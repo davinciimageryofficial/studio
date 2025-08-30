@@ -53,15 +53,16 @@ export function AppSidebar() {
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} legacyBehavior passHref>
-                <SidebarMenuButton
-                  isActive={isActive(item.href)}
-                  tooltip={item.label}
-                >
+              <SidebarMenuButton
+                asChild
+                isActive={isActive(item.href)}
+                tooltip={item.label}
+              >
+                <Link href={item.href}>
                   <item.icon />
                   <span>{item.label}</span>
-                </SidebarMenuButton>
-              </Link>
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
@@ -69,15 +70,15 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
             <SidebarMenuItem>
-              <Link href="/profile/me" legacyBehavior passHref>
-                  <SidebarMenuButton tooltip="Profile">
-                      <Avatar className="size-7">
-                        <AvatarImage src="https://picsum.photos/id/1005/40/40" data-ai-hint="man portrait" />
-                        <AvatarFallback>ME</AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm font-medium">My Profile</span>
-                  </SidebarMenuButton>
-              </Link>
+              <SidebarMenuButton asChild tooltip="Profile">
+                <Link href="/profile/me">
+                    <Avatar className="size-7">
+                      <AvatarImage src="https://picsum.photos/id/1005/40/40" data-ai-hint="man portrait" />
+                      <AvatarFallback>ME</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-medium">My Profile</span>
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Settings">
