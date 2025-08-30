@@ -19,7 +19,7 @@ import Image from "next/image";
 export default function FeedPage() {
   return (
     <div className="flex h-full min-h-screen">
-      <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
+      <main className="flex-1 bg-black p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-2xl">
           <CreatePostCard />
           <div className="mt-6 space-y-6">
