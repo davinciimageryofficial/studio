@@ -22,6 +22,7 @@ import {
   Settings,
   LogOut,
   PanelLeft,
+  CreditCard,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -34,6 +35,10 @@ const menuItems = [
   { href: "/workmate-radar", label: "Workmate Radar", icon: Radar },
   { href: "/messages", label: "Messages", icon: MessageSquare },
   { href: "/news", label: "News", icon: Newspaper },
+];
+
+const secondaryMenuItems = [
+    { href: "/billing", label: "Billing", icon: CreditCard },
 ];
 
 export function AppSidebar() {
@@ -50,7 +55,7 @@ export function AppSidebar() {
             </div>
         </div>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="flex-1 justify-center">
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
@@ -67,8 +72,23 @@ export function AppSidebar() {
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
+          {secondaryMenuItems.map((item) => (
+            <SidebarMenuItem key={item.href}>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive(item.href)}
+                tooltip={item.label}
+                className="justify-start"
+              >
+                <Link href={item.href}>
+                  <item.icon />
+                  <span>{item.label}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
         </SidebarMenu>
-        <SidebarTrigger className="h-8 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full justify-start mt-auto" />
+        <SidebarTrigger className="h-8 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mt-auto w-full justify-start" />
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
