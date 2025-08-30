@@ -23,12 +23,14 @@ import {
   LogOut,
   PanelLeft,
   CreditCard,
+  Home,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const menuItems = [
+  { href: "/dashboard", label: "Dashboard", icon: Home },
   { href: "/", label: "Feed", icon: LayoutGrid },
   { href: "/discover", label: "Discover", icon: Search },
   { href: "/connect", label: "Connect", icon: Users },
