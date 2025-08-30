@@ -18,7 +18,12 @@ export default function ConnectPage() {
       </div>
 
       <div className="w-full max-w-sm">
-        <Carousel className="w-full">
+        <Carousel
+          className="relative w-full"
+          opts={{
+            loop: true,
+          }}
+        >
           <CarouselContent>
             {placeholderUsers.map((user, index) => (
               <CarouselItem key={index}>
@@ -26,14 +31,34 @@ export default function ConnectPage() {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className="mt-8 flex justify-center gap-4">
-             <Button variant="outline" size="icon" className="h-16 w-16 rounded-full border-2 border-yellow-500 text-yellow-500">
-               <RotateCcw className="h-8 w-8" />
+          <CarouselPrevious asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute -left-4 top-1/2 -translate-y-1/2 h-20 w-20 rounded-full border-2 border-red-500 bg-white text-red-500 hover:bg-red-50 hover:text-red-600"
+            >
+              <X className="h-10 w-10" />
             </Button>
-            <CarouselPrevious asChild><Button variant="outline" size="icon" className="h-20 w-20 rounded-full border-2 border-red-500 text-red-500"><X className="h-10 w-10" /></Button></CarouselPrevious>
-             <CarouselNext asChild><Button variant="outline" size="icon" className="h-20 w-20 rounded-full border-2 border-green-500 text-green-500"><Heart className="h-10 w-10" /></Button></CarouselNext>
-          </div>
+          </CarouselPrevious>
+          <CarouselNext asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute -right-4 top-1/2 -translate-y-1/2 h-20 w-20 rounded-full border-2 border-green-500 bg-white text-green-500 hover:bg-green-50 hover:text-green-600"
+            >
+              <Heart className="h-10 w-10" />
+            </Button>
+          </CarouselNext>
         </Carousel>
+        <div className="mt-8 flex justify-center">
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-16 w-16 rounded-full border-2 border-yellow-500 text-yellow-500"
+          >
+            <RotateCcw className="h-8 w-8" />
+          </Button>
+        </div>
       </div>
     </div>
   );
