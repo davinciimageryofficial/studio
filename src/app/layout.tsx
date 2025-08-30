@@ -1,9 +1,11 @@
+
 import type { Metadata } from "next";
 import { AppSidebar } from "@/components/layout/sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { GlobalSearch } from "@/components/layout/global-search";
+import { ClientOnly } from "@/components/layout/client-only";
 
 export const metadata: Metadata = {
   title: "Sentry",
@@ -31,7 +33,9 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <SidebarProvider>
-          <AppSidebar />
+          <ClientOnly>
+            <AppSidebar />
+          </ClientOnly>
           <SidebarInset>
             <div className="flex flex-col">
               <GlobalSearch />
