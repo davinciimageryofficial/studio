@@ -18,6 +18,7 @@ import {
   Image as ImageIcon,
   Sparkles,
   AlertCircle,
+  Briefcase,
 } from "lucide-react";
 import Image from "next/image";
 import { ConversationStarters } from "./conversation-starters";
@@ -35,6 +36,7 @@ import { analyzePost, AnalyzePostOutput } from "@/ai/flows/post-analyzer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 
 export default function FeedPage() {
   return (
@@ -195,29 +197,38 @@ function CreatePostCard() {
 }
 
 function PostCard({ post }: { post: (typeof placeholderPosts)[0] }) {
+    const author = post.author;
   return (
     <Card>
       <CardContent className="p-4">
         <div className="flex items-start gap-4">
           <Avatar>
-            <AvatarImage src={post.author.avatar} />
+            <AvatarImage src={author.avatar} />
             <AvatarFallback>
-              {post.author.name.charAt(0)}
+              {author.name.charAt(0)}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">{post.author.name}</span>
-                <span className="text-sm text-muted-foreground">
-                  @{post.author.handle} · {post.timestamp}
-                </span>
+              <div>
+                <div className="flex items-center gap-2">
+                    <span className="font-semibold">{author.name}</span>
+                    <span className="text-sm text-muted-foreground">
+                    @{author.handle} · {post.timestamp}
+                    </span>
+                </div>
+                {author.jobTitle && author.company && (
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Briefcase className="h-3 w-3" />
+                        <span>{author.jobTitle} at {author.company}</span>
+                    </div>
+                )}
               </div>
               <Button variant="ghost" size="icon">
                 <MoreHorizontal className="h-5 w-5" />
               </Button>
             </div>
-            <p className="mt-1 whitespace-pre-wrap">{post.content}</p>
+            <p className="mt-2 whitespace-pre-wrap">{post.content}</p>
             {post.image && (
               <div className="mt-4 overflow-hidden rounded-lg border">
                 <Image

@@ -1,8 +1,12 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { CheckCircle, Briefcase } from "lucide-react";
 
 export default function SettingsPage() {
   return (
@@ -42,18 +46,57 @@ export default function SettingsPage() {
         <Separator />
 
         <Card>
+            <CardHeader>
+                <CardTitle>Verification</CardTitle>
+                <CardDescription>Verify your place of work to add credibility to your profile and posts.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <Alert>
+                    <Briefcase className="h-4 w-4" />
+                    <AlertTitle>Current Verified Position</AlertTitle>
+                    <AlertDescription>
+                        <p className="font-semibold">Senior Frontend Developer at Innovate Inc.</p>
+                        <p className="text-sm text-muted-foreground">Your position is verified and will be displayed on your profile.</p>
+                    </AlertDescription>
+                </Alert>
+                <div className="space-y-2">
+                    <Label htmlFor="work-email">Verify with a new work email</Label>
+                    <div className="flex gap-2">
+                        <Input id="work-email" type="email" placeholder="you@company.com" />
+                        <Button variant="outline">Send Verification Email</Button>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+
+        <Separator />
+        
+        <Card>
           <CardHeader>
             <CardTitle>Account</CardTitle>
-            <CardDescription>Manage your account settings.</CardDescription>
+            <CardDescription>Manage your account settings and display preferences.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
              <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" defaultValue="bob.williams@example.com" />
+                <Input id="email" type="email" defaultValue="bob.williams@example.com" disabled />
               </div>
               <Button variant="outline">Change Password</Button>
+
+              <div className="space-y-4 rounded-lg border p-4">
+                  <h4 className="font-medium">Display Preferences</h4>
+                  <div className="flex items-center justify-between">
+                      <Label htmlFor="show-job-info" className="flex flex-col gap-1">
+                          <span>Show position on posts</span>
+                          <span className="font-normal text-muted-foreground text-xs">Display your verified job title and company next to your name on your posts.</span>
+                      </Label>
+                      <Switch id="show-job-info" defaultChecked />
+                  </div>
+              </div>
           </CardContent>
         </Card>
+
+
       </div>
     </div>
   );

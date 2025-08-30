@@ -1,3 +1,4 @@
+
 export type User = {
   id: string;
   name: string;
@@ -9,6 +10,9 @@ export type User = {
   skills: string[];
   portfolio: string[];
   category: "design" | "writing" | "development";
+  jobTitle?: string;
+  company?: string;
+  verified?: boolean;
 };
 
 export const placeholderUsers: User[] = [
@@ -23,6 +27,9 @@ export const placeholderUsers: User[] = [
     skills: ["UI/UX Design", "Figma", "Prototyping", "User Research", "Webflow"],
     portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p1-${i}/400/300`),
     category: "design",
+    jobTitle: "Principal Designer",
+    company: "Creative Co.",
+    verified: true,
   },
   {
     id: "2",
@@ -35,6 +42,9 @@ export const placeholderUsers: User[] = [
     skills: ["React", "Next.js", "TypeScript", "GraphQL", "Tailwind CSS"],
     portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p2-${i}/400/300`),
     category: "development",
+    jobTitle: "Senior Frontend Developer",
+    company: "Innovate Inc.",
+    verified: true,
   },
   {
     id: "3",
@@ -47,6 +57,9 @@ export const placeholderUsers: User[] = [
     skills: ["Content Strategy", "SEO", "Copywriting", "Blogging", "Ahrefs"],
     portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p3-${i}/400/300`),
     category: "writing",
+    jobTitle: "Head of Content",
+    company: "StoryWeavers",
+    verified: true,
   },
   {
     id: "4",
@@ -83,6 +96,9 @@ export const placeholderUsers: User[] = [
     skills: ["Technical Writing", "Docs-as-Code", "API Documentation", "Markdown"],
     portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p6-${i}/400/300`),
     category: "writing",
+    jobTitle: "Senior Technical Writer",
+    company: "Clearly Documented",
+    verified: true,
   },
 ];
 
