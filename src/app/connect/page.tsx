@@ -66,7 +66,7 @@ export default function ConnectPage() {
 
 function SwipeCard({ user }: { user: (typeof placeholderUsers)[0] }) {
   return (
-    <Card className="relative aspect-[3/4] w-full overflow-hidden rounded-xl">
+    <Card className="relative aspect-[3/4] w-full overflow-hidden rounded-xl flex items-center justify-center">
       <Image
         src={user.avatar}
         alt={user.name}
