@@ -53,7 +53,7 @@ export function GlobalSearch() {
   return (
     <>
       <div className="sticky top-0 z-20 w-full border-b bg-background/80 py-2 backdrop-blur-lg transition-all duration-300">
-        <div className="container flex items-center justify-end gap-4 px-4">
+        <div className="container flex items-center justify-center gap-4 px-4">
             <div className="flex w-full max-w-2xl items-center gap-2">
                 <form 
                     onSubmit={handleSearch} 
