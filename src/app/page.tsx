@@ -15,6 +15,7 @@ import {
   Image as ImageIcon,
 } from "lucide-react";
 import Image from "next/image";
+import { ConversationStarters } from "./conversation-starters";
 
 export default function FeedPage() {
   return (
@@ -30,7 +31,7 @@ export default function FeedPage() {
         </div>
       </main>
       <aside className="hidden w-80 flex-col border-l p-6 lg:flex">
-        <h3 className="text-lg font-semibold">Who to follow</h3>
+        <ConversationStarters />
       </aside>
     </div>
   );
