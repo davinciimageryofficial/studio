@@ -50,7 +50,7 @@ export function AppSidebar() {
             </div>
         </div>
       </SidebarHeader>
-      <SidebarContent className="flex flex-1 flex-col justify-center">
+      <SidebarContent>
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
@@ -68,6 +68,7 @@ export function AppSidebar() {
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
+        <SidebarTrigger className="h-8 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full justify-start mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
@@ -97,9 +98,6 @@ export function AppSidebar() {
                   <span>Logout</span>
                 </Link>
               </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-                <SidebarTrigger className="w-full justify-start" />
             </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
