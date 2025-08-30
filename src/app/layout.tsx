@@ -3,6 +3,7 @@ import { AppSidebar } from "@/components/layout/sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
+import { GlobalSearch } from "@/components/layout/global-search";
 
 export const metadata: Metadata = {
   title: "Sentry",
@@ -31,7 +32,10 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <SidebarProvider>
           <AppSidebar />
-          <SidebarInset>{children}</SidebarInset>
+          <SidebarInset>
+            <GlobalSearch />
+            {children}
+          </SidebarInset>
           <Toaster />
         </SidebarProvider>
       </body>
