@@ -40,7 +40,7 @@ export function AppSidebar() {
   const isActive = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href));
 
   return (
-    <Sidebar variant="sidebar" collapsible="icon" side="right">
+    <Sidebar variant="sidebar" collapsible="icon" side="left">
       <SidebarHeader>
         <div className="flex w-full items-center justify-between p-2">
             <div className="flex items-center gap-2 [&>span]:font-bold [&>span]:text-lg [&>span]:tracking-wide">
