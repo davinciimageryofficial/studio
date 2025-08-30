@@ -23,7 +23,7 @@ const chartData = [
 const chartConfig = {
   views: {
     label: "Page Views",
-    color: "hsl(var(--chart-1))",
+    color: "hsl(0 0% 0%)",
   },
 } satisfies ChartConfig
 
