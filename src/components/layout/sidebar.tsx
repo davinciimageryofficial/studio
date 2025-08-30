@@ -50,7 +50,7 @@ export function AppSidebar() {
             </div>
         </div>
       </SidebarHeader>
-      <SidebarContent className="flex flex-col items-center justify-center">
+      <SidebarContent className="flex flex-1 flex-col items-center justify-center">
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
