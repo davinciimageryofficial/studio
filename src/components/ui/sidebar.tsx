@@ -176,12 +176,16 @@ const Sidebar = React.forwardRef<
     },
     ref
   ) => {
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
-    const [isMounted, setIsMounted] = React.useState(false);
+    const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+    const [isMounted, setIsMounted] = React.useState(false)
 
     React.useEffect(() => {
-        setIsMounted(true);
-    }, []);
+      setIsMounted(true)
+    }, [])
+
+    if (!isMounted) {
+      return null
+    }
 
     if (collapsible === "none") {
       return (
@@ -198,7 +202,7 @@ const Sidebar = React.forwardRef<
       )
     }
 
-    if (isMobile && isMounted) {
+    if (isMobile) {
       return (
         <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
           <SheetContent
@@ -268,26 +272,21 @@ Sidebar.displayName = "Sidebar"
 const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
->(({ className, onClick, ...props }, ref) => {
+>(({ className, children, ...props }, ref) => {
   const { toggleSidebar, state } = useSidebar()
   const label = state === 'collapsed' ? 'Expand Sidebar' : 'Collapse Sidebar';
 
   return (
-    <Button
-      ref={ref}
-      data-sidebar="trigger"
-      variant="ghost"
-      size="icon"
-      className={cn("h-8 w-8 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:absolute group-data-[collapsible=icon]:bottom-2 group-data-[collapsible=icon]:left-2", className)}
-      onClick={(event) => {
-        onClick?.(event)
-        toggleSidebar()
-      }}
-      {...props}
-    >
-        <PanelLeft className="duration-200 group-data-[collapsible=icon]:rotate-180" />
-      <span className="sr-only">{label}</span>
-    </Button>
+    <SidebarMenuButton
+        ref={ref}
+        tooltip={label}
+        onClick={toggleSidebar}
+        className={className}
+        {...props}
+      >
+        <PanelLeft className="duration-200 group-data-[state=expanded]:rotate-180" />
+        <span>{label}</span>
+    </SidebarMenuButton>
   )
 })
 SidebarTrigger.displayName = "SidebarTrigger"
