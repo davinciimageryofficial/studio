@@ -68,6 +68,7 @@ export function AppSidebar() {
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
+        <SidebarTrigger className="w-full justify-start mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
@@ -97,9 +98,6 @@ export function AppSidebar() {
                   <span>Logout</span>
                 </Link>
               </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-                <SidebarTrigger className="w-full justify-start" />
             </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
