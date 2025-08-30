@@ -81,7 +81,7 @@ function ProfileCard({ user }: { user: User }) {
               </Badge>
             ))}
           </div>
-          <Link href={`/profile/${user.id}`} passHref>
+          <Link href={`/profile/${user.id}`} legacyBehavior={false}>
             <Button variant="outline" className="mt-6 w-full">
               View Profile
             </Button>
