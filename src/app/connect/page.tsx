@@ -1,3 +1,4 @@
+
 import { placeholderUsers } from "@/lib/placeholder-data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -29,16 +30,12 @@ export default function ConnectPage() {
              <Button variant="outline" size="icon" className="h-16 w-16 rounded-full border-2 border-yellow-500 text-yellow-500">
                <RotateCcw className="h-8 w-8" />
             </Button>
-            <CarouselPrevious asChild>
-              <Button variant="outline" size="icon" className="h-20 w-20 rounded-full border-2 border-red-500 text-red-500">
+            <CarouselPrevious asChild><Button variant="outline" size="icon" className="h-20 w-20 rounded-full border-2 border-red-500 text-red-500">
                 <X className="h-10 w-10" />
-              </Button>
-            </CarouselPrevious>
-             <CarouselNext asChild>
-               <Button variant="outline" size="icon" className="h-20 w-20 rounded-full border-2 border-green-500 text-green-500">
+              </Button></CarouselPrevious>
+             <CarouselNext asChild><Button variant="outline" size="icon" className="h-20 w-20 rounded-full border-2 border-green-500 text-green-500">
                  <Heart className="h-10 w-10" />
-               </Button>
-             </CarouselNext>
+               </Button></CarouselNext>
           </div>
         </Carousel>
       </div>
