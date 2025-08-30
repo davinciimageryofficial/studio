@@ -38,7 +38,9 @@ export default function RootLayout({
           </ClientOnly>
           <SidebarInset>
             <div className="flex flex-col">
-              <GlobalSearch />
+              <ClientOnly>
+                <GlobalSearch />
+              </ClientOnly>
               <div className="flex-1">{children}</div>
             </div>
           </SidebarInset>
