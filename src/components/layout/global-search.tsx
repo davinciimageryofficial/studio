@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,12 +14,22 @@ import {
 import { searchAI } from "@/ai/flows/search-ai";
 import { SearchAIInput, SearchAIOutput } from "@/ai/schemas/search-ai";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 export function GlobalSearch() {
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<SearchAIOutput | null>(null);
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,8 +52,14 @@ export function GlobalSearch() {
 
   return (
     <>
-      <div className="w-full bg-background p-4 border-b">
-        <form onSubmit={handleSearch} className="relative w-full max-w-2xl mx-auto">
+      <div className="sticky top-0 z-20 w-full bg-background/80 py-4 backdrop-blur-lg border-b transition-all duration-300">
+        <form 
+          onSubmit={handleSearch} 
+          className={cn(
+            "relative w-full max-w-2xl mx-auto transition-all duration-300 ease-in-out",
+            isScrolled && "max-w-md hover:max-w-2xl focus-within:max-w-2xl"
+            )}
+        >
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Ask AI anything..."

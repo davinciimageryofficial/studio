@@ -33,8 +33,10 @@ export default function RootLayout({
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
-            <GlobalSearch />
-            {children}
+            <div className="flex flex-col">
+              <GlobalSearch />
+              <div className="flex-1">{children}</div>
+            </div>
           </SidebarInset>
           <Toaster />
         </SidebarProvider>
