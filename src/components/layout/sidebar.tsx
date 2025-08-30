@@ -50,7 +50,7 @@ export function AppSidebar() {
             </div>
         </div>
       </SidebarHeader>
-      <SidebarContent className="justify-start">
+      <SidebarContent className="flex flex-col items-center justify-center">
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
@@ -99,7 +99,7 @@ export function AppSidebar() {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-                <SidebarTrigger className="group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:justify-start" />
+                <SidebarTrigger className="w-full justify-start" />
             </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
