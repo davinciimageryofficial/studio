@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CreditCard, Download } from "lucide-react";
+import { CheckCircle, CreditCard, Download, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function BillingPage() {
   const invoices = [
@@ -10,6 +11,55 @@ export default function BillingPage() {
     { id: "INV-2024-003", date: "May 1, 2024", amount: "$99.00", status: "Paid" },
     { id: "INV-2024-004", date: "April 1, 2024", amount: "$99.00", status: "Paid" },
   ];
+
+  const plans = [
+    {
+      name: "Basic",
+      price: "$29",
+      features: [
+        "10 Connections per month",
+        "Basic Search Filters",
+        "Limited Profile Views",
+      ],
+      current: false,
+    },
+    {
+      name: "Pro",
+      price: "$99",
+      features: [
+        "Unlimited Connections",
+        "Advanced Search Filters",
+        "Access to AI Workmate Radar",
+        "Full Profile Analytics",
+      ],
+      current: true,
+    },
+    {
+      name: "Team",
+      price: "$249",
+      features: [
+        "All Pro features",
+        "Up to 5 team members",
+        "Team collaboration tools",
+        "Priority Support",
+      ],
+      current: false,
+    },
+    {
+        name: "Enterprise",
+        price: "Custom",
+        features: [
+          "All Team features",
+          "Unlimited team members",
+          "Dedicated Account Manager",
+          "Custom Integrations",
+        ],
+        current: false,
+    },
+  ];
+  const currentPlan = plans.find(p => p.current);
+  const otherPlans = plans.filter(p => !p.current);
+
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
@@ -26,23 +76,60 @@ export default function BillingPage() {
           <Card>
             <CardHeader>
               <CardTitle>Current Plan</CardTitle>
-              <CardDescription>You are currently on the Pro plan.</CardDescription>
+              <CardDescription>You are currently on the <strong>{currentPlan?.name}</strong> plan.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold">$99</span>
+                    <span className="text-4xl font-bold">{currentPlan?.price}</span>
                     <span className="text-muted-foreground">/ month</span>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                    Your plan includes unlimited connections, advanced search filters, and access to AI Workmate Radar.
-                    Your next billing date is August 1, 2024.
-                </p>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                    {currentPlan?.features.map(feature => (
+                        <li key={feature} className="flex items-center gap-2">
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                            <span>{feature}</span>
+                        </li>
+                    ))}
+                </ul>
             </CardContent>
-            <CardFooter className="flex justify-between">
+            <CardFooter>
               <Button variant="outline">Cancel Subscription</Button>
-              <Button>Upgrade Plan</Button>
             </CardFooter>
           </Card>
+
+          {/* Available Plans */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Available Plans</CardTitle>
+                    <CardDescription>Choose the plan that's right for you.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {otherPlans.map(plan => (
+                        <Card key={plan.name} className={cn("flex flex-col", plan.name === "Pro" && "border-primary")}>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                  {plan.name}
+                                  {plan.name === 'Pro' && <Star className="h-5 w-5 text-primary" />}
+                                </CardTitle>
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-3xl font-bold">{plan.price}</span>
+                                    {plan.price !== 'Custom' && <span className="text-muted-foreground">/ month</span>}
+                                </div>
+                            </CardHeader>
+                            <CardContent className="flex-1 space-y-3">
+                                {plan.features.map(feature => (
+                                    <p key={feature} className="text-sm text-muted-foreground">{feature}</p>
+                                ))}
+                            </CardContent>
+                            <CardFooter>
+                                <Button className="w-full" variant={plan.price === 'Custom' ? 'outline' : 'default'}>
+                                  {plan.price === 'Custom' ? 'Contact Sales' : 'Upgrade'}
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    ))}
+                </CardContent>
+            </Card>
 
           {/* Payment Method */}
           <Card>
