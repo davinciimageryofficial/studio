@@ -53,30 +53,30 @@ export function GlobalSearch() {
   return (
     <>
       <div className="sticky top-0 z-20 w-full border-b bg-background/80 py-2 backdrop-blur-lg transition-all duration-300">
-        <div className="container flex items-center justify-between gap-4 px-4">
-            <form 
-            onSubmit={handleSearch} 
-            className={cn(
-                "relative w-full max-w-2xl transition-all duration-300 ease-in-out",
-                isScrolled ? "max-w-md" : "max-w-2xl",
-                "focus-within:max-w-2xl hover:max-w-2xl"
-                )}
-            >
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input
-                placeholder="Ask AI anything..."
-                className="pl-10"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-            />
-            <Button type="submit" className="absolute right-1 top-1/2 -translate-y-1/2 h-8">
-                Search
-            </Button>
-            </form>
-            <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
-                <span className="sr-only">Notifications</span>
-            </Button>
+        <div className="container flex items-center justify-end gap-4 px-4">
+            <div className="flex w-full max-w-2xl items-center gap-2">
+                <form 
+                    onSubmit={handleSearch} 
+                    className={cn(
+                        "relative w-full transition-all duration-300 ease-in-out"
+                        )}
+                    >
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                        placeholder="Ask AI anything..."
+                        className="pl-10"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                    />
+                    <Button type="submit" className="absolute right-1 top-1/2 -translate-y-1/2 h-8">
+                        Search
+                    </Button>
+                </form>
+                <Button variant="ghost" size="icon">
+                    <Bell className="h-5 w-5" />
+                    <span className="sr-only">Notifications</span>
+                </Button>
+            </div>
         </div>
       </div>
 
