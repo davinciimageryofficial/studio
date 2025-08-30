@@ -1,0 +1,182 @@
+export type User = {
+  id: string;
+  name: string;
+  handle: string;
+  headline: string;
+  bio: string;
+  avatar: string;
+  coverImage: string;
+  skills: string[];
+  portfolio: string[];
+  category: "design" | "writing" | "development";
+};
+
+export const placeholderUsers: User[] = [
+  {
+    id: "1",
+    name: "Alice Johnson",
+    handle: "alicej",
+    headline: "UX/UI Designer | Creating Intuitive Digital Experiences",
+    bio: "Passionate about crafting user-centric designs that are both beautiful and functional. 10+ years of experience in the tech industry.",
+    avatar: "https://picsum.photos/id/1027/100/100",
+    coverImage: "https://picsum.photos/seed/1/1000/300",
+    skills: ["UI/UX Design", "Figma", "Prototyping", "User Research", "Webflow"],
+    portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p1-${i}/400/300`),
+    category: "design",
+  },
+  {
+    id: "2",
+    name: "Bob Williams",
+    handle: "bobw",
+    headline: "Senior Frontend Developer | React & Next.js Expert",
+    bio: "Building performant and scalable web applications. I love TypeScript and clean code. Always eager to learn new technologies.",
+    avatar: "https://picsum.photos/id/1005/100/100",
+    coverImage: "https://picsum.photos/seed/2/1000/300",
+    skills: ["React", "Next.js", "TypeScript", "GraphQL", "Tailwind CSS"],
+    portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p2-${i}/400/300`),
+    category: "development",
+  },
+  {
+    id: "3",
+    name: "Charlie Brown",
+    handle: "charlieb",
+    headline: "Content Strategist & SEO Writer",
+    bio: "Helping brands tell their story and rank higher on search engines. I specialize in long-form content for B2B SaaS companies.",
+    avatar: "https://picsum.photos/id/1011/100/100",
+    coverImage: "https://picsum.photos/seed/3/1000/300",
+    skills: ["Content Strategy", "SEO", "Copywriting", "Blogging", "Ahrefs"],
+    portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p3-${i}/400/300`),
+    category: "writing",
+  },
+  {
+    id: "4",
+    name: "Diana Prince",
+    handle: "dianap",
+    headline: "Full-Stack Developer | Node.js, Python, & Cloud",
+    bio: "Architecting and building robust backend systems. Experienced with AWS and serverless architectures. Believer in DevOps culture.",
+    avatar: "https://picsum.photos/id/1012/100/100",
+    coverImage: "https://picsum.photos/seed/4/1000/300",
+    skills: ["Node.js", "Python", "AWS", "Serverless", "PostgreSQL"],
+    portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p4-${i}/400/300`),
+    category: "development",
+  },
+  {
+    id: "5",
+    name: "Ethan Hunt",
+    handle: "ethanh",
+    headline: "Brand & Visual Designer",
+    bio: "Creating memorable brand identities and visual systems. My work is driven by strategy and a passion for detail.",
+    avatar: "https://picsum.photos/id/1013/100/100",
+    coverImage: "https://picsum.photos/seed/5/1000/300",
+    skills: ["Branding", "Illustration", "Adobe Creative Suite", "Typography"],
+    portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p5-${i}/400/300`),
+    category: "design",
+  },
+  {
+    id: "6",
+    name: "Fiona Glenanne",
+    handle: "fionag",
+    headline: "Technical Writer & Documentation Specialist",
+    bio: "Making complex topics easy to understand. I write clear, concise, and comprehensive documentation for developers and end-users.",
+    avatar: "https://picsum.photos/id/1014/100/100",
+    coverImage: "https://picsum.photos/seed/6/1000/300",
+    skills: ["Technical Writing", "Docs-as-Code", "API Documentation", "Markdown"],
+    portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p6-${i}/400/300`),
+    category: "writing",
+  },
+];
+
+export const placeholderPosts = [
+  {
+    id: 1,
+    author: placeholderUsers[0],
+    timestamp: "2h",
+    content: `Just wrapped up a major redesign for a client's e-commerce platform. Focused on streamlining the checkout process and improving mobile navigation. The early feedback has been amazing! #UIDesign #UX`,
+    image: "https://picsum.photos/seed/post1/600/400",
+    likes: 102,
+    comments: 15,
+    retweets: 23,
+    views: "10.2k",
+  },
+  {
+    id: 2,
+    author: placeholderUsers[1],
+    timestamp: "5h",
+    content: `Excited to share that I'll be speaking at React Conf next month! I'll be diving deep into server components and the future of web development. Who else is going? #React #NextJS`,
+    image: null,
+    likes: 256,
+    comments: 45,
+    retweets: 88,
+    views: "25.1k",
+  },
+  {
+    id: 3,
+    author: placeholderUsers[2],
+    timestamp: "1d",
+    content: `Published a new blog post on "The Ultimate Guide to SEO in 2024". It covers everything from keyword research to link building strategies. Hope you find it useful! Link in bio. #SEO #ContentMarketing`,
+    image: "https://picsum.photos/seed/post3/600/400",
+    likes: 89,
+    comments: 22,
+    retweets: 41,
+    views: "15.7k",
+  },
+];
+
+export const placeholderMessages = [
+  {
+    id: "msg1",
+    userId: "2",
+    messages: [
+      { from: "2", text: "Hey Alice, saw your profile on Sentry. Your design work is incredible!", time: "10:30 AM" },
+      { from: "me", text: "Thanks, Bob! I appreciate that. Your frontend projects look really solid.", time: "10:31 AM" },
+      { from: "2", text: "I'm looking for a designer for a new side project. It's a mobile app for local event discovery. Would you be interested in hearing more?", time: "10:32 AM" },
+    ],
+  },
+   {
+    id: "msg2",
+    userId: "3",
+    messages: [
+      { from: "3", text: "Hi there! I'm looking for a developer to help build out a new blog. Your experience with Next.js seems like a perfect fit.", time: "Yesterday" },
+      { from: "me", text: "Hi Charlie. Happy to chat. What kind of features are you looking for?", time: "Yesterday" },
+    ],
+  },
+];
+
+export const placeholderNews = [
+    {
+        id: "1",
+        category: "Funding",
+        title: "AI Startup 'Innovate' Raises $50M Series B to Revolutionize Code Generation",
+        author: "Alex Chen",
+        date: "2 hours ago",
+        excerpt: "Innovate, a company building AI-powered tools for developers, announced today it has closed a $50 million Series B funding round led by Future Ventures.",
+        imageUrl: "https://picsum.photos/seed/news1/600/400",
+    },
+    {
+        id: "2",
+        category: "Product Launch",
+        title: "Connective Unveils 'Sentry', a New Platform for Creative Professionals to Network and Collaborate",
+        author: "Maria Rodriguez",
+        date: "1 day ago",
+        excerpt: "The professional networking space gets a new contender today with the launch of Sentry, a platform designed specifically for freelancers and creatives.",
+        imageUrl: "https://picsum.photos/seed/news2/600/400",
+    },
+    {
+        id: "3",
+        category: "Tech",
+        title: "The Rise of 'Micro-Teams': How Freelancers are Shaping the Future of Work",
+        author: "David Smith",
+        date: "3 days ago",
+        excerpt: "Forget the traditional 9-to-5. A new trend is emerging where elite freelancers form small, agile teams to tackle complex projects for major corporations.",
+        imageUrl: "https://picsum.photos/seed/news3/600/400",
+    },
+     {
+        id: "4",
+        category: "Design",
+        title: "Is Neobrutalism the Future of UI Design? A Deep Dive.",
+        author: "Emily White",
+        date: "4 days ago",
+        excerpt: "Characterized by raw elements, bold typography, and a stark honesty, neobrutalism is taking the design world by storm. We explore its origins and impact.",
+        imageUrl: "https://picsum.photos/seed/news4/600/400",
+    },
+];
