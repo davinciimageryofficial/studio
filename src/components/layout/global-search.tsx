@@ -52,7 +52,7 @@ export function GlobalSearch() {
 
   return (
     <>
-      <div className="sticky top-0 z-20 w-full bg-black/40 py-4 backdrop-blur-lg border-b transition-all duration-300">
+      <div className="sticky top-0 z-20 w-full bg-black/4 py-4 backdrop-blur-lg border-b transition-all duration-300">
         <form 
           onSubmit={handleSearch} 
           className={cn(
