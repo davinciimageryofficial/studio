@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search, Bell } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,25 +52,32 @@ export function GlobalSearch() {
 
   return (
     <>
-      <div className="sticky top-0 z-20 w-full bg-black/4 py-2 backdrop-blur-lg border-b transition-all duration-300">
-        <form 
-          onSubmit={handleSearch} 
-          className={cn(
-            "relative w-full max-w-2xl mx-auto transition-all duration-300 ease-in-out",
-            isScrolled && "max-w-md hover:max-w-2xl focus-within:max-w-2xl"
-            )}
-        >
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Ask AI anything..."
-            className="pl-10 bg-white/50"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <Button type="submit" className="absolute right-1 top-1/2 -translate-y-1/2 h-8">
-            Search
-          </Button>
-        </form>
+      <div className="sticky top-0 z-20 w-full border-b bg-background/80 py-2 backdrop-blur-lg transition-all duration-300">
+        <div className="container flex items-center justify-between gap-4 px-4">
+            <form 
+            onSubmit={handleSearch} 
+            className={cn(
+                "relative w-full max-w-2xl transition-all duration-300 ease-in-out",
+                isScrolled ? "max-w-md" : "max-w-2xl",
+                "focus-within:max-w-2xl hover:max-w-2xl"
+                )}
+            >
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+                placeholder="Ask AI anything..."
+                className="pl-10"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+            />
+            <Button type="submit" className="absolute right-1 top-1/2 -translate-y-1/2 h-8">
+                Search
+            </Button>
+            </form>
+            <Button variant="ghost" size="icon">
+                <Bell className="h-5 w-5" />
+                <span className="sr-only">Notifications</span>
+            </Button>
+        </div>
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
