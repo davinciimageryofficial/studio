@@ -179,4 +179,31 @@ export const placeholderNews = [
         excerpt: "Characterized by raw elements, bold typography, and a stark honesty, neobrutalism is taking the design world by storm. We explore its origins and impact.",
         imageUrl: "https://picsum.photos/seed/news4/600/400",
     },
+    {
+        id: "5",
+        category: "Freelance",
+        title: "How to Price Your Services as a Creative Freelancer",
+        author: "John Doe",
+        date: "5 days ago",
+        excerpt: "Struggling to figure out your rates? This guide breaks down the different pricing models and helps you find the one that works for you.",
+        imageUrl: "https://picsum.photos/seed/news5/600/400",
+    },
+    {
+        id: "6",
+        category: "Writing",
+        title: "The Art of Storytelling in Brand Marketing",
+        author: "Jane Austen",
+        date: "6 days ago",
+        excerpt: "Discover how to craft compelling narratives that resonate with your audience and build lasting brand loyalty. It's not just about what you sell, but the story you tell.",
+        imageUrl: "https://picsum.photos/seed/news6/600/400",
+    },
+    {
+        id: "7",
+        category: "Development",
+        title: "A Guide to State Management in Modern React Applications",
+        author: "Ada Lovelace",
+        date: "1 week ago",
+        excerpt: "From Zustand to Jotai, we explore the landscape of state management libraries in the React ecosystem beyond Redux.",
+        imageUrl: "https://picsum.photos/seed/news7/600/400",
+    }
 ];
