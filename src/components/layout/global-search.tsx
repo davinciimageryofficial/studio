@@ -63,7 +63,7 @@ export function GlobalSearch() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Ask AI anything..."
-            className="pl-10 bg-white"
+            className="pl-10 bg-white/50"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
