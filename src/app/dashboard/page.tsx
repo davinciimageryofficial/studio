@@ -1,4 +1,7 @@
 
+"use client";
+
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -6,9 +9,11 @@ import { placeholderUsers } from "@/lib/placeholder-data";
 import { ArrowUpRight, Users, Eye, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { EngagementChart } from "./charts";
-
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function DashboardPage() {
+    const [chartType, setChartType] = useState<"bar" | "line" | "area">("bar");
+
     const recentActivities = [
         {
             user: placeholderUsers[2],
@@ -73,11 +78,22 @@ export default function DashboardPage() {
         {/* Engagement Chart */}
         <Card className="lg:col-span-2">
             <CardHeader>
-                <CardTitle>Profile Engagement</CardTitle>
-                <CardDescription>A look at your profile views over the last 7 days.</CardDescription>
+                <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <CardTitle>Profile Engagement</CardTitle>
+                        <CardDescription>A look at your profile views over the last 7 days.</CardDescription>
+                    </div>
+                    <Tabs defaultValue="bar" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
+                        <TabsList className="grid w-full grid-cols-3 sm:w-auto">
+                            <TabsTrigger value="bar">Bar</TabsTrigger>
+                            <TabsTrigger value="line">Line</TabsTrigger>
+                            <TabsTrigger value="area">Area</TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                </div>
             </CardHeader>
             <CardContent className="pl-2">
-                <EngagementChart />
+                <EngagementChart type={chartType} />
             </CardContent>
         </Card>
 

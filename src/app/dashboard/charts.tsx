@@ -1,7 +1,7 @@
 
 "use client"
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, Line, LineChart, Area, AreaChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid } from "recharts"
 
 import {
   ChartConfig,
@@ -27,10 +27,30 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function EngagementChart() {
+type EngagementChartProps = {
+    type: "bar" | "line" | "area";
+}
+
+export function EngagementChart({ type }: EngagementChartProps) {
+  const ChartComponent = {
+    bar: BarChart,
+    line: LineChart,
+    area: AreaChart,
+  }[type];
+
   return (
     <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-      <BarChart accessibilityLayer data={chartData}>
+      <ChartComponent
+        accessibilityLayer 
+        data={chartData}
+        margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <CartesianGrid vertical={false} />
         <XAxis
           dataKey="day"
           tickLine={false}
@@ -43,8 +63,18 @@ export function EngagementChart() {
           cursor={false}
           content={<ChartTooltipContent indicator="dot" />}
         />
-        <Bar dataKey="views" fill="var(--color-views)" radius={4} />
-      </BarChart>
+        {type === "bar" && <Bar dataKey="views" fill="var(--color-views)" radius={4} />}
+        {type === "line" && <Line type="monotone" dataKey="views" stroke="var(--color-views)" strokeWidth={2} dot={false} />}
+        {type === "area" && (
+            <defs>
+                <linearGradient id="fillViews" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--color-views)" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="var(--color-views)" stopOpacity={0.1}/>
+                </linearGradient>
+            </defs>
+        )}
+        {type === "area" && <Area type="monotone" dataKey="views" stroke="var(--color-views)" fill="url(#fillViews)" />}
+      </ChartComponent>
     </ChartContainer>
   )
 }
