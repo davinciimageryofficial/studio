@@ -97,7 +97,8 @@ export function AppSidebar() {
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Profile" className="justify-start">
                 <Link href="/profile/me">
-                    <Avatar className="size-7">
+                    <UserCircle className="hidden group-data-[collapsible=icon]:block" />
+                    <Avatar className="size-7 group-data-[collapsible=icon]:hidden">
                       <AvatarImage src="https://picsum.photos/id/1005/40/40" data-ai-hint="man portrait" />
                       <AvatarFallback>ME</AvatarFallback>
                     </Avatar>
