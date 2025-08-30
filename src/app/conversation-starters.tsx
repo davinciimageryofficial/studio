@@ -33,7 +33,7 @@ export function ConversationStarters() {
     <div>
       <h3 className="text-lg font-semibold flex items-center gap-2">
         <Lightbulb className="w-5 h-5" />
-        AI-Powered Conversation Starters
+        Pocket Guide
       </h3>
       <div className="mt-4 space-y-3">
         {loading && (

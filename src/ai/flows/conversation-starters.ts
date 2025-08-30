@@ -22,11 +22,12 @@ const prompt = ai.definePrompt({
   output: { schema: ConversationStartersOutputSchema },
   prompt: `You are an AI assistant for a professional networking platform called Sentry.
 
-Your task is to generate a list of 5 fresh, engaging, and thought-provoking conversation starters. These topics should be relevant to professionals in the tech and creative industries.
+Your task is to generate a list of 5 short, direct, and thought-provoking subject headlines.
+These headlines should be relevant to professionals in the tech and creative industries and inspire them to write a post.
 
-Focus on current trends, future-looking questions, and topics that encourage meaningful discussion. Avoid generic or boring questions.
+Focus on current trends and future-looking ideas.
 
-Generate a JSON object with a "topics" array containing 5 string-based conversation starters.
+Generate a JSON object with a "topics" array containing 5 string-based subject headlines.
 `,
 });
 
