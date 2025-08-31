@@ -8,7 +8,7 @@ export default function WorkmateRadarPage() {
       <div className="mx-auto max-w-4xl">
         <header className="mb-8 text-center">
           <div className="mb-4 inline-flex items-center justify-center rounded-full bg-primary/10 p-3">
-            <Radar className="h-8 w-8 animate-spin text-primary" />
+            <Radar className="h-8 w-8 text-primary" />
           </div>
           <h1 className="text-3xl font-bold tracking-tight">AI Workmate Radar</h1>
           <p className="mt-2 text-muted-foreground">
