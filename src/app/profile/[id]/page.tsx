@@ -6,10 +6,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2 } from "lucide-react";
+import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -21,9 +21,10 @@ type Experience = {
     duration: string;
 };
 
-export default function ProfilePage({ params }: { params: { id: string } }) {
+export default function ProfilePage() {
+  const params = useParams<{ id: string }>();
   const isMyProfile = params.id === 'me';
-  const user = isMyProfile ? placeholderUsers[1] : placeholderUsers.find((u) => u.id === params.id);
+  const user = isMy_profile ? placeholderUsers[1] : placeholderUsers.find((u) => u.id === params.id);
   
   const initialExperiences: Experience[] = [
     { title: "Senior Frontend Developer", company: "Innovate Inc.", duration: "Jan 2020 - Present · 4+ years" },
@@ -313,6 +314,5 @@ function EditExperienceDialog({ initialExperiences, onSave }: { initialExperienc
         </Dialog>
     )
 }
-
 
     
