@@ -1,6 +1,7 @@
 import { Radar } from "lucide-react";
 import { WorkmateRadarForm } from "./form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ClientOnly } from "@/components/layout/client-only";
 
 export default function WorkmateRadarPage() {
   return (
@@ -23,7 +24,9 @@ export default function WorkmateRadarPage() {
             <CardDescription>Fill out the form below to get AI-powered suggestions.</CardDescription>
           </CardHeader>
           <CardContent>
-            <WorkmateRadarForm />
+            <ClientOnly>
+              <WorkmateRadarForm />
+            </ClientOnly>
           </CardContent>
         </Card>
       </div>
