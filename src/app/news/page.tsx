@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Category = 
   | "All" 
@@ -52,6 +53,8 @@ export default function NewsPage() {
   };
   
   const categories: Category[] = ["Tech", "Design", "Writing", "Development", "Freelance", "AI & Machine Learning", "Cybersecurity", "Data Science", "Cloud Computing", "UI/UX"];
+  const isCategorySelected = categories.includes(selectedCategory);
+
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
@@ -62,17 +65,28 @@ export default function NewsPage() {
         </p>
       </header>
 
-      <div className="mb-8 flex flex-wrap gap-4">
-        <Button variant={selectedCategory === 'Personalized' ? 'default' : 'outline'} onClick={() => setSelectedCategory('Personalized')}>
+      <div className="mb-8 flex flex-wrap items-center gap-2 rounded-lg bg-muted p-1 w-fit">
+        <Button 
+          variant={selectedCategory === 'Personalized' ? 'default' : 'ghost'} 
+          onClick={() => setSelectedCategory('Personalized')}
+          className={cn(selectedCategory === 'Personalized' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+        >
           Personalized
         </Button>
-        <Button variant={selectedCategory === 'Trending' ? 'default' : 'outline'} onClick={() => setSelectedCategory('Trending')}>
+        <Button 
+          variant={selectedCategory === 'Trending' ? 'default' : 'ghost'} 
+          onClick={() => setSelectedCategory('Trending')}
+          className={cn(selectedCategory === 'Trending' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+        >
           Trending
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant={categories.includes(selectedCategory) ? 'default' : 'outline'}>
-              {categories.includes(selectedCategory) ? selectedCategory : 'Select Category'}
+            <Button 
+              variant={isCategorySelected ? 'default' : 'ghost'}
+              className={cn(isCategorySelected && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+            >
+              {isCategorySelected ? selectedCategory : 'Select Category'}
               <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
