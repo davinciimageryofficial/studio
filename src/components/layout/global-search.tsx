@@ -15,21 +15,16 @@ import { searchAI } from "@/ai/flows/search-ai";
 import { SearchAIInput, SearchAIOutput } from "@/ai/schemas/search-ai";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { placeholderUsers } from "@/lib/placeholder-data";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export function GlobalSearch() {
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<SearchAIOutput | null>(null);
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const [isActive, setIsActive] = useState(false);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +44,12 @@ export function GlobalSearch() {
       setLoading(false);
     }
   };
+  
+  const notifications = [
+    { user: placeholderUsers[2], action: "viewed your profile.", time: "2h" },
+    { user: placeholderUsers[3], action: "sent you a connection request.", time: "1d" },
+    { user: placeholderUsers[4], action: "accepted your connection request.", time: "2d" },
+  ];
 
   return (
     <>
@@ -57,8 +58,13 @@ export function GlobalSearch() {
             <div className="flex w-full max-w-2xl items-center gap-2">
                 <form 
                     onSubmit={handleSearch} 
+                    onMouseEnter={() => setIsActive(true)}
+                    onMouseLeave={() => setIsActive(false)}
+                    onFocus={() => setIsActive(true)}
+                    onBlur={() => setIsActive(false)}
                     className={cn(
-                        "relative w-full transition-all duration-300 ease-in-out"
+                        "relative w-full transition-all duration-300 ease-in-out",
+                        isActive ? "max-w-xl" : "max-w-sm"
                         )}
                     >
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -72,10 +78,32 @@ export function GlobalSearch() {
                         Search
                     </Button>
                 </form>
-                <Button variant="ghost" size="icon">
-                    <Bell className="h-5 w-5" />
-                    <span className="sr-only">Notifications</span>
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <Bell className="h-5 w-5" />
+                        <span className="sr-only">Notifications</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-80">
+                    <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {notifications.map((item, index) => (
+                      <DropdownMenuItem key={index} className="flex items-start gap-3 p-3">
+                         <Avatar className="h-9 w-9">
+                            <AvatarImage src={item.user.avatar} alt={item.user.name} />
+                            <AvatarFallback>{item.user.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                            <p className="text-sm whitespace-normal">
+                                <span className="font-semibold">{item.user.name}</span> {item.action}
+                            </p>
+                            <p className="text-xs text-muted-foreground">{item.time}</p>
+                        </div>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </div>
       </div>
