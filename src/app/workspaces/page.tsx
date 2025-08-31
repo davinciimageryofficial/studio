@@ -6,9 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, Mic, MicOff, MessageSquare } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { WorkspaceChat } from "./chat";
+import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { WorkspaceTeam } from "./workspace-team";
 
 const formatTime = (seconds: number) => {
   const mins = Math.floor(seconds / 60);
@@ -16,14 +16,17 @@ const formatTime = (seconds: number) => {
   return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 };
 
+type SessionType = "solo" | "team" | null;
+
 export default function WorkspacesPage() {
   const [time, setTime] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const [sessionType, setSessionType] = useState<SessionType>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-
   const onlineUsers = placeholderUsers.slice(0, 5);
-  const workspaceUsers = placeholderUsers.slice(0, 8); // Simulate users in the workspace
-
+  
   useEffect(() => {
     if (isActive) {
       timerRef.current = setInterval(() => {
@@ -40,14 +43,55 @@ export default function WorkspacesPage() {
     };
   }, [isActive]);
 
-  const handleStartPause = () => {
-    setIsActive(!isActive);
+  const handleStart = (type: SessionType) => {
+    setSessionType(type);
+    setIsActive(true);
+    setIsDialogOpen(false);
+  };
+
+  const handleEndSession = () => {
+    setIsActive(false);
+    setSessionType(null);
+    setTime(0);
   };
 
   const handleReset = () => {
     setIsActive(false);
     setTime(0);
   };
+
+  if (isActive) {
+    return (
+      <div className="p-4 sm:p-6 md:p-8">
+        {sessionType === 'solo' && (
+           <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Solo Focus Session</CardTitle>
+                  <div className="flex items-center gap-2 font-mono text-lg font-bold">
+                    <TimerIcon className="h-5 w-5"/>
+                    {formatTime(time)}
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="text-center">
+                 <p className="text-muted-foreground mb-4">You are in a solo session. Keep up the great work!</p>
+                 <Button size="lg" variant="destructive" onClick={handleEndSession}>
+                    End Session
+                </Button>
+              </CardContent>
+            </Card>
+        )}
+        {sessionType === 'team' && (
+          <WorkspaceTeam 
+            time={time} 
+            formatTime={formatTime} 
+            onEndSession={handleEndSession} 
+          />
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="flex h-full min-h-screen">
@@ -59,135 +103,99 @@ export default function WorkspacesPage() {
             </p>
         </header>
 
-        {isActive ? (
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle>Focus Session</CardTitle>
-                    <div className="flex items-center gap-2 font-mono text-lg font-bold">
-                      <TimerIcon className="h-5 w-5"/>
-                      {formatTime(time)}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                    {workspaceUsers.map(user => (
-                      <ParticipantCard key={user.id} user={user} />
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-             <div className="flex flex-col gap-6">
-                <WorkspaceChat />
-                <Button size="lg" variant="destructive" onClick={handleStartPause}>
-                    End Session
+        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+            <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                <TimerIcon className="h-6 w-6" />
+                <span>Session Timer</span>
+                </CardTitle>
+                <CardDescription>
+                Start the timer to begin your focused work session.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center gap-8 p-12">
+                <div className="font-mono text-8xl font-bold tracking-tighter">
+                {formatTime(time)}
+                </div>
+                <div className="flex gap-4">
+                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button size="lg" className="w-40">
+                            <Play className="mr-2" />
+                            Start Session
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>Choose your workspace</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2">
+                            <Button variant="outline" className="h-auto flex-col gap-2 p-6" onClick={() => handleStart('solo')}>
+                                <Users className="h-8 w-8" />
+                                <span className="font-semibold">Start Solo Session</span>
+                                <span className="text-xs text-muted-foreground">Work by yourself in a focused environment.</span>
+                            </Button>
+                             <Button variant="outline" className="h-auto flex-col gap-2 p-6" onClick={() => handleStart('team')}>
+                                <Users className="h-8 w-8" />
+                                <span className="font-semibold">Create Team Workspace</span>
+                                <span className="text-xs text-muted-foreground">Invite colleagues to collaborate in real-time.</span>
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+                <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={handleReset}
+                    disabled={time === 0 && !isActive}
+                >
+                    <RotateCcw className="mr-2" />
+                    Reset
                 </Button>
-            </div>
-          </div>
-        ) : (
-            <div className="grid gap-8 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-                <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                    <TimerIcon className="h-6 w-6" />
-                    <span>Session Timer</span>
-                    </CardTitle>
-                    <CardDescription>
-                    Start the timer to begin your focused work session.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center gap-8 p-12">
-                    <div className="font-mono text-8xl font-bold tracking-tighter">
-                    {formatTime(time)}
-                    </div>
-                    <div className="flex gap-4">
-                    <Button
-                        size="lg"
-                        onClick={handleStartPause}
-                        className="w-40"
-                    >
-                        {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
-                        {isActive ? "Pause" : "Start Session"}
-                    </Button>
-                    <Button
-                        size="lg"
-                        variant="outline"
-                        onClick={handleReset}
-                        disabled={time === 0 && !isActive}
-                    >
-                        <RotateCcw className="mr-2" />
-                        Reset
-                    </Button>
-                    </div>
-                </CardContent>
-                </Card>
-            </div>
+                </div>
+            </CardContent>
+            </Card>
+        </div>
 
-            <aside className="space-y-8">
-                <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Users className="h-6 w-6" />
-                        <span>Online Users</span>
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-4">
-                        {onlineUsers.map(user => (
-                            <div key={user.id} className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <Avatar>
-                                        <AvatarImage src={user.avatar} />
-                                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                    </Avatar>
-                                    <div>
-                                        <p className="font-semibold">{user.name}</p>
-                                        <div className="flex items-center gap-1.5">
-                                        <span className="h-2 w-2 rounded-full bg-green-500" />
-                                        <p className="text-xs text-muted-foreground">Online</p>
-                                        </div>
+        <aside className="space-y-8">
+            <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Users className="h-6 w-6" />
+                    <span>Online Users</span>
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-4">
+                    {onlineUsers.map(user => (
+                        <div key={user.id} className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <Avatar>
+                                    <AvatarImage src={user.avatar} />
+                                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <p className="font-semibold">{user.name}</p>
+                                    <div className="flex items-center gap-1.5">
+                                    <span className="h-2 w-2 rounded-full bg-green-500" />
+                                    <p className="text-xs text-muted-foreground">Online</p>
                                     </div>
                                 </div>
-                                <Button variant="ghost" size="icon">
-                                    <Plus className="h-5 w-5" />
-                                    <span className="sr-only">Invite {user.name}</span>
-                                </Button>
                             </div>
-                        ))}
-                    </div>
-                </CardContent>
-                </Card>
-            </aside>
-            </div>
-        )}
+                            <Button variant="ghost" size="icon" disabled>
+                                <Plus className="h-5 w-5" />
+                                <span className="sr-only">Invite {user.name}</span>
+                            </Button>
+                        </div>
+                    ))}
+                </div>
+            </CardContent>
+            </Card>
+        </aside>
+        </div>
       </main>
     </div>
   );
 }
-
-
-function ParticipantCard({ user }: { user: typeof placeholderUsers[0] }) {
-  const [isMuted, setIsMuted] = useState(false);
-
-  return (
-    <div className="relative aspect-square overflow-hidden rounded-lg">
-      <Avatar className="h-full w-full rounded-lg">
-        <AvatarImage src={user.avatar} className="object-cover" />
-        <AvatarFallback className="text-4xl">{user.name.charAt(0)}</AvatarFallback>
-      </Avatar>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-      <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
-        <p className="truncate text-xs font-medium text-white">{user.name}</p>
-        <Button size="icon" variant="ghost" className="h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white" onClick={() => setIsMuted(!isMuted)}>
-          {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-        </Button>
-      </div>
-    </div>
-  );
-}
-

@@ -21,12 +21,12 @@ export function WorkspaceChat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       user: placeholderUsers[0],
-      text: "Hey everyone, ready to get started?",
+      text: "Hey everyone, ready to get started on the Q3 planning doc?",
       time: "10:01 AM",
     },
     {
       user: placeholderUsers[2],
-      text: "Yep, ready when you are!",
+      text: "Yep, I have the latest version pulled up. Let's do it!",
       time: "10:02 AM",
     },
   ]);
@@ -47,33 +47,28 @@ export function WorkspaceChat() {
   };
 
   return (
-    <Card className="flex h-[32rem] flex-col">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-6 w-6" />
-            <span>Live Chat</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-1 flex-col p-0">
-        <ScrollArea className="flex-1 px-6 py-4">
-          <div className="space-y-4">
-            {messages.map((message, index) => (
-              <div key={index} className="flex items-start gap-3">
-                <Avatar className="h-8 w-8">
-                    <AvatarImage src={message.user.avatar} />
-                    <AvatarFallback>{message.user.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                    <div className="flex items-baseline gap-2">
-                        <p className="font-semibold text-sm">{message.user.name}</p>
-                        <p className="text-xs text-muted-foreground">{message.time}</p>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{message.text}</p>
+    <div className="flex h-full flex-col">
+        <div className="flex-1">
+          <ScrollArea className="h-full px-6 py-4">
+            <div className="space-y-4">
+              {messages.map((message, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <Avatar className="h-8 w-8">
+                      <AvatarImage src={message.user.avatar} />
+                      <AvatarFallback>{message.user.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                      <div className="flex items-baseline gap-2">
+                          <p className="font-semibold text-sm">{message.user.name}</p>
+                          <p className="text-xs text-muted-foreground">{message.time}</p>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{message.text}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
         <div className="border-t p-4">
           <form onSubmit={handleSendMessage} className="relative">
             <Input
@@ -87,7 +82,6 @@ export function WorkspaceChat() {
             </Button>
           </form>
         </div>
-      </CardContent>
-    </Card>
+    </div>
   );
 }
