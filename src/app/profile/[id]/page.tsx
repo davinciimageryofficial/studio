@@ -24,7 +24,7 @@ type Experience = {
 export default function ProfilePage() {
   const params = useParams<{ id: string }>();
   const isMyProfile = params.id === 'me';
-  const user = isMy_profile ? placeholderUsers[1] : placeholderUsers.find((u) => u.id === params.id);
+  const user = isMyProfile ? placeholderUsers[1] : placeholderUsers.find((u) => u.id === params.id);
   
   const initialExperiences: Experience[] = [
     { title: "Senior Frontend Developer", company: "Innovate Inc.", duration: "Jan 2020 - Present · 4+ years" },
@@ -289,8 +289,7 @@ function EditExperienceDialog({ initialExperiences, onSave }: { initialExperienc
                                 <Input id={`company-${index}`} value={exp.company} onChange={(e) => handleChange(index, 'company', e.target.value)} />
                             </div>
                              <div className="space-y-2">
-                                <Label htmlFor={`duration-${index}`}>Duration</Label>
-                                <Input id={`duration-${index}`} value={exp.duration} onChange={(e) => handleChange(index, 'duration', e.target.value)} />
+                                <Label htmlFor={`duration-${index}`}>Duration</Label>                                <Input id={`duration-${index}`} value={exp.duration} onChange={(e) => handleChange(index, 'duration', e.target.value)} />
                             </div>
                             <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-7 w-7" onClick={() => handleRemove(index)}>
                                 <Trash2 className="h-4 w-4" />
@@ -314,5 +313,3 @@ function EditExperienceDialog({ initialExperiences, onSave }: { initialExperienc
         </Dialog>
     )
 }
-
-    
