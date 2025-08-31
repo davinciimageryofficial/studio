@@ -161,7 +161,7 @@ export const placeholderMessages = [
 export const placeholderNews = [
     {
         id: "1",
-        category: "Funding",
+        category: "AI & Machine Learning",
         title: "AI Startup 'Innovate' Raises $50M Series B to Revolutionize Code Generation",
         author: "Alex Chen",
         date: "2 hours ago",
@@ -170,7 +170,7 @@ export const placeholderNews = [
     },
     {
         id: "2",
-        category: "Product Launch",
+        category: "Tech",
         title: "Connective Unveils 'Sentry', a New Platform for Creative Professionals to Network and Collaborate",
         author: "Maria Rodriguez",
         date: "1 day ago",
@@ -179,7 +179,7 @@ export const placeholderNews = [
     },
     {
         id: "3",
-        category: "Tech",
+        category: "Freelance",
         title: "The Rise of 'Micro-Teams': How Freelancers are Shaping the Future of Work",
         author: "David Smith",
         date: "3 days ago",
@@ -188,7 +188,7 @@ export const placeholderNews = [
     },
      {
         id: "4",
-        category: "Design",
+        category: "UI/UX",
         title: "Is Neobrutalism the Future of UI Design? A Deep Dive.",
         author: "Emily White",
         date: "4 days ago",
@@ -221,5 +221,32 @@ export const placeholderNews = [
         date: "1 week ago",
         excerpt: "From Zustand to Jotai, we explore the landscape of state management libraries in the React ecosystem beyond Redux.",
         imageUrl: "https://picsum.photos/seed/news7/600/400",
+    },
+    {
+        id: "8",
+        category: "Cybersecurity",
+        title: "Protecting Your Digital Assets: A Guide for Freelancers",
+        author: "Alan Turing",
+        date: "1 week ago",
+        excerpt: "As a freelancer, you're a target. Learn how to secure your devices, data, and client information from cyber threats.",
+        imageUrl: "https://picsum.photos/seed/news8/600/400",
+    },
+    {
+        id: "9",
+        category: "Data Science",
+        title: "The Impact of Big Data on Creative Industries",
+        author: "Grace Hopper",
+        date: "2 weeks ago",
+        excerpt: "Data is not just for tech companies. See how creatives are using data to inform their work, from film production to music composition.",
+        imageUrl: "https://picsum.photos/seed/news9/600/400",
+    },
+    {
+        id: "10",
+        category: "Cloud Computing",
+        title: "Serverless for Startups: A Cost-Effective Approach to Scaling",
+        author: "Vint Cerf",
+        date: "2 weeks ago",
+        excerpt: "Learn how serverless architectures can help your startup scale without breaking the bank on infrastructure costs.",
+        imageUrl: "https://picsum.photos/seed/news10/600/400",
     }
 ];

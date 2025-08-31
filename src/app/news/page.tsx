@@ -18,7 +18,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 
-type Category = "All" | "Personalized" | "Trending" | "Tech" | "Design" | "Writing" | "Freelance";
+type Category = 
+  | "All" 
+  | "Personalized" 
+  | "Trending" 
+  | "Tech" 
+  | "Design" 
+  | "Writing" 
+  | "Freelance"
+  | "AI & Machine Learning"
+  | "Cybersecurity"
+  | "Data Science"
+  | "Development"
+  | "Cloud Computing"
+  | "UI/UX";
 
 export default function NewsPage() {
   const [selectedCategory, setSelectedCategory] = useState<Category>("All");
@@ -26,8 +39,9 @@ export default function NewsPage() {
   const getArticlesForCategory = (category: Category) => {
     switch (category) {
       case "All":
-      case "Personalized": // Placeholder for personalized content
         return placeholderNews;
+      case "Personalized": // Placeholder for personalized content
+        return placeholderNews.slice(2,6);
       case "Trending":
         return placeholderNews.slice(0, 4); // Placeholder for trending
       default:
@@ -37,7 +51,7 @@ export default function NewsPage() {
     }
   };
   
-  const categories: Category[] = ["Tech", "Design", "Writing", "Freelance"];
+  const categories: Category[] = ["Tech", "Design", "Writing", "Development", "Freelance", "AI & Machine Learning", "Cybersecurity", "Data Science", "Cloud Computing", "UI/UX"];
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
@@ -58,7 +72,7 @@ export default function NewsPage() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant={categories.includes(selectedCategory) ? 'default' : 'outline'}>
-              Select Category
+              {categories.includes(selectedCategory) ? selectedCategory : 'Select Category'}
               <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
