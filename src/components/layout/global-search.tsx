@@ -73,10 +73,10 @@ export function GlobalSearch() {
     <>
       <div className="sticky top-0 z-30 w-full border-b bg-background/80 py-2 backdrop-blur-lg transition-all duration-300">
         <div className="container flex items-center justify-center gap-4 px-4">
-            <div className="flex w-full max-w-2xl items-center justify-center gap-2">
+            <div className="flex w-full max-w-3xl items-center justify-center gap-2">
                 <form 
                     onSubmit={handleSearch} 
-                    className="relative w-full max-w-xl"
+                    className="relative w-full"
                     onFocus={() => setIsActive(true)}
                     onBlur={(e) => {
                       // Use relatedTarget to see if the focus is moving within the form
@@ -129,7 +129,7 @@ export function GlobalSearch() {
                         <span className="sr-only">Notifications</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-80 bg-background/80 backdrop-blur-lg">
+                  <DropdownMenuContent align="end" className="w-80 bg-background/90 backdrop-blur-lg">
                     <DropdownMenuLabel>Notifications</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {notifications.map((item, index) => (
