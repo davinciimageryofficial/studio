@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ShoppingCart } from "lucide-react";
+import { Search, ShoppingCart, SlidersHorizontal } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -16,25 +16,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ClientOnly } from "@/components/layout/client-only";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 
-
-export default function CoursesPage() {
+function CoursesPageInternal() {
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("all");
+  const [priceRange, setPriceRange] = useState([0, 300]);
+  const [sortBy, setSortBy] = useState("relevance");
 
   const allCategories = [
     ...new Set(placeholderCourses.map(c => c.category))
   ];
 
-  const filterContent = (content: any[]) => {
-    return content.filter(item => {
-      const matchesCategory = category === 'all' || item.category.toLowerCase() === category.toLowerCase();
-      const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || item.author.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
+  const filteredAndSortedCourses = placeholderCourses
+    .filter(course => {
+      const matchesCategory = category === 'all' || course.category.toLowerCase() === category.toLowerCase();
+      const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) || course.author.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesPrice = course.price >= priceRange[0] && course.price <= priceRange[1];
+      return matchesCategory && matchesSearch && matchesPrice;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'price-asc':
+          return a.price - b.price;
+        case 'price-desc':
+          return b.price - a.price;
+        case 'newest':
+          // Assuming higher ID is newer, will need a real date field for production
+          return parseInt(b.id.replace('course', '')) - parseInt(a.id.replace('course', ''));
+        default:
+          return 0; // 'relevance' - no specific sorting for now
+      }
     });
-  };
-
-  const filteredCourses = filterContent(placeholderCourses);
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
@@ -69,18 +86,66 @@ export default function CoursesPage() {
           </Select>
         </div>
       </div>
+      
+      <Collapsible className="mb-6">
+        <CollapsibleTrigger asChild>
+          <Button variant="outline" size="sm">
+            <SlidersHorizontal className="mr-2 h-4 w-4" />
+            Advanced Filters
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="mt-4 rounded-md border p-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div>
+                  <Label htmlFor="price-range">Price Range: ${priceRange[0]} - ${priceRange[1]}</Label>
+                  <Slider
+                    id="price-range"
+                    min={0}
+                    max={300}
+                    step={10}
+                    value={priceRange}
+                    onValueChange={setPriceRange}
+                    className="mt-2"
+                  />
+                </div>
+                <div>
+                   <Label htmlFor="sort-by">Sort by</Label>
+                   <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger id="sort-by" className="w-full mt-2">
+                      <SelectValue placeholder="Sort by" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="relevance">Relevance</SelectItem>
+                      <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                      <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                      <SelectItem value="newest">Newest</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+            </div>
+        </CollapsibleContent>
+      </Collapsible>
+
 
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {filteredCourses.length > 0 ? (
-            filteredCourses.map((course) => (
+        {filteredAndSortedCourses.length > 0 ? (
+            filteredAndSortedCourses.map((course) => (
                 <ContentCard key={course.id} content={course} />
             ))
         ) : (
-            <p className="text-muted-foreground col-span-full text-center">No courses found.</p>
+            <p className="text-muted-foreground col-span-full text-center">No courses found matching your criteria.</p>
         )}
       </div>
     </div>
   );
+}
+
+export default function CoursesPage() {
+    return (
+        <ClientOnly>
+            <CoursesPageInternal />
+        </ClientOnly>
+    )
 }
 
 function ContentCard({ content }: { content: any }) {
@@ -103,7 +168,7 @@ function ContentCard({ content }: { content: any }) {
         <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{content.description}</p>
         <div className="mt-4 flex items-center justify-between">
             <p className="text-lg font-bold">
-                ${content.price}
+                ${content.price.toFixed(2)}
             </p>
             <Button variant="outline" size="sm">
                 <ShoppingCart className="mr-2 h-4 w-4" />
