@@ -1,19 +1,45 @@
-import { placeholderUsers } from "@/lib/placeholder-data";
+
+'use client';
+
+import { placeholderUsers, User } from "@/lib/placeholder-data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon } from "lucide-react";
+import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+type Experience = {
+    title: string;
+    company: string;
+    duration: string;
+};
 
 export default function ProfilePage({ params }: { params: { id: string } }) {
-  const user = params.id === 'me' ? placeholderUsers[1] : placeholderUsers.find((u) => u.id === params.id);
+  const isMyProfile = params.id === 'me';
+  const user = isMyProfile ? placeholderUsers[1] : placeholderUsers.find((u) => u.id === params.id);
+  
+  const initialExperiences: Experience[] = [
+    { title: "Senior Frontend Developer", company: "Innovate Inc.", duration: "Jan 2020 - Present · 4+ years" },
+    { title: "Web Developer", company: "Solutions Co.", duration: "Jun 2017 - Dec 2019 · 2.5 years" },
+  ];
+
+  const [experiences, setExperiences] = useState(initialExperiences);
 
   if (!user) {
     notFound();
   }
+
+  const handleSaveChanges = (updatedExperiences: Experience[]) => {
+    setExperiences(updatedExperiences);
+    // Here you would typically make an API call to save the changes
+  };
 
   return (
     <div className="bg-muted/40">
@@ -103,30 +129,25 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
                 </Card>
 
                 <Card>
-                    <CardHeader>
+                    <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle>Experience</CardTitle>
+                        {isMyProfile && (
+                            <EditExperienceDialog initialExperiences={experiences} onSave={handleSaveChanges} />
+                        )}
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        <div className="flex gap-4">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
-                                <Briefcase className="h-6 w-6 text-muted-foreground" />
+                        {experiences.map((exp, index) => (
+                            <div key={index} className="flex gap-4">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
+                                    <Briefcase className="h-6 w-6 text-muted-foreground" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold">{exp.title}</h3>
+                                    <p className="text-sm text-muted-foreground">{exp.company}</p>
+                                    <p className="text-xs text-muted-foreground">{exp.duration}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="font-semibold">Senior Frontend Developer</h3>
-                                <p className="text-sm text-muted-foreground">Innovate Inc.</p>
-                                <p className="text-xs text-muted-foreground">Jan 2020 - Present · 4+ years</p>
-                            </div>
-                        </div>
-                        <div className="flex gap-4">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
-                                <Briefcase className="h-6 w-6 text-muted-foreground" />
-                            </div>
-                            <div>
-                                <h3 className="font-semibold">Web Developer</h3>
-                                <p className="text-sm text-muted-foreground">Solutions Co.</p>
-                                <p className="text-xs text-muted-foreground">Jun 2017 - Dec 2019 · 2.5 years</p>
-                            </div>
-                        </div>
+                        ))}
                     </CardContent>
                 </Card>
             </div>
@@ -135,4 +156,75 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
       </div>
     </div>
   );
+}
+
+
+function EditExperienceDialog({ initialExperiences, onSave }: { initialExperiences: Experience[], onSave: (exps: Experience[]) => void }) {
+    const [experiences, setExperiences] = useState(initialExperiences);
+    
+    const handleAdd = () => {
+        setExperiences([...experiences, { title: "", company: "", duration: "" }]);
+    };
+
+    const handleRemove = (index: number) => {
+        setExperiences(experiences.filter((_, i) => i !== index));
+    };
+
+    const handleChange = (index: number, field: keyof Experience, value: string) => {
+        const newExperiences = [...experiences];
+        newExperiences[index][field] = value;
+        setExperiences(newExperiences);
+    };
+
+    const handleSaveChanges = () => {
+        onSave(experiences);
+    };
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="ghost" size="icon">
+                    <Edit className="h-4 w-4" />
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                    <DialogTitle>Edit Experience</DialogTitle>
+                </DialogHeader>
+                <div className="py-4 space-y-6 max-h-[60vh] overflow-y-auto pr-4">
+                    {experiences.map((exp, index) => (
+                        <div key={index} className="space-y-4 rounded-md border p-4 relative">
+                            <div className="space-y-2">
+                                <Label htmlFor={`title-${index}`}>Job Title</Label>
+                                <Input id={`title-${index}`} value={exp.title} onChange={(e) => handleChange(index, 'title', e.target.value)} />
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor={`company-${index}`}>Company</Label>
+                                <Input id={`company-${index}`} value={exp.company} onChange={(e) => handleChange(index, 'company', e.target.value)} />
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor={`duration-${index}`}>Duration</Label>
+                                <Input id={`duration-${index}`} value={exp.duration} onChange={(e) => handleChange(index, 'duration', e.target.value)} />
+                            </div>
+                            <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-7 w-7" onClick={() => handleRemove(index)}>
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    ))}
+                    <Button variant="outline" className="w-full" onClick={handleAdd}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Experience
+                    </Button>
+                </div>
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary">Cancel</Button>
+                    </DialogClose>
+                     <DialogClose asChild>
+                        <Button type="button" onClick={handleSaveChanges}>Save Changes</Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
 }
