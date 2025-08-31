@@ -32,7 +32,10 @@ type Category =
   | "Data Science"
   | "Development"
   | "Cloud Computing"
-  | "UI/UX";
+  | "UI/UX"
+  | "Events"
+  | "Platforms"
+  | "Spotlight";
 
 export default function NewsPage() {
   const [selectedCategory, setSelectedCategory] = useState<Category>("All");
@@ -80,6 +83,27 @@ export default function NewsPage() {
             className={cn(selectedCategory === 'Trending' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
           >
             Trending
+          </Button>
+           <Button 
+            variant={selectedCategory === 'Events' ? 'default' : 'ghost'} 
+            onClick={() => setSelectedCategory('Events')}
+            className={cn(selectedCategory === 'Events' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+          >
+            Events
+          </Button>
+           <Button 
+            variant={selectedCategory === 'Platforms' ? 'default' : 'ghost'} 
+            onClick={() => setSelectedCategory('Platforms')}
+            className={cn(selectedCategory === 'Platforms' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+          >
+            Platforms
+          </Button>
+           <Button 
+            variant={selectedCategory === 'Spotlight' ? 'default' : 'ghost'} 
+            onClick={() => setSelectedCategory('Spotlight')}
+            className={cn(selectedCategory === 'Spotlight' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+          >
+            Spotlight
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

@@ -170,7 +170,7 @@ export const placeholderNews = [
     },
     {
         id: "2",
-        category: "Tech",
+        category: "Platforms",
         title: "Connective Unveils 'Sentry', a New Platform for Creative Professionals to Network and Collaborate",
         author: "Maria Rodriguez",
         date: "1 day ago",
@@ -248,5 +248,23 @@ export const placeholderNews = [
         date: "2 weeks ago",
         excerpt: "Learn how serverless architectures can help your startup scale without breaking the bank on infrastructure costs.",
         imageUrl: "https://picsum.photos/seed/news10/600/400",
+    },
+    {
+        id: "11",
+        category: "Events",
+        title: "Design Forward 2024: A Recap of the Biggest Announcements",
+        author: "Casey Newton",
+        date: "Yesterday",
+        excerpt: "From AI-powered design tools to the latest trends in sustainable design, here's everything you missed from this year's landmark conference.",
+        imageUrl: "https://picsum.photos/seed/news11/600/400",
+    },
+    {
+        id: "12",
+        category: "Spotlight",
+        title: "From Side Project to Unicorn: The Story of Sentry",
+        author: "Kara Swisher",
+        date: "2 days ago",
+        excerpt: "An in-depth look at how a small team of developers and designers built a platform that's changing the game for creative professionals.",
+        imageUrl: "https://picsum.photos/seed/news12/600/400",
     }
 ];
