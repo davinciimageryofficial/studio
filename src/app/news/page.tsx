@@ -65,41 +65,43 @@ export default function NewsPage() {
         </p>
       </header>
 
-      <div className="mb-8 flex flex-wrap items-center gap-2 rounded-lg bg-muted p-1 w-fit">
-        <Button 
-          variant={selectedCategory === 'Personalized' ? 'default' : 'ghost'} 
-          onClick={() => setSelectedCategory('Personalized')}
-          className={cn(selectedCategory === 'Personalized' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
-        >
-          Personalized
-        </Button>
-        <Button 
-          variant={selectedCategory === 'Trending' ? 'default' : 'ghost'} 
-          onClick={() => setSelectedCategory('Trending')}
-          className={cn(selectedCategory === 'Trending' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
-        >
-          Trending
-        </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant={isCategorySelected ? 'default' : 'ghost'}
-              className={cn(isCategorySelected && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
-            >
-              {isCategorySelected ? selectedCategory : 'Select Category'}
-              <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>Topics</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {categories.map((category) => (
-              <DropdownMenuItem key={category} onSelect={() => setSelectedCategory(category)}>
-                {category}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <div className="mb-8 flex justify-center">
+        <div className="flex flex-wrap items-center gap-2 rounded-lg bg-muted p-1 w-fit">
+          <Button 
+            variant={selectedCategory === 'Personalized' ? 'default' : 'ghost'} 
+            onClick={() => setSelectedCategory('Personalized')}
+            className={cn(selectedCategory === 'Personalized' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+          >
+            Personalized
+          </Button>
+          <Button 
+            variant={selectedCategory === 'Trending' ? 'default' : 'ghost'} 
+            onClick={() => setSelectedCategory('Trending')}
+            className={cn(selectedCategory === 'Trending' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+          >
+            Trending
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant={isCategorySelected ? 'default' : 'ghost'}
+                className={cn(isCategorySelected && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+              >
+                {isCategorySelected ? selectedCategory : 'Select Category'}
+                <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Topics</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {categories.map((category) => (
+                <DropdownMenuItem key={category} onSelect={() => setSelectedCategory(category)}>
+                  {category}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       
       <NewsGrid articles={getArticlesForCategory(selectedCategory)} />
