@@ -1,22 +1,43 @@
+
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { placeholderNews } from "@/lib/placeholder-data";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
+
+type Category = "All" | "Personalized" | "Trending" | "Tech" | "Design" | "Writing" | "Freelance";
 
 export default function NewsPage() {
-  const featuredArticle = placeholderNews[0];
-  const otherArticles = placeholderNews.slice(1);
-  const categories = ["All", "Trending", "Tech", "Design", "Writing", "Freelance"];
+  const [selectedCategory, setSelectedCategory] = useState<Category>("All");
 
-  const getArticlesForCategory = (category: string) => {
-    if (category === "All") return placeholderNews;
-    if (category === "Trending") return placeholderNews.slice(0, 4); // Placeholder for trending
-    return placeholderNews.filter(
-      (article) => article.category.toLowerCase() === category.toLowerCase()
-    );
+  const getArticlesForCategory = (category: Category) => {
+    switch (category) {
+      case "All":
+      case "Personalized": // Placeholder for personalized content
+        return placeholderNews;
+      case "Trending":
+        return placeholderNews.slice(0, 4); // Placeholder for trending
+      default:
+        return placeholderNews.filter(
+          (article) => article.category.toLowerCase() === category.toLowerCase()
+        );
+    }
   };
+  
+  const categories: Category[] = ["Tech", "Design", "Writing", "Freelance"];
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
@@ -27,21 +48,33 @@ export default function NewsPage() {
         </p>
       </header>
 
-      <Tabs defaultValue="All" className="w-full">
-        <TabsList className="mb-8 grid w-full grid-cols-3 sm:w-auto sm:grid-cols-6">
-          {categories.map((category) => (
-            <TabsTrigger key={category} value={category}>
-              {category}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        {categories.map((category) => (
-          <TabsContent key={category} value={category}>
-            <NewsGrid articles={getArticlesForCategory(category)} />
-          </TabsContent>
-        ))}
-      </Tabs>
+      <div className="mb-8 flex flex-wrap gap-4">
+        <Button variant={selectedCategory === 'Personalized' ? 'default' : 'outline'} onClick={() => setSelectedCategory('Personalized')}>
+          Personalized
+        </Button>
+        <Button variant={selectedCategory === 'Trending' ? 'default' : 'outline'} onClick={() => setSelectedCategory('Trending')}>
+          Trending
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant={categories.includes(selectedCategory) ? 'default' : 'outline'}>
+              Select Category
+              <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Topics</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {categories.map((category) => (
+              <DropdownMenuItem key={category} onSelect={() => setSelectedCategory(category)}>
+                {category}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      
+      <NewsGrid articles={getArticlesForCategory(selectedCategory)} />
     </div>
   );
 }
