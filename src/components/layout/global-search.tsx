@@ -85,7 +85,7 @@ export function GlobalSearch() {
                         <span className="sr-only">Notifications</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-80">
+                  <DropdownMenuContent align="end" className="w-80 bg-background/80 backdrop-blur-lg">
                     <DropdownMenuLabel>Notifications</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {notifications.map((item, index) => (
