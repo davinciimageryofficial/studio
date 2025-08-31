@@ -10,26 +10,10 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'zod';
+import { ConnectionMatchmakerInputSchema, ConnectionMatchmakerOutputSchema, type ConnectionMatchmakerInput, type ConnectionMatchmakerOutput } from '@/ai/schemas/connection-matchmaker';
 
-const UserProfileSchema = z.object({
-    id: z.string().describe("The user's unique identifier."),
-    headline: z.string().describe("The user's professional headline."),
-    skills: z.array(z.string()).describe("A list of the user's skills."),
-    bio: z.string().describe("The user's biography or about section."),
-});
+export type { ConnectionMatchmakerInput, ConnectionMatchmakerOutput };
 
-export const ConnectionMatchmakerInputSchema = z.object({
-  currentUser: UserProfileSchema.describe("The profile of the user initiating the swipe."),
-  otherUser: UserProfileSchema.describe("The profile of the user being swiped on."),
-});
-export type ConnectionMatchmakerInput = z.infer<typeof ConnectionMatchmakerInputSchema>;
-
-export const ConnectionMatchmakerOutputSchema = z.object({
-  match: z.boolean().describe('Whether the two users are a good professional match.'),
-  reason: z.string().describe('A brief explanation for the decision.'),
-});
-export type ConnectionMatchmakerOutput = z.infer<typeof ConnectionMatchmakerOutputSchema>;
 
 export async function makeConnectionDecision(input: ConnectionMatchmakerInput): Promise<ConnectionMatchmakerOutput> {
   return connectionMatchmakerFlow(input);
