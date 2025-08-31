@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, Lightbulb } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { searchAI } from "@/ai/flows/search-ai";
-import { SearchAIInput, SearchAIOutput } from "@/ai/schemas/search-ai";
+import { SearchAIOutput } from "@/ai/schemas/search-ai";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
@@ -26,16 +26,22 @@ export function GlobalSearch() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isActive, setIsActive] = useState(false);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!query.trim()) return;
+  const handleSearch = async (e?: React.FormEvent, suggestion?: string) => {
+    e?.preventDefault();
+    const searchQuery = suggestion || query;
+    if (!searchQuery.trim()) return;
+
+    if (!suggestion) {
+        setQuery(searchQuery);
+    }
 
     setLoading(true);
     setResult(null);
     setIsDialogOpen(true);
+    setIsActive(false); // Close suggestions on search
 
     try {
-      const output = await searchAI({ query });
+      const output = await searchAI({ query: searchQuery });
       setResult(output);
     } catch (error) {
       console.error("AI search failed:", error);
@@ -51,32 +57,72 @@ export function GlobalSearch() {
     { user: placeholderUsers[4], action: "accepted your connection request.", time: "2d" },
   ];
 
+  const suggestions = [
+    "Find a React developer with TypeScript skills",
+    "Who are the top designers in London?",
+    "Draft a post about the future of AI",
+    "What are the latest trends in content marketing?",
+  ];
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setQuery(suggestion);
+    handleSearch(undefined, suggestion);
+  };
+
   return (
     <>
-      <div className="sticky top-0 z-20 w-full border-b bg-background/80 py-2 backdrop-blur-lg transition-all duration-300">
+      <div className="sticky top-0 z-30 w-full border-b bg-background/80 py-2 backdrop-blur-lg transition-all duration-300">
         <div className="container flex items-center justify-center gap-4 px-4">
             <div className="flex w-full max-w-2xl items-center gap-2">
                 <form 
                     onSubmit={handleSearch} 
-                    onMouseEnter={() => setIsActive(true)}
-                    onMouseLeave={() => setIsActive(false)}
+                    className="relative w-full"
                     onFocus={() => setIsActive(true)}
-                    onBlur={() => setIsActive(false)}
-                    className={cn(
+                    onBlur={(e) => {
+                      // Use relatedTarget to see if the focus is moving within the form
+                      if (!e.currentTarget.contains(e.relatedTarget)) {
+                        setIsActive(false);
+                      }
+                    }}
+                    >
+                    <div
+                      className={cn(
                         "relative w-full transition-all duration-300 ease-in-out",
                         isActive ? "max-w-xl" : "max-w-sm"
-                        )}
+                      )}
                     >
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                        placeholder="Ask AI anything..."
-                        className="pl-10"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                    />
-                    <Button type="submit" className="absolute right-1 top-1/2 -translate-y-1/2 h-8">
-                        Search
-                    </Button>
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                          placeholder="Ask AI anything..."
+                          className="pl-10"
+                          value={query}
+                          onChange={(e) => setQuery(e.target.value)}
+                      />
+                      <Button type="submit" className="absolute right-1 top-1/2 -translate-y-1/2 h-8">
+                          Search
+                      </Button>
+                    </div>
+                     {isActive && (
+                        <div className="absolute top-full mt-2 w-full max-w-xl rounded-md border bg-background shadow-lg">
+                            <ul>
+                                {suggestions.map((s, i) => (
+                                    <li key={i}>
+                                        <button
+                                            type="button"
+                                            className="w-full text-left p-3 hover:bg-accent text-sm flex items-center gap-3"
+                                            onMouseDown={(e) => {
+                                                e.preventDefault();
+                                                handleSuggestionClick(s);
+                                            }}
+                                        >
+                                            <Lightbulb className="h-4 w-4 text-muted-foreground" />
+                                            <span>{s}</span>
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </form>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -134,3 +180,5 @@ export function GlobalSearch() {
     </>
   );
 }
+
+    
