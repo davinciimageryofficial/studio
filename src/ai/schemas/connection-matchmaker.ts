@@ -1,10 +1,10 @@
 /**
- * @fileOverview Zod schemas and TypeScript types for the connection matchmaker AI functionality.
+ * @fileOverview Zod schemas and TypeScript types for the content recommender AI functionality.
  *
- * - ConnectionMatchmakerInputSchema - Zod schema for the makeConnectionDecision function's input.
- * - ConnectionMatchmakerInput - TypeScript type for the makeConnectionDecision function's input.
- * - ConnectionMatchmakerOutputSchema - Zod schema for the makeConnectionDecision function's output.
- * - ConnectionMatchmakerOutput - TypeScript type for the makeConnectionDecision function's output.
+ * - ContentRecommenderInputSchema - Zod schema for the recommendContent function's input.
+ * - ContentRecommenderInput - TypeScript type for the recommendContent function's input.
+ * - ContentRecommenderOutputSchema - Zod schema for the recommendContent function's output.
+ * - ContentRecommenderOutput - TypeScript type for the recommendContent function's output.
  */
 
 import { z } from 'zod';
@@ -16,14 +16,21 @@ const UserProfileSchema = z.object({
     bio: z.string().describe("The user's biography or about section."),
 });
 
-export const ConnectionMatchmakerInputSchema = z.object({
-  currentUser: UserProfileSchema.describe("The profile of the user initiating the swipe."),
-  otherUser: UserProfileSchema.describe("The profile of the user being swiped on."),
+const ContentSchema = z.object({
+    id: z.string().describe("The content's unique identifier."),
+    title: z.string().describe("The title of the course or podcast."),
+    description: z.string().describe("A brief description of the content."),
+    category: z.string().describe("The category of the content (e.g., Development, Design)."),
 });
-export type ConnectionMatchmakerInput = z.infer<typeof ConnectionMatchmakerInputSchema>;
 
-export const ConnectionMatchmakerOutputSchema = z.object({
-  match: z.boolean().describe('Whether the two users are a good professional match.'),
+export const ContentRecommenderInputSchema = z.object({
+  currentUser: UserProfileSchema.describe("The profile of the user to receive the recommendation."),
+  content: ContentSchema.describe("The course or podcast being considered for recommendation."),
+});
+export type ContentRecommenderInput = z.infer<typeof ContentRecommenderInputSchema>;
+
+export const ContentRecommenderOutputSchema = z.object({
+  recommended: z.boolean().describe('Whether the content is a good recommendation for the user.'),
   reason: z.string().describe('A brief explanation for the decision.'),
 });
-export type ConnectionMatchmakerOutput = z.infer<typeof ConnectionMatchmakerOutputSchema>;
+export type ContentRecommenderOutput = z.infer<typeof ContentRecommenderOutputSchema>;

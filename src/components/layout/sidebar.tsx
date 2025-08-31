@@ -15,7 +15,7 @@ import {
 import {
   LayoutGrid,
   Search,
-  Users,
+  Radio,
   Radar,
   MessageSquare,
   Newspaper,
@@ -35,7 +35,7 @@ const menuItems = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
   { href: "/", label: "Feed", icon: LayoutGrid },
   { href: "/discover", label: "Discover", icon: Search },
-  { href: "/connect", label: "Connect", icon: Users },
+  { href: "/connect", label: "Podcasts", icon: Radio },
   { href: "/workmate-radar", label: "Workmate Radar", icon: Radar },
   { href: "/messages", label: "Messages", icon: MessageSquare },
   { href: "/news", label: "News", icon: Newspaper },

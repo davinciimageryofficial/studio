@@ -268,3 +268,69 @@ export const placeholderNews = [
         imageUrl: "https://picsum.photos/seed/news12/600/400",
     }
 ];
+
+export const placeholderCourses = [
+    {
+        id: "course1",
+        title: "Advanced TypeScript for Modern Applications",
+        author: "Bob Williams",
+        price: 149.99,
+        category: "Development",
+        description: "Take your TypeScript skills to the next level. Learn advanced patterns, decorators, and how to build type-safe, enterprise-grade applications.",
+        imageUrl: "https://picsum.photos/seed/course1/600/400",
+    },
+    {
+        id: "course2",
+        title: "Figma Mastery: From Beginner to Pro",
+        author: "Alice Johnson",
+        price: 99.99,
+        category: "Design",
+        description: "A comprehensive guide to Figma. Master components, auto layout, and prototyping to create stunning and efficient designs.",
+        imageUrl: "https://picsum.photos/seed/course2/600/400",
+    },
+    {
+        id: "course3",
+        title: "SEO-Driven Content Strategy",
+        author: "Charlie Brown",
+        price: 199.99,
+        category: "Writing",
+        description: "Learn how to create a content strategy that drives organic traffic. This course covers keyword research, on-page SEO, and content promotion.",
+        imageUrl: "https://picsum.photos/seed/course3/600/400",
+    },
+     {
+        id: "course4",
+        title: "Building Serverless APIs with Node.js",
+        author: "Diana Prince",
+        price: 129.99,
+        category: "Development",
+        description: "Learn how to build, deploy, and scale serverless APIs on AWS using Node.js, API Gateway, and Lambda. No servers, no problem.",
+        imageUrl: "https://picsum.photos/seed/course4/600/400",
+    },
+];
+
+export const placeholderPodcasts = [
+    {
+        id: "podcast1",
+        title: "The Design Details Podcast",
+        author: "Alice Johnson & Ethan Hunt",
+        category: "Design",
+        description: "A weekly podcast about the details of design. We dive into the latest trends, tools, and challenges facing designers today.",
+        imageUrl: "https://picsum.photos/seed/podcast1/600/400",
+    },
+    {
+        id: "podcast2",
+        title: "Code & Coffee",
+        author: "Bob Williams",
+        category: "Development",
+        description: "A morning show for developers. Join Bob as he discusses the latest news in the world of web development, from new frameworks to career advice.",
+        imageUrl: "https://picsum.photos/seed/podcast2/600/400",
+    },
+    {
+        id: "podcast3",
+        title: "The Freelance Journey",
+        author: "Fiona Glenanne",
+        category: "Freelance",
+        description: "Interviews with successful freelancers from various fields. Learn about their journey, challenges, and what it takes to succeed on your own.",
+        imageUrl: "https://picsum.photos/seed/podcast3/600/400",
+    },
+];
