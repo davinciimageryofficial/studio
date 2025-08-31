@@ -1,0 +1,93 @@
+
+"use client";
+
+import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Send, MessageSquare } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { placeholderUsers } from "@/lib/placeholder-data";
+
+type Message = {
+  user: typeof placeholderUsers[0];
+  text: string;
+  time: string;
+};
+
+export function WorkspaceChat() {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      user: placeholderUsers[0],
+      text: "Hey everyone, ready to get started?",
+      time: "10:01 AM",
+    },
+    {
+      user: placeholderUsers[2],
+      text: "Yep, ready when you are!",
+      time: "10:02 AM",
+    },
+  ]);
+  const [newMessage, setNewMessage] = useState("");
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newMessage.trim() === "") return;
+
+    const currentUser = placeholderUsers[1]; // Assuming 'me' is Bob Williams
+    const message: Message = {
+      user: currentUser,
+      text: newMessage,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+    setMessages([...messages, message]);
+    setNewMessage("");
+  };
+
+  return (
+    <Card className="flex h-[32rem] flex-col">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-6 w-6" />
+            <span>Live Chat</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-1 flex-col p-0">
+        <ScrollArea className="flex-1 px-6 py-4">
+          <div className="space-y-4">
+            {messages.map((message, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <Avatar className="h-8 w-8">
+                    <AvatarImage src={message.user.avatar} />
+                    <AvatarFallback>{message.user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                    <div className="flex items-baseline gap-2">
+                        <p className="font-semibold text-sm">{message.user.name}</p>
+                        <p className="text-xs text-muted-foreground">{message.time}</p>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{message.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+        <div className="border-t p-4">
+          <form onSubmit={handleSendMessage} className="relative">
+            <Input
+              placeholder="Type a message..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              className="pr-12"
+            />
+            <Button type="submit" size="icon" className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2">
+              <Send className="h-4 w-4" />
+            </Button>
+          </form>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

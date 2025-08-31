@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import {
@@ -24,7 +25,7 @@ import {
   PanelLeft,
   CreditCard,
   Home,
-  Timer,
+  Mic,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -38,7 +39,7 @@ const menuItems = [
   { href: "/workmate-radar", label: "Workmate Radar", icon: Radar },
   { href: "/messages", label: "Messages", icon: MessageSquare },
   { href: "/news", label: "News", icon: Newspaper },
-  { href: "/workspaces", label: "Workspaces", icon: Timer },
+  { href: "/workspaces", label: "Workspaces", icon: Mic },
 ];
 
 const secondaryMenuItems = [
