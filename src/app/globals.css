@@ -86,3 +86,14 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+    @keyframes orbit {
+        from {
+            transform: rotate(0rad) translateX(150px) rotate(0rad);
+        }
+        to {
+            transform: rotate(1turn) translateX(150px) rotate(-1turn);
+        }
+    }
+}
