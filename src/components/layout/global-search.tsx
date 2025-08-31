@@ -103,7 +103,7 @@ export function GlobalSearch() {
                       </Button>
                     </div>
                      {isActive && (
-                        <div className="absolute top-full mt-2 w-full max-w-xl rounded-md border bg-background shadow-lg">
+                        <div className="absolute top-full mt-2 w-full max-w-xl rounded-md border bg-background/80 backdrop-blur-lg shadow-lg">
                             <ul>
                                 {suggestions.map((s, i) => (
                                     <li key={i}>
@@ -131,7 +131,7 @@ export function GlobalSearch() {
                         <span className="sr-only">Notifications</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-80 bg-background/50 backdrop-blur-lg">
+                  <DropdownMenuContent align="end" className="w-80 bg-background/80 backdrop-blur-lg">
                     <DropdownMenuLabel>Notifications</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {notifications.map((item, index) => (
