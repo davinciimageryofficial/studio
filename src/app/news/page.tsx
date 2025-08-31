@@ -73,35 +73,35 @@ export default function NewsPage() {
           <Button 
             variant={selectedCategory === 'Personalized' ? 'default' : 'ghost'} 
             onClick={() => setSelectedCategory('Personalized')}
-            className={cn(selectedCategory === 'Personalized' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+            className={cn(selectedCategory === 'Personalized' ? "shadow-sm" : "text-muted-foreground", "data-[state=active]:text-foreground")}
           >
             Personalized
           </Button>
           <Button 
             variant={selectedCategory === 'Trending' ? 'default' : 'ghost'} 
             onClick={() => setSelectedCategory('Trending')}
-            className={cn(selectedCategory === 'Trending' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+            className={cn(selectedCategory === 'Trending' ? "shadow-sm" : "text-muted-foreground", "data-[state=active]:text-foreground")}
           >
             Trending
           </Button>
            <Button 
             variant={selectedCategory === 'Events' ? 'default' : 'ghost'} 
             onClick={() => setSelectedCategory('Events')}
-            className={cn(selectedCategory === 'Events' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+            className={cn(selectedCategory === 'Events' ? "shadow-sm" : "text-muted-foreground", "data-[state=active]:text-foreground")}
           >
             Events
           </Button>
            <Button 
             variant={selectedCategory === 'Platforms' ? 'default' : 'ghost'} 
             onClick={() => setSelectedCategory('Platforms')}
-            className={cn(selectedCategory === 'Platforms' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+            className={cn(selectedCategory === 'Platforms' ? "shadow-sm" : "text-muted-foreground", "data-[state=active]:text-foreground")}
           >
             Platforms
           </Button>
            <Button 
             variant={selectedCategory === 'Spotlight' ? 'default' : 'ghost'} 
             onClick={() => setSelectedCategory('Spotlight')}
-            className={cn(selectedCategory === 'Spotlight' && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+            className={cn(selectedCategory === 'Spotlight' ? "shadow-sm" : "text-muted-foreground", "data-[state=active]:text-foreground")}
           >
             Spotlight
           </Button>
@@ -109,7 +109,7 @@ export default function NewsPage() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant={isCategorySelected ? 'default' : 'ghost'}
-                className={cn(isCategorySelected && "shadow-sm", "text-muted-foreground data-[state=active]:text-foreground")}
+                className={cn(isCategorySelected ? "shadow-sm" : "text-muted-foreground", "data-[state=active]:text-foreground")}
               >
                 {isCategorySelected ? selectedCategory : 'Select Category'}
                 <ChevronDown className="ml-2 h-4 w-4" />
