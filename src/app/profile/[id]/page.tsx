@@ -31,13 +31,20 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
   ];
 
   const [experiences, setExperiences] = useState(initialExperiences);
+  const [skills, setSkills] = useState(user?.skills || []);
+
 
   if (!user) {
     notFound();
   }
 
-  const handleSaveChanges = (updatedExperiences: Experience[]) => {
+  const handleSaveExperience = (updatedExperiences: Experience[]) => {
     setExperiences(updatedExperiences);
+    // Here you would typically make an API call to save the changes
+  };
+
+  const handleSaveSkills = (updatedSkills: string[]) => {
+    setSkills(updatedSkills);
     // Here you would typically make an API call to save the changes
   };
 
@@ -118,11 +125,14 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
             {/* Right Column */}
             <div className="space-y-8">
                 <Card>
-                    <CardHeader>
+                    <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle>Skills</CardTitle>
+                        {isMyProfile && (
+                            <EditSkillsDialog initialSkills={skills} onSave={handleSaveSkills} />
+                        )}
                     </CardHeader>
                     <CardContent className="flex flex-wrap gap-2">
-                        {user.skills.map(skill => (
+                        {skills.map(skill => (
                             <Badge key={skill} variant="secondary" className="text-sm">{skill}</Badge>
                         ))}
                     </CardContent>
@@ -132,7 +142,7 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle>Experience</CardTitle>
                         {isMyProfile && (
-                            <EditExperienceDialog initialExperiences={experiences} onSave={handleSaveChanges} />
+                            <EditExperienceDialog initialExperiences={experiences} onSave={handleSaveExperience} />
                         )}
                     </CardHeader>
                     <CardContent className="space-y-6">
@@ -156,6 +166,81 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
       </div>
     </div>
   );
+}
+
+function EditSkillsDialog({ initialSkills, onSave }: { initialSkills: string[], onSave: (skills: string[]) => void }) {
+    const [skills, setSkills] = useState(initialSkills);
+    const [newSkill, setNewSkill] = useState("");
+
+    const handleAddSkill = () => {
+        if (newSkill.trim() !== "" && !skills.includes(newSkill.trim())) {
+            setSkills([...skills, newSkill.trim()]);
+            setNewSkill("");
+        }
+    };
+
+    const handleRemoveSkill = (skillToRemove: string) => {
+        setSkills(skills.filter(skill => skill !== skillToRemove));
+    };
+
+    const handleSaveChanges = () => {
+        onSave(skills);
+    };
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="ghost" size="icon">
+                    <Edit className="h-4 w-4" />
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>Edit Skills</DialogTitle>
+                </DialogHeader>
+                <div className="py-4 space-y-4">
+                    <div className="flex gap-2">
+                        <Input 
+                            value={newSkill} 
+                            onChange={(e) => setNewSkill(e.target.value)} 
+                            placeholder="Add a new skill"
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleAddSkill();
+                                }
+                            }}
+                        />
+                        <Button onClick={handleAddSkill}>Add</Button>
+                    </div>
+                    <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
+                        {skills.length > 0 ? (
+                             <div className="flex flex-wrap gap-2">
+                                {skills.map((skill, index) => (
+                                    <Badge key={index} variant="secondary" className="text-sm">
+                                        {skill}
+                                        <button onClick={() => handleRemoveSkill(skill)} className="ml-2 rounded-full hover:bg-muted-foreground/20 p-0.5">
+                                            <X className="h-3 w-3" />
+                                        </button>
+                                    </Badge>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted-foreground text-center">No skills added yet.</p>
+                        )}
+                    </div>
+                </div>
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary">Cancel</Button>
+                    </DialogClose>
+                     <DialogClose asChild>
+                        <Button type="button" onClick={handleSaveChanges}>Save Changes</Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
 }
 
 
@@ -228,3 +313,6 @@ function EditExperienceDialog({ initialExperiences, onSave }: { initialExperienc
         </Dialog>
     )
 }
+
+
+    
