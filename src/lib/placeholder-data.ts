@@ -306,6 +306,24 @@ export const placeholderCourses = [
         description: "Learn how to build, deploy, and scale serverless APIs on AWS using Node.js, API Gateway, and Lambda. No servers, no problem.",
         imageUrl: "https://picsum.photos/seed/course4/600/400",
     },
+    {
+        id: "course5",
+        title: "Introduction to Generative AI",
+        author: "Alan Turing",
+        price: 249.99,
+        category: "AI & Machine Learning",
+        description: "Explore the fundamentals of generative AI, including large language models, diffusion models, and their applications.",
+        imageUrl: "https://picsum.photos/seed/course5/600/400",
+    },
+    {
+        id: "course6",
+        title: "Practical Data Science with Python",
+        author: "Grace Hopper",
+        price: 179.99,
+        category: "Data Science",
+        description: "Get hands-on experience with Pandas, Scikit-learn, and Matplotlib to analyze data and build predictive models.",
+        imageUrl: "https://picsum.photos/seed/course6/600/400",
+    },
 ];
 
 export const placeholderPodcasts = [
@@ -332,5 +350,21 @@ export const placeholderPodcasts = [
         category: "Freelance",
         description: "Interviews with successful freelancers from various fields. Learn about their journey, challenges, and what it takes to succeed on your own.",
         imageUrl: "https://picsum.photos/seed/podcast3/600/400",
+    },
+    {
+        id: "podcast4",
+        title: "Cyber Chats",
+        author: "Alan Turing",
+        category: "Cybersecurity",
+        description: "A podcast dedicated to the world of cybersecurity. We discuss the latest threats, vulnerabilities, and how to stay safe in a digital world.",
+        imageUrl: "https://picsum.photos/seed/podcast4/600/400",
+    },
+    {
+        id: "podcast5",
+        title: "UI/UX Insights",
+        author: "Alice Johnson",
+        category: "UI/UX",
+        description: "Deep dives into user interface and user experience design principles, case studies, and interviews with industry leaders.",
+        imageUrl: "https://picsum.photos/seed/podcast5/600/400",
     },
 ];
