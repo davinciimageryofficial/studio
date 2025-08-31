@@ -76,7 +76,7 @@ export function GlobalSearch() {
             <div className="flex w-full max-w-2xl items-center justify-center gap-2">
                 <form 
                     onSubmit={handleSearch} 
-                    className="relative w-full max-w-md"
+                    className="relative w-full max-w-xl"
                     onFocus={() => setIsActive(true)}
                     onBlur={(e) => {
                       // Use relatedTarget to see if the focus is moving within the form
@@ -90,7 +90,6 @@ export function GlobalSearch() {
                         "relative w-full transition-all duration-300 ease-in-out"
                       )}
                     >
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                       <Input
                           placeholder="Ask AI anything..."
                           className="pl-10"
