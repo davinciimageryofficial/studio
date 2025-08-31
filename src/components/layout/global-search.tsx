@@ -73,10 +73,10 @@ export function GlobalSearch() {
     <>
       <div className="sticky top-0 z-30 w-full border-b bg-background/80 py-2 backdrop-blur-lg transition-all duration-300">
         <div className="container flex items-center justify-center gap-4 px-4">
-            <div className="flex w-full max-w-2xl items-center gap-2">
+            <div className="flex w-full max-w-2xl items-center justify-center gap-2">
                 <form 
                     onSubmit={handleSearch} 
-                    className="relative w-full"
+                    className="relative w-full max-w-md"
                     onFocus={() => setIsActive(true)}
                     onBlur={(e) => {
                       // Use relatedTarget to see if the focus is moving within the form
@@ -87,8 +87,7 @@ export function GlobalSearch() {
                     >
                     <div
                       className={cn(
-                        "relative w-full transition-all duration-300 ease-in-out",
-                        isActive ? "max-w-xl" : "max-w-sm"
+                        "relative w-full transition-all duration-300 ease-in-out"
                       )}
                     >
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -103,7 +102,7 @@ export function GlobalSearch() {
                       </Button>
                     </div>
                      {isActive && (
-                        <div className="absolute top-full mt-2 w-full max-w-xl rounded-md border bg-background/80 backdrop-blur-lg shadow-lg">
+                        <div className="absolute top-full mt-2 w-full rounded-md border bg-background/80 backdrop-blur-lg shadow-lg">
                             <ul>
                                 {suggestions.map((s, i) => (
                                     <li key={i}>
@@ -180,5 +179,3 @@ export function GlobalSearch() {
     </>
   );
 }
-
-    
