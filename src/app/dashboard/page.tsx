@@ -12,7 +12,7 @@ import { EngagementChart } from "./charts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function DashboardPage() {
-    const [chartType, setChartType] = useState<"bar" | "line" | "area">("bar");
+    const [chartType, setChartType] = useState<"bar" | "line" | "area">("area");
 
     const recentActivities = [
         {
@@ -83,7 +83,7 @@ export default function DashboardPage() {
                         <CardTitle>Profile Engagement</CardTitle>
                         <CardDescription>A look at your profile views over the last 7 days.</CardDescription>
                     </div>
-                    <Tabs defaultValue="bar" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
+                    <Tabs defaultValue="area" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
                         <TabsList className="grid w-full grid-cols-3 sm:w-auto">
                             <TabsTrigger value="bar">Bar</TabsTrigger>
                             <TabsTrigger value="line">Line</TabsTrigger>
