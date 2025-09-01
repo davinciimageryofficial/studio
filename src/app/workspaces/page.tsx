@@ -26,13 +26,19 @@ function FlowStateOverlay({ isVisible, isFadingOut }: { isVisible: boolean, isFa
     return (
         <div 
             className={cn(
-                "fixed inset-0 z-50 flex items-center justify-center bg-black",
+                "fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm",
                 isFadingOut ? 'fade-out' : 'fade-in'
             )}
         >
-            <h2 className="text-4xl font-bold text-white tracking-widest animate-pulse">
-                FLOW STATE CONFIRMED
-            </h2>
+            <div className={cn(
+                "rounded-lg bg-background p-8 shadow-2xl border text-center",
+                isFadingOut ? 'animate-out fade-out-0 zoom-out-95' : 'animate-in fade-in-0 zoom-in-95'
+            )}>
+                 <h2 className="text-2xl font-bold tracking-widest text-primary animate-pulse">
+                    FLOW STATE
+                </h2>
+                <p className="text-muted-foreground">CONFIRMED</p>
+            </div>
         </div>
     );
 }
