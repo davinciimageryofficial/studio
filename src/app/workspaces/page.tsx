@@ -121,10 +121,10 @@ export default function WorkspacesPage() {
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                 <TimerIcon className="h-6 w-6" />
-                <span>Session Timer</span>
+                <span>SESSION</span>
                 </CardTitle>
                 <CardDescription>
-                Start the timer to begin your focused work session.
+                Start a focused work session, solo or with your team.
                 </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center gap-8 p-12">
