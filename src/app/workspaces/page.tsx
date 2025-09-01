@@ -21,10 +21,14 @@ const formatTime = (seconds: number) => {
 
 type SessionType = "solo" | "team" | null;
 
-function FlowStateOverlay() {
+function FlowStateOverlay({ isVisible, isFadingOut }: { isVisible: boolean, isFadingOut: boolean }) {
+    if (!isVisible) return null;
     return (
         <div 
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black"
+            className={cn(
+                "fixed inset-0 z-50 flex items-center justify-center bg-black",
+                isFadingOut ? 'fade-out' : 'fade-in'
+            )}
         >
             <h2 className="text-4xl font-bold text-white tracking-widest animate-pulse">
                 FLOW STATE CONFIRMED
@@ -38,7 +42,9 @@ export default function WorkspacesPage() {
   const [isActive, setIsActive] = useState(false);
   const [sessionType, setSessionType] = useState<SessionType>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [showFlowState, setShowFlowState] = useState(false);
+  const [isFlowStateVisible, setIsFlowStateVisible] = useState(false);
+  const [isFlowStateFadingOut, setIsFlowStateFadingOut] = useState(false);
+
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const onlineUsers = placeholderUsers.slice(0, 5);
@@ -58,20 +64,20 @@ export default function WorkspacesPage() {
       }
     };
   }, [isActive]);
-  
-  useEffect(() => {
-    if (showFlowState) {
-      const timer = setTimeout(() => {
-        setShowFlowState(false);
-      }, 2000); // Show for 2 seconds
-      return () => clearTimeout(timer);
-    }
-  }, [showFlowState]);
 
 
   const handleStart = (type: SessionType) => {
     if (type === 'solo') {
-        setShowFlowState(true);
+        setIsFlowStateVisible(true);
+        setIsFlowStateFadingOut(false);
+
+        setTimeout(() => {
+            setIsFlowStateFadingOut(true);
+        }, 1500); // Start fading out after 1.5s
+
+        setTimeout(() => {
+            setIsFlowStateVisible(false);
+        }, 2000); // Remove from DOM after 2s total
     }
     setSessionType(type);
     setIsActive(true);
@@ -97,8 +103,8 @@ export default function WorkspacesPage() {
 
   return (
     <div className="relative h-full min-h-screen">
-      {showFlowState && <FlowStateOverlay />}
-      <div className={cn("p-4 sm:p-6 md:p-8", showFlowState && "blur-sm")}>
+      <FlowStateOverlay isVisible={isFlowStateVisible} isFadingOut={isFlowStateFadingOut} />
+      <div className={cn("p-4 sm:p-6 md:p-8", isFlowStateVisible && "blur-sm")}>
         {sessionType === 'solo' && (
            <Card>
               <CardHeader className="text-center">
