@@ -18,22 +18,11 @@ const formatTime = (seconds: number) => {
 
 type SessionType = "solo" | "team" | null;
 
-function FlowStateOverlay() {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black animate-flow-state">
-      <h2 className="text-4xl font-bold text-white tracking-widest">
-        FLOW STATE CONFIRMED
-      </h2>
-    </div>
-  );
-}
-
 export default function WorkspacesPage() {
   const [time, setTime] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [sessionType, setSessionType] = useState<SessionType>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [showFlowState, setShowFlowState] = useState(false);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const onlineUsers = placeholderUsers.slice(0, 5);
@@ -58,10 +47,6 @@ export default function WorkspacesPage() {
     setSessionType(type);
     setIsActive(true);
     setIsDialogOpen(false);
-     if (type === 'solo') {
-      setShowFlowState(true);
-      setTimeout(() => setShowFlowState(false), 3000); // Animation is 3s long
-    }
   };
   
   const handleToggleTimer = () => {
@@ -122,7 +107,6 @@ export default function WorkspacesPage() {
 
   return (
     <div className="flex h-full min-h-screen">
-      {showFlowState && <FlowStateOverlay />}
       <main className="flex-1 p-4 sm:p-6 md:p-8">
         <header className="mb-8">
             <h1 className="text-3xl font-bold tracking-tight">Workspaces</h1>
