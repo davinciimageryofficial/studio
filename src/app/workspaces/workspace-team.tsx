@@ -16,6 +16,8 @@ import { GlobalSearch } from "@/components/layout/global-search";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 type ParticipantCardProps = {
   user: typeof placeholderUsers[0];
@@ -63,9 +65,8 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isSc
             </Avatar>
         </div>
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover/participant:opacity-100 transition-opacity pointer-events-none" />
       <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between opacity-0 group-hover/participant:opacity-100 transition-opacity">
-        <p className="truncate text-sm font-medium text-white">{user.name}</p>
+        <p className="truncate text-sm font-medium text-black">{user.name}</p>
         <Button size="icon" variant="ghost" className="h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white" onClick={() => setIsMuted(!isMuted)}>
           {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
         </Button>
@@ -103,7 +104,7 @@ type WorkspaceTeamProps = {
 
 export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEndSession }: WorkspaceTeamProps) {
     const allUsers = placeholderUsers;
-    const initialParticipants = allUsers.slice(0, 4);
+    const initialParticipants = allUsers.slice(0, 5); // Start with more users to demonstrate layout
     
     const [participants, setParticipants] = useState(initialParticipants);
     const [isCameraOn, setIsCameraOn] = useState(false);
@@ -169,8 +170,12 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
     const onlineUsers = allUsers.filter(u => !participants.some(p => p.id === u.id));
 
     const handleInvite = (user: typeof placeholderUsers[0]) => {
-        setParticipants(prev => [...prev, user]);
-        toast({ title: "User Invited", description: `${user.name} has been added to the workspace.` });
+        if (participants.length < 15) {
+            setParticipants(prev => [...prev, user]);
+            toast({ title: "User Invited", description: `${user.name} has been added to the workspace.` });
+        } else {
+            toast({ variant: "destructive", title: "Workspace Full", description: "You cannot invite more than 15 participants." });
+        }
     };
 
     const handleRemove = (userId: string) => {
@@ -195,6 +200,11 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
         });
     }
 
+    const maxVisibleParticipants = 4;
+    const visibleParticipants = participants.slice(0, maxVisibleParticipants);
+    const hiddenParticipants = participants.slice(maxVisibleParticipants);
+
+
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-6">
@@ -210,7 +220,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                     </CardHeader>
                     <CardContent>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        {participants.map(user => (
+                        {visibleParticipants.map(user => (
                           <ParticipantCard 
                             key={user.id} 
                             user={user} 
@@ -221,6 +231,30 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                           />
                         ))}
                     </div>
+                    {hiddenParticipants.length > 0 && (
+                        <div className="mt-4 flex items-center gap-4 rounded-md border p-3">
+                            <div className="flex -space-x-2 overflow-hidden">
+                                <TooltipProvider>
+                                {hiddenParticipants.map(user => (
+                                    <Tooltip key={user.id}>
+                                        <TooltipTrigger asChild>
+                                            <Avatar className="h-8 w-8 border-2 border-background">
+                                                <AvatarImage src={user.avatar} />
+                                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>{user.name}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                ))}
+                                </TooltipProvider>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                                +{hiddenParticipants.length} more participant{hiddenParticipants.length > 1 ? 's' : ''}
+                            </p>
+                        </div>
+                    )}
                      {hasCameraPermission === false && (
                          <Alert variant="destructive" className="mt-4">
                             <AlertCircle className="h-4 w-4" />
@@ -310,7 +344,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                                                 </div>
                                             </div>
                                         </div>
-                                        <Button variant="outline" size="sm" onClick={() => handleInvite(user)}>
+                                        <Button variant="outline" size="sm" onClick={() => handleInvite(user)} disabled={participants.length >= 15}>
                                             <Plus className="h-4 w-4 mr-2" />
                                             Invite
                                         </Button>
@@ -337,3 +371,5 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
         </div>
     )
 }
+
+    
