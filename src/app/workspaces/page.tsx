@@ -20,7 +20,7 @@ type SessionType = "solo" | "team" | null;
 
 function FlowStateOverlay() {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-flow-state">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black animate-flow-state">
       <h2 className="text-4xl font-bold text-white tracking-widest">
         FLOW STATE CONFIRMED
       </h2>
