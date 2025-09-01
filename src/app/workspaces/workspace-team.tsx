@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -21,9 +21,10 @@ type ParticipantCardProps = {
   isRemovable?: boolean;
   onRemove?: (id: string) => void;
   isCameraOn: boolean;
+  isScreenSharing: boolean;
 }
 
-function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn }: ParticipantCardProps) {
+function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isScreenSharing }: ParticipantCardProps) {
   const [isMuted, setIsMuted] = useState(Math.random() > 0.5);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -37,7 +38,12 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn }: Pa
 
   return (
     <div className="relative group/participant aspect-video overflow-hidden rounded-lg bg-muted">
-      {isCameraOn ? (
+      {isScreenSharing ? (
+         <div className="w-full h-full flex flex-col items-center justify-center bg-blue-900/20 text-blue-200">
+            <ScreenShare className="h-10 w-10" />
+            <p className="mt-2 text-sm font-semibold">Presenting</p>
+        </div>
+      ) : isCameraOn ? (
          <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted />
       ) : (
         <div className="w-full h-full flex items-center justify-center">
@@ -85,9 +91,12 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
     const [isCameraOn, setIsCameraOn] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
     const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+    const [isScreenSharing, setIsScreenSharing] = useState(false);
+    const [hasScreenPermission, setHasScreenPermission] = useState<boolean | null>(null);
 
     const { toast } = useToast();
     const videoRef = useRef<HTMLVideoElement>(null);
+    const screenStreamRef = useRef<MediaStream | null>(null);
 
     const handleToggleCamera = async () => {
         if (!isCameraOn) {
@@ -105,6 +114,35 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
         } else {
             setIsCameraOn(false);
         }
+    };
+    
+    const handleToggleScreenShare = async () => {
+      if (!isScreenSharing) {
+        try {
+          const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+          screenStreamRef.current = stream;
+          setHasScreenPermission(true);
+          setIsScreenSharing(true);
+          toast({ title: "Screen sharing started" });
+        } catch (error) {
+          console.error("Error starting screen share:", error);
+          setHasScreenPermission(false);
+          setIsScreenSharing(false);
+          toast({
+            variant: "destructive",
+            title: "Screen Share Failed",
+            description: "Could not start screen sharing. Please grant permission and try again.",
+          });
+        }
+      } else {
+        if (screenStreamRef.current) {
+          screenStreamRef.current.getTracks().forEach(track => track.stop());
+          screenStreamRef.current = null;
+        }
+        setIsScreenSharing(false);
+        setHasScreenPermission(null);
+        toast({ title: "Screen sharing stopped" });
+      }
     };
 
 
@@ -159,6 +197,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                             isRemovable={user.id !== placeholderUsers[1].id} // Can't remove self
                             onRemove={handleRemove}
                             isCameraOn={isCameraOn && user.id === placeholderUsers[1].id} // Example: only my camera is on
+                            isScreenSharing={isScreenSharing && user.id === placeholderUsers[1].id}
                           />
                         ))}
                     </div>
@@ -174,30 +213,34 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                  <Card>
                     <CardContent className="p-2">
                         <div className="flex justify-center flex-wrap gap-2">
-                           <Button onClick={onToggleTimer} className="flex-1 sm:flex-none text-xs">
+                           <Button onClick={onToggleTimer} className="flex-1 sm:flex-none text-xs bg-black hover:bg-gray-800">
                                 {isActive ? <Pause /> : <Play />}
                                 <span className="ml-2">{isActive ? 'Pause Timer' : 'Resume Timer'}</span>
                             </Button>
-                           <Button variant={isCameraOn ? "secondary" : "default"} onClick={handleToggleCamera} className="flex-1 sm:flex-none text-xs">
+                           <Button variant={isCameraOn ? "secondary" : "default"} onClick={handleToggleCamera} className="flex-1 sm:flex-none text-xs bg-black hover:bg-gray-800">
                                 {isCameraOn ? <VideoOff /> : <Video />}
                                 <span className="ml-2">{isCameraOn ? 'Turn Off Camera' : 'Use Camera'}</span>
                             </Button>
-                           <Button variant={isRecording ? "destructive" : "default"} onClick={handleToggleRecording} className="flex-1 sm:flex-none text-xs">
+                            <Button variant={isScreenSharing ? "secondary" : "default"} onClick={handleToggleScreenShare} className="flex-1 sm:flex-none text-xs bg-black hover:bg-gray-800">
+                                {isScreenSharing ? <ScreenShareOff /> : <ScreenShare />}
+                                <span className="ml-2">{isScreenSharing ? 'Stop Sharing' : 'Share Screen'}</span>
+                            </Button>
+                           <Button variant={isRecording ? "destructive" : "default"} onClick={handleToggleRecording} className="flex-1 sm:flex-none text-xs bg-black hover:bg-gray-800">
                                 <CircleDot />
                                 <span className="ml-2">{isRecording ? 'Stop Recording' : 'Record Session'}</span>
                             </Button>
                              <Separator orientation="vertical" className="h-10 hidden sm:block" />
-                            <Button className="flex-1 sm:flex-none text-xs">
+                            <Button className="flex-1 sm:flex-none text-xs bg-black hover:bg-gray-800">
                                 <PenSquare />
                                 <span className="ml-2">Whiteboard</span>
                             </Button>
-                            <Button className="flex-1 sm:flex-none text-xs">
+                            <Button className="flex-1 sm:flex-none text-xs bg-black hover:bg-gray-800">
                                 <Hand />
                                 <span className="ml-2">Gestures</span>
                             </Button>
                             <Dialog>
                                 <DialogTrigger asChild>
-                                    <Button className="flex-1 sm:flex-none text-xs">
+                                    <Button className="flex-1 sm:flex-none text-xs bg-black hover:bg-gray-800">
                                         <Lightbulb />
                                         <span className="ml-2">Pocket Guide</span>
                                     </Button>
@@ -271,3 +314,5 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
         </div>
     )
 }
+
+    
