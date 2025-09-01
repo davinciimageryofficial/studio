@@ -11,9 +11,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { WorkspaceTeam } from "./workspace-team";
 
 const formatTime = (seconds: number) => {
-  const mins = Math.floor(seconds / 60);
+  const hours = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
   const secs = seconds % 60;
-  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 };
 
 type SessionType = "solo" | "team" | null;
@@ -69,17 +70,14 @@ export default function WorkspacesPage() {
       <div className="p-4 sm:p-6 md:p-8">
         {sessionType === 'solo' && (
            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>Solo Focus Session</CardTitle>
-                  <div className="flex items-center gap-2 font-mono text-lg font-bold">
-                    <TimerIcon className="h-5 w-5"/>
+              <CardHeader className="text-center">
+                <CardTitle>Solo Focus Session</CardTitle>
+                <CardDescription>You are in a solo session. Keep up the great work!</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center justify-center gap-8 p-12">
+                  <div className="font-mono text-8xl font-bold tracking-tighter">
                     {formatTime(time)}
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent className="text-center space-y-4">
-                 <p className="text-muted-foreground">You are in a solo session. Keep up the great work!</p>
                   <div className="flex justify-center gap-4">
                     <Button size="lg" onClick={handleToggleTimer}>
                       {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
