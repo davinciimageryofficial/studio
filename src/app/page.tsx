@@ -7,6 +7,8 @@ import { ArrowRight, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { ClientOnly } from "@/components/layout/client-only";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 export default function WaitlistPage() {
   const { toast } = useToast();
@@ -15,9 +17,10 @@ export default function WaitlistPage() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email");
+    const earlyAccess = formData.get("earlyAccess") === "on";
     
     if (email) {
-      console.log("Waitlist submission:", email);
+      console.log("Waitlist submission:", { email, earlyAccess });
       toast({
         title: "You're on the list!",
         description: "Thanks for joining the Sentry waitlist. We'll be in touch soon.",
@@ -38,12 +41,20 @@ export default function WaitlistPage() {
                     <p className="mt-4 text-lg text-muted-foreground">
                         Sentry is an AI-powered platform for top-tier freelancers and creative professionals to connect, collaborate, and build their dream teams.
                     </p>
-                    <form onSubmit={handleSubmit} className="mt-8 flex w-full max-w-md items-center gap-2">
-                        <Input name="email" type="email" placeholder="Enter your email" required className="h-12 flex-1 text-base" />
-                        <Button type="submit" size="lg" className="h-12">
-                            Join Waitlist
-                            <ArrowRight className="ml-2 h-5 w-5" />
-                        </Button>
+                    <form onSubmit={handleSubmit} className="mt-8 w-full max-w-md space-y-4">
+                        <div className="flex items-center gap-2">
+                            <Input name="email" type="email" placeholder="Enter your email" required className="h-12 flex-1 text-base" />
+                            <Button type="submit" size="lg" className="h-12">
+                                Join Waitlist
+                                <ArrowRight className="ml-2 h-5 w-5" />
+                            </Button>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <Checkbox id="early-access" name="earlyAccess" />
+                            <Label htmlFor="early-access" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground">
+                                Sign up for early access to new features
+                            </Label>
+                        </div>
                     </form>
                     <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
