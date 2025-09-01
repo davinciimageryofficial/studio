@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -28,6 +28,8 @@ type ParticipantCardProps = {
 function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isScreenSharing }: ParticipantCardProps) {
   const [isMuted, setIsMuted] = useState(Math.random() > 0.5);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { toast } = useToast();
+
 
   useEffect(() => {
     if (isCameraOn && videoRef.current) {
@@ -35,6 +37,13 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isSc
         // For this placeholder, we just show a black box.
     }
   }, [isCameraOn]);
+  
+  const handleFullScreen = () => {
+    toast({
+        title: "Fullscreen Mode",
+        description: "This would normally make the video full screen."
+    })
+  }
 
 
   return (
@@ -54,17 +63,26 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isSc
             </Avatar>
         </div>
       )}
-      <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
-        <p className="truncate text-sm font-medium text-black">{user.name}</p>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover/participant:opacity-100 transition-opacity pointer-events-none" />
+      <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between opacity-0 group-hover/participant:opacity-100 transition-opacity">
+        <p className="truncate text-sm font-medium text-white">{user.name}</p>
         <Button size="icon" variant="ghost" className="h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white" onClick={() => setIsMuted(!isMuted)}>
           {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
         </Button>
       </div>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute top-2 left-2 h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white opacity-0 group-hover/participant:opacity-100 transition-opacity"
+        onClick={handleFullScreen}
+        >
+        <Maximize className="h-4 w-4" />
+      </Button>
        {isRemovable && onRemove && (
          <Button
             variant="destructive"
             size="icon"
-            className="absolute top-2 right-2 h-6 w-6 rounded-full opacity-0 group-hover/participant:opacity-100 transition-opacity"
+            className="absolute top-2 right-2 h-7 w-7 rounded-full opacity-0 group-hover/participant:opacity-100 transition-opacity"
             onClick={() => onRemove(user.id)}
           >
             <X className="h-4 w-4" />
@@ -85,7 +103,7 @@ type WorkspaceTeamProps = {
 
 export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEndSession }: WorkspaceTeamProps) {
     const allUsers = placeholderUsers;
-    const initialParticipants = allUsers.slice(0, 3);
+    const initialParticipants = allUsers.slice(0, 4);
     
     const [participants, setParticipants] = useState(initialParticipants);
     const [isCameraOn, setIsCameraOn] = useState(false);
@@ -319,8 +337,3 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
         </div>
     )
 }
-
-    
-
-    
-
