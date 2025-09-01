@@ -54,7 +54,7 @@ export default function WorkspacesPage() {
         setTimeout(() => {
             setIsStartingFlow(false);
             setIsActive(true);
-        }, 2000); // Duration of the "Flow State" message
+        }, 2000);
     } else {
         setIsActive(true);
     }
@@ -98,7 +98,7 @@ export default function WorkspacesPage() {
                         </div>
                   ) : (
                     <>
-                        <div className="w-full space-y-4">
+                        <div className="w-full max-w-full space-y-4">
                             <div className="font-mono text-8xl font-bold tracking-tighter text-center">
                                 {formatTime(time)}
                             </div>
@@ -130,7 +130,7 @@ export default function WorkspacesPage() {
             isActive={isActive}
             formatTime={formatTime}
             onToggleTimer={handleToggleTimer}
-            onEndSession={onEndSession}
+            onEndSession={handleEndSession}
           />
         )}
         {!sessionType && (
