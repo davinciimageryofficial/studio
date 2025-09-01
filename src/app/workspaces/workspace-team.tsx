@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2 } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -25,9 +25,10 @@ type ParticipantCardProps = {
   onRemove?: (id: string) => void;
   isCameraOn: boolean;
   isScreenSharing: boolean;
+  isSpeaking: boolean;
 }
 
-function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isScreenSharing }: ParticipantCardProps) {
+function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isScreenSharing, isSpeaking }: ParticipantCardProps) {
   const [isMuted, setIsMuted] = useState(Math.random() > 0.5);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { toast } = useToast();
@@ -49,7 +50,10 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isSc
 
 
   return (
-    <div className="relative group/participant aspect-video overflow-hidden rounded-lg bg-muted">
+    <div className={cn(
+        "relative group/participant aspect-video overflow-hidden rounded-lg bg-muted transition-all duration-300",
+        isSpeaking && "ring-2 ring-primary ring-offset-2 ring-offset-background"
+    )}>
       {isScreenSharing ? (
          <div className="w-full h-full flex flex-col items-center justify-center bg-blue-900/20 text-blue-200">
             <ScreenShare className="h-10 w-10" />
@@ -63,6 +67,11 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isSc
                 <AvatarImage src={user.avatar} className="object-cover" />
                 <AvatarFallback className="text-4xl">{user.name.charAt(0)}</AvatarFallback>
             </Avatar>
+        </div>
+      )}
+       {isSpeaking && (
+        <div className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-black/50 p-1 pr-2 text-xs text-white">
+          <Volume2 className="h-4 w-4" />
         </div>
       )}
       <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between opacity-0 group-hover/participant:opacity-100 transition-opacity">
@@ -107,6 +116,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
     const initialParticipants = allUsers.slice(0, 5); // Start with more users to demonstrate layout
     
     const [participants, setParticipants] = useState(initialParticipants);
+    const [activeSpeakerId, setActiveSpeakerId] = useState<string | null>(null);
     const [isCameraOn, setIsCameraOn] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
     const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
@@ -118,6 +128,34 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
     const { toast } = useToast();
     const videoRef = useRef<HTMLVideoElement>(null);
     const screenStreamRef = useRef<MediaStream | null>(null);
+
+    // Simulate active speaker change
+    useEffect(() => {
+        if (participants.length > 1) {
+            const interval = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * participants.length);
+                const newSpeakerId = participants[randomIndex].id;
+                setActiveSpeakerId(newSpeakerId);
+            }, 3000); // Change speaker every 3 seconds
+            return () => clearInterval(interval);
+        }
+    }, [participants]);
+
+    // Reorder participants when active speaker changes
+    useEffect(() => {
+        if (!activeSpeakerId) return;
+
+        setParticipants(prev => {
+            const speakerIndex = prev.findIndex(p => p.id === activeSpeakerId);
+            if (speakerIndex === -1 || speakerIndex === 0) return prev; // Not found or already first
+
+            const newParticipants = [...prev];
+            const [speaker] = newParticipants.splice(speakerIndex, 1);
+            newParticipants.unshift(speaker);
+            return newParticipants;
+        });
+
+    }, [activeSpeakerId]);
 
     const handleToggleCamera = async () => {
         if (!isCameraOn) {
@@ -228,6 +266,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                             onRemove={handleRemove}
                             isCameraOn={isCameraOn && user.id === placeholderUsers[1].id} // Example: only my camera is on
                             isScreenSharing={isScreenSharing && user.id === placeholderUsers[1].id}
+                            isSpeaking={user.id === activeSpeakerId}
                           />
                         ))}
                     </div>
@@ -238,7 +277,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                                 {hiddenParticipants.map(user => (
                                     <Tooltip key={user.id}>
                                         <TooltipTrigger asChild>
-                                            <Avatar className="h-8 w-8 border-2 border-background">
+                                            <Avatar className={cn("h-8 w-8 border-2 border-background", user.id === activeSpeakerId && "ring-2 ring-primary")}>
                                                 <AvatarImage src={user.avatar} />
                                                 <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                                             </Avatar>
@@ -371,5 +410,3 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
         </div>
     )
 }
-
-    
