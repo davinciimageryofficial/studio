@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -33,15 +34,94 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, User } from "lucide-react";
+import { AlertCircle, User, SlidersHorizontal } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
 
 const formSchema = z.object({
-  userProfile: z.string().min(50, "Please provide a more detailed profile (min 50 characters)."),
+  userProfile: z.string().min(10, "Please provide a profile description or select traits from the picker."),
   categorization: z.enum(["design", "writing", "development"]),
   teamSize: z.coerce.number().int().min(1, "Team size must be at least 1.").max(10, "Team size cannot exceed 10."),
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+const traitCategories = {
+    skills: ["React", "Node.js", "Python", "Figma", "UI/UX Design", "Copywriting", "SEO", "Project Management", "Data Analysis", "Go"],
+    interests: ["Fintech", "Healthcare Tech", "AI/ML", "E-commerce", "SaaS", "Mobile Apps", "Gaming", "Social Impact"],
+    expertise: ["Entry-Level", "Mid-Level", "Senior", "Lead", "Principal"]
+};
+
+function TraitPickerDialog({ onSave }: { onSave: (traits: string) => void }) {
+    const [selectedTraits, setSelectedTraits] = useState<Record<string, string[]>>({
+        skills: [],
+        interests: [],
+        expertise: [],
+    });
+
+    const handleSelect = (category: keyof typeof traitCategories, trait: string) => {
+        setSelectedTraits(prev => {
+            const currentCategoryTraits = prev[category];
+            const isSelected = currentCategoryTraits.includes(trait);
+            
+            if (category === 'expertise') {
+                 // Single choice for expertise
+                return { ...prev, [category]: [trait] };
+            }
+
+            // Multi-choice for others
+            const newCategoryTraits = isSelected
+                ? currentCategoryTraits.filter(t => t !== trait)
+                : [...currentCategoryTraits, trait];
+
+            return { ...prev, [category]: newCategoryTraits };
+        });
+    };
+    
+    const handleSaveChanges = () => {
+        const description = `Looking for collaborators with the following profile: Skills in ${selectedTraits.skills.join(', ') || 'any field'}. Interested in ${selectedTraits.interests.join(', ') || 'any industry'}. Expertise level: ${selectedTraits.expertise.join(', ') || 'any level'}.`;
+        onSave(description);
+    };
+
+    return (
+         <DialogContent className="sm:max-w-2xl">
+            <DialogHeader>
+                <DialogTitle>Trait Picker</DialogTitle>
+            </DialogHeader>
+            <div className="py-4 space-y-6 max-h-[60vh] overflow-y-auto pr-4">
+                {Object.entries(traitCategories).map(([category, traits]) => (
+                    <div key={category}>
+                        <h4 className="font-semibold text-lg capitalize mb-3">{category}</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {traits.map(trait => (
+                                <div key={trait} className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id={`${category}-${trait}`}
+                                        checked={selectedTraits[category as keyof typeof traitCategories]?.includes(trait)}
+                                        onCheckedChange={() => handleSelect(category as keyof typeof traitCategories, trait)}
+                                    />
+                                    <label htmlFor={`${category}-${trait}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                        {trait}
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <Separator className="mt-6" />
+                    </div>
+                ))}
+            </div>
+            <DialogFooter>
+                <DialogClose asChild>
+                    <Button type="button" variant="secondary">Cancel</Button>
+                </DialogClose>
+                <DialogClose asChild>
+                    <Button type="button" onClick={handleSaveChanges}>Save</Button>
+                </DialogClose>
+            </DialogFooter>
+        </DialogContent>
+    );
+}
 
 export function WorkmateRadarForm() {
   const [result, setResult] = useState<AIWorkmateRadarOutput | null>(null);
@@ -72,6 +152,10 @@ export function WorkmateRadarForm() {
     }
   };
 
+  const handleTraitsSave = (traits: string) => {
+      form.setValue("userProfile", traits);
+  }
+
   return (
     <div>
       <Form {...form}>
@@ -81,10 +165,21 @@ export function WorkmateRadarForm() {
             name="userProfile"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Your Profile / Project Description</FormLabel>
+                <div className="flex items-center justify-between">
+                    <FormLabel>Your Profile / Project Description</FormLabel>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                                Trait Picker
+                            </Button>
+                        </DialogTrigger>
+                        <TraitPickerDialog onSave={handleTraitsSave} />
+                    </Dialog>
+                </div>
                 <FormControl>
                   <Textarea
-                    placeholder="Describe yourself, your skills, or the project you're building. For example: 'I'm a senior backend engineer with experience in Go and Python, looking for a frontend developer and a UI/UX designer for a new fintech startup project...'"
+                    placeholder="Describe yourself, your skills, or the project you're building. Or, use the Trait Picker to generate a description."
                     className="min-h-32"
                     {...field}
                   />
