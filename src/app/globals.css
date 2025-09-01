@@ -96,4 +96,18 @@ body {
             transform: rotate(1turn) translateX(150px) rotate(-1turn);
         }
     }
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes fade-out {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    .fade-in {
+        animation: fade-in 0.5s ease-out forwards;
+    }
+    .fade-out {
+        animation: fade-out 0.5s ease-in forwards;
+    }
 }
