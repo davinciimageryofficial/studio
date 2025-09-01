@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Category = 
   | "All" 
@@ -55,8 +56,9 @@ export default function NewsPage() {
     }
   };
   
-  const categories: Category[] = ["Tech", "Design", "Writing", "Development", "Freelance", "AI & Machine Learning", "Cybersecurity", "Data Science", "Cloud Computing", "UI/UX"];
-  const isCategorySelected = categories.includes(selectedCategory);
+  const mainCategories: Category[] = ["Personalized", "Trending", "Events", "Platforms", "Spotlight"];
+  const dropdownCategories: Category[] = ["Tech", "Design", "Writing", "Development", "Freelance", "AI & Machine Learning", "Cybersecurity", "Data Science", "Cloud Computing", "UI/UX"];
+  const isDropdownCategorySelected = dropdownCategories.includes(selectedCategory);
 
 
   return (
@@ -69,63 +71,30 @@ export default function NewsPage() {
       </header>
 
       <div className="mb-8 flex justify-center">
-        <div className="flex flex-wrap items-center gap-2 rounded-lg bg-muted p-1 w-fit">
-          <Button 
-            variant={selectedCategory === 'Personalized' ? 'default' : 'ghost'} 
-            onClick={() => setSelectedCategory('Personalized')}
-            className={cn(selectedCategory === 'Personalized' ? "shadow-sm" : "text-muted-foreground", "data-[state=active]:text-foreground")}
-          >
-            Personalized
-          </Button>
-          <Button 
-            variant={selectedCategory === 'Trending' ? 'default' : 'ghost'} 
-            onClick={() => setSelectedCategory('Trending')}
-            className={cn(selectedCategory === 'Trending' ? "shadow-sm" : "text-muted-foreground", "data-[state=active]:text-foreground")}
-          >
-            Trending
-          </Button>
-           <Button 
-            variant={selectedCategory === 'Events' ? 'default' : 'ghost'} 
-            onClick={() => setSelectedCategory('Events')}
-            className={cn(selectedCategory === 'Events' ? "shadow-sm" : "text-muted-foreground", "data-[state=active]:text-foreground")}
-          >
-            Events
-          </Button>
-           <Button 
-            variant={selectedCategory === 'Platforms' ? 'default' : 'ghost'} 
-            onClick={() => setSelectedCategory('Platforms')}
-            className={cn(selectedCategory === 'Platforms' ? "shadow-sm" : "text-muted-foreground", "data-[state=active]:text-foreground")}
-          >
-            Platforms
-          </Button>
-           <Button 
-            variant={selectedCategory === 'Spotlight' ? 'default' : 'ghost'} 
-            onClick={() => setSelectedCategory('Spotlight')}
-            className={cn(selectedCategory === 'Spotlight' ? "shadow-sm" : "text-muted-foreground", "data-[state=active]:text-foreground")}
-          >
-            Spotlight
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant={isCategorySelected ? 'default' : 'ghost'}
-                className={cn(isCategorySelected ? "shadow-sm" : "text-muted-foreground", "data-[state=active]:text-foreground")}
-              >
-                {isCategorySelected ? selectedCategory : 'Select Category'}
-                <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Topics</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {categories.map((category) => (
-                <DropdownMenuItem key={category} onSelect={() => setSelectedCategory(category)}>
-                  {category}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <Tabs value={isDropdownCategorySelected ? "more" : selectedCategory} onValueChange={(value) => setSelectedCategory(value as Category)}>
+            <TabsList>
+                {mainCategories.map(category => (
+                    <TabsTrigger key={category} value={category}>{category}</TabsTrigger>
+                ))}
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <TabsTrigger value="more" className={cn(isDropdownCategorySelected && "bg-background text-foreground shadow-sm")}>
+                            {isDropdownCategorySelected ? selectedCategory : "More"}
+                            <ChevronDown className="ml-2 h-4 w-4" />
+                        </TabsTrigger>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>Topics</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {dropdownCategories.map((category) => (
+                            <DropdownMenuItem key={category} onSelect={() => setSelectedCategory(category)}>
+                            {category}
+                            </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </TabsList>
+        </Tabs>
       </div>
       
       <NewsGrid articles={getArticlesForCategory(selectedCategory)} />
