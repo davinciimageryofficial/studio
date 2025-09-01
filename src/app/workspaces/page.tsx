@@ -130,7 +130,7 @@ export default function WorkspacesPage() {
             isActive={isActive}
             formatTime={formatTime}
             onToggleTimer={handleToggleTimer}
-            onEndSession={handleEndSession}
+            onEndSession={onEndSession}
           />
         )}
         {!sessionType && (
