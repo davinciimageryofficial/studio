@@ -38,6 +38,8 @@ import { AlertCircle, User, SlidersHorizontal } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+
 
 const formSchema = z.object({
   userProfile: z.string().min(10, "Please provide a profile description or select traits from the picker."),
@@ -48,68 +50,208 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const traitCategories = {
-    skills: ["React", "Node.js", "Python", "Figma", "UI/UX Design", "Copywriting", "SEO", "Project Management", "Data Analysis", "Go"],
-    interests: ["Fintech", "Healthcare Tech", "AI/ML", "E-commerce", "SaaS", "Mobile Apps", "Gaming", "Social Impact"],
-    expertise: ["Entry-Level", "Mid-Level", "Senior", "Lead", "Principal"]
+  "Professional Skills Development": {
+    "Technical Skills": ["Python", "JavaScript", "Web Development", "Graphic Design", "Video Editing", "UX/UI Design", "Data Analysis", "Cybersecurity", "AI/ML", "Cloud Computing"],
+    "Creative Skills": ["Copywriting", "Content Writing", "Technical Writing", "Illustration", "Photography", "Animation", "Music Production", "Voice Acting"],
+    "Soft Skills": ["Communication", "Time Management", "Negotiation", "Problem-solving", "Adaptability", "Emotional Intelligence"],
+    "Industry-Specific Knowledge": ["Marketing", "Healthcare", "Finance", "Education", "E-commerce"],
+    "Portfolio Building": ["Curating a portfolio"],
+  },
+  "Business and Entrepreneurship": {
+    "Branding and Marketing": ["Personal Branding", "Social Media Marketing", "SEO", "Content Marketing", "Email Marketing"],
+    "Client Acquisition": ["Upwork", "Fiverr", "LinkedIn", "Pitching", "Networking", "Cold Emailing"],
+    "Pricing and Negotiation": ["Setting Rates", "Value-Based Pricing", "Scope Creep", "Contract Negotiation"],
+    "Financial Management": ["Budgeting", "Invoicing", "Expense Tracking", "Tax Preparation", "Retirement Planning"],
+    "Business Operations": ["Trello", "Asana", "Time Tracking", "CRM"],
+    "Legal Considerations": ["Contracts", "NDAs", "Intellectual Property", "Freelancing Laws"],
+    "Scaling a Freelance Business": ["Hiring Subcontractors", "Agency Model", "Outsourcing Tasks"],
+  },
+  "Technology and Tools": {
+    "Productivity Tools": ["Notion", "ClickUp", "Slack", "Zoom", "Google Drive", "Dropbox"],
+    "Creative Software": ["Adobe Creative Suite", "Canva", "Final Cut Pro", "Blender", "Pro Tools"],
+    "Development Tools": ["VS Code", "Git", "Testing Frameworks"],
+    "Automation and AI": ["ChatGPT", "Jasper", "Workflow Automation"],
+    "Cybersecurity Tools": ["VPNs", "Secure File Transfers", "Password Management"],
+    "Website and Online Presence": ["Personal Website Building", "Domain Management", "Hosting Services", "WordPress"],
+  },
+  "Marketing and Self-Promotion": {
+    "Social Media": ["LinkedIn", "X", "Instagram", "TikTok"],
+    "Content Creation": ["Blogging", "Vlogging", "Podcasting"],
+    "SEO and Online Visibility": ["Keyword Research", "Freelance Platform Optimization", "Google My Business"],
+    "Networking": ["Virtual Events", "In-person Events", "Professional Groups", "Collaborations"],
+    "Testimonials and Reviews": ["Collecting Client Feedback", "Case Studies"],
+    "Advertising": ["Google Ads", "LinkedIn Ads", "Sponsored Content"],
+  },
+  "Personal Development and Well-Being": {
+    "Work-Life Balance": ["Managing Burnout", "Setting Boundaries", "Sustainable Schedule"],
+    "Mental Health": ["Stress Management", "Mindfulness", "Therapy Resources"],
+    "Physical Health": ["Ergonomics", "Exercise Routines"],
+    "Motivation and Discipline": ["Goal Setting", "Overcoming Procrastination", "Building Habits"],
+    "Continuous Learning": ["Reading Blogs", "Listening to Podcasts", "Attending Webinars"],
+  },
+  "Finance and Economics": {
+    "Income Diversification": ["Digital Products", "Online Courses"],
+    "Tax Compliance": ["Self-Employment Taxes", "Deductions", "Quarterly Payments"],
+    "Invoicing and Payments": ["PayPal", "Stripe", "Wise", "Handling Late Payments"],
+    "Budgeting for Irregular Income": ["Cash Flow Management", "Emergency Funds"],
+    "Investing": ["SEP IRA", "Solo 401(k)", "Stock Market Basics"],
+  },
+  "Client and Project Management": {
+    "Client Communication": ["Managing Expectations", "Handling Difficult Clients"],
+    "Project Scoping": ["Defining Deliverables", "Timelines", "Milestones"],
+    "Conflict Resolution": ["Handling Disputes", "Managing Scope Creep"],
+    "Feedback Loops": ["Gathering Feedback", "Iterative Improvements"],
+    "Time Management": ["Prioritizing Tasks", "Meeting Deadlines"],
+  },
+  "Industry-Specific Trends": {
+    "Gig Economy": ["Freelance Marketplaces", "Remote Work Trends"],
+    "Emerging Technologies": ["Blockchain", "Web3", "AR/VR", "Generative AI", "IoT"],
+    "Sustainability": ["Green Freelancing", "Eco-conscious Clients"],
+    "Global Markets": ["International Freelancing", "Currency Exchange"],
+    "Niche Specialization": ["Fintech", "Edtech", "Healthtech", "Gaming"],
+  },
+  "Community and Networking": {
+    "Freelance Communities": ["Reddit", "Discord", "Local Meetups", "Coworking Spaces"],
+    "Mentorship": ["Finding Mentors", "Peer Accountability"],
+    "Collaborations": ["Partnering with Freelancers"],
+    "Professional Associations": ["Freelancers Union"],
+  },
+  "Legal and Ethical Considerations": {
+    "Contracts and Agreements": ["Drafting Contracts", "Understanding Terms"],
+    "Intellectual Property": ["Copyright", "Trademarks", "Licensing"],
+    "Ethics": ["Transparency", "Avoiding Conflicts of Interest", "Data Privacy"],
+    "Compliance": ["Labor Laws", "GDPR"],
+  },
+  "Education and Training": {
+    "Online Learning Platforms": ["Coursera", "Udemy", "LinkedIn Learning", "Skillshare"],
+    "Events": ["Workshops", "Conferences", "Webinars", "Virtual Summits"],
+    "Peer Learning": ["Study Groups", "Masterminds"],
+    "Language Skills": ["Spanish", "Mandarin"],
+  },
+  "Lifestyle and Remote Work": {
+    "Remote Work Setup": ["Home Office Ergonomics", "Internet Reliability", "Hardware"],
+    "Digital Nomadism": ["Traveling while Freelancing", "Visas", "Coworking Abroad"],
+    "Time Zone Management": ["Working with Global Clients"],
+    "Minimalism and Productivity": ["Decluttering Workspaces", "Simplifying Workflows"],
+  },
+  "Data and Analytics": {
+    "Performance Tracking": ["Measuring Project Success", "Client Satisfaction", "ROI"],
+    "Analytics Tools": ["Google Analytics", "Social Media Insights"],
+    "Data-Driven Decisions": ["Optimizing Pricing", "Marketing Strategy"],
+    "Client Reporting": ["Creating Reports", "Dashboards", "Visualizations"],
+  },
+  "Creative and Innovation": {
+    "Ideation Techniques": ["Brainstorming", "Mind Mapping", "Design Thinking"],
+    "Experimentation": ["Testing New Services", "New Niches"],
+    "Trend Awareness": ["Following Design Trends", "Tech Trends", "Cultural Trends"],
+    "Storytelling": ["Branding Narratives", "Client Pitches"],
+  },
+  "Risk Management": {
+    "Insurance": ["Health Insurance", "Liability Insurance"],
+    "Backup Plans": ["Data Backups", "Income Diversification", "Client Diversification"],
+    "Client Vetting": ["Identifying Red Flags", "Avoiding Scams"],
+    "Crisis Management": ["Handling Project Failures", "Client Disputes"],
+  },
 };
 
-function TraitPickerDialog({ onSave }: { onSave: (traits: string) => void }) {
-    const [selectedTraits, setSelectedTraits] = useState<Record<string, string[]>>({
-        skills: [],
-        interests: [],
-        expertise: [],
-    });
+type TraitCategory = keyof typeof traitCategories;
+type SelectedTraits = Record<TraitCategory, Record<string, string[]>>;
 
-    const handleSelect = (category: keyof typeof traitCategories, trait: string) => {
+
+function TraitPickerDialog({ onSave }: { onSave: (traits: string) => void }) {
+    const [selectedTraits, setSelectedTraits] = useState<SelectedTraits>({} as SelectedTraits);
+
+    const handleSelect = (mainCategory: TraitCategory, subCategory: string, trait: string) => {
         setSelectedTraits(prev => {
-            const currentCategoryTraits = prev[category];
-            const isSelected = currentCategoryTraits.includes(trait);
+            const newSelections = { ...prev };
             
-            if (category === 'expertise') {
-                 // Single choice for expertise
-                return { ...prev, [category]: [trait] };
+            // Ensure main category and subcategory exist
+            if (!newSelections[mainCategory]) {
+                newSelections[mainCategory] = {};
+            }
+            if (!newSelections[mainCategory][subCategory]) {
+                newSelections[mainCategory][subCategory] = [];
             }
 
-            // Multi-choice for others
-            const newCategoryTraits = isSelected
-                ? currentCategoryTraits.filter(t => t !== trait)
-                : [...currentCategoryTraits, trait];
+            const currentTraits = newSelections[mainCategory][subCategory];
+            const isSelected = currentTraits.includes(trait);
 
-            return { ...prev, [category]: newCategoryTraits };
+            if (isSelected) {
+                newSelections[mainCategory][subCategory] = currentTraits.filter(t => t !== trait);
+            } else {
+                newSelections[mainCategory][subCategory].push(trait);
+            }
+            
+            return newSelections;
         });
     };
     
     const handleSaveChanges = () => {
-        const description = `Looking for collaborators with the following profile: Skills in ${selectedTraits.skills.join(', ') || 'any field'}. Interested in ${selectedTraits.interests.join(', ') || 'any industry'}. Expertise level: ${selectedTraits.expertise.join(', ') || 'any level'}.`;
+        let description = "Seeking collaborators with the following profile: ";
+        const allSelections: string[] = [];
+
+        for (const mainCategory in selectedTraits) {
+            const subCategories = selectedTraits[mainCategory as TraitCategory];
+            const mainCategorySelections: string[] = [];
+
+            for (const subCategory in subCategories) {
+                const traits = subCategories[subCategory];
+                if (traits.length > 0) {
+                    mainCategorySelections.push(`${subCategory}: ${traits.join(', ')}`);
+                }
+            }
+
+            if (mainCategorySelections.length > 0) {
+                allSelections.push(`${mainCategory} (${mainCategorySelections.join('; ')})`);
+            }
+        }
+        
+        if (allSelections.length > 0) {
+            description += allSelections.join('. ');
+        } else {
+            description = ""; // Reset if nothing is selected
+        }
+        
         onSave(description);
     };
 
     return (
-         <DialogContent className="sm:max-w-2xl">
+         <DialogContent className="sm:max-w-3xl">
             <DialogHeader>
                 <DialogTitle>Trait Picker</DialogTitle>
+                <DialogDescription>Select the skills, interests, and expertise you're looking for in a collaborator.</DialogDescription>
             </DialogHeader>
-            <div className="py-4 space-y-6 max-h-[60vh] overflow-y-auto pr-4">
-                {Object.entries(traitCategories).map(([category, traits]) => (
-                    <div key={category}>
-                        <h4 className="font-semibold text-lg capitalize mb-3">{category}</h4>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {traits.map(trait => (
-                                <div key={trait} className="flex items-center space-x-2">
-                                    <Checkbox
-                                        id={`${category}-${trait}`}
-                                        checked={selectedTraits[category as keyof typeof traitCategories]?.includes(trait)}
-                                        onCheckedChange={() => handleSelect(category as keyof typeof traitCategories, trait)}
-                                    />
-                                    <label htmlFor={`${category}-${trait}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                        {trait}
-                                    </label>
+            <div className="py-4 space-y-2 max-h-[60vh] overflow-y-auto pr-4">
+                <Accordion type="multiple" className="w-full">
+                     {Object.entries(traitCategories).map(([mainCategory, subCategories]) => (
+                        <AccordionItem key={mainCategory} value={mainCategory}>
+                            <AccordionTrigger className="text-lg font-semibold">{mainCategory}</AccordionTrigger>
+                            <AccordionContent>
+                                <div className="space-y-4 pl-2">
+                                {Object.entries(subCategories).map(([subCategory, traits]) => (
+                                    <div key={subCategory}>
+                                        <h5 className="font-medium mb-3">{subCategory}</h5>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-3">
+                                            {traits.map(trait => (
+                                                <div key={trait} className="flex items-center space-x-2">
+                                                    <Checkbox
+                                                        id={`${mainCategory}-${subCategory}-${trait}`}
+                                                        checked={selectedTraits[mainCategory as TraitCategory]?.[subCategory]?.includes(trait) || false}
+                                                        onCheckedChange={() => handleSelect(mainCategory as TraitCategory, subCategory, trait)}
+                                                    />
+                                                    <label htmlFor={`${mainCategory}-${subCategory}-${trait}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                                        {trait}
+                                                    </label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
                                 </div>
-                            ))}
-                        </div>
-                        <Separator className="mt-6" />
-                    </div>
-                ))}
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
             </div>
             <DialogFooter>
                 <DialogClose asChild>
@@ -153,7 +295,7 @@ export function WorkmateRadarForm() {
   };
 
   const handleTraitsSave = (traits: string) => {
-      form.setValue("userProfile", traits);
+      form.setValue("userProfile", traits, { shouldValidate: true });
   }
 
   return (
