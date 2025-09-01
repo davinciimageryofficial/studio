@@ -93,10 +93,12 @@ export function AppSidebar() {
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
-        <SidebarTrigger className="h-8 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mt-auto w-full justify-start" />
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
+            <SidebarMenuItem>
+                <SidebarTrigger className="h-8 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full justify-start" />
+            </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Profile" className="justify-start">
                 <Link href="/profile/me">
