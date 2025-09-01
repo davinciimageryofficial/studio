@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
@@ -255,7 +255,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-6">
-                <Card>
+                <Card className="flex flex-col">
                     <CardHeader>
                     <div className="flex items-center justify-between">
                         <CardTitle>Team Workspace</CardTitle>
@@ -265,7 +265,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                         </div>
                     </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="flex-1">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         {visibleParticipants.map(user => (
                           <ParticipantCard 
@@ -312,10 +312,8 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                         </Alert>
                     )}
                     </CardContent>
-                </Card>
-                 <Card>
-                    <CardContent className="p-2">
-                        <div className="flex justify-center flex-wrap gap-2">
+                    <CardFooter className="p-2 bg-card">
+                         <div className="flex justify-center flex-wrap gap-2 w-full">
                            <Button onClick={onToggleTimer} className={cn("text-xs bg-black hover:bg-gray-800", !isControlsCollapsed && "flex-1 sm:flex-none")}>
                                 {isActive ? <Pause /> : <Play />}
                                 {!isControlsCollapsed && <span className="ml-2">{isActive ? 'Pause Timer' : 'Resume Timer'}</span>}
@@ -363,7 +361,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                                 {isControlsCollapsed ? <PanelRight /> : <PanelLeft />}
                             </Button>
                         </div>
-                    </CardContent>
+                    </CardFooter>
                 </Card>
             </div>
             <div className="flex flex-col gap-6">
