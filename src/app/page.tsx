@@ -71,14 +71,8 @@ export default function WaitlistPage() {
                         </div>
                     </div>
                 </div>
-                <div className="relative hidden aspect-square lg:block">
-                    <Image 
-                        src="https://picsum.photos/seed/waitlist/1000/1000"
-                        alt="Abstract representation of a professional network"
-                        fill
-                        className="object-cover"
-                        data-ai-hint="futuristic abstract"
-                    />
+                <div className="relative hidden lg:flex items-center justify-center bg-muted/20 p-8">
+                    <svg className="size-48 text-muted-foreground/40" fill="currentColor" viewBox="0 0 256 256"><path d="M152,24a80,80,0,1,0,59.4,136H152V88a8,8,0,0,0,-16,0v72H68.6a80,80,0,1,0,83.4-136ZM128,200a64,64,0,1,1,64-64A64.07,64.07,0,0,1,128,200Z"></path></svg>
                 </div>
             </div>
         </div>
