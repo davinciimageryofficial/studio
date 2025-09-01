@@ -112,7 +112,7 @@ export default function WorkspacesPage() {
                 <CardDescription>You are in a solo session. Keep up the great work!</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col items-center justify-center gap-8 p-12">
-                  <div className="w-full max-w-2xl space-y-4">
+                  <div className="w-full space-y-4">
                     <div className="font-mono text-8xl font-bold tracking-tighter text-center">
                         {formatTime(time)}
                     </div>
