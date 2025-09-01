@@ -54,7 +54,6 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isSc
             </Avatar>
         </div>
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
       <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
         <p className="truncate text-sm font-medium text-black">{user.name}</p>
         <Button size="icon" variant="ghost" className="h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white" onClick={() => setIsMuted(!isMuted)}>
