@@ -50,109 +50,109 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const traitCategories = {
-  "Professional Skills Development": {
-    "Technical Skills": ["Python", "JavaScript", "Web Development", "Graphic Design", "Video Editing", "UX/UI Design", "Data Analysis", "Cybersecurity", "AI/ML", "Cloud Computing"],
-    "Creative Skills": ["Copywriting", "Content Writing", "Technical Writing", "Illustration", "Photography", "Animation", "Music Production", "Voice Acting"],
-    "Soft Skills": ["Communication", "Time Management", "Negotiation", "Problem-solving", "Adaptability", "Emotional Intelligence"],
-    "Industry-Specific Knowledge": ["Marketing", "Healthcare", "Finance", "Education", "E-commerce"],
-    "Portfolio Building": ["Curating a portfolio"],
-  },
-  "Business and Entrepreneurship": {
-    "Branding and Marketing": ["Personal Branding", "Social Media Marketing", "SEO", "Content Marketing", "Email Marketing"],
-    "Client Acquisition": ["Upwork", "Fiverr", "LinkedIn", "Pitching", "Networking", "Cold Emailing"],
-    "Pricing and Negotiation": ["Setting Rates", "Value-Based Pricing", "Scope Creep", "Contract Negotiation"],
-    "Financial Management": ["Budgeting", "Invoicing", "Expense Tracking", "Tax Preparation", "Retirement Planning"],
-    "Business Operations": ["Trello", "Asana", "Time Tracking", "CRM"],
-    "Legal Considerations": ["Contracts", "NDAs", "Intellectual Property", "Freelancing Laws"],
-    "Scaling a Freelance Business": ["Hiring Subcontractors", "Agency Model", "Outsourcing Tasks"],
-  },
-  "Technology and Tools": {
-    "Productivity Tools": ["Notion", "ClickUp", "Slack", "Zoom", "Google Drive", "Dropbox"],
-    "Creative Software": ["Adobe Creative Suite", "Canva", "Final Cut Pro", "Blender", "Pro Tools"],
-    "Development Tools": ["VS Code", "Git", "Testing Frameworks"],
-    "Automation and AI": ["ChatGPT", "Jasper", "Workflow Automation"],
-    "Cybersecurity Tools": ["VPNs", "Secure File Transfers", "Password Management"],
-    "Website and Online Presence": ["Personal Website Building", "Domain Management", "Hosting Services", "WordPress"],
-  },
-  "Marketing and Self-Promotion": {
-    "Social Media": ["LinkedIn", "X", "Instagram", "TikTok"],
-    "Content Creation": ["Blogging", "Vlogging", "Podcasting"],
-    "SEO and Online Visibility": ["Keyword Research", "Freelance Platform Optimization", "Google My Business"],
-    "Networking": ["Virtual Events", "In-person Events", "Professional Groups", "Collaborations"],
-    "Testimonials and Reviews": ["Collecting Client Feedback", "Case Studies"],
-    "Advertising": ["Google Ads", "LinkedIn Ads", "Sponsored Content"],
-  },
-  "Personal Development and Well-Being": {
-    "Work-Life Balance": ["Managing Burnout", "Setting Boundaries", "Sustainable Schedule"],
-    "Mental Health": ["Stress Management", "Mindfulness", "Therapy Resources"],
-    "Physical Health": ["Ergonomics", "Exercise Routines"],
-    "Motivation and Discipline": ["Goal Setting", "Overcoming Procrastination", "Building Habits"],
-    "Continuous Learning": ["Reading Blogs", "Listening to Podcasts", "Attending Webinars"],
-  },
-  "Finance and Economics": {
-    "Income Diversification": ["Digital Products", "Online Courses"],
-    "Tax Compliance": ["Self-Employment Taxes", "Deductions", "Quarterly Payments"],
-    "Invoicing and Payments": ["PayPal", "Stripe", "Wise", "Handling Late Payments"],
-    "Budgeting for Irregular Income": ["Cash Flow Management", "Emergency Funds"],
-    "Investing": ["SEP IRA", "Solo 401(k)", "Stock Market Basics"],
-  },
-  "Client and Project Management": {
-    "Client Communication": ["Managing Expectations", "Handling Difficult Clients"],
-    "Project Scoping": ["Defining Deliverables", "Timelines", "Milestones"],
-    "Conflict Resolution": ["Handling Disputes", "Managing Scope Creep"],
-    "Feedback Loops": ["Gathering Feedback", "Iterative Improvements"],
-    "Time Management": ["Prioritizing Tasks", "Meeting Deadlines"],
-  },
-  "Industry-Specific Trends": {
-    "Gig Economy": ["Freelance Marketplaces", "Remote Work Trends"],
-    "Emerging Technologies": ["Blockchain", "Web3", "AR/VR", "Generative AI", "IoT"],
-    "Sustainability": ["Green Freelancing", "Eco-conscious Clients"],
-    "Global Markets": ["International Freelancing", "Currency Exchange"],
-    "Niche Specialization": ["Fintech", "Edtech", "Healthtech", "Gaming"],
-  },
-  "Community and Networking": {
-    "Freelance Communities": ["Reddit", "Discord", "Local Meetups", "Coworking Spaces"],
-    "Mentorship": ["Finding Mentors", "Peer Accountability"],
-    "Collaborations": ["Partnering with Freelancers"],
-    "Professional Associations": ["Freelancers Union"],
-  },
-  "Legal and Ethical Considerations": {
-    "Contracts and Agreements": ["Drafting Contracts", "Understanding Terms"],
-    "Intellectual Property": ["Copyright", "Trademarks", "Licensing"],
-    "Ethics": ["Transparency", "Avoiding Conflicts of Interest", "Data Privacy"],
-    "Compliance": ["Labor Laws", "GDPR"],
-  },
-  "Education and Training": {
-    "Online Learning Platforms": ["Coursera", "Udemy", "LinkedIn Learning", "Skillshare"],
-    "Events": ["Workshops", "Conferences", "Webinars", "Virtual Summits"],
-    "Peer Learning": ["Study Groups", "Masterminds"],
-    "Language Skills": ["Spanish", "Mandarin"],
-  },
-  "Lifestyle and Remote Work": {
-    "Remote Work Setup": ["Home Office Ergonomics", "Internet Reliability", "Hardware"],
-    "Digital Nomadism": ["Traveling while Freelancing", "Visas", "Coworking Abroad"],
-    "Time Zone Management": ["Working with Global Clients"],
-    "Minimalism and Productivity": ["Decluttering Workspaces", "Simplifying Workflows"],
-  },
-  "Data and Analytics": {
-    "Performance Tracking": ["Measuring Project Success", "Client Satisfaction", "ROI"],
-    "Analytics Tools": ["Google Analytics", "Social Media Insights"],
-    "Data-Driven Decisions": ["Optimizing Pricing", "Marketing Strategy"],
-    "Client Reporting": ["Creating Reports", "Dashboards", "Visualizations"],
-  },
-  "Creative and Innovation": {
-    "Ideation Techniques": ["Brainstorming", "Mind Mapping", "Design Thinking"],
-    "Experimentation": ["Testing New Services", "New Niches"],
-    "Trend Awareness": ["Following Design Trends", "Tech Trends", "Cultural Trends"],
-    "Storytelling": ["Branding Narratives", "Client Pitches"],
-  },
-  "Risk Management": {
-    "Insurance": ["Health Insurance", "Liability Insurance"],
-    "Backup Plans": ["Data Backups", "Income Diversification", "Client Diversification"],
-    "Client Vetting": ["Identifying Red Flags", "Avoiding Scams"],
-    "Crisis Management": ["Handling Project Failures", "Client Disputes"],
-  },
-};
+    "Professional Skills Development": {
+      "Technical Skills": ["Python", "JavaScript", "Web Development", "Graphic Design", "Video Editing", "UX/UI Design", "Data Analysis", "Cybersecurity", "AI/ML", "Cloud Computing"],
+      "Creative Skills": ["Copywriting", "Content Writing", "Technical Writing", "Illustration", "Photography", "Animation", "Music Production", "Voice Acting"],
+      "Soft Skills": ["Communication", "Time Management", "Negotiation", "Problem-solving", "Adaptability", "Emotional Intelligence"],
+      "Industry-Specific Knowledge": ["Marketing", "Healthcare", "Finance", "Education", "E-commerce"],
+      "Portfolio Building": ["Curating a portfolio"],
+    },
+    "Business and Entrepreneurship": {
+      "Branding and Marketing": ["Personal Branding", "Social Media Marketing", "SEO", "Content Marketing", "Email Marketing"],
+      "Client Acquisition": ["Upwork", "Fiverr", "LinkedIn", "Pitching", "Networking", "Cold Emailing"],
+      "Pricing and Negotiation": ["Setting Rates", "Value-Based Pricing", "Scope Creep", "Contract Negotiation"],
+      "Financial Management": ["Budgeting", "Invoicing", "Expense Tracking", "Tax Preparation", "Retirement Planning"],
+      "Business Operations": ["Trello", "Asana", "Time Tracking", "CRM"],
+      "Legal Considerations": ["Contracts", "NDAs", "Intellectual Property", "Freelancing Laws"],
+      "Scaling a Freelance Business": ["Hiring Subcontractors", "Agency Model", "Outsourcing Tasks"],
+    },
+    "Technology and Tools": {
+      "Productivity Tools": ["Notion", "ClickUp", "Slack", "Zoom", "Google Drive", "Dropbox"],
+      "Creative Software": ["Adobe Creative Suite", "Canva", "Final Cut Pro", "Blender", "Pro Tools"],
+      "Development Tools": ["VS Code", "Git", "Testing Frameworks"],
+      "Automation and AI": ["ChatGPT", "Jasper", "Workflow Automation"],
+      "Cybersecurity Tools": ["VPNs", "Secure File Transfers", "Password Management"],
+      "Website and Online Presence": ["Personal Website Building", "Domain Management", "Hosting Services", "WordPress"],
+    },
+    "Marketing and Self-Promotion": {
+      "Social Media": ["LinkedIn", "X", "Instagram", "TikTok"],
+      "Content Creation": ["Blogging", "Vlogging", "Podcasting"],
+      "SEO and Online Visibility": ["Keyword Research", "Freelance Platform Optimization", "Google My Business"],
+      "Networking": ["Virtual Events", "In-person Events", "Professional Groups", "Collaborations"],
+      "Testimonials and Reviews": ["Collecting Client Feedback", "Case Studies"],
+      "Advertising": ["Google Ads", "LinkedIn Ads", "Sponsored Content"],
+    },
+    "Personal Development and Well-Being": {
+      "Work-Life Balance": ["Managing Burnout", "Setting Boundaries", "Sustainable Schedule"],
+      "Mental Health": ["Stress Management", "Mindfulness", "Therapy Resources"],
+      "Physical Health": ["Ergonomics", "Exercise Routines"],
+      "Motivation and Discipline": ["Goal Setting", "Overcoming Procrastination", "Building Habits"],
+      "Continuous Learning": ["Reading Blogs", "Listening to Podcasts", "Attending Webinars"],
+    },
+    "Finance and Economics": {
+      "Income Diversification": ["Digital Products", "Online Courses"],
+      "Tax Compliance": ["Self-Employment Taxes", "Deductions", "Quarterly Payments"],
+      "Invoicing and Payments": ["PayPal", "Stripe", "Wise", "Handling Late Payments"],
+      "Budgeting for Irregular Income": ["Cash Flow Management", "Emergency Funds"],
+      "Investing": ["SEP IRA", "Solo 401(k)", "Stock Market Basics"],
+    },
+    "Client and Project Management": {
+      "Client Communication": ["Managing Expectations", "Handling Difficult Clients"],
+      "Project Scoping": ["Defining Deliverables", "Timelines", "Milestones"],
+      "Conflict Resolution": ["Handling Disputes", "Managing Scope Creep"],
+      "Feedback Loops": ["Gathering Feedback", "Iterative Improvements"],
+      "Time Management": ["Prioritizing Tasks", "Meeting Deadlines"],
+    },
+    "Industry-Specific Trends": {
+      "Gig Economy": ["Freelance Marketplaces", "Remote Work Trends"],
+      "Emerging Technologies": ["Blockchain", "Web3", "AR/VR", "Generative AI", "IoT"],
+      "Sustainability": ["Green Freelancing", "Eco-conscious Clients"],
+      "Global Markets": ["International Freelancing", "Currency Exchange"],
+      "Niche Specialization": ["Fintech", "Edtech", "Healthtech", "Gaming"],
+    },
+    "Community and Networking": {
+      "Freelance Communities": ["Reddit", "Discord", "Local Meetups", "Coworking Spaces"],
+      "Mentorship": ["Finding Mentors", "Peer Accountability"],
+      "Collaborations": ["Partnering with Freelancers"],
+      "Professional Associations": ["Freelancers Union"],
+    },
+    "Legal and Ethical Considerations": {
+      "Contracts and Agreements": ["Drafting Contracts", "Understanding Terms"],
+      "Intellectual Property": ["Copyright", "Trademarks", "Licensing"],
+      "Ethics": ["Transparency", "Avoiding Conflicts of Interest", "Data Privacy"],
+      "Compliance": ["Adhering to Labor Laws", "GDPR"],
+    },
+    "Education and Training": {
+      "Online Learning Platforms": ["Coursera", "Udemy", "LinkedIn Learning", "Skillshare"],
+      "Events": ["Workshops", "Conferences", "Webinars", "Virtual Summits"],
+      "Peer Learning": ["Study Groups", "Masterminds"],
+      "Language Skills": ["Spanish", "Mandarin"],
+    },
+    "Lifestyle and Remote Work": {
+      "Remote Work Setup": ["Home Office Ergonomics", "Internet Reliability", "Hardware"],
+      "Digital Nomadism": ["Traveling while Freelancing", "Visas", "Coworking Abroad"],
+      "Time Zone Management": ["Working with Global Clients"],
+      "Minimalism and Productivity": ["Decluttering Workspaces", "Simplifying Workflows"],
+    },
+    "Data and Analytics": {
+      "Performance Tracking": ["Measuring Project Success", "Client Satisfaction", "ROI"],
+      "Analytics Tools": ["Google Analytics", "Social Media Insights"],
+      "Data-Driven Decisions": ["Optimizing Pricing", "Marketing Strategy"],
+      "Client Reporting": ["Creating Reports", "Dashboards", "Visualizations"],
+    },
+    "Creative and Innovation": {
+      "Ideation Techniques": ["Brainstorming", "Mind Mapping", "Design Thinking"],
+      "Experimentation": ["Testing New Services", "New Niches"],
+      "Trend Awareness": ["Following Design Trends", "Tech Trends", "Cultural Trends"],
+      "Storytelling": ["Branding Narratives", "Client Pitches"],
+    },
+    "Risk Management": {
+      "Insurance": ["Health Insurance", "Liability Insurance"],
+      "Backup Plans": ["Data Backups", "Income Diversification", "Client Diversification"],
+      "Client Vetting": ["Identifying Red Flags", "Avoiding Scams"],
+      "Crisis Management": ["Handling Project Failures", "Client Disputes"],
+    },
+  };
 
 type TraitCategory = keyof typeof traitCategories;
 type SelectedTraits = Record<TraitCategory, Record<string, string[]>>;
@@ -163,9 +163,8 @@ function TraitPickerDialog({ onSave }: { onSave: (traits: string) => void }) {
 
     const handleSelect = (mainCategory: TraitCategory, subCategory: string, trait: string) => {
         setSelectedTraits(prev => {
-            const newSelections = { ...prev };
+            const newSelections = JSON.parse(JSON.stringify(prev)); // Deep copy to avoid mutation
             
-            // Ensure main category and subcategory exist
             if (!newSelections[mainCategory]) {
                 newSelections[mainCategory] = {};
             }
@@ -173,7 +172,7 @@ function TraitPickerDialog({ onSave }: { onSave: (traits: string) => void }) {
                 newSelections[mainCategory][subCategory] = [];
             }
 
-            const currentTraits = newSelections[mainCategory][subCategory];
+            const currentTraits: string[] = newSelections[mainCategory][subCategory];
             const isSelected = currentTraits.includes(trait);
 
             if (isSelected) {
