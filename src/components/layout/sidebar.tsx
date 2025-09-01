@@ -26,6 +26,7 @@ import {
   CreditCard,
   Home,
   Mic,
+  ListPlus,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -33,7 +34,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const menuItems = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
-  { href: "/", label: "Feed", icon: LayoutGrid },
+  { href: "/feed", label: "Feed", icon: LayoutGrid },
   { href: "/messages", label: "Messages", icon: MessageSquare },
   { href: "/discover", label: "Discover", icon: Search },
 ];
@@ -52,9 +53,13 @@ const secondaryMenuItems = [
     { href: "/billing", label: "Billing", icon: CreditCard },
 ];
 
+const waitlistItems = [
+    { href: "/", label: "Waitlist", icon: ListPlus },
+];
+
 export function AppSidebar() {
   const pathname = usePathname();
-  const isActive = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href));
+  const isActive = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href) && href !== "/");
 
   return (
     <Sidebar variant="sidebar" collapsible="icon" side="left">
@@ -137,6 +142,23 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
+        <SidebarMenu>
+            {waitlistItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.href)}
+                    tooltip={item.label}
+                    className="justify-start"
+                >
+                    <Link href={item.href}>
+                    <item.icon />
+                    <span>{item.label}</span>
+                    </Link>
+                </SidebarMenuButton>
+                </SidebarMenuItem>
+            ))}
+        </SidebarMenu>
         <SidebarMenu>
              <SidebarMenuItem>
                 <SidebarTrigger className="h-8 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full justify-start" />
