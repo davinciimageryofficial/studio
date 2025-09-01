@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2 } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -26,9 +26,10 @@ type ParticipantCardProps = {
   isCameraOn: boolean;
   isScreenSharing: boolean;
   isSpeaking: boolean;
+  showAvatars: boolean;
 }
 
-function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isScreenSharing, isSpeaking }: ParticipantCardProps) {
+function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isScreenSharing, isSpeaking, showAvatars }: ParticipantCardProps) {
   const [isMuted, setIsMuted] = useState(Math.random() > 0.5);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { toast } = useToast();
@@ -64,7 +65,7 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isSc
       ) : (
         <div className="w-full h-full flex items-center justify-center">
             <Avatar className="h-20 w-20">
-                <AvatarImage src={user.avatar} className="object-cover" />
+                {showAvatars && <AvatarImage src={user.avatar} className="object-cover" />}
                 <AvatarFallback className="text-4xl">{user.name.charAt(0)}</AvatarFallback>
             </Avatar>
         </div>
@@ -123,6 +124,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
     const [isScreenSharing, setIsScreenSharing] = useState(false);
     const [hasScreenPermission, setHasScreenPermission] = useState<boolean | null>(null);
     const [isControlsCollapsed, setIsControlsCollapsed] = useState(false);
+    const [showAvatars, setShowAvatars] = useState(true);
 
 
     const { toast } = useToast();
@@ -238,6 +240,13 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
         });
     }
 
+    const handleToggleAvatars = () => {
+        setShowAvatars(prev => !prev);
+        toast({
+            title: showAvatars ? "Profile Pictures Hidden" : "Profile Pictures Shown",
+        });
+    }
+
     const maxVisibleParticipants = 4;
     const visibleParticipants = participants.slice(0, maxVisibleParticipants);
     const hiddenParticipants = participants.slice(maxVisibleParticipants);
@@ -267,6 +276,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                             isCameraOn={isCameraOn && user.id === placeholderUsers[1].id} // Example: only my camera is on
                             isScreenSharing={isScreenSharing && user.id === placeholderUsers[1].id}
                             isSpeaking={user.id === activeSpeakerId}
+                            showAvatars={showAvatars}
                           />
                         ))}
                     </div>
@@ -278,7 +288,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                                     <Tooltip key={user.id}>
                                         <TooltipTrigger asChild>
                                             <Avatar className={cn("h-8 w-8 border-2 border-background", user.id === activeSpeakerId && "ring-2 ring-primary")}>
-                                                <AvatarImage src={user.avatar} />
+                                                {showAvatars && <AvatarImage src={user.avatar} />}
                                                 <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                                             </Avatar>
                                         </TooltipTrigger>
@@ -327,9 +337,9 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                                 <PenSquare />
                                 {!isControlsCollapsed && <span className="ml-2">Whiteboard</span>}
                             </Button>
-                            <Button className={cn("text-xs bg-black hover:bg-gray-800", !isControlsCollapsed && "flex-1 sm:flex-none")}>
-                                <Hand />
-                                {!isControlsCollapsed && <span className="ml-2">Gestures</span>}
+                             <Button onClick={handleToggleAvatars} className={cn("text-xs bg-black hover:bg-gray-800", !isControlsCollapsed && "flex-1 sm:flex-none")}>
+                                <UserX />
+                                {!isControlsCollapsed && <span className="ml-2">{showAvatars ? 'Hide Pictures' : 'Show Pictures'}</span>}
                             </Button>
                             <Dialog>
                                 <DialogTrigger asChild>
@@ -372,7 +382,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                                     <div key={user.id} className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
                                             <Avatar>
-                                                <AvatarImage src={user.avatar} />
+                                                {showAvatars && <AvatarImage src={user.avatar} />}
                                                 <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                                             </Avatar>
                                             <div>
