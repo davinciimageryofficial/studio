@@ -25,6 +25,8 @@ export function GlobalSearch() {
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isActive, setIsActive] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+
 
   const handleSearch = async (e?: React.FormEvent, suggestion?: string) => {
     e?.preventDefault();
@@ -37,7 +39,7 @@ export function GlobalSearch() {
 
     setLoading(true);
     setResult(null);
-    setIsDialogOpen(true);
+    setShowResults(true); // Show results pane
     setIsActive(false); // Close suggestions on search
 
     try {
@@ -68,28 +70,25 @@ export function GlobalSearch() {
     setQuery(suggestion);
     handleSearch(undefined, suggestion);
   };
+  
+  const searchContainerClass = showResults ? "flex-col h-full" : "";
+  const searchBarClass = showResults ? "w-full" : "w-full max-w-3xl";
 
   return (
-    <>
-      <div className="sticky top-0 z-30 w-full border-b bg-background/80 py-2 backdrop-blur-lg transition-all duration-300">
+    <div className={cn("sticky top-0 z-30 w-full border-b bg-background/80 py-2 backdrop-blur-lg transition-all duration-300", searchContainerClass)}>
         <div className="container flex items-center justify-center gap-4 px-4">
-            <div className="flex w-full max-w-3xl items-center justify-center gap-2">
+            <div className={cn("flex items-center justify-center gap-2", searchBarClass)}>
                 <form 
                     onSubmit={handleSearch} 
                     className="relative w-full"
                     onFocus={() => setIsActive(true)}
                     onBlur={(e) => {
-                      // Use relatedTarget to see if the focus is moving within the form
                       if (!e.currentTarget.contains(e.relatedTarget)) {
                         setIsActive(false);
                       }
                     }}
                     >
-                    <div
-                      className={cn(
-                        "relative w-full transition-all duration-300 ease-in-out"
-                      )}
-                    >
+                    <div className="relative w-full transition-all duration-300 ease-in-out">
                       <Input
                           placeholder="Ask AI anything..."
                           className="pl-10"
@@ -122,44 +121,39 @@ export function GlobalSearch() {
                         </div>
                     )}
                 </form>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        <Bell className="h-5 w-5" />
-                        <span className="sr-only">Notifications</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-80 bg-background/90 backdrop-blur-lg">
-                    <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {notifications.map((item, index) => (
-                      <DropdownMenuItem key={index} className="flex items-start gap-3 p-3">
-                         <Avatar className="h-9 w-9">
-                            <AvatarImage src={item.user.avatar} alt={item.user.name} />
-                            <AvatarFallback>{item.user.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                            <p className="text-sm whitespace-normal">
-                                <span className="font-semibold">{item.user.name}</span> {item.action}
-                            </p>
-                            <p className="text-xs text-muted-foreground">{item.time}</p>
-                        </div>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                {!showResults && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                          <Bell className="h-5 w-5" />
+                          <span className="sr-only">Notifications</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-80 bg-background/90 backdrop-blur-lg">
+                      <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {notifications.map((item, index) => (
+                        <DropdownMenuItem key={index} className="flex items-start gap-3 p-3">
+                          <Avatar className="h-9 w-9">
+                              <AvatarImage src={item.user.avatar} alt={item.user.name} />
+                              <AvatarFallback>{item.user.name.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                              <p className="text-sm whitespace-normal">
+                                  <span className="font-semibold">{item.user.name}</span> {item.action}
+                              </p>
+                              <p className="text-xs text-muted-foreground">{item.time}</p>
+                          </div>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
             </div>
         </div>
-      </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[625px]">
-          <DialogHeader>
-            <DialogTitle>AI Assistant</DialogTitle>
-          </DialogHeader>
-          <div className="mt-4 space-y-4">
-            <div className="font-semibold">Your question:</div>
-            <p className="p-3 rounded-md bg-muted">{query}</p>
+      {showResults && (
+        <div className="p-4 mt-4 space-y-4 overflow-y-auto flex-1">
             <div className="font-semibold">Answer:</div>
             {loading ? (
               <div className="space-y-2">
@@ -173,8 +167,33 @@ export function GlobalSearch() {
               </div>
             )}
           </div>
-        </DialogContent>
-      </Dialog>
-    </>
+      )}
+
+      {!showResults && (
+         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="sm:max-w-[625px]">
+            <DialogHeader>
+              <DialogTitle>AI Assistant</DialogTitle>
+            </DialogHeader>
+            <div className="mt-4 space-y-4">
+              <div className="font-semibold">Your question:</div>
+              <p className="p-3 rounded-md bg-muted">{query}</p>
+              <div className="font-semibold">Answer:</div>
+              {loading ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                </div>
+              ) : (
+                <div className="p-3 rounded-md bg-muted whitespace-pre-wrap">
+                  {result?.answer}
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+    </div>
   );
 }

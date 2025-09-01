@@ -1,35 +1,55 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { GlobalSearch } from "@/components/layout/global-search";
+import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 type ParticipantCardProps = {
   user: typeof placeholderUsers[0];
   isRemovable?: boolean;
   onRemove?: (id: string) => void;
+  isCameraOn: boolean;
 }
 
-function ParticipantCard({ user, isRemovable = false, onRemove }: ParticipantCardProps) {
+function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn }: ParticipantCardProps) {
   const [isMuted, setIsMuted] = useState(Math.random() > 0.5);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (isCameraOn && videoRef.current) {
+        // In a real app, you'd get the user's actual media stream.
+        // For this placeholder, we just show a black box.
+    }
+  }, [isCameraOn]);
+
 
   return (
-    <div className="relative group/participant aspect-square overflow-hidden rounded-lg">
-      <Avatar className="h-full w-full rounded-lg">
-        <AvatarImage src={user.avatar} className="object-cover" />
-        <AvatarFallback className="text-4xl">{user.name.charAt(0)}</AvatarFallback>
-      </Avatar>
+    <div className="relative group/participant aspect-video overflow-hidden rounded-lg bg-muted">
+      {isCameraOn ? (
+         <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center">
+            <Avatar className="h-20 w-20">
+                <AvatarImage src={user.avatar} className="object-cover" />
+                <AvatarFallback className="text-4xl">{user.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+        </div>
+      )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
       <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
-        <p className="truncate text-xs font-medium text-white">{user.name}</p>
+        <p className="truncate text-sm font-medium text-white">{user.name}</p>
         <Button size="icon" variant="ghost" className="h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white" onClick={() => setIsMuted(!isMuted)}>
           {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
         </Button>
@@ -51,16 +71,42 @@ function ParticipantCard({ user, isRemovable = false, onRemove }: ParticipantCar
 
 type WorkspaceTeamProps = {
     time: number;
+    isActive: boolean;
     formatTime: (seconds: number) => string;
+    onToggleTimer: () => void;
     onEndSession: () => void;
 }
 
-export function WorkspaceTeam({ time, formatTime, onEndSession }: WorkspaceTeamProps) {
+export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEndSession }: WorkspaceTeamProps) {
     const allUsers = placeholderUsers;
     const initialParticipants = allUsers.slice(0, 3);
     
     const [participants, setParticipants] = useState(initialParticipants);
+    const [isCameraOn, setIsCameraOn] = useState(false);
+    const [isRecording, setIsRecording] = useState(false);
+    const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+
     const { toast } = useToast();
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    const handleToggleCamera = async () => {
+        if (!isCameraOn) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                setHasCameraPermission(true);
+                // In a real app, you would handle the stream for each participant.
+                // We'll just enable the visual state here.
+                setIsCameraOn(true);
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                setHasCameraPermission(false);
+                setIsCameraOn(false);
+            }
+        } else {
+            setIsCameraOn(false);
+        }
+    };
+
 
     const onlineUsers = allUsers.filter(u => !participants.some(p => p.id === u.id));
 
@@ -82,9 +128,18 @@ export function WorkspaceTeam({ time, formatTime, onEndSession }: WorkspaceTeamP
         toast({ title: "Invite Link Copied!", description: "You can now share the link with your team." });
     };
 
+    const handleToggleRecording = () => {
+        const newRecordingState = !isRecording;
+        setIsRecording(newRecordingState);
+        toast({
+            title: newRecordingState ? "Recording Started" : "Recording Stopped",
+            description: newRecordingState ? "The session is now being recorded." : "The session recording has been saved.",
+        });
+    }
+
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 space-y-6">
                 <Card>
                     <CardHeader>
                     <div className="flex items-center justify-between">
@@ -96,16 +151,69 @@ export function WorkspaceTeam({ time, formatTime, onEndSession }: WorkspaceTeamP
                     </div>
                     </CardHeader>
                     <CardContent>
-                    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                         {participants.map(user => (
                           <ParticipantCard 
                             key={user.id} 
                             user={user} 
                             isRemovable={user.id !== placeholderUsers[1].id} // Can't remove self
                             onRemove={handleRemove}
+                            isCameraOn={isCameraOn && user.id === placeholderUsers[1].id} // Example: only my camera is on
                           />
                         ))}
                     </div>
+                     {hasCameraPermission === false && (
+                         <Alert variant="destructive" className="mt-4">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Camera Access Denied</AlertTitle>
+                            <AlertDescription>Please enable camera permissions in your browser settings to use this feature.</AlertDescription>
+                        </Alert>
+                    )}
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardContent className="p-2">
+                        <div className="flex justify-center flex-wrap gap-2">
+                           <Button variant="outline" onClick={onToggleTimer} className="flex-1 sm:flex-none">
+                                {isActive ? <Pause /> : <Play />}
+                                <span className="ml-2">{isActive ? 'Pause Timer' : 'Resume Timer'}</span>
+                            </Button>
+                           <Button variant={isCameraOn ? "secondary" : "outline"} onClick={handleToggleCamera} className="flex-1 sm:flex-none">
+                                {isCameraOn ? <VideoOff /> : <Video />}
+                                <span className="ml-2">{isCameraOn ? 'Turn Off Camera' : 'Use Camera'}</span>
+                            </Button>
+                           <Button variant={isRecording ? "destructive" : "outline"} onClick={handleToggleRecording} className="flex-1 sm:flex-none">
+                                <CircleDot />
+                                <span className="ml-2">{isRecording ? 'Stop Recording' : 'Record Session'}</span>
+                            </Button>
+                             <Separator orientation="vertical" className="h-10 hidden sm:block" />
+                            <Button variant="outline" className="flex-1 sm:flex-none">
+                                <PenSquare />
+                                <span className="ml-2">Whiteboard</span>
+                            </Button>
+                            <Button variant="outline" className="flex-1 sm:flex-none">
+                                <Hand />
+                                <span className="ml-2">Gestures</span>
+                            </Button>
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline" className="flex-1 sm:flex-none">
+                                        <Lightbulb />
+                                        <span className="ml-2">Pocket Guide</span>
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-4xl h-3/4 flex flex-col p-0">
+                                    <div className="p-4 border-b">
+                                       <DialogHeader>
+                                            <DialogTitle>AI Assistant</DialogTitle>
+                                        </DialogHeader>
+                                    </div>
+                                    <div className="flex-1 overflow-hidden">
+                                        <GlobalSearch />
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
                     </CardContent>
                 </Card>
             </div>

@@ -48,6 +48,10 @@ export default function WorkspacesPage() {
     setIsActive(true);
     setIsDialogOpen(false);
   };
+  
+  const handleToggleTimer = () => {
+    setIsActive(!isActive);
+  }
 
   const handleEndSession = () => {
     setIsActive(false);
@@ -60,7 +64,7 @@ export default function WorkspacesPage() {
     setTime(0);
   };
 
-  if (isActive) {
+  if (sessionType) {
     return (
       <div className="p-4 sm:p-6 md:p-8">
         {sessionType === 'solo' && (
@@ -74,19 +78,27 @@ export default function WorkspacesPage() {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="text-center">
-                 <p className="text-muted-foreground mb-4">You are in a solo session. Keep up the great work!</p>
-                 <Button size="lg" variant="destructive" onClick={handleEndSession}>
-                    End Session
-                </Button>
+              <CardContent className="text-center space-y-4">
+                 <p className="text-muted-foreground">You are in a solo session. Keep up the great work!</p>
+                  <div className="flex justify-center gap-4">
+                    <Button size="lg" onClick={handleToggleTimer}>
+                      {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
+                      {isActive ? 'Pause' : 'Resume'}
+                    </Button>
+                    <Button size="lg" variant="destructive" onClick={handleEndSession}>
+                        End Session
+                    </Button>
+                  </div>
               </CardContent>
             </Card>
         )}
         {sessionType === 'team' && (
           <WorkspaceTeam 
-            time={time} 
-            formatTime={formatTime} 
-            onEndSession={handleEndSession} 
+            time={time}
+            isActive={isActive}
+            formatTime={formatTime}
+            onToggleTimer={handleToggleTimer}
+            onEndSession={handleEndSession}
           />
         )}
       </div>
