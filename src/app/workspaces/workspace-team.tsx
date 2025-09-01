@@ -191,7 +191,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                     </div>
                     </CardHeader>
                     <CardContent>
-                    <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         {participants.map(user => (
                           <ParticipantCard 
                             key={user.id} 
@@ -323,3 +323,4 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
     
 
     
+
