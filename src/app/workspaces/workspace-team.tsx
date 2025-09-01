@@ -174,30 +174,30 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                  <Card>
                     <CardContent className="p-2">
                         <div className="flex justify-center flex-wrap gap-2">
-                           <Button variant="outline" onClick={onToggleTimer} className="flex-1 sm:flex-none">
+                           <Button onClick={onToggleTimer} className="flex-1 sm:flex-none text-xs">
                                 {isActive ? <Pause /> : <Play />}
                                 <span className="ml-2">{isActive ? 'Pause Timer' : 'Resume Timer'}</span>
                             </Button>
-                           <Button variant={isCameraOn ? "secondary" : "outline"} onClick={handleToggleCamera} className="flex-1 sm:flex-none">
+                           <Button variant={isCameraOn ? "secondary" : "default"} onClick={handleToggleCamera} className="flex-1 sm:flex-none text-xs">
                                 {isCameraOn ? <VideoOff /> : <Video />}
                                 <span className="ml-2">{isCameraOn ? 'Turn Off Camera' : 'Use Camera'}</span>
                             </Button>
-                           <Button variant={isRecording ? "destructive" : "outline"} onClick={handleToggleRecording} className="flex-1 sm:flex-none">
+                           <Button variant={isRecording ? "destructive" : "default"} onClick={handleToggleRecording} className="flex-1 sm:flex-none text-xs">
                                 <CircleDot />
                                 <span className="ml-2">{isRecording ? 'Stop Recording' : 'Record Session'}</span>
                             </Button>
                              <Separator orientation="vertical" className="h-10 hidden sm:block" />
-                            <Button variant="outline" className="flex-1 sm:flex-none">
+                            <Button className="flex-1 sm:flex-none text-xs">
                                 <PenSquare />
                                 <span className="ml-2">Whiteboard</span>
                             </Button>
-                            <Button variant="outline" className="flex-1 sm:flex-none">
+                            <Button className="flex-1 sm:flex-none text-xs">
                                 <Hand />
                                 <span className="ml-2">Gestures</span>
                             </Button>
                             <Dialog>
                                 <DialogTrigger asChild>
-                                    <Button variant="outline" className="flex-1 sm:flex-none">
+                                    <Button className="flex-1 sm:flex-none text-xs">
                                         <Lightbulb />
                                         <span className="ml-2">Pocket Guide</span>
                                     </Button>
