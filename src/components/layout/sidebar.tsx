@@ -36,11 +36,17 @@ const menuItems = [
   { href: "/", label: "Feed", icon: LayoutGrid },
   { href: "/messages", label: "Messages", icon: MessageSquare },
   { href: "/discover", label: "Discover", icon: Search },
-  { href: "/workspaces", label: "Workspaces", icon: Mic },
-  { href: "/workmate-radar", label: "Workmate Radar", icon: Radar },
-  { href: "/news", label: "News", icon: Newspaper },
-  { href: "/connect", label: "Courses", icon: Book },
 ];
+
+const productivityItems = [
+    { href: "/workspaces", label: "Workspaces", icon: Mic },
+    { href: "/workmate-radar", label: "Workmate Radar", icon: Radar },
+];
+
+const contentItems = [
+    { href: "/news", label: "News", icon: Newspaper },
+    { href: "/connect", label: "Courses", icon: Book },
+]
 
 const secondaryMenuItems = [
     { href: "/billing", label: "Billing", icon: CreditCard },
@@ -77,6 +83,42 @@ export function AppSidebar() {
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
+        </SidebarMenu>
+        <SidebarMenu>
+             {productivityItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.href)}
+                    tooltip={item.label}
+                    className="justify-start"
+                >
+                    <Link href={item.href}>
+                    <item.icon />
+                    <span>{item.label}</span>
+                    </Link>
+                </SidebarMenuButton>
+                </SidebarMenuItem>
+            ))}
+        </SidebarMenu>
+         <SidebarMenu>
+             {contentItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.href)}
+                    tooltip={item.label}
+                    className="justify-start"
+                >
+                    <Link href={item.href}>
+                    <item.icon />
+                    <span>{item.label}</span>
+                    </Link>
+                </SidebarMenuButton>
+                </SidebarMenuItem>
+            ))}
+        </SidebarMenu>
+        <SidebarMenu>
           {secondaryMenuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
@@ -96,7 +138,7 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-            <SidebarMenuItem>
+             <SidebarMenuItem>
                 <SidebarTrigger className="h-8 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full justify-start" />
             </SidebarMenuItem>
             <SidebarMenuItem>
