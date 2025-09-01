@@ -144,15 +144,15 @@ export default function WorkspacesPage() {
                             <DialogTitle>Choose your workspace</DialogTitle>
                         </DialogHeader>
                         <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2">
-                            <Button variant="outline" className="h-auto flex-col gap-2 p-6" onClick={() => handleStart('solo')}>
+                            <Button variant="outline" className="h-auto flex flex-col items-center justify-start text-center gap-2 p-6" onClick={() => handleStart('solo')}>
                                 <Users className="h-8 w-8" />
                                 <span className="font-semibold">Start Solo Session</span>
-                                <span className="text-xs text-muted-foreground">Work by yourself in a focused environment.</span>
+                                <span className="text-xs text-muted-foreground font-normal normal-case text-balance">Work by yourself in a focused environment.</span>
                             </Button>
-                             <Button variant="outline" className="h-auto flex-col gap-2 p-6" onClick={() => handleStart('team')}>
+                             <Button variant="outline" className="h-auto flex flex-col items-center justify-start text-center gap-2 p-6" onClick={() => handleStart('team')}>
                                 <Users className="h-8 w-8" />
                                 <span className="font-semibold">Create Team Workspace</span>
-                                <span className="text-xs text-muted-foreground">Invite colleagues to collaborate in real-time.</span>
+                                <span className="text-xs text-muted-foreground font-normal normal-case text-balance">Invite colleagues to collaborate in real-time.</span>
                             </Button>
                         </div>
                     </DialogContent>
