@@ -259,7 +259,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                                     </div>
                                 </DialogContent>
                             </Dialog>
-                             <Button variant="outline" size="icon" onClick={() => setIsControlsCollapsed(!isControlsCollapsed)} className="h-auto">
+                             <Button size="icon" onClick={() => setIsControlsCollapsed(!isControlsCollapsed)} className="h-auto bg-black hover:bg-gray-800">
                                 {isControlsCollapsed ? <PanelRight /> : <PanelLeft />}
                             </Button>
                         </div>
