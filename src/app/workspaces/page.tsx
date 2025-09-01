@@ -21,36 +21,12 @@ const formatTime = (seconds: number) => {
 
 type SessionType = "solo" | "team" | null;
 
-function FlowStateOverlay({ isVisible, isFadingOut }: { isVisible: boolean, isFadingOut: boolean }) {
-    if (!isVisible) return null;
-    return (
-        <div 
-            className={cn(
-                "fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm",
-                isFadingOut ? 'fade-out' : 'fade-in'
-            )}
-        >
-            <div className={cn(
-                "rounded-lg bg-background p-8 shadow-2xl border text-center",
-                isFadingOut ? 'animate-out fade-out-0 zoom-out-95' : 'animate-in fade-in-0 zoom-in-95'
-            )}>
-                 <h2 className="text-2xl font-bold tracking-widest text-primary animate-pulse">
-                    FLOW STATE
-                </h2>
-                <p className="text-muted-foreground">CONFIRMED</p>
-            </div>
-        </div>
-    );
-}
-
 export default function WorkspacesPage() {
   const [time, setTime] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [sessionType, setSessionType] = useState<SessionType>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isFlowStateVisible, setIsFlowStateVisible] = useState(false);
-  const [isFlowStateFadingOut, setIsFlowStateFadingOut] = useState(false);
-
+  const [isStartingFlow, setIsStartingFlow] = useState(false);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const onlineUsers = placeholderUsers.slice(0, 5);
@@ -74,19 +50,15 @@ export default function WorkspacesPage() {
 
   const handleStart = (type: SessionType) => {
     if (type === 'solo') {
-        setIsFlowStateVisible(true);
-        setIsFlowStateFadingOut(false);
-
+        setIsStartingFlow(true);
         setTimeout(() => {
-            setIsFlowStateFadingOut(true);
-        }, 1500); // Start fading out after 1.5s
-
-        setTimeout(() => {
-            setIsFlowStateVisible(false);
-        }, 2000); // Remove from DOM after 2s total
+            setIsStartingFlow(false);
+            setIsActive(true);
+        }, 2000); // Duration of the "Flow State" message
+    } else {
+        setIsActive(true);
     }
     setSessionType(type);
-    setIsActive(true);
     setIsDialogOpen(false);
   };
   
@@ -109,8 +81,7 @@ export default function WorkspacesPage() {
 
   return (
     <div className="relative h-full min-h-screen">
-      <FlowStateOverlay isVisible={isFlowStateVisible} isFadingOut={isFlowStateFadingOut} />
-      <div className={cn("p-4 sm:p-6 md:p-8", isFlowStateVisible && "blur-sm")}>
+      <div className="p-4 sm:p-6 md:p-8">
         {sessionType === 'solo' && (
            <Card>
               <CardHeader className="text-center">
@@ -118,25 +89,38 @@ export default function WorkspacesPage() {
                 <CardDescription>You are in a solo session. Keep up the great work!</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col items-center justify-center gap-8 p-12">
-                  <div className="w-full space-y-4">
-                    <div className="font-mono text-8xl font-bold tracking-tighter text-center">
-                        {formatTime(time)}
-                    </div>
-                    <Progress value={progressValue} />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>00:00:00</span>
-                        <span>1:00:00</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-center gap-4">
-                    <Button size="lg" onClick={handleToggleTimer}>
-                      {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
-                      {isActive ? 'Pause' : 'Resume'}
-                    </Button>
-                    <Button size="lg" variant="destructive" onClick={handleEndSession}>
-                        End Session
-                    </Button>
-                  </div>
+                  {isStartingFlow ? (
+                        <div className="text-center animate-in fade-in-0 zoom-in-95 duration-500">
+                             <h2 className="text-2xl font-bold tracking-widest text-primary animate-pulse">
+                                FLOW STATE
+                            </h2>
+                            <p className="text-muted-foreground">CONFIRMED</p>
+                        </div>
+                  ) : (
+                    <>
+                        <div className="w-full space-y-4">
+                            <div className="font-mono text-8xl font-bold tracking-tighter text-center">
+                                {formatTime(time)}
+                            </div>
+                            <div className="w-full">
+                                <Progress value={progressValue} />
+                                <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                                    <span>00:00:00</span>
+                                    <span>1:00:00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex justify-center gap-4">
+                            <Button size="lg" onClick={handleToggleTimer}>
+                            {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
+                            {isActive ? 'Pause' : 'Resume'}
+                            </Button>
+                            <Button size="lg" variant="destructive" onClick={handleEndSession}>
+                                End Session
+                            </Button>
+                        </div>
+                    </>
+                  )}
               </CardContent>
             </Card>
         )}
