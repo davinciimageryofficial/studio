@@ -41,23 +41,27 @@ import { ClientOnly } from "@/components/layout/client-only";
 
 export default function FeedPage() {
   return (
-    <ClientOnly>
       <div className="flex h-full min-h-screen">
         <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
           <div className="mx-auto max-w-2xl">
-            <CreatePostCard />
+            <ClientOnly>
+                <CreatePostCard />
+            </ClientOnly>
             <div className="mt-6 space-y-6">
               {placeholderPosts.map((post) => (
-                <PostCard key={post.id} post={post} />
+                <ClientOnly key={post.id}>
+                    <PostCard post={post} />
+                </ClientOnly>
               ))}
             </div>
           </div>
         </main>
         <aside className="hidden w-80 flex-col border-l p-6 lg:flex">
-          <ConversationStarters />
+            <ClientOnly>
+              <ConversationStarters />
+            </ClientOnly>
         </aside>
       </div>
-    </ClientOnly>
   );
 }
 
