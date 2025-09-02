@@ -256,7 +256,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-6">
                 <Card className="flex flex-col">
-                    <CardHeader>
+                    <CardHeader className="p-4">
                     <div className="flex items-center justify-between">
                         <CardTitle>Team Workspace</CardTitle>
                         <div className="flex items-center gap-2 font-mono text-lg font-bold">
