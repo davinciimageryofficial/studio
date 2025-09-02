@@ -96,4 +96,10 @@ body {
             transform: rotate(1turn) translateX(150px) rotate(-1turn);
         }
     }
+    @keyframes ping {
+      75%, 100% {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    }
 }
