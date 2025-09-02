@@ -6,37 +6,41 @@ import { ClientOnly } from "@/components/layout/client-only";
 export default function WorkmateRadarPage() {
   return (
     <div>
-      <header className="relative flex h-screen flex-col items-center justify-center gap-12 overflow-hidden">
-          {/* Radar Animation */}
-          <div className="relative flex h-80 w-80 items-center justify-center">
-              {/* Radar Pings */}
-              <div className="absolute h-full w-full rounded-full bg-primary/5 animate-ping [animation-duration:3s] [animation-delay:0s]"></div>
-              <div className="absolute h-[calc(100%-40px)] w-[calc(100%-40px)] rounded-full bg-primary/5 animate-ping [animation-duration:3s] [animation-delay:0.5s]"></div>
-              <div className="absolute h-[calc(100%-80px)] w-[calc(100%-80px)] rounded-full bg-primary/5 animate-ping [animation-duration:3s] [animation-delay:1s]"></div>
-              
-              {/* Radar Static Rings */}
-              <div className="absolute h-20 w-20 rounded-full border-2 border-dashed border-primary/20"></div>
-              <div className="absolute h-40 w-40 rounded-full border-2 border-dashed border-primary/20"></div>
-              <div className="absolute h-60 w-60 rounded-full border-2 border-dashed border-primary/20"></div>
-              <div className="absolute h-80 w-80 rounded-full border-2 border-dashed border-primary/20"></div>
-              
-              {/* Center Dot */}
-              <div className="h-4 w-4 rounded-full bg-primary shadow-lg"></div>
-          </div>
+      <header className="relative flex min-h-screen flex-col items-center justify-center gap-12 overflow-hidden bg-background p-4">
+        {/* New Orbital Animation */}
+        <div className="relative flex h-80 w-80 items-center justify-center">
+            {/* Center */}
+            <div className="absolute grid h-24 w-24 place-content-center rounded-full bg-primary/5 text-primary">
+                <div className="h-12 w-12 rounded-full bg-primary/10"></div>
+            </div>
+
+            {/* Orbiting Dots */}
+            <div className="absolute h-full w-full animate-[spin-slow_20s_linear_infinite]">
+                <div className="absolute left-1/2 top-0 h-4 w-4 -translate-x-1/2 rounded-full bg-primary"></div>
+            </div>
+            <div className="absolute h-full w-full animate-[spin-medium_15s_linear_infinite]">
+                 <div className="absolute right-1/2 top-full h-3 w-3 -translate-y-1/2 rounded-full bg-primary/80"></div>
+            </div>
+            <div className="absolute h-2/3 w-2/3 animate-[spin-medium_10s_linear_infinite]">
+                 <div className="absolute left-0 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-primary/60"></div>
+            </div>
+             <div className="absolute h-1/2 w-1/2 animate-[spin-slow_8s_linear_infinite]">
+                 <div className="absolute right-0 top-1/2 h-1 w-1 -translate-y-1/2 rounded-full bg-primary/40"></div>
+            </div>
+        </div>
           
-          {/* Page Title */}
-          <div className="relative text-center">
+        {/* Page Title */}
+        <div className="relative text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">AI Workmate Radar</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Let our AI help you build your dream team.
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
+                Let our AI help you build your dream team. Describe your ideal workmate and we&apos;ll find the best matches.
             </p>
-             <p className="text-muted-foreground">Describe your ideal workmate and we&apos;ll find the best matches.</p>
-          </div>
+        </div>
       </header>
 
-      <div className="p-4 sm:p-6 md:p-8">
-        <div className="mx-auto max-w-4xl -mt-32">
-          <Card>
+      <div className="p-4 sm:p-6 md:p-8 -mt-48">
+        <div className="mx-auto max-w-4xl">
+          <Card className="shadow-2xl">
             <CardHeader>
               <CardTitle>Find Your Team</CardTitle>
               <CardDescription>Fill out the form below to get AI-powered suggestions.</CardDescription>
