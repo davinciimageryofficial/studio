@@ -65,8 +65,8 @@ export default function ProfilePage() {
             />
         </div>
         <CardContent className="p-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row items-center sm:items-end sm:gap-6 -mt-16 sm:-mt-20">
-                <Avatar className="h-28 w-28 md:h-32 md:w-32 border-4 border-card">
+            <div className="flex flex-col items-center sm:flex-row sm:items-end sm:gap-6 -mt-16">
+                <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-card flex-shrink-0">
                   <AvatarImage src={user.avatar} />
                   <AvatarFallback className="text-5xl">{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
@@ -326,5 +326,3 @@ function EditExperienceDialog({ initialExperiences, onSave }: { initialExperienc
         </Dialog>
     )
 }
-
-    
