@@ -11,9 +11,9 @@ export default function WorkmateRadarPage() {
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <div className="relative flex h-80 w-80 items-center justify-center">
                   {/* Radar Pings */}
-                  <div className="absolute h-full w-full rounded-full bg-primary/5 animate-ping [animation-duration:2s] [animation-delay:0s]"></div>
-                  <div className="absolute h-full w-full rounded-full bg-primary/5 animate-ping [animation-duration:2s] [animation-delay:0.5s]"></div>
-                  <div className="absolute h-full w-full rounded-full bg-primary/5 animate-ping [animation-duration:2s] [animation-delay:1s]"></div>
+                  <div className="absolute h-full w-full rounded-full bg-primary/5 animate-ping [animation-duration:3s] [animation-delay:0s]"></div>
+                  <div className="absolute h-[calc(100%-40px)] w-[calc(100%-40px)] rounded-full bg-primary/5 animate-ping [animation-duration:3s] [animation-delay:0.5s]"></div>
+                  <div className="absolute h-[calc(100%-80px)] w-[calc(100%-80px)] rounded-full bg-primary/5 animate-ping [animation-duration:3s] [animation-delay:1s]"></div>
                   
                   {/* Radar Static Rings */}
                   <div className="absolute h-20 w-20 rounded-full border-2 border-dashed border-primary/20"></div>
