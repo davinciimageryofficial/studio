@@ -78,7 +78,7 @@ export default function ProfilePage() {
               data-ai-hint="abstract landscape"
             />
         </div>
-        <CardContent className="p-4 py-8 sm:p-6 sm:py-12">
+        <CardContent className="p-4 py-12 sm:p-6 sm:py-16">
             <div className="flex flex-col items-center sm:flex-row sm:items-end sm:gap-6 -mt-20 sm:-mt-24">
                 <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-card flex-shrink-0">
                   <AvatarImage src={user.avatar} />
