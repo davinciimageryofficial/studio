@@ -10,7 +10,7 @@ import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Tra
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -435,10 +435,27 @@ function EditExperienceDialog({ initialExperiences, onSave }: { initialExperienc
 
 function EditImageDialog({ currentImage, onSave, triggerButton }: { currentImage: string, onSave: (newUrl: string) => void, triggerButton: React.ReactNode }) {
     const [imageUrl, setImageUrl] = useState(currentImage);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleSave = () => {
         onSave(imageUrl);
     };
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImageUrl(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleUploadClick = () => {
+        fileInputRef.current?.click();
+    };
+
 
     return (
         <Dialog>
@@ -448,16 +465,34 @@ function EditImageDialog({ currentImage, onSave, triggerButton }: { currentImage
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Edit Image</DialogTitle>
-                    <DialogDescription>Paste a new image URL below to update your picture.</DialogDescription>
+                    <DialogDescription>Update your picture by uploading a new file or pasting an image URL.</DialogDescription>
                 </DialogHeader>
                 <div className="py-4 space-y-4">
                     <div className="w-full aspect-square relative rounded-md overflow-hidden bg-muted">
                         <Image src={imageUrl} alt="Image Preview" fill className="object-cover"/>
                     </div>
-                    <div className="space-y-2">
+                     <div className="space-y-2">
                         <Label htmlFor="imageUrl">Image URL</Label>
                         <Input id="imageUrl" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
                     </div>
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-background px-2 text-muted-foreground">OR</span>
+                        </div>
+                    </div>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        className="hidden"
+                        accept="image/*"
+                    />
+                    <Button variant="outline" className="w-full" onClick={handleUploadClick}>
+                        Upload from device
+                    </Button>
                 </div>
                 <DialogFooter>
                     <DialogClose asChild>
