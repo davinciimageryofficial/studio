@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X } from "lucide-react";
+import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
@@ -14,6 +14,8 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 
 type Experience = {
     title: string;
@@ -50,121 +52,132 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="bg-muted/40">
-      {/* Cover Image */}
-      <div className="relative h-48 w-full md:h-56">
-        <Image
-          src={user.coverImage}
-          alt={`${user.name}'s cover image`}
-          fill
-          className="object-cover"
-          data-ai-hint="abstract landscape"
-        />
-        <div className="absolute inset-0 bg-black/20" />
-      </div>
-
-      <div className="p-4 sm:p-6 md:p-8">
-        <div className="mx-auto max-w-6xl">
-          {/* Profile Header */}
-          <div className="relative -mt-20 flex flex-col items-center gap-4 border-b border-border bg-card p-6 pb-6 sm:flex-row sm:items-end sm:gap-6 md:-mt-24 rounded-t-lg">
-            <Avatar className="h-32 w-32 border-4 border-card md:h-36 md:w-36">
-              <AvatarImage src={user.avatar} />
-              <AvatarFallback className="text-5xl">{user.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 text-center sm:text-left">
-              <h1 className="text-2xl font-bold md:text-3xl">{user.name}</h1>
-              <p className="text-muted-foreground">{user.headline}</p>
-              <div className="mt-2 flex items-center justify-center gap-4 text-sm text-muted-foreground sm:justify-start">
-                  <div className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      <span>San Francisco, CA</span>
-                  </div>
-                   <div className="flex items-center gap-1">
-                      <LinkIcon className="h-4 w-4" />
-                      <a href="#" className="hover:underline">website.com</a>
-                  </div>
-              </div>
-            </div>
-            <div className="mt-4 flex w-full flex-shrink-0 gap-2 sm:mt-0 sm:w-auto">
-              <Button className="flex-1">
-                <CheckCircle className="mr-2 h-4 w-4" /> Connect
-              </Button>
-              <Button variant="outline" className="flex-1">
-                <Mail className="mr-2 h-4 w-4" /> Message
-              </Button>
-            </div>
-          </div>
-          
-          <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
-            {/* Left Column */}
-            <div className="space-y-8 lg:col-span-2">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>About</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-muted-foreground">{user.bio}</p>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Portfolio</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                            {user.portfolio.map((item, index) => (
-                                <Link href="#" key={index} className="group relative block w-full aspect-video overflow-hidden rounded-lg">
-                                    <Image src={item} alt={`Portfolio item ${index+1}`} fill className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint="design abstract" />
-                                    <div className="absolute inset-0 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100" />
-                                </Link>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-            {/* Right Column */}
-            <div className="space-y-8">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle>Skills</CardTitle>
-                        {isMyProfile && (
-                            <EditSkillsDialog initialSkills={skills} onSave={handleSaveSkills} />
-                        )}
-                    </CardHeader>
-                    <CardContent className="flex flex-wrap gap-2">
-                        {skills.map(skill => (
-                            <Badge key={skill} variant="secondary" className="text-sm">{skill}</Badge>
-                        ))}
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle>Experience</CardTitle>
-                        {isMyProfile && (
-                            <EditExperienceDialog initialExperiences={experiences} onSave={handleSaveExperience} />
-                        )}
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        {experiences.map((exp, index) => (
-                            <div key={index} className="flex gap-4">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
-                                    <Briefcase className="h-6 w-6 text-muted-foreground" />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold">{exp.title}</h3>
-                                    <p className="text-sm text-muted-foreground">{exp.company}</p>
-                                    <p className="text-xs text-muted-foreground">{exp.duration}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </CardContent>
-                </Card>
-            </div>
-          </div>
+    <div className="bg-muted/40 min-h-screen">
+      {/* Profile Header */}
+      <Card className="rounded-none">
+        <div className="relative h-40 w-full md:h-48">
+            <Image
+              src={user.coverImage}
+              alt={`${user.name}'s cover image`}
+              fill
+              className="object-cover"
+              data-ai-hint="abstract landscape"
+            />
         </div>
-      </div>
+        <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-center sm:items-end sm:gap-6 -mt-16 sm:-mt-20">
+                <Avatar className="h-28 w-28 md:h-32 md:w-32 border-4 border-card">
+                  <AvatarImage src={user.avatar} />
+                  <AvatarFallback className="text-5xl">{user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 mt-4 sm:mt-0 text-center sm:text-left">
+                  <h1 className="text-2xl font-bold md:text-3xl">{user.name}</h1>
+                  <p className="text-muted-foreground">{user.headline}</p>
+                  <div className="mt-2 flex items-center justify-center gap-4 text-sm text-muted-foreground sm:justify-start">
+                      <div className="flex items-center gap-1">
+                          <MapPin className="h-4 w-4" />
+                          <span>San Francisco, CA</span>
+                      </div>
+                       <div className="flex items-center gap-1">
+                          <LinkIcon className="h-4 w-4" />
+                          <a href="#" className="hover:underline">website.com</a>
+                      </div>
+                  </div>
+                </div>
+                <div className="mt-4 flex w-full flex-shrink-0 gap-2 sm:mt-0 sm:w-auto">
+                  <Button className="flex-1">
+                    <CheckCircle className="mr-2 h-4 w-4" /> Connect
+                  </Button>
+                  <Button variant="outline" className="flex-1">
+                    <Mail className="mr-2 h-4 w-4" /> Message
+                  </Button>
+                </div>
+            </div>
+        </CardContent>
+      </Card>
+      
+      {/* Content Tabs */}
+       <div className="p-4 sm:p-6 md:p-8">
+            <Tabs defaultValue="overview" className="w-full">
+              <TabsList className="grid w-full grid-cols-3 max-w-2xl mx-auto">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="experience">Experience</TabsTrigger>
+                <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
+              </TabsList>
+              
+              <div className="max-w-4xl mx-auto mt-6">
+                <TabsContent value="overview">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="lg:col-span-2 space-y-8">
+                            <Card>
+                                <CardHeader><CardTitle>About</CardTitle></CardHeader>
+                                <CardContent><p className="text-muted-foreground whitespace-pre-line">{user.bio}</p></CardContent>
+                            </Card>
+                        </div>
+                        <div className="space-y-8">
+                            <Card>
+                                <CardHeader className="flex flex-row items-center justify-between">
+                                    <CardTitle>Skills</CardTitle>
+                                    {isMyProfile && (
+                                        <EditSkillsDialog initialSkills={skills} onSave={handleSaveSkills} />
+                                    )}
+                                </CardHeader>
+                                <CardContent className="flex flex-wrap gap-2">
+                                    {skills.map(skill => (
+                                        <Badge key={skill} variant="secondary" className="text-sm">{skill}</Badge>
+                                    ))}
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </TabsContent>
+                
+                <TabsContent value="experience">
+                   <Card>
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <CardTitle>Work Experience</CardTitle>
+                            {isMyProfile && (
+                                <EditExperienceDialog initialExperiences={experiences} onSave={handleSaveExperience} />
+                            )}
+                        </CardHeader>
+                        <CardContent>
+                            <div className="relative pl-6">
+                                <div className="absolute left-6 top-0 bottom-0 w-px bg-border"></div>
+                                {experiences.map((exp, index) => (
+                                    <div key={index} className="relative flex gap-6 pb-8 last:pb-0">
+                                        <div className="absolute -left-1.5 top-1.5 h-3 w-3 rounded-full bg-primary"></div>
+                                        <div>
+                                            <h3 className="font-semibold">{exp.title}</h3>
+                                            <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                                                <div className="flex items-center gap-1.5"><Building className="h-4 w-4" /> <span>{exp.company}</span></div>
+                                                <div className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> <span>{exp.duration}</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="portfolio">
+                     <Card>
+                        <CardHeader><CardTitle>Portfolio</CardTitle></CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                {user.portfolio.map((item, index) => (
+                                    <Link href="#" key={index} className="group relative block w-full aspect-video overflow-hidden rounded-lg">
+                                        <Image src={item} alt={`Portfolio item ${index+1}`} fill className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint="design abstract" />
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100" />
+                                    </Link>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+              </div>
+            </Tabs>
+        </div>
     </div>
   );
 }
@@ -313,3 +326,5 @@ function EditExperienceDialog({ initialExperiences, onSave }: { initialExperienc
         </Dialog>
     )
 }
+
+    
