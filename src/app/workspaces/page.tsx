@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon } from "lucide-react";
+import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, CheckCircle, Award } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { WorkspaceTeam } from "./workspace-team";
 import { Progress } from "@/components/ui/progress";
@@ -27,6 +27,9 @@ export default function WorkspacesPage() {
   const [sessionType, setSessionType] = useState<SessionType>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isStartingFlow, setIsStartingFlow] = useState(false);
+  const [monthlyFlowHours, setMonthlyFlowHours] = useState(25.5); // Example starting hours
+  const monthlyGoal = 50;
+
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const onlineUsers = placeholderUsers.slice(0, 5);
@@ -67,6 +70,9 @@ export default function WorkspacesPage() {
   }
 
   const handleEndSession = () => {
+    // In a real app, you would save the session time to the user's total
+    const sessionHours = time / 3600;
+    setMonthlyFlowHours(prev => prev + sessionHours);
     setIsActive(false);
     setSessionType(null);
     setTime(0);
@@ -77,7 +83,10 @@ export default function WorkspacesPage() {
     setTime(0);
   };
 
-  const progressValue = (time / 3600) * 100; // Calculate progress towards one hour
+  const hourlyProgressValue = (time / 3600) * 100; // Calculate progress towards one hour
+  const monthlyProgressValue = (monthlyFlowHours / monthlyGoal) * 100;
+  const hasReachedGoal = monthlyFlowHours >= monthlyGoal;
+
 
   return (
     <div className="relative h-full min-h-screen">
@@ -98,19 +107,43 @@ export default function WorkspacesPage() {
                         </div>
                   ) : (
                     <>
-                        <div className="w-full max-w-full space-y-4">
+                        <div className="w-full max-w-full space-y-6">
                             <div className="font-mono text-8xl font-bold tracking-tighter text-center">
                                 {formatTime(time)}
                             </div>
                             <div className="w-full">
-                                <Progress value={progressValue} />
+                                <Progress value={hourlyProgressValue} />
                                 <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                                    <span>00:00:00</span>
+                                    <span>Session Goal</span>
                                     <span>1:00:00</span>
                                 </div>
                             </div>
+                            
+                            {/* Monthly Reward Tracker */}
+                            <div className="w-full pt-4 space-y-3">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2 text-muted-foreground">
+                                    <Award className="h-5 w-5" />
+                                    <span className="font-medium">Monthly Flow Reward</span>
+                                  </div>
+                                   <span className="text-sm font-bold">{monthlyFlowHours.toFixed(1)} / {monthlyGoal} hrs</span>
+                                </div>
+                                {hasReachedGoal ? (
+                                    <div className="flex items-center gap-2 rounded-md border border-green-500 bg-green-500/10 p-3 text-sm font-semibold text-green-700 dark:text-green-400">
+                                        <CheckCircle className="h-5 w-5" />
+                                        <span>Congratulations! You've earned a discount for next month.</span>
+                                    </div>
+                                ) : (
+                                   <Progress value={monthlyProgressValue} />
+                                )}
+                                <p className="text-xs text-muted-foreground">
+                                    Reach {monthlyGoal} hours of "flow state" per month to get a discount on your subscription.
+                                </p>
+                            </div>
                         </div>
-                        <div className="flex justify-center gap-4">
+
+
+                        <div className="flex justify-center gap-4 mt-4">
                             <Button size="lg" onClick={handleToggleTimer}>
                             {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
                             {isActive ? 'Pause' : 'Resume'}
@@ -242,3 +275,5 @@ export default function WorkspacesPage() {
     </div>
   );
 }
+
+    
