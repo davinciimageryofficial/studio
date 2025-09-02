@@ -19,6 +19,7 @@ import {
   Sparkles,
   AlertCircle,
   Briefcase,
+  Bot,
 } from "lucide-react";
 import Image from "next/image";
 import { ConversationStarters } from "../conversation-starters";
@@ -33,22 +34,38 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { analyzePost, AnalyzePostOutput } from "@/ai/flows/post-analyzer";
+import { generatePost, PostGeneratorOutput } from "@/ai/flows/post-generator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { ClientOnly } from "@/components/layout/client-only";
 
+type Post = (typeof placeholderPosts)[0];
+
 export default function FeedPage() {
+    const [posts, setPosts] = useState<Post[]>(placeholderPosts);
+    
+    const addPost = (newPostData: PostGeneratorOutput) => {
+        const author = placeholderUsers.find(u => u.id === newPostData.authorId);
+        if (author) {
+            const newPost: Post = {
+                ...newPostData,
+                author,
+            };
+            setPosts(prevPosts => [newPost, ...prevPosts]);
+        }
+    };
+
   return (
       <div className="flex h-full min-h-screen">
         <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
           <div className="mx-auto max-w-2xl">
             <ClientOnly>
-                <CreatePostCard />
+                <CreatePostCard onPostGenerated={addPost} />
             </ClientOnly>
             <div className="mt-6 space-y-6">
-              {placeholderPosts.map((post) => (
+              {posts.map((post) => (
                 <ClientOnly key={post.id}>
                     <PostCard post={post} />
                 </ClientOnly>
@@ -65,11 +82,11 @@ export default function FeedPage() {
   );
 }
 
-function CreatePostCard() {
+function CreatePostCard({ onPostGenerated }: { onPostGenerated: (post: PostGeneratorOutput) => void }) {
   const [postContent, setPostContent] = useState("");
-  const [analysisResult, setAnalysisResult] =
-    useState<AnalyzePostOutput | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<AnalyzePostOutput | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleAnalyze = async () => {
@@ -77,7 +94,7 @@ function CreatePostCard() {
       setError("Please write something before analyzing.");
       return;
     }
-    setLoading(true);
+    setIsAnalyzing(true);
     setError(null);
     setAnalysisResult(null);
 
@@ -98,9 +115,26 @@ function CreatePostCard() {
       console.error(e);
       setError("Failed to analyze the post. Please try again.");
     } finally {
-      setLoading(false);
+      setIsAnalyzing(false);
     }
   };
+
+  const handleGenerate = async () => {
+    setIsGenerating(true);
+    setError(null);
+    try {
+        // For simplicity, we'll randomly pick a persona.
+        const personas = ["developer", "designer", "writer"] as const;
+        const randomPersona = personas[Math.floor(Math.random() * personas.length)];
+        const result = await generatePost({ persona: randomPersona });
+        onPostGenerated(result);
+    } catch(e) {
+        console.error(e);
+        setError("Failed to generate a post. Please try again.");
+    } finally {
+        setIsGenerating(false);
+    }
+  }
 
   return (
     <Card>
@@ -128,17 +162,17 @@ function CreatePostCard() {
                       variant="ghost"
                       size="sm"
                       onClick={handleAnalyze}
-                      disabled={!postContent.trim()}
+                      disabled={!postContent.trim() || isAnalyzing}
                     >
                       <Sparkles className="mr-2 h-4 w-4" />
-                      Analyze Post
+                      {isAnalyzing ? "Analyzing..." : "Analyze Post"}
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                       <DialogTitle>AI Post Analysis</DialogTitle>
                     </DialogHeader>
-                    {loading && (
+                    {isAnalyzing && (
                       <div className="space-y-4 py-4">
                         <Skeleton className="h-4 w-1/3" />
                         <Skeleton className="h-8 w-full" />
@@ -192,6 +226,15 @@ function CreatePostCard() {
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleGenerate}
+                    disabled={isGenerating}
+                >
+                    <Bot className="mr-2 h-4 w-4" />
+                    {isGenerating ? "Generating..." : "Generate Post"}
+                </Button>
               </div>
 
               <Button>Post</Button>
@@ -203,7 +246,7 @@ function CreatePostCard() {
   );
 }
 
-function PostCard({ post }: { post: (typeof placeholderPosts)[0] }) {
+function PostCard({ post }: { post: Post }) {
     const author = post.author;
   return (
     <Card>
