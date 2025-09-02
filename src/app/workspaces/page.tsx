@@ -35,15 +35,20 @@ export default function WorkspacesPage() {
 
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const startTimeRef = useRef(0);
   const onlineUsers = placeholderUsers.slice(0, 5);
   
   useEffect(() => {
     if (isActive) {
+      startTimeRef.current = Date.now() - (time * 1000);
       timerRef.current = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
+        setTime(Math.round((Date.now() - startTimeRef.current) / 1000));
       }, 1000);
-    } else if (timerRef.current) {
-      clearInterval(timerRef.current);
+    } else {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     }
 
     return () => {
