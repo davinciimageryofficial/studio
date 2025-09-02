@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -47,7 +48,7 @@ User Profile: {{{userProfile}}}
 Categorization: {{{categorization}}}
 Team Size: {{{teamSize}}}
 
-Ensure that the suggested members align with the specified categorization and complement the user's skills and experience. Consider factors such as expertise, availability, and compatibility.
+Ensure that the suggested members align with the specified categorization and complement the user's skills and experience. Consider factors such as expertise, availability, and compatibility. For each suggested member, provide a realistic name, a match score between 70 and 95, a list of 3-5 relevant skills, and a compelling, one-sentence bio that highlights their expertise.
 
 Output a JSON array of suggested team members, including their profile ID, name, match score, skills, and a short bio.
 `, 
