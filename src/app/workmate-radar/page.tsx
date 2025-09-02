@@ -38,7 +38,7 @@ export default function WorkmateRadarPage() {
         </div>
       </header>
 
-      <div className="p-4 sm:p-6 md:p-8 -mt-48">
+      <div className="p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-4xl">
           <Card className="shadow-2xl">
             <CardHeader>
