@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, CheckCircle, Award } from "lucide-react";
+import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, CheckCircle, Award, ArrowUp } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { WorkspaceTeam } from "./workspace-team";
 import { Progress } from "@/components/ui/progress";
@@ -190,7 +190,7 @@ export default function WorkspacesPage() {
                                 className="absolute bottom-4 right-4 text-muted-foreground hover:bg-muted"
                                 onClick={() => setIsRewardSectionVisible(!isRewardSectionVisible)}
                             >
-                                <Award className="h-5 w-5" />
+                                <ArrowUp className="h-5 w-5" />
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent>
