@@ -84,10 +84,10 @@ export default function ProfilePage() {
                   <AvatarImage src={user.avatar} />
                   <AvatarFallback className="text-5xl">{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <div className="flex-1 mt-4 sm:mt-0 text-center sm:text-left">
+                <div className="flex-1 mt-4 sm:mt-0 text-center">
                   <h1 className="text-2xl font-bold md:text-3xl">{user.name}</h1>
                   <p className="text-muted-foreground">{user.headline}</p>
-                  <div className="mt-2 flex items-center justify-center gap-4 text-sm text-muted-foreground sm:justify-start">
+                  <div className="mt-2 flex items-center justify-center gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                           <MapPin className="h-4 w-4" />
                           <span>San Francisco, CA</span>
