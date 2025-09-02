@@ -93,23 +93,6 @@ export default function ProfilePage() {
     <div className="bg-muted/40 min-h-screen">
       {/* Profile Header */}
       <Card className="rounded-none relative">
-        <div className="absolute top-4 right-4 z-10 flex gap-2">
-            {socials.twitter && (
-                 <Button asChild variant="outline" size="icon" className="rounded-full h-9 w-9">
-                    <a href={socials.twitter} target="_blank" rel="noopener noreferrer"><Twitter className="h-4 w-4" /></a>
-                 </Button>
-            )}
-            {socials.linkedin && (
-                 <Button asChild variant="outline" size="icon" className="rounded-full h-9 w-9">
-                    <a href={socials.linkedin} target="_blank" rel="noopener noreferrer"><Linkedin className="h-4 w-4" /></a>
-                 </Button>
-            )}
-             {socials.instagram && (
-                 <Button asChild variant="outline" size="icon" className="rounded-full h-9 w-9">
-                    <a href={socials.instagram} target="_blank" rel="noopener noreferrer"><Instagram className="h-4 w-4" /></a>
-                 </Button>
-            )}
-        </div>
         <div className="relative h-40 w-full md:h-48 group">
             <Image
               src={user.coverImage}
@@ -164,24 +147,43 @@ export default function ProfilePage() {
                       </div>
                   </div>
                 </div>
-                <div className="mt-4 flex w-full flex-shrink-0 gap-2 sm:mt-0 sm:w-auto">
-                    {isMyProfile ? (
-                        <EditProfileDialog
-                            initialProfile={{ name: user.name, headline: user.headline, bio: user.bio }}
-                            onSave={handleSaveProfile}
-                            initialSocials={socials}
-                            onSaveSocials={handleSaveSocials}
-                        />
-                    ) : (
-                        <>
-                            <Button className="flex-1">
-                                <CheckCircle className="mr-2 h-4 w-4" /> Connect
+                <div className="mt-4 flex w-full flex-col items-center sm:items-end gap-4 sm:w-auto">
+                    <div className="flex items-center gap-2">
+                        {socials.twitter && (
+                            <Button asChild variant="outline" size="icon" className="rounded-full h-8 w-8">
+                                <a href={socials.twitter} target="_blank" rel="noopener noreferrer"><Twitter className="h-4 w-4" /></a>
                             </Button>
-                            <Button variant="outline" className="flex-1">
-                                <Mail className="mr-2 h-4 w-4" /> Message
+                        )}
+                        {socials.linkedin && (
+                            <Button asChild variant="outline" size="icon" className="rounded-full h-8 w-8">
+                                <a href={socials.linkedin} target="_blank" rel="noopener noreferrer"><Linkedin className="h-4 w-4" /></a>
                             </Button>
-                        </>
-                    )}
+                        )}
+                        {socials.instagram && (
+                            <Button asChild variant="outline" size="icon" className="rounded-full h-8 w-8">
+                                <a href={socials.instagram} target="_blank" rel="noopener noreferrer"><Instagram className="h-4 w-4" /></a>
+                            </Button>
+                        )}
+                    </div>
+                    <div className="flex w-full flex-shrink-0 gap-2 sm:w-auto">
+                        {isMyProfile ? (
+                            <EditProfileDialog
+                                initialProfile={{ name: user.name, headline: user.headline, bio: user.bio }}
+                                onSave={handleSaveProfile}
+                                initialSocials={socials}
+                                onSaveSocials={handleSaveSocials}
+                            />
+                        ) : (
+                            <>
+                                <Button className="flex-1">
+                                    <CheckCircle className="mr-2 h-4 w-4" /> Connect
+                                </Button>
+                                <Button variant="outline" className="flex-1">
+                                    <Mail className="mr-2 h-4 w-4" /> Message
+                                </Button>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
         </CardContent>
