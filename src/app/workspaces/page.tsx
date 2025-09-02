@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { WorkspaceTeam } from "./workspace-team";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const formatTime = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
@@ -29,6 +30,8 @@ export default function WorkspacesPage() {
   const [isStartingFlow, setIsStartingFlow] = useState(false);
   const [monthlyFlowHours, setMonthlyFlowHours] = useState(25.5); // Example starting hours
   const monthlyGoal = 50;
+  const [isRewardSectionVisible, setIsRewardSectionVisible] = useState(true);
+  const rewardTimerRef = useRef<NodeJS.Timeout | null>(null);
 
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -49,6 +52,21 @@ export default function WorkspacesPage() {
       }
     };
   }, [isActive]);
+
+  useEffect(() => {
+    if (sessionType === 'solo' && !isStartingFlow) {
+      setIsRewardSectionVisible(true); // Reset on new session start
+      rewardTimerRef.current = setTimeout(() => {
+        setIsRewardSectionVisible(false);
+      }, 30000); // 30 seconds
+    }
+    
+    return () => {
+      if (rewardTimerRef.current) {
+        clearTimeout(rewardTimerRef.current);
+      }
+    };
+  }, [sessionType, isStartingFlow]);
 
 
   const handleStart = (type: SessionType) => {
@@ -76,6 +94,10 @@ export default function WorkspacesPage() {
     setIsActive(false);
     setSessionType(null);
     setTime(0);
+    if (rewardTimerRef.current) {
+        clearTimeout(rewardTimerRef.current);
+    }
+    setIsRewardSectionVisible(true); // Reset for next session
   };
 
   const handleReset = () => {
@@ -92,7 +114,7 @@ export default function WorkspacesPage() {
     <div className="relative h-full min-h-screen">
       <div className="p-4 sm:p-6 md:p-8">
         {sessionType === 'solo' && (
-           <Card>
+           <Card className="relative">
               <CardHeader className="text-center">
                 <CardTitle>Solo Focus Session</CardTitle>
                 <CardDescription>You are in a solo session. Keep up the great work!</CardDescription>
@@ -120,7 +142,10 @@ export default function WorkspacesPage() {
                             </div>
                             
                             {/* Monthly Reward Tracker */}
-                            <div className="w-full pt-4 space-y-3">
+                            <div className={cn(
+                                "w-full pt-4 space-y-3 transition-all duration-500 ease-in-out",
+                                isRewardSectionVisible ? "opacity-100 max-h-40" : "opacity-0 max-h-0 overflow-hidden"
+                            )}>
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2 text-muted-foreground">
                                     <Award className="h-5 w-5" />
@@ -155,6 +180,25 @@ export default function WorkspacesPage() {
                     </>
                   )}
               </CardContent>
+               {!isStartingFlow && (
+                 <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="absolute bottom-4 right-4 text-muted-foreground hover:bg-muted"
+                                onClick={() => setIsRewardSectionVisible(!isRewardSectionVisible)}
+                            >
+                                <Award className="h-5 w-5" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Toggle Monthly Reward Tracker</p>
+                        </TooltipContent>
+                    </Tooltip>
+                 </TooltipProvider>
+               )}
             </Card>
         )}
         {sessionType === 'team' && (
