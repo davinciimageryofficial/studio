@@ -11,7 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -62,14 +62,22 @@ export default function ProfilePage() {
 
   const handleSaveSkills = (updatedSkills: string[]) => {
     setSkills(updatedSkills);
-    // Here you would typically make an API call to save the changes
+     setUser(prevUser => prevUser ? { ...prevUser, skills: updatedSkills } : null);
   };
+  
+  const handleSaveAvatar = (newUrl: string) => {
+      setUser(prevUser => prevUser ? { ...prevUser, avatar: newUrl } : null);
+  }
+
+  const handleSaveCoverImage = (newUrl: string) => {
+      setUser(prevUser => prevUser ? { ...prevUser, coverImage: newUrl } : null);
+  }
 
   return (
     <div className="bg-muted/40 min-h-screen">
       {/* Profile Header */}
       <Card className="rounded-none">
-        <div className="relative h-40 w-full md:h-48">
+        <div className="relative h-40 w-full md:h-48 group">
             <Image
               src={user.coverImage}
               alt={`${user.name}'s cover image`}
@@ -77,17 +85,42 @@ export default function ProfilePage() {
               className="object-cover"
               data-ai-hint="abstract landscape"
             />
+            {isMyProfile && (
+                 <EditImageDialog
+                    currentImage={user.coverImage}
+                    onSave={handleSaveCoverImage}
+                    triggerButton={
+                        <Button variant="outline" size="sm" className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit Cover
+                        </Button>
+                    }
+                />
+            )}
         </div>
-        <CardContent className="p-4 py-12 sm:p-6 sm:py-16">
-            <div className="flex flex-col items-center sm:flex-row sm:items-end sm:gap-6 -mt-20 sm:-mt-24">
-                <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-card flex-shrink-0">
-                  <AvatarImage src={user.avatar} />
-                  <AvatarFallback className="text-5xl">{user.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 mt-4 sm:mt-0 text-center">
+        <CardContent className="p-4 py-16 sm:p-6 sm:py-16">
+            <div className="flex flex-col items-center text-center sm:flex-row sm:items-end sm:gap-6 -mt-28 sm:-mt-24">
+                <div className="relative group flex-shrink-0">
+                    <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-card">
+                      <AvatarImage src={user.avatar} />
+                      <AvatarFallback className="text-5xl">{user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                     {isMyProfile && (
+                        <EditImageDialog
+                            currentImage={user.avatar}
+                            onSave={handleSaveAvatar}
+                            triggerButton={
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                    <Edit className="h-6 w-6 text-white" />
+                                </div>
+                            }
+                        />
+                    )}
+                </div>
+                <div className="flex-1 mt-4 sm:mt-0 text-center sm:text-left">
                   <h1 className="text-2xl font-bold md:text-3xl">{user.name}</h1>
                   <p className="text-muted-foreground">{user.headline}</p>
-                  <div className="mt-2 flex items-center justify-center gap-4 text-sm text-muted-foreground">
+                  <div className="mt-2 flex items-center justify-center sm:justify-start gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                           <MapPin className="h-4 w-4" />
                           <span>San Francisco, CA</span>
@@ -398,6 +431,45 @@ function EditExperienceDialog({ initialExperiences, onSave }: { initialExperienc
             </DialogContent>
         </Dialog>
     )
+}
+
+function EditImageDialog({ currentImage, onSave, triggerButton }: { currentImage: string, onSave: (newUrl: string) => void, triggerButton: React.ReactNode }) {
+    const [imageUrl, setImageUrl] = useState(currentImage);
+
+    const handleSave = () => {
+        onSave(imageUrl);
+    };
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                {triggerButton}
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>Edit Image</DialogTitle>
+                    <DialogDescription>Paste a new image URL below to update your picture.</DialogDescription>
+                </DialogHeader>
+                <div className="py-4 space-y-4">
+                    <div className="w-full aspect-square relative rounded-md overflow-hidden bg-muted">
+                        <Image src={imageUrl} alt="Image Preview" fill className="object-cover"/>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="imageUrl">Image URL</Label>
+                        <Input id="imageUrl" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary">Cancel</Button>
+                    </DialogClose>
+                    <DialogClose asChild>
+                        <Button type="button" onClick={handleSave}>Save Changes</Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
 }
 
     
