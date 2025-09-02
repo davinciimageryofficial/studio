@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 const signupSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters."),
@@ -27,9 +28,16 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 export default function SignupPage() {
   const { toast } = useToast();
   const router = useRouter();
-  const { register, handleSubmit, control, formState: { errors } } = useForm<SignupFormValues>({
+  const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      earlyAccess: false,
+    },
   });
+
+  const { handleSubmit, control, formState: { errors } } = form;
 
   const onSubmit: SubmitHandler<SignupFormValues> = (data) => {
     console.log("Signup submission:", data);
@@ -58,40 +66,79 @@ export default function SignupPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input id="fullName" {...register("fullName")} />
-              {errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <Input id="email" type="email" {...register("email")} />
-              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="profession">Primary Profession</Label>
-              <Select onValueChange={(value) => control._inputValues.profession = value} {...register("profession")}>
-                <SelectTrigger id="profession">
-                  <SelectValue placeholder="Select your profession" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="designer">Designer</SelectItem>
-                  <SelectItem value="developer">Developer</SelectItem>
-                  <SelectItem value="writer">Writer</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.profession && <p className="text-sm text-destructive">{errors.profession.message}</p>}
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="early-access" {...register("earlyAccess")} />
-              <Label htmlFor="early-access" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Sign up for early access to new features
-              </Label>
-            </div>
-            <Button type="submit" className="w-full" size="lg">Join Waitlist</Button>
-          </form>
+          <Form {...form}>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={control}
+                name="fullName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Address</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="profession"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Primary Profession</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your profession" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="designer">Designer</SelectItem>
+                        <SelectItem value="developer">Developer</SelectItem>
+                        <SelectItem value="writer">Writer</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="earlyAccess"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        Sign up for early access to new features
+                      </FormLabel>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full" size="lg">Join Waitlist</Button>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>
