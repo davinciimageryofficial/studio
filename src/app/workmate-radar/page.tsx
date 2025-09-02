@@ -31,7 +31,7 @@ export default function WorkmateRadarPage() {
           
         {/* Page Title */}
         <div className="relative text-center">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">AI Workmate Radar</h1>
+            <h1 className="text-4xl font-headline-tech font-bold tracking-tight sm:text-5xl">AI Workmate Radar</h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
                 Let our AI help you build your dream team. Describe your ideal workmate and we&apos;ll find the best matches.
             </p>
