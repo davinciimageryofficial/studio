@@ -314,34 +314,34 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                     </CardContent>
                     <CardFooter className="p-2 bg-card">
                          <div className="flex justify-center flex-wrap gap-2 w-full">
-                           <Button onClick={onToggleTimer} className={cn("text-xs bg-black hover:bg-gray-800", !isControlsCollapsed && "flex-1 sm:flex-none")}>
+                           <Button onClick={onToggleTimer} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
                                 {isActive ? <Pause /> : <Play />}
                                 {!isControlsCollapsed && <span className="ml-2">{isActive ? 'Pause Timer' : 'Resume Timer'}</span>}
                             </Button>
-                           <Button variant={isCameraOn ? "secondary" : "default"} onClick={handleToggleCamera} className={cn("text-xs bg-black hover:bg-gray-800", !isControlsCollapsed && "flex-1 sm:flex-none")}>
+                           <Button variant={isCameraOn ? "secondary" : "default"} onClick={handleToggleCamera} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
                                 {isCameraOn ? <VideoOff /> : <Video />}
                                 {!isControlsCollapsed && <span className="ml-2">{isCameraOn ? 'Turn Off Camera' : 'Use Camera'}</span>}
                             </Button>
-                            <Button variant={isScreenSharing ? "secondary" : "default"} onClick={handleToggleScreenShare} className={cn("text-xs bg-black hover:bg-gray-800", !isControlsCollapsed && "flex-1 sm:flex-none")}>
+                            <Button variant={isScreenSharing ? "secondary" : "default"} onClick={handleToggleScreenShare} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
                                 {isScreenSharing ? <ScreenShareOff /> : <ScreenShare />}
                                 {!isControlsCollapsed && <span className="ml-2">{isScreenSharing ? 'Stop Sharing' : 'Share Screen'}</span>}
                             </Button>
-                           <Button variant={isRecording ? "destructive" : "default"} onClick={handleToggleRecording} className={cn("text-xs bg-black hover:bg-gray-800", !isControlsCollapsed && "flex-1 sm:flex-none")}>
+                           <Button variant={isRecording ? "destructive" : "default"} onClick={handleToggleRecording} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
                                 <CircleDot />
                                 {!isControlsCollapsed && <span className="ml-2">{isRecording ? 'Stop Recording' : 'Record Session'}</span>}
                             </Button>
-                             <Separator orientation="vertical" className="h-10 hidden sm:block" />
-                            <Button className={cn("text-xs bg-black hover:bg-gray-800", !isControlsCollapsed && "flex-1 sm:flex-none")}>
+                             <Separator orientation="vertical" className="h-8 hidden sm:block" />
+                            <Button className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
                                 <PenSquare />
                                 {!isControlsCollapsed && <span className="ml-2">Whiteboard</span>}
                             </Button>
-                             <Button onClick={handleToggleAvatars} className={cn("text-xs bg-black hover:bg-gray-800", !isControlsCollapsed && "flex-1 sm:flex-none")}>
+                             <Button onClick={handleToggleAvatars} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
                                 <UserX />
                                 {!isControlsCollapsed && <span className="ml-2">{showAvatars ? 'Hide Pictures' : 'Show Pictures'}</span>}
                             </Button>
                             <Dialog>
                                 <DialogTrigger asChild>
-                                    <Button className={cn("text-xs bg-black hover:bg-gray-800", !isControlsCollapsed && "flex-1 sm:flex-none")}>
+                                    <Button className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
                                         <Lightbulb />
                                         {!isControlsCollapsed && <span className="ml-2">Pocket Guide</span>}
                                     </Button>
@@ -357,7 +357,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                                     </div>
                                 </DialogContent>
                             </Dialog>
-                             <Button size="icon" onClick={() => setIsControlsCollapsed(!isControlsCollapsed)} className="h-auto bg-black hover:bg-gray-800">
+                             <Button size="icon" onClick={() => setIsControlsCollapsed(!isControlsCollapsed)} className="h-8 w-8 bg-black hover:bg-gray-800">
                                 {isControlsCollapsed ? <PanelRight /> : <PanelLeft />}
                             </Button>
                         </div>
@@ -418,3 +418,5 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
         </div>
     )
 }
+
+    
