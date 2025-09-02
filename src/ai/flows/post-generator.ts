@@ -51,7 +51,7 @@ const getAuthorForPersona = (persona: PostGeneratorInput['persona']) => {
 const prompt = ai.definePrompt({
   name: 'postGeneratorPrompt',
   input: { schema: PostGeneratorInputSchema },
-  output: { schema: Omit<PostGeneratorOutput, 'id' | 'authorId'> },
+  output: { schema: PostGeneratorOutputSchema.omit({ id: true, authorId: true }) },
   prompt: `You are an AI assistant for a professional networking platform called Sentry.
 
 Your task is to generate a realistic social media post for a professional user.
