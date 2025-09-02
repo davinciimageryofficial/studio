@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar } from "lucide-react";
+import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
@@ -30,6 +30,12 @@ type ProfileData = {
     bio: string;
 }
 
+type SocialLinks = {
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+}
+
 export default function ProfilePage() {
   const params = useParams<{ id: string }>();
   const isMyProfile = params.id === 'me';
@@ -44,6 +50,11 @@ export default function ProfilePage() {
 
   const [experiences, setExperiences] = useState(initialExperiences);
   const [skills, setSkills] = useState(user?.skills || []);
+  const [socials, setSocials] = useState<SocialLinks>({
+    twitter: "https://x.com/sentry",
+    linkedin: "https://linkedin.com/in/sentry",
+    instagram: "",
+  });
 
 
   if (!user) {
@@ -72,11 +83,33 @@ export default function ProfilePage() {
   const handleSaveCoverImage = (newUrl: string) => {
       setUser(prevUser => prevUser ? { ...prevUser, coverImage: newUrl } : null);
   }
+  
+  const handleSaveSocials = (updatedSocials: SocialLinks) => {
+      setSocials(updatedSocials);
+  };
+
 
   return (
     <div className="bg-muted/40 min-h-screen">
       {/* Profile Header */}
-      <Card className="rounded-none">
+      <Card className="rounded-none relative">
+        <div className="absolute top-4 right-4 z-10 flex gap-2">
+            {socials.twitter && (
+                 <Button asChild variant="outline" size="icon" className="rounded-full h-9 w-9">
+                    <a href={socials.twitter} target="_blank" rel="noopener noreferrer"><Twitter className="h-4 w-4" /></a>
+                 </Button>
+            )}
+            {socials.linkedin && (
+                 <Button asChild variant="outline" size="icon" className="rounded-full h-9 w-9">
+                    <a href={socials.linkedin} target="_blank" rel="noopener noreferrer"><Linkedin className="h-4 w-4" /></a>
+                 </Button>
+            )}
+             {socials.instagram && (
+                 <Button asChild variant="outline" size="icon" className="rounded-full h-9 w-9">
+                    <a href={socials.instagram} target="_blank" rel="noopener noreferrer"><Instagram className="h-4 w-4" /></a>
+                 </Button>
+            )}
+        </div>
         <div className="relative h-40 w-full md:h-48 group">
             <Image
               src={user.coverImage}
@@ -136,6 +169,8 @@ export default function ProfilePage() {
                         <EditProfileDialog
                             initialProfile={{ name: user.name, headline: user.headline, bio: user.bio }}
                             onSave={handleSaveProfile}
+                            initialSocials={socials}
+                            onSaveSocials={handleSaveSocials}
                         />
                     ) : (
                         <>
@@ -238,7 +273,62 @@ export default function ProfilePage() {
   );
 }
 
-function EditProfileDialog({ initialProfile, onSave }: { initialProfile: ProfileData, onSave: (profile: ProfileData) => void }) {
+function EditSocialsDialog({ initialSocials, onSave, triggerButton }: { initialSocials: SocialLinks, onSave: (socials: SocialLinks) => void, triggerButton: React.ReactNode }) {
+    const [socials, setSocials] = useState(initialSocials);
+
+    const handleChange = (field: keyof SocialLinks, value: string) => {
+        setSocials(prev => ({...prev, [field]: value}));
+    };
+
+    const handleSaveChanges = () => {
+        onSave(socials);
+    };
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>{triggerButton}</DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>Edit Social Links</DialogTitle>
+                </DialogHeader>
+                <div className="py-4 space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="twitter">Twitter / X URL</Label>
+                        <Input id="twitter" value={socials.twitter} onChange={(e) => handleChange('twitter', e.target.value)} placeholder="https://x.com/username" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="linkedin">LinkedIn URL</Label>
+                        <Input id="linkedin" value={socials.linkedin} onChange={(e) => handleChange('linkedin', e.target.value)} placeholder="https://linkedin.com/in/username" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="instagram">Instagram URL</Label>
+                        <Input id="instagram" value={socials.instagram} onChange={(e) => handleChange('instagram', e.target.value)} placeholder="https://instagram.com/username" />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary">Cancel</Button>
+                    </DialogClose>
+                    <DialogClose asChild>
+                        <Button type="button" onClick={handleSaveChanges}>Save Changes</Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function EditProfileDialog({ 
+    initialProfile, 
+    onSave,
+    initialSocials,
+    onSaveSocials,
+}: { 
+    initialProfile: ProfileData, 
+    onSave: (profile: ProfileData) => void,
+    initialSocials: SocialLinks,
+    onSaveSocials: (socials: SocialLinks) => void,
+}) {
     const [profile, setProfile] = useState(initialProfile);
 
     const handleChange = (field: keyof ProfileData, value: string) => {
@@ -274,6 +364,12 @@ function EditProfileDialog({ initialProfile, onSave }: { initialProfile: Profile
                         <Label htmlFor="bio">Bio</Label>
                         <Textarea id="bio" value={profile.bio} onChange={(e) => handleChange('bio', e.target.value)} className="min-h-32" />
                     </div>
+                    <Separator />
+                     <EditSocialsDialog
+                        initialSocials={initialSocials}
+                        onSave={onSaveSocials}
+                        triggerButton={<Button variant="outline" className="w-full">Edit Social Links</Button>}
+                    />
                 </div>
                 <DialogFooter>
                     <DialogClose asChild>
@@ -506,5 +602,3 @@ function EditImageDialog({ currentImage, onSave, triggerButton }: { currentImage
         </Dialog>
     );
 }
-
-    
