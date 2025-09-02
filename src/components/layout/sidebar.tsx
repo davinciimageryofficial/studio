@@ -185,7 +185,7 @@ export function AppSidebar() {
             </SidebarMenuItem>
              <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Logout" className="justify-start">
-                <Link href="/">
+                <Link href="/logout">
                   <LogOut />
                   <span>Logout</span>
                 </Link>
