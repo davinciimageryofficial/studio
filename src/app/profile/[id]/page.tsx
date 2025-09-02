@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 
 type Experience = {
     title: string;
@@ -23,11 +24,19 @@ type Experience = {
     duration: string;
 };
 
+type ProfileData = {
+    name: string;
+    headline: string;
+    bio: string;
+}
+
 export default function ProfilePage() {
   const params = useParams<{ id: string }>();
   const isMyProfile = params.id === 'me';
-  const user = isMyProfile ? placeholderUsers[1] : placeholderUsers.find((u) => u.id === params.id);
+  const initialUser = isMyProfile ? placeholderUsers[1] : placeholderUsers.find((u) => u.id === params.id);
   
+  const [user, setUser] = useState(initialUser);
+
   const initialExperiences: Experience[] = [
     { title: "Senior Frontend Developer", company: "Innovate Inc.", duration: "Jan 2020 - Present · 4+ years" },
     { title: "Web Developer", company: "Solutions Co.", duration: "Jun 2017 - Dec 2019 · 2.5 years" },
@@ -40,6 +49,11 @@ export default function ProfilePage() {
   if (!user) {
     notFound();
   }
+  
+  const handleSaveProfile = (updatedProfile: ProfileData) => {
+    setUser(prevUser => prevUser ? { ...prevUser, ...updatedProfile } : null);
+    // Here you would typically make an API call to save the changes
+  };
 
   const handleSaveExperience = (updatedExperiences: Experience[]) => {
     setExperiences(updatedExperiences);
@@ -65,7 +79,7 @@ export default function ProfilePage() {
             />
         </div>
         <CardContent className="p-4 py-8 sm:p-6 sm:py-12">
-            <div className="flex flex-col items-center sm:flex-row sm:items-end sm:gap-6 -mt-16 sm:-mt-24">
+            <div className="flex flex-col items-center sm:flex-row sm:items-end sm:gap-6 -mt-20 sm:-mt-24">
                 <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-card flex-shrink-0">
                   <AvatarImage src={user.avatar} />
                   <AvatarFallback className="text-5xl">{user.name.charAt(0)}</AvatarFallback>
@@ -85,12 +99,21 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div className="mt-4 flex w-full flex-shrink-0 gap-2 sm:mt-0 sm:w-auto">
-                  <Button className="flex-1">
-                    <CheckCircle className="mr-2 h-4 w-4" /> Connect
-                  </Button>
-                  <Button variant="outline" className="flex-1">
-                    <Mail className="mr-2 h-4 w-4" /> Message
-                  </Button>
+                    {isMyProfile ? (
+                        <EditProfileDialog
+                            initialProfile={{ name: user.name, headline: user.headline, bio: user.bio }}
+                            onSave={handleSaveProfile}
+                        />
+                    ) : (
+                        <>
+                            <Button className="flex-1">
+                                <CheckCircle className="mr-2 h-4 w-4" /> Connect
+                            </Button>
+                            <Button variant="outline" className="flex-1">
+                                <Mail className="mr-2 h-4 w-4" /> Message
+                            </Button>
+                        </>
+                    )}
                 </div>
             </div>
         </CardContent>
@@ -180,6 +203,56 @@ export default function ProfilePage() {
         </div>
     </div>
   );
+}
+
+function EditProfileDialog({ initialProfile, onSave }: { initialProfile: ProfileData, onSave: (profile: ProfileData) => void }) {
+    const [profile, setProfile] = useState(initialProfile);
+
+    const handleChange = (field: keyof ProfileData, value: string) => {
+        setProfile(prev => ({...prev, [field]: value}));
+    }
+
+    const handleSaveChanges = () => {
+        onSave(profile);
+    }
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="outline" className="flex-1">
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit Profile
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                    <DialogTitle>Edit Profile</DialogTitle>
+                </DialogHeader>
+                <div className="py-4 space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="name">Name</Label>
+                        <Input id="name" value={profile.name} onChange={(e) => handleChange('name', e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="headline">Headline</Label>
+                        <Input id="headline" value={profile.headline} onChange={(e) => handleChange('headline', e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="bio">Bio</Label>
+                        <Textarea id="bio" value={profile.bio} onChange={(e) => handleChange('bio', e.target.value)} className="min-h-32" />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary">Cancel</Button>
+                    </DialogClose>
+                    <DialogClose asChild>
+                        <Button type="button" onClick={handleSaveChanges}>Save Changes</Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
 }
 
 function EditSkillsDialog({ initialSkills, onSave }: { initialSkills: string[], onSave: (skills: string[]) => void }) {
@@ -326,3 +399,5 @@ function EditExperienceDialog({ initialExperiences, onSave }: { initialExperienc
         </Dialog>
     )
 }
+
+    
