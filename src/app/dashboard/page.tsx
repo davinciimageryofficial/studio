@@ -16,6 +16,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 
 export default function DashboardPage() {
     const [chartType, setChartType] = useState<"bar" | "line" | "area">("area");
+    const [isAppDownloaded, setIsAppDownloaded] = useState(false);
+
 
     const recentActivities = [
         {
@@ -232,24 +234,26 @@ export default function DashboardPage() {
         </Card>
       </div>
       
-      <div className="mt-8">
-        <Card>
-            <CardHeader>
-                <CardTitle>Get Sentry for Desktop</CardTitle>
-                <CardDescription>Experience Sentry on your desktop for a more integrated and focused workflow.</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="w-full">
-                    <Apple className="mr-2 h-5 w-5" />
-                    Download for Mac
-                </Button>
-                <Button size="lg" variant="outline" className="w-full">
-                    <AppWindow className="mr-2 h-5 w-5" />
-                    Download for Windows
-                </Button>
-            </CardContent>
-        </Card>
-      </div>
+      {!isAppDownloaded && (
+        <div className="mt-8">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Get Sentry for Desktop</CardTitle>
+                    <CardDescription>Experience Sentry on your desktop for a more integrated and focused workflow.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col sm:flex-row gap-4">
+                    <Button size="lg" className="w-full" onClick={() => setIsAppDownloaded(true)}>
+                        <Apple className="mr-2 h-5 w-5" />
+                        Download for Mac
+                    </Button>
+                    <Button size="lg" className="w-full" onClick={() => setIsAppDownloaded(true)}>
+                        <AppWindow className="mr-2 h-5 w-5" />
+                        Download for Windows
+                    </Button>
+                </CardContent>
+            </Card>
+        </div>
+      )}
 
     </div>
   );
