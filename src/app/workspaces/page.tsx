@@ -35,7 +35,6 @@ export default function WorkspacesPage() {
   const monthlyGoal = 50;
   const [isRewardSectionVisible, setIsRewardSectionVisible] = useState(true);
   const [initialParticipant, setInitialParticipant] = useState<User | null>(null);
-  const [isLitMode, setIsLitMode] = useState(false);
   
   const rewardTimerRef = useRef<NodeJS.Timeout | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -131,7 +130,7 @@ export default function WorkspacesPage() {
     <div className="relative h-full min-h-screen">
       <div className="p-4 sm:p-6 md:p-8">
         {sessionType === 'solo' && (
-           <Card className={cn("relative", isLitMode && "lit-mode-border")}>
+           <Card>
               <CardHeader className="text-center">
                 <CardTitle>Solo Focus Session</CardTitle>
                 <CardDescription>You are in a solo session. Keep up the great work!</CardDescription>
@@ -197,12 +196,6 @@ export default function WorkspacesPage() {
                     </>
                   )}
               </CardContent>
-               {!isStartingFlow && (
-                <div className="absolute top-4 right-4 flex items-center space-x-2">
-                    <Label htmlFor="lit-mode-switch" className="text-sm font-medium text-muted-foreground">Lit Mode</Label>
-                    <Switch id="lit-mode-switch" checked={isLitMode} onCheckedChange={setIsLitMode} />
-                </div>
-               )}
                {!isStartingFlow && (
                  <TooltipProvider>
                     <Tooltip>
@@ -347,3 +340,4 @@ export default function WorkspacesPage() {
     
 
     
+
