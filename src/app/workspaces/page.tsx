@@ -12,54 +12,30 @@ import { WorkspaceTeam } from "./workspace-team";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+import { useWorkspace } from "@/context/workspace-context";
 
-const formatTime = (seconds: number) => {
-  const hours = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-  return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-};
-
-type SessionType = "solo" | "team" | null;
 type User = typeof placeholderUsers[0];
 
 export default function WorkspacesPage() {
-  const [time, setTime] = useState(0);
-  const [isActive, setIsActive] = useState(false);
-  const [sessionType, setSessionType] = useState<SessionType>(null);
+    const { 
+        time, 
+        isActive, 
+        sessionType, 
+        startSession, 
+        endSession, 
+        toggleTimer,
+        formatTime
+    } = useWorkspace();
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isStartingFlow, setIsStartingFlow] = useState(false);
   const [monthlyFlowHours, setMonthlyFlowHours] = useState(25.5); // Example starting hours
   const monthlyGoal = 50;
   const [isRewardSectionVisible, setIsRewardSectionVisible] = useState(true);
-  const [initialParticipant, setInitialParticipant] = useState<User | null>(null);
   
   const rewardTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const startTimeRef = useRef(0);
   const onlineUsers = placeholderUsers.slice(0, 5);
   
-  useEffect(() => {
-    if (isActive) {
-      startTimeRef.current = Date.now() - (time * 1000);
-      timerRef.current = setInterval(() => {
-        setTime(Math.round((Date.now() - startTimeRef.current) / 1000));
-      }, 1000);
-    } else {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    }
-
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    };
-  }, [isActive]);
 
   useEffect(() => {
     if (sessionType === 'solo' && !isStartingFlow) {
@@ -77,48 +53,28 @@ export default function WorkspacesPage() {
   }, [sessionType, isStartingFlow]);
 
 
-  const handleStart = (type: SessionType) => {
+  const handleStart = (type: "solo" | "team", initialParticipant: User | null = null) => {
     if (type === 'solo') {
         setIsStartingFlow(true);
         setTimeout(() => {
             setIsStartingFlow(false);
-            setIsActive(true);
+            startSession(type);
         }, 2000);
     } else {
-        setIsActive(true);
+        startSession(type, initialParticipant ? [placeholderUsers[1], initialParticipant] : undefined);
     }
-    setInitialParticipant(null); // Clear initial participant for general start
-    setSessionType(type);
     setIsDialogOpen(false);
   };
-
-  const handleInviteAndStart = (user: User) => {
-    setInitialParticipant(user);
-    setSessionType('team');
-    setIsActive(true);
-  };
   
-  const handleToggleTimer = () => {
-    setIsActive(!isActive);
-  }
-
-  const handleEndSession = () => {
-    // In a real app, you would save the session time to the user's total
+  const handleEndSessionWrapper = () => {
     const sessionHours = time / 3600;
     setMonthlyFlowHours(prev => prev + sessionHours);
-    setIsActive(false);
-    setSessionType(null);
-    setTime(0);
-    setInitialParticipant(null);
-    if (rewardTimerRef.current) {
-        clearTimeout(rewardTimerRef.current);
-    }
-    setIsRewardSectionVisible(true); // Reset for next session
-  };
+    endSession();
+  }
 
   const handleReset = () => {
-    setIsActive(false);
-    setTime(0);
+    // This local reset is fine as it's for the non-session state
+    endSession();
   };
 
   const hourlyProgressValue = (time / 3600) * 100; // Calculate progress towards one hour
@@ -185,11 +141,11 @@ export default function WorkspacesPage() {
 
 
                         <div className="flex justify-center gap-4 mt-4">
-                            <Button size="lg" onClick={handleToggleTimer}>
+                            <Button size="lg" onClick={toggleTimer}>
                             {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
                             {isActive ? 'Pause' : 'Resume'}
                             </Button>
-                            <Button size="lg" variant="destructive" onClick={handleEndSession}>
+                            <Button size="lg" variant="destructive" onClick={handleEndSessionWrapper}>
                                 End Session
                             </Button>
                         </div>
@@ -218,14 +174,7 @@ export default function WorkspacesPage() {
             </Card>
         )}
         {sessionType === 'team' && (
-          <WorkspaceTeam 
-            time={time}
-            isActive={isActive}
-            formatTime={formatTime}
-            onToggleTimer={handleToggleTimer}
-            onEndSession={handleEndSession}
-            initialParticipant={initialParticipant}
-          />
+          <WorkspaceTeam />
         )}
         {!sessionType && (
             <div className="flex h-full items-center justify-center">
@@ -318,7 +267,7 @@ export default function WorkspacesPage() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <Button variant="ghost" size="icon" onClick={() => handleInviteAndStart(user)}>
+                                        <Button variant="ghost" size="icon" onClick={() => handleStart('team', user)}>
                                             <Plus className="h-5 w-5" />
                                             <span className="sr-only">Invite {user.name}</span>
                                         </Button>
@@ -336,8 +285,3 @@ export default function WorkspacesPage() {
     </div>
   );
 }
-
-    
-
-    
-

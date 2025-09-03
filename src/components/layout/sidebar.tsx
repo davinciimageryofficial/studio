@@ -30,6 +30,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useWorkspace } from "@/context/workspace-context";
 
 const menuItems = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
@@ -54,7 +55,15 @@ const secondaryMenuItems = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { setNextPath } = useWorkspace();
   const isActive = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href) && href !== "/");
+
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (pathname.startsWith('/workspaces')) {
+        e.preventDefault();
+        setNextPath(href);
+    }
+  }
 
   return (
     <Sidebar variant="sidebar" collapsible="icon" side="left">
@@ -76,7 +85,7 @@ export function AppSidebar() {
                 tooltip={item.label}
                 className="justify-start"
               >
-                <Link href={item.href}>
+                <Link href={item.href} onClick={(e) => handleLinkClick(e, item.href)}>
                   <item.icon />
                   <span>{item.label}</span>
                 </Link>
@@ -93,7 +102,7 @@ export function AppSidebar() {
                     tooltip={item.label}
                     className="justify-start"
                 >
-                    <Link href={item.href}>
+                    <Link href={item.href} onClick={(e) => handleLinkClick(e, item.href)}>
                     <item.icon />
                     <span>{item.label}</span>
                     </Link>
@@ -110,7 +119,7 @@ export function AppSidebar() {
                     tooltip={item.label}
                     className="justify-start"
                 >
-                    <Link href={item.href}>
+                    <Link href={item.href} onClick={(e) => handleLinkClick(e, item.href)}>
                     <item.icon />
                     <span>{item.label}</span>
                     </Link>
@@ -127,7 +136,7 @@ export function AppSidebar() {
                 tooltip={item.label}
                 className="justify-start"
               >
-                <Link href={item.href}>
+                <Link href={item.href} onClick={(e) => handleLinkClick(e, item.href)}>
                   <item.icon />
                   <span>{item.label}</span>
                 </Link>

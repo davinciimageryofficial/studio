@@ -21,6 +21,7 @@ import Image from "next/image";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useWorkspace } from "@/context/workspace-context";
 
 
 type User = typeof placeholderUsers[0];
@@ -110,30 +111,18 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isSc
 }
 
 
-type WorkspaceTeamProps = {
-    time: number;
-    isActive: boolean;
-    formatTime: (seconds: number) => string;
-    onToggleTimer: () => void;
-    onEndSession: () => void;
-    initialParticipant?: User | null;
-}
-
-export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEndSession, initialParticipant = null }: WorkspaceTeamProps) {
+export function WorkspaceTeam() {
+    const { 
+        time, 
+        isActive,
+        formatTime,
+        toggleTimer,
+        endSession,
+        participants,
+        setParticipants,
+    } = useWorkspace();
     const allUsers = placeholderUsers;
-    // Current user is always a participant
-    const currentUser = allUsers.find(u => u.id === '2'); // Assuming 'me' is Bob Williams (id: 2)
     
-    // Setup initial participants with current user and optional invited user
-    const getInitialParticipants = () => {
-        const initial = [currentUser!];
-        if (initialParticipant && initialParticipant.id !== currentUser!.id) {
-            initial.push(initialParticipant);
-        }
-        return initial;
-    };
-    
-    const [participants, setParticipants] = useState<User[]>(getInitialParticipants());
     const [activeSpeakerId, setActiveSpeakerId] = useState<string | null>(null);
     const [isCameraOn, setIsCameraOn] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
@@ -176,7 +165,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
             return newParticipants;
         });
 
-    }, [activeSpeakerId]);
+    }, [activeSpeakerId, setParticipants]);
 
     const handleToggleCamera = async () => {
         if (!isCameraOn) {
@@ -334,7 +323,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                     </CardContent>
                     <CardFooter className="p-2 bg-card">
                          <div className="flex justify-center flex-wrap gap-2 w-full">
-                           <Button onClick={onToggleTimer} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
+                           <Button onClick={toggleTimer} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
                                 {isActive ? <Pause /> : <Play />}
                                 {!isControlsCollapsed && <span className="ml-2">{isActive ? 'Pause Timer' : 'Resume Timer'}</span>}
                             </Button>
@@ -488,7 +477,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                     <Copy className="mr-2 h-4 w-4"/>
                     Copy Invite Link
                 </Button>
-                <Button size="lg" variant="destructive" onClick={onEndSession}>
+                <Button size="lg" variant="destructive" onClick={endSession}>
                     End Session
                 </Button>
             </div>

@@ -7,6 +7,9 @@ import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { GlobalSearch } from "@/components/layout/global-search";
 import { ClientOnly } from "@/components/layout/client-only";
+import { WorkspaceProvider } from "@/context/workspace-context";
+import { CallWidget } from "@/components/layout/call-widget";
+import { NavigationPrompt } from "@/components/layout/navigation-prompt";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const michroma = Michroma({ weight: ["400"], subsets: ["latin"], variable: "--font-michroma" });
@@ -24,20 +27,26 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${michroma.variable} font-body antialiased`}>
-        <SidebarProvider>
-          <ClientOnly>
-            <AppSidebar />
-          </ClientOnly>
-          <SidebarInset>
-            <div className="flex flex-col">
-              <ClientOnly>
-                <GlobalSearch />
-              </ClientOnly>
-              <div className="flex-1">{children}</div>
-            </div>
-          </SidebarInset>
-          <Toaster />
-        </SidebarProvider>
+        <WorkspaceProvider>
+          <SidebarProvider>
+            <ClientOnly>
+              <AppSidebar />
+            </ClientOnly>
+            <SidebarInset>
+              <div className="flex flex-col">
+                <ClientOnly>
+                  <GlobalSearch />
+                </ClientOnly>
+                <div className="flex-1">{children}</div>
+              </div>
+            </SidebarInset>
+            <Toaster />
+            <ClientOnly>
+                <CallWidget />
+                <NavigationPrompt />
+            </ClientOnly>
+          </SidebarProvider>
+        </WorkspaceProvider>
       </body>
     </html>
   );
