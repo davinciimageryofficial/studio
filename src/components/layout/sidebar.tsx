@@ -55,11 +55,11 @@ const secondaryMenuItems = [
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { setNextPath } = useWorkspace();
+  const { setNextPath, isActive: isSessionActive } = useWorkspace();
   const isActive = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href) && href !== "/");
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (pathname.startsWith('/workspaces')) {
+    if (pathname.startsWith('/workspaces') && isSessionActive) {
         e.preventDefault();
         setNextPath(href);
     }
