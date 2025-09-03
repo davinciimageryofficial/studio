@@ -93,38 +93,6 @@ export function MessagesClient() {
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                <UserPlus className="h-5 w-5" />
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>New Conversation</DialogTitle>
-                            </DialogHeader>
-                             <div className="relative mt-4">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                                <Input placeholder="Search people..." className="pl-10" />
-                            </div>
-                            <ScrollArea className="mt-4 h-72">
-                                <div className="space-y-2">
-                                   {placeholderUsers.map(user => (
-                                        <div key={user.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-accent cursor-pointer">
-                                            <Avatar>
-                                                <AvatarImage src={user.avatar} />
-                                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            <div>
-                                                <p className="font-semibold">{user.name}</p>
-                                                <p className="text-sm text-muted-foreground">{user.headline}</p>
-                                            </div>
-                                        </div>
-                                   ))}
-                                </div>
-                            </ScrollArea>
-                        </DialogContent>
-                    </Dialog>
                 </div>
             </div>
             <div className="relative mt-4">
