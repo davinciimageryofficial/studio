@@ -88,31 +88,26 @@ body {
 }
 
 @layer utilities {
-  .disco-effect::after {
+  .flow-effect::after {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: repeating-conic-gradient(from var(--angle), #ff00ff, #00ffff, #ffff00, #ff00ff 25%);
+    background: radial-gradient(ellipse 80% 80% at 50% -20%,rgba(120,119,198,0.3),rgba(255,255,255,0));
     background-size: 200% 200%;
-    animation: disco-party 5s linear infinite;
-    opacity: 0.2;
+    animation: flow-state 8s ease-in-out infinite;
+    opacity: 0.8;
     pointer-events: none;
     border-radius: inherit;
   }
 }
 
-@keyframes disco-party {
-  0% {
-    --angle: 0deg;
-    background-position: 0% 50%;
-  }
-  100% {
-    --angle: 360deg;
-    background-position: 100% 50%;
-  }
+@keyframes flow-state {
+    0%{background-position:50% 0%}
+    50%{background-position:50% 100%}
+    100%{background-position:50% 0%}
 }
 
 @keyframes lit-mode-spin {

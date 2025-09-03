@@ -61,7 +61,7 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isSc
     <div className={cn(
         "relative group/participant aspect-video overflow-hidden rounded-lg bg-muted transition-all duration-300",
         isSpeaking && "ring-2 ring-primary ring-offset-2 ring-offset-background",
-        isLitMode && "disco-effect"
+        isLitMode && "flow-effect"
     )}>
       {isScreenSharing ? (
          <div className="w-full h-full flex flex-col items-center justify-center bg-blue-900/20 text-blue-200">
@@ -498,8 +498,3 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
         </div>
     )
 }
-
-    
-
-    
-
