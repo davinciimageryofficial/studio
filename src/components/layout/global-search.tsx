@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { placeholderUsers } from "@/lib/placeholder-data";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useSidebar } from "../ui/sidebar";
 
 export function GlobalSearch() {
   const [query, setQuery] = useState("");
@@ -26,6 +27,7 @@ export function GlobalSearch() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const { state: sidebarState } = useSidebar();
 
 
   const handleSearch = async (e?: React.FormEvent, suggestion?: string) => {
@@ -72,12 +74,16 @@ export function GlobalSearch() {
   };
   
   const searchContainerClass = showResults ? "flex-col h-full" : "";
-  const searchBarClass = showResults ? "w-full" : "w-full max-w-3xl";
+  const searchBarClass = showResults ? "w-full" : "w-full transition-all duration-300 ease-in-out";
 
   return (
     <div className={cn("sticky top-0 z-30 w-full border-b bg-background/80 py-2 backdrop-blur-lg transition-all duration-300", searchContainerClass)}>
         <div className="container flex items-center justify-center gap-4 px-4">
-            <div className={cn("flex items-center justify-center gap-2", searchBarClass)}>
+            <div className={cn(
+                "flex items-center justify-center gap-2", 
+                searchBarClass,
+                sidebarState === 'collapsed' ? 'max-w-5xl' : 'max-w-3xl'
+            )}>
                 <form 
                     onSubmit={handleSearch} 
                     className="relative w-full"
