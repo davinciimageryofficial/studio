@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff } from "lucide-react";
+import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, UserPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -116,37 +116,27 @@ export function MessagesClient() {
     const end = textarea.selectionEnd;
     const selectedText = newMessage.substring(start, end);
     
-    let prefix = "";
-    let suffix = "";
+    const markers = {
+        bold: "**",
+        italic: "*",
+        code: "`"
+    };
+    const marker = markers[format];
 
-    switch(format) {
-        case 'bold':
-            prefix = "**";
-            suffix = "**";
-            break;
-        case 'italic':
-            prefix = "*";
-            suffix = "*";
-            break;
-        case 'code':
-            prefix = "`";
-            suffix = "`";
-            break;
-    }
-    
     const newText = 
-      newMessage.substring(0, start) + 
-      prefix + selectedText + suffix + 
+      newMessage.substring(0, start) +
+      marker + selectedText + marker +
       newMessage.substring(end);
-
+    
     setNewMessage(newText);
 
-    // After updating the state, focus the textarea and set the cursor position.
-    // Use a timeout to ensure the state update has been rendered.
     setTimeout(() => {
-      textarea.focus();
-      const newCursorPosition = start + prefix.length;
-      textarea.setSelectionRange(newCursorPosition, newCursorPosition + selectedText.length);
+        textarea.focus();
+        if(selectedText.length > 0) {
+            textarea.setSelectionRange(start + marker.length, end + marker.length);
+        } else {
+            textarea.setSelectionRange(start + marker.length, start + marker.length);
+        }
     }, 0);
   };
 
@@ -327,3 +317,5 @@ export function MessagesClient() {
     </div>
   );
 }
+
+    
