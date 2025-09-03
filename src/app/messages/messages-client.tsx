@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, UserPlus } from "lucide-react";
+import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -33,7 +33,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
 type Message = (typeof placeholderMessages)[0]['messages'][0];
@@ -48,11 +47,11 @@ export function MessagesClient() {
   const [showAvatars, setShowAvatars] = useState(true);
   
   const activeConversation = conversations.find(c => c.id === activeConversationId);
-  const [activeMessages, setActiveMessages] = useState<Message[]>(placeholderMessages.find(m => m.userId === activeConversation?.id)?.messages || []);
-
+  const [activeMessages, setActiveMessages] = useState<Message[]>([]);
+  
   const [newMessage, setNewMessage] = useState("");
   const [linkPreview, setLinkPreview] = useState<{url: string, title: string, description: string, image: string} | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -72,15 +71,20 @@ export function MessagesClient() {
 
   const handleSendMessage = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (newMessage.trim() === "") return;
+    const messageContent = editorRef.current?.innerHTML || '';
+    if (!messageContent.trim()) return;
 
     const currentUser = placeholderUsers[1]; // Assuming 'me' is Bob Williams
     const message: Message = {
       from: 'me',
-      text: newMessage,
+      text: messageContent,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
     setActiveMessages(prev => [...prev, message]);
+    
+    if (editorRef.current) {
+        editorRef.current.innerHTML = "";
+    }
     setNewMessage("");
     setLinkPreview(null);
   };
@@ -91,9 +95,10 @@ export function MessagesClient() {
     const match = text.match(urlRegex);
     return match ? match[0] : null;
   }
-
-  useEffect(() => {
-    const url = extractUrl(newMessage);
+  
+  const handleInput = () => {
+    const textContent = editorRef.current?.textContent || '';
+    const url = extractUrl(textContent);
     if (url) {
         // In a real app, you would fetch metadata from this URL.
         // For now, we'll use placeholder data for the preview.
@@ -106,39 +111,24 @@ export function MessagesClient() {
     } else {
         setLinkPreview(null);
     }
-  }, [newMessage]);
+  }
 
-  const handleTextFormat = (format: 'bold' | 'italic' | 'code') => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = newMessage.substring(start, end);
-    
-    const markers = {
-        bold: "**",
-        italic: "*",
-        code: "`"
-    };
-    const marker = markers[format];
-
-    const newText = 
-      newMessage.substring(0, start) +
-      marker + selectedText + marker +
-      newMessage.substring(end);
-    
-    setNewMessage(newText);
-
-    setTimeout(() => {
-        textarea.focus();
-        if(selectedText.length > 0) {
-            textarea.setSelectionRange(start + marker.length, end + marker.length);
-        } else {
-            textarea.setSelectionRange(start + marker.length, start + marker.length);
-        }
-    }, 0);
+  const handleTextFormat = (format: 'bold' | 'italic' | 'insertHTML', value?: string) => {
+    if (editorRef.current) {
+      editorRef.current.focus();
+      if (format === 'insertHTML' && value) {
+         document.execCommand(format, false, value);
+      } else {
+         document.execCommand(format, false);
+      }
+    }
   };
+
+  const handleCodeSnippet = () => {
+    const snippet = `<pre><code class="language-javascript">console.log("Hello, World!");</code></pre>`;
+    handleTextFormat('insertHTML', snippet);
+  }
 
 
   return (
@@ -149,20 +139,18 @@ export function MessagesClient() {
           <div className="border-b p-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold">Messages</h2>
-                <div className="flex items-center">
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" onClick={() => setShowAvatars(!showAvatars)}>
-                                    {showAvatars ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>{showAvatars ? 'Hide profile pictures' : 'Show profile pictures'}</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                </div>
+                 <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" onClick={() => setShowAvatars(!showAvatars)}>
+                                {showAvatars ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>{showAvatars ? 'Hide profile pictures' : 'Show profile pictures'}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </div>
             <div className="relative mt-4">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -255,8 +243,8 @@ export function MessagesClient() {
                 <div key={index} className={cn("flex items-end gap-2", message.from === 'me' ? 'justify-end' : 'justify-start')}>
                   {message.from !== 'me' && showAvatars && activeConversation.avatar && <Avatar className="h-8 w-8"><AvatarImage src={activeConversation.avatar} /></Avatar>}
                   <div className={cn("max-w-xs rounded-lg px-4 py-2 sm:max-w-md", message.from === 'me' ? 'bg-primary text-primary-foreground' : 'bg-card shadow')}>
-                    <p className="whitespace-pre-wrap">{message.text}</p>
-                    <p className={cn("text-xs mt-1", message.from === 'me' ? 'text-primary-foreground/70' : 'text-muted-foreground')}>{message.time}</p>
+                    <div className="prose prose-sm dark:prose-invert" dangerouslySetInnerHTML={{ __html: message.text }} />
+                    <p className={cn("text-xs mt-1 text-right", message.from === 'me' ? 'text-primary-foreground/70' : 'text-muted-foreground')}>{message.time}</p>
                   </div>
                 </div>
               ))}
@@ -276,19 +264,18 @@ export function MessagesClient() {
                   </Card>
               )}
             <div className="relative rounded-lg border">
-              <Textarea 
-                ref={textareaRef}
-                placeholder="Type a message..." 
-                className="min-h-12 resize-none border-0 ring-0 focus-visible:ring-0 pr-12"
-                value={newMessage}
-                onChange={e => setNewMessage(e.target.value)}
-                onKeyDown={e => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSendMessage();
-                    }
-                }}
-              />
+                <div
+                    ref={editorRef}
+                    contentEditable
+                    className="min-h-12 w-full resize-none rounded-md bg-background p-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    onInput={handleInput}
+                    onKeyDown={e => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSendMessage();
+                        }
+                    }}
+                />
               <div className="absolute right-2 top-2">
                 <Button type="submit" size="icon" variant="ghost">
                   <Send />
@@ -298,7 +285,7 @@ export function MessagesClient() {
             <div className="flex items-center gap-1 mt-2">
                 <Button type="button" variant="ghost" size="icon" onClick={() => handleTextFormat('bold')}><Bold className="h-5 w-5" /></Button>
                 <Button type="button" variant="ghost" size="icon" onClick={() => handleTextFormat('italic')}><Italic className="h-5 w-5" /></Button>
-                <Button type="button" variant="ghost" size="icon" onClick={() => handleTextFormat('code')}><Code className="h-5 w-5" /></Button>
+                <Button type="button" variant="ghost" size="icon" onClick={handleCodeSnippet}><Code className="h-5 w-5" /></Button>
                 <Button type="button" variant="ghost" size="icon" onClick={() => toast({ title: "Coming Soon!", description: "File attachment functionality would be here."})}><Paperclip className="h-5 w-5" /></Button>
                 <Button type="button" variant="ghost" size="icon" onClick={() => toast({ title: "Coming Soon!", description: "An emoji picker would appear here."})}><Smile className="h-5 w-5" /></Button>
             </div>
@@ -317,5 +304,3 @@ export function MessagesClient() {
     </div>
   );
 }
-
-    
