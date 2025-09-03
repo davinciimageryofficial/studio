@@ -18,6 +18,7 @@ interface WorkspaceContextType {
     toggleTimer: () => void;
     formatTime: (seconds: number) => string;
     isPromptOpen: boolean;
+    nextPath: string | null;
     setNextPath: (path: string | null) => void;
     confirmNavigation: () => void;
     cancelNavigation: () => void;
@@ -119,6 +120,7 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         toggleTimer,
         formatTime,
         isPromptOpen,
+        nextPath,
         setNextPath,
         confirmNavigation,
         cancelNavigation,

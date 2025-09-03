@@ -13,30 +13,25 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export function NavigationPrompt() {
-  const { isPromptOpen, confirmNavigation, cancelNavigation, endSession } = useWorkspace();
+  const { 
+    isPromptOpen, 
+    nextPath, 
+    confirmNavigation, 
+    cancelNavigation, 
+    endSession 
+  } = useWorkspace();
+  
   const router = useRouter();
 
-  // This is a bit of a hack to get the next path from the context,
-  // because the router doesn't expose it directly.
-  const nextPathRef =
-    (useContext: any) =>
-    () => {
-      return useContext().nextPath;
-    };
-  const getNextPath = nextPathRef(useWorkspace);
-
   const handleConfirm = () => {
-    const nextPath = getNextPath();
     endSession();
     confirmNavigation();
     if(nextPath) router.push(nextPath);
   };
   
   const handleStay = () => {
-    const nextPath = getNextPath();
     confirmNavigation();
      if(nextPath) router.push(nextPath);
   }
