@@ -1,13 +1,13 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { placeholderUsers, placeholderMessages } from "@/lib/placeholder-data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Send, Smile, Phone, Video, Settings, UserPlus, Bold, Italic, Code, Paperclip, Link2, CaseSensitive, Eye, EyeOff } from "lucide-react";
+import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -48,6 +48,7 @@ export function MessagesClient() {
   const activeMessages = placeholderMessages.find(m => m.userId === activeConversation?.id)?.messages || [];
   const [newMessage, setNewMessage] = useState("");
   const [linkPreview, setLinkPreview] = useState<{url: string, title: string, description: string, image: string} | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const extractUrl = (text: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -70,6 +71,48 @@ export function MessagesClient() {
         setLinkPreview(null);
     }
   }, [newMessage]);
+
+  const handleTextFormat = (format: 'bold' | 'italic' | 'code') => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = newMessage.substring(start, end);
+    
+    let prefix = "";
+    let suffix = "";
+
+    switch(format) {
+        case 'bold':
+            prefix = "**";
+            suffix = "**";
+            break;
+        case 'italic':
+            prefix = "*";
+            suffix = "*";
+            break;
+        case 'code':
+            prefix = "`";
+            suffix = "`";
+            break;
+    }
+    
+    const newText = 
+      newMessage.substring(0, start) + 
+      prefix + selectedText + suffix + 
+      newMessage.substring(end);
+
+    setNewMessage(newText);
+
+    // After updating the state, focus the textarea and set the cursor position.
+    // Use a timeout to ensure the state update has been rendered.
+    setTimeout(() => {
+      textarea.focus();
+      const newCursorPosition = start + prefix.length;
+      textarea.setSelectionRange(newCursorPosition, newCursorPosition + selectedText.length);
+    }, 0);
+  };
 
 
   return (
@@ -208,6 +251,7 @@ export function MessagesClient() {
               )}
             <div className="relative rounded-lg border">
               <Textarea 
+                ref={textareaRef}
                 placeholder="Type a message..." 
                 className="min-h-12 resize-none border-0 ring-0 focus-visible:ring-0 pr-12"
                 value={newMessage}
@@ -226,9 +270,9 @@ export function MessagesClient() {
               </div>
             </div>
             <div className="flex items-center gap-1 mt-2">
-                <Button variant="ghost" size="icon"><Bold className="h-5 w-5" /></Button>
-                <Button variant="ghost" size="icon"><Italic className="h-5 w-5" /></Button>
-                <Button variant="ghost" size="icon"><Code className="h-5 w-5" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => handleTextFormat('bold')}><Bold className="h-5 w-5" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => handleTextFormat('italic')}><Italic className="h-5 w-5" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => handleTextFormat('code')}><Code className="h-5 w-5" /></Button>
                 <Button variant="ghost" size="icon"><Paperclip className="h-5 w-5" /></Button>
                 <Button variant="ghost" size="icon"><Smile className="h-5 w-5" /></Button>
             </div>
