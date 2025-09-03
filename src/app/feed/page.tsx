@@ -97,7 +97,7 @@ export default function FeedPage() {
       <div className="flex h-full min-h-screen">
         <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
           <div className="mx-auto max-w-2xl">
-            <div className="sticky top-[70px] z-10 bg-background pb-6 transition-all duration-300">
+            <div className="sticky top-[70px] z-10 bg-background transition-all duration-300 pb-2">
               <ClientOnly>
                   <CreatePostCard 
                     onPostGenerated={addPost} 
@@ -205,6 +205,7 @@ function CreatePostCard({
         <Card 
             className="cursor-pointer transition-all bg-black/80 backdrop-blur-sm hover:bg-black" 
             onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
             onClick={onExpand}
         >
             <CardContent className="p-2">
@@ -220,7 +221,7 @@ function CreatePostCard({
   }
 
   return (
-    <Card className="transition-all" onMouseLeave={handleMouseLeaveCard}>
+    <Card className="transition-all" onMouseEnter={onMouseEnter} onMouseLeave={handleMouseLeaveCard}>
       <CardContent className="p-4">
         <div className="flex items-start gap-4">
           <Avatar>
@@ -413,4 +414,5 @@ function PostCard({ post }: { post: Post }) {
     
 
     
+
 
