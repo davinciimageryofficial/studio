@@ -1,6 +1,6 @@
 
 import type { Metadata } from "next";
-import { Inter, Michroma, Cactus_Classical_Serif } from "next/font/google";
+import { Inter, Michroma, Playfair_Display } from "next/font/google";
 import { AppSidebar } from "@/components/layout/sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
@@ -13,7 +13,7 @@ import { NavigationPrompt } from "@/components/layout/navigation-prompt";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const michroma = Michroma({ weight: ["400"], subsets: ["latin"], variable: "--font-michroma" });
-const cactus = Cactus_Classical_Serif({ weight: ["400"], subsets: ["latin"], variable: "--font-cactus-serif" });
+const playfair = Playfair_Display({ subsets: ["latin"], weight: "700", variable: "--font-playfair-display" });
 
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${michroma.variable} ${cactus.variable} font-body antialiased`}>
+      <body className={`${inter.variable} ${michroma.variable} ${playfair.variable} font-body antialiased`}>
         <WorkspaceProvider>
           <SidebarProvider>
             <ClientOnly>
