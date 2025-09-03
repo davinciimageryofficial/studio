@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { ConversationStarters } from "../conversation-starters";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -48,12 +48,15 @@ type Post = (typeof placeholderPosts)[0];
 export default function FeedPage() {
     const [posts, setPosts] = useState<Post[]>(placeholderPosts);
     const [isCreatePostExpanded, setIsCreatePostExpanded] = useState(true);
+    const [isHovering, setIsHovering] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
             const offset = window.scrollY;
             if (offset > 50) {
-                setIsCreatePostExpanded(false);
+                if (!isHovering) {
+                  setIsCreatePostExpanded(false);
+                }
             } else {
                 setIsCreatePostExpanded(true);
             }
@@ -63,7 +66,7 @@ export default function FeedPage() {
         return () => {
             window.removeEventListener("scroll", handleScroll);
         };
-    }, []);
+    }, [isHovering]);
     
     const addPost = (newPostData: PostGeneratorOutput) => {
         const author = placeholderUsers.find(u => u.id === newPostData.authorId);
@@ -73,6 +76,20 @@ export default function FeedPage() {
                 author,
             };
             setPosts(prevPosts => [newPost, ...prevPosts]);
+        }
+    };
+
+    const handleMouseEnter = () => {
+        setIsHovering(true);
+        if (window.scrollY > 50) {
+            setIsCreatePostExpanded(true);
+        }
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovering(false);
+        if (window.scrollY > 50) {
+            setIsCreatePostExpanded(false);
         }
     };
 
@@ -86,6 +103,8 @@ export default function FeedPage() {
                     onPostGenerated={addPost} 
                     isMinimized={!isCreatePostExpanded}
                     onExpand={() => setIsCreatePostExpanded(true)}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                   />
               </ClientOnly>
             </div>
@@ -107,12 +126,25 @@ export default function FeedPage() {
   );
 }
 
-function CreatePostCard({ onPostGenerated, isMinimized, onExpand }: { onPostGenerated: (post: PostGeneratorOutput) => void, isMinimized: boolean, onExpand: () => void }) {
+function CreatePostCard({ 
+    onPostGenerated, 
+    isMinimized, 
+    onExpand,
+    onMouseEnter,
+    onMouseLeave,
+}: { 
+    onPostGenerated: (post: PostGeneratorOutput) => void, 
+    isMinimized: boolean, 
+    onExpand: () => void,
+    onMouseEnter: () => void,
+    onMouseLeave: () => void,
+}) {
   const [postContent, setPostContent] = useState("");
   const [analysisResult, setAnalysisResult] = useState<AnalyzePostOutput | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleAnalyze = async () => {
     if (!postContent.trim()) {
@@ -161,10 +193,20 @@ function CreatePostCard({ onPostGenerated, isMinimized, onExpand }: { onPostGene
         setIsGenerating(false);
     }
   }
+  
+  const handleMouseLeaveCard = () => {
+    if (!isFocused) {
+        onMouseLeave();
+    }
+  }
 
   if (isMinimized) {
     return (
-        <Card className="cursor-pointer transition-all bg-black/80 backdrop-blur-sm hover:bg-black" onClick={onExpand}>
+        <Card 
+            className="cursor-pointer transition-all bg-black/80 backdrop-blur-sm hover:bg-black" 
+            onMouseEnter={onMouseEnter}
+            onClick={onExpand}
+        >
             <CardContent className="p-2">
                 <div className="flex items-center gap-3">
                     <Button variant="ghost" size="icon" className="text-white/80 hover:bg-white/10 hover:text-white flex-shrink-0 h-8 w-8">
@@ -178,7 +220,7 @@ function CreatePostCard({ onPostGenerated, isMinimized, onExpand }: { onPostGene
   }
 
   return (
-    <Card className="transition-all">
+    <Card className="transition-all" onMouseLeave={handleMouseLeaveCard}>
       <CardContent className="p-4">
         <div className="flex items-start gap-4">
           <Avatar>
@@ -191,6 +233,8 @@ function CreatePostCard({ onPostGenerated, isMinimized, onExpand }: { onPostGene
               className="mb-2 min-h-20 w-full resize-none border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
               value={postContent}
               onChange={(e) => setPostContent(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
             />
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -369,3 +413,4 @@ function PostCard({ post }: { post: Post }) {
     
 
     
+
