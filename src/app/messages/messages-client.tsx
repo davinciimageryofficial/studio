@@ -35,6 +35,8 @@ import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
 
+type Message = (typeof placeholderMessages)[0]['messages'][0];
+
 export function MessagesClient() {
   const [conversations, setConversations] = useState(placeholderMessages.map(msg => {
     const user = placeholderUsers.find(u => u.id === msg.userId);
@@ -45,10 +47,42 @@ export function MessagesClient() {
   const [showAvatars, setShowAvatars] = useState(true);
   
   const activeConversation = conversations.find(c => c.id === activeConversationId);
-  const activeMessages = placeholderMessages.find(m => m.userId === activeConversation?.id)?.messages || [];
+  const [activeMessages, setActiveMessages] = useState<Message[]>(placeholderMessages.find(m => m.userId === activeConversation?.id)?.messages || []);
+
   const [newMessage, setNewMessage] = useState("");
   const [linkPreview, setLinkPreview] = useState<{url: string, title: string, description: string, image: string} | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+
+  useEffect(() => {
+    // When the active conversation changes, update the messages
+    const messages = placeholderMessages.find(m => m.userId === activeConversationId)?.messages || [];
+    setActiveMessages(messages);
+  }, [activeConversationId]);
+
+  useEffect(() => {
+    // Scroll to the bottom when new messages are added
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
+    }
+  }, [activeMessages]);
+
+  const handleSendMessage = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (newMessage.trim() === "") return;
+
+    const currentUser = placeholderUsers[1]; // Assuming 'me' is Bob Williams
+    const message: Message = {
+      from: 'me',
+      text: newMessage,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+    setActiveMessages(prev => [...prev, message]);
+    setNewMessage("");
+    setLinkPreview(null);
+  };
+
 
   const extractUrl = (text: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -223,11 +257,11 @@ export function MessagesClient() {
           </div>
           
           {/* Messages */}
-          <ScrollArea className="flex-1 bg-muted/20 p-4 sm:p-6">
+          <ScrollArea className="flex-1 bg-muted/20 p-4 sm:p-6" ref={scrollAreaRef}>
             <div className={`space-y-6 text-${fontSize}`}>
               {activeMessages.map((message, index) => (
                 <div key={index} className={cn("flex items-end gap-2", message.from === 'me' ? 'justify-end' : 'justify-start')}>
-                  {message.from !== 'me' && showAvatars && <Avatar className="h-8 w-8"><AvatarImage src={activeConversation.avatar} /></Avatar>}
+                  {message.from !== 'me' && showAvatars && activeConversation.avatar && <Avatar className="h-8 w-8"><AvatarImage src={activeConversation.avatar} /></Avatar>}
                   <div className={cn("max-w-xs rounded-lg px-4 py-2 sm:max-w-md", message.from === 'me' ? 'bg-primary text-primary-foreground' : 'bg-card shadow')}>
                     <p className="whitespace-pre-wrap">{message.text}</p>
                     <p className={cn("text-xs mt-1", message.from === 'me' ? 'text-primary-foreground/70' : 'text-muted-foreground')}>{message.time}</p>
@@ -238,7 +272,7 @@ export function MessagesClient() {
           </ScrollArea>
           
           {/* Message Input */}
-          <div className="border-t p-4 bg-card">
+          <form onSubmit={handleSendMessage} className="border-t p-4 bg-card">
               {linkPreview && (
                   <Card className="mb-2 overflow-hidden">
                       <Image src={linkPreview.image} width={400} height={200} alt="Link preview" className="w-full object-cover max-h-40" />
@@ -259,24 +293,24 @@ export function MessagesClient() {
                 onKeyDown={e => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
-                        // handleSendMessage();
+                        handleSendMessage();
                     }
                 }}
               />
               <div className="absolute right-2 top-2">
-                <Button size="icon" variant="ghost">
+                <Button type="submit" size="icon" variant="ghost">
                   <Send />
                 </Button>
               </div>
             </div>
             <div className="flex items-center gap-1 mt-2">
-                <Button variant="ghost" size="icon" onClick={() => handleTextFormat('bold')}><Bold className="h-5 w-5" /></Button>
-                <Button variant="ghost" size="icon" onClick={() => handleTextFormat('italic')}><Italic className="h-5 w-5" /></Button>
-                <Button variant="ghost" size="icon" onClick={() => handleTextFormat('code')}><Code className="h-5 w-5" /></Button>
-                <Button variant="ghost" size="icon"><Paperclip className="h-5 w-5" /></Button>
-                <Button variant="ghost" size="icon"><Smile className="h-5 w-5" /></Button>
+                <Button type="button" variant="ghost" size="icon" onClick={() => handleTextFormat('bold')}><Bold className="h-5 w-5" /></Button>
+                <Button type="button" variant="ghost" size="icon" onClick={() => handleTextFormat('italic')}><Italic className="h-5 w-5" /></Button>
+                <Button type="button" variant="ghost" size="icon" onClick={() => handleTextFormat('code')}><Code className="h-5 w-5" /></Button>
+                <Button type="button" variant="ghost" size="icon"><Paperclip className="h-5 w-5" /></Button>
+                <Button type="button" variant="ghost" size="icon"><Smile className="h-5 w-5" /></Button>
             </div>
-          </div>
+          </form>
         </div>
         ) : (
              <div className="hidden md:flex flex-col items-center justify-center md:col-span-2 lg:col-span-3 text-center p-8">
