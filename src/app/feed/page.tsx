@@ -20,10 +20,11 @@ import {
   AlertCircle,
   Briefcase,
   Bot,
+  PenSquare,
 } from "lucide-react";
 import Image from "next/image";
 import { ConversationStarters } from "../conversation-starters";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -40,11 +41,29 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { ClientOnly } from "@/components/layout/client-only";
+import { cn } from "@/lib/utils";
 
 type Post = (typeof placeholderPosts)[0];
 
 export default function FeedPage() {
     const [posts, setPosts] = useState<Post[]>(placeholderPosts);
+    const [isCreatePostExpanded, setIsCreatePostExpanded] = useState(true);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const offset = window.scrollY;
+            if (offset > 50) {
+                setIsCreatePostExpanded(false);
+            } else {
+                setIsCreatePostExpanded(true);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
     
     const addPost = (newPostData: PostGeneratorOutput) => {
         const author = placeholderUsers.find(u => u.id === newPostData.authorId);
@@ -61,9 +80,13 @@ export default function FeedPage() {
       <div className="flex h-full min-h-screen">
         <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
           <div className="mx-auto max-w-2xl">
-            <div className="sticky top-[70px] z-10 bg-background pb-6">
+            <div className="sticky top-[70px] z-10 bg-background pb-6 transition-all duration-300">
               <ClientOnly>
-                  <CreatePostCard onPostGenerated={addPost} />
+                  <CreatePostCard 
+                    onPostGenerated={addPost} 
+                    isMinimized={!isCreatePostExpanded}
+                    onExpand={() => setIsCreatePostExpanded(true)}
+                  />
               </ClientOnly>
             </div>
             <div className="mt-6 space-y-6">
@@ -84,7 +107,7 @@ export default function FeedPage() {
   );
 }
 
-function CreatePostCard({ onPostGenerated }: { onPostGenerated: (post: PostGeneratorOutput) => void }) {
+function CreatePostCard({ onPostGenerated, isMinimized, onExpand }: { onPostGenerated: (post: PostGeneratorOutput) => void, isMinimized: boolean, onExpand: () => void }) {
   const [postContent, setPostContent] = useState("");
   const [analysisResult, setAnalysisResult] = useState<AnalyzePostOutput | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -130,6 +153,7 @@ function CreatePostCard({ onPostGenerated }: { onPostGenerated: (post: PostGener
         const randomPersona = personas[Math.floor(Math.random() * personas.length)];
         const result = await generatePost({ persona: randomPersona });
         onPostGenerated(result);
+        setPostContent(""); // Clear content after generating
     } catch(e) {
         console.error(e);
         setError("Failed to generate a post. Please try again.");
@@ -138,8 +162,27 @@ function CreatePostCard({ onPostGenerated }: { onPostGenerated: (post: PostGener
     }
   }
 
+  if (isMinimized) {
+    return (
+        <Card className="cursor-pointer transition-all hover:bg-muted" onClick={onExpand}>
+            <CardContent className="p-3">
+                <div className="flex items-center gap-4">
+                    <Avatar className="h-9 w-9">
+                        <AvatarImage src="https://picsum.photos/id/1005/40/40" data-ai-hint="man portrait" />
+                        <AvatarFallback>ME</AvatarFallback>
+                    </Avatar>
+                    <div className="text-muted-foreground flex-1">Write a post...</div>
+                    <Button variant="ghost" size="icon">
+                        <PenSquare className="h-5 w-5" />
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
+    )
+  }
+
   return (
-    <Card>
+    <Card className="transition-all">
       <CardContent className="p-4">
         <div className="flex items-start gap-4">
           <Avatar>
@@ -324,3 +367,7 @@ function PostCard({ post }: { post: Post }) {
     </Card>
   );
 }
+
+    
+
+    
