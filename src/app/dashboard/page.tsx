@@ -36,6 +36,7 @@ export default function DashboardPage() {
     ];
 
     const pendingInvitations = placeholderUsers.slice(3, 6);
+    const newConnections = placeholderUsers.slice(2, 5);
     
   return (
     <div className="p-4 sm:p-6 md:p-8">
@@ -59,8 +60,9 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
         </Link>
-        <Link href="/discover">
-            <Card className="transition-all hover:scale-105 hover:shadow-xl">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">New Connections</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
@@ -70,7 +72,32 @@ export default function DashboardPage() {
                 <p className="text-xs text-muted-foreground">+15 from last month</p>
               </CardContent>
             </Card>
-        </Link>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-80" align="end">
+                <DropdownMenuLabel>Recent Connections</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {newConnections.map(user => (
+                    <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
+                        <div className="flex items-center gap-3">
+                            <Avatar className="h-9 w-9">
+                                <AvatarImage src={user.avatar} alt={user.name} />
+                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="font-semibold">{user.name}</p>
+                                <p className="text-xs text-muted-foreground">{user.headline}</p>
+                            </div>
+                        </div>
+                    </DropdownMenuItem>
+                ))}
+                 <DropdownMenuSeparator />
+                 <DropdownMenuItem asChild>
+                    <Link href="/discover" className="w-full justify-center">
+                        View all Connections
+                    </Link>
+                 </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                  <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
