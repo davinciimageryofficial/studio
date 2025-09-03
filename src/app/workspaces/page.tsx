@@ -23,7 +23,7 @@ export default function WorkspacesPage() {
         sessionType, 
         startSession, 
         endSession, 
-        toggleTimer,
+        toggleTimer, 
         formatTime
     } = useWorkspace();
 
@@ -190,7 +190,7 @@ export default function WorkspacesPage() {
                     <div className="lg:col-span-2">
                         <Card>
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 font-headline-tech">
                             <TimerIcon className="h-6 w-6" />
                             <span>SESSION</span>
                             </CardTitle>
@@ -285,3 +285,5 @@ export default function WorkspacesPage() {
     </div>
   );
 }
+
+    
