@@ -14,7 +14,7 @@ export default {
         body: ['var(--font-inter)', 'sans-serif'],
         headline: ['var(--font-inter)', 'sans-serif'],
         'headline-tech': ['var(--font-michroma)', 'sans-serif'],
-        'headline-serif': ['var(--font-lora)', 'serif'],
+        'headline-serif': ['var(--font-cactus-serif)', 'serif'],
         code: ['monospace'],
       },
       colors: {
