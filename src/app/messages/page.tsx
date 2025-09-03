@@ -178,7 +178,7 @@ export default function MessagesPage() {
                             <DropdownMenuSubContent>
                                 <DropdownMenuRadioGroup value={fontSize} onValueChange={setFontSize}>
                                     <DropdownMenuRadioItem value="sm">Small</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="base">Default</.source>
+                                    <DropdownMenuRadioItem value="base">Default</DropdownMenuRadioItem>
                                     <DropdownMenuRadioItem value="lg">Large</DropdownMenuRadioItem>
                                 </DropdownMenuRadioGroup>
                             </DropdownMenuSubContent>
