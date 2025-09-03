@@ -409,6 +409,42 @@ export const placeholderNews = [
         date: "2 days ago",
         excerpt: "An in-depth look at how a small team of developers and designers built a platform that's changing the game for creative professionals.",
         imageUrl: "https://picsum.photos/seed/news12/600/400",
+    },
+    {
+        id: "13",
+        category: "Tech",
+        title: "Quantum Computing: What Creatives Need to Know",
+        author: "Ben Goertzel",
+        date: "3 weeks ago",
+        excerpt: "Quantum computing isn't just for scientists. We explore how this emerging technology could revolutionize creative fields from design to music.",
+        imageUrl: "https://picsum.photos/seed/news13/600/400",
+    },
+    {
+        id: "14",
+        category: "Design",
+        title: "The Psychology of Color in Branding",
+        author: "Jessica Walsh",
+        date: "3 weeks ago",
+        excerpt: "A deep dive into how color theory influences consumer perception and how to choose the perfect palette for your brand.",
+        imageUrl: "https://picsum.photos/seed/news14/600/400",
+    },
+    {
+        id: "15",
+        category: "Development",
+        title: "WebAssembly: The Future of High-Performance Web Apps",
+        author: "Brendan Eich",
+        date: "4 weeks ago",
+        excerpt: "Is JavaScript's reign ending? We explore how WebAssembly is enabling near-native performance for web applications.",
+        imageUrl: "https://picsum.photos/seed/news15/600/400",
+    },
+    {
+        id: "16",
+        category: "Freelance",
+        title: "Navigating the Gig Economy: How to Stand Out",
+        author: "Sara Horowitz",
+        date: "1 month ago",
+        excerpt: "The founder of the Freelancers Union shares her tips for thriving in the competitive gig economy and building a sustainable career.",
+        imageUrl: "https://picsum.photos/seed/news16/600/400",
     }
 ];
 
