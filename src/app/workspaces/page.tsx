@@ -180,7 +180,7 @@ export default function WorkspacesPage() {
             <div className="flex h-full items-center justify-center">
                 <div className="w-full max-w-4xl">
                     <header className="mb-8 text-center">
-                        <h1 className="text-3xl font-bold tracking-tight">Workspaces</h1>
+                        <h1 className="text-3xl font-bold tracking-tight font-headline-tech">Workspaces</h1>
                         <p className="mt-1 text-muted-foreground">
                             Your focused environment for deep work and collaboration.
                         </p>
