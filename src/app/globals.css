@@ -95,7 +95,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(ellipse 80% 80% at 50% -20%,rgba(120,119,198,0.3),rgba(255,255,255,0));
+    background: radial-gradient(ellipse 80% 80% at 50% -20%,rgba(120,119,198,0.5),rgba(45,7,99,0.2));
     background-size: 200% 200%;
     animation: flow-state 8s ease-in-out infinite;
     opacity: 0.8;
