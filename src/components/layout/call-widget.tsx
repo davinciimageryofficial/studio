@@ -29,7 +29,7 @@ export function CallWidget() {
                     </div>
                 </div>
                  <Button asChild variant="outline" size="sm">
-                    <Link href="/workspaces">Return to Call</Link>
+                    <Link href="/workspaces">{sessionType === 'solo' ? 'Return to Session' : 'Return to Call'}</Link>
                 </Button>
                 <Button variant="destructive" size="icon" className="h-9 w-9" onClick={endSession}>
                     <PhoneOff className="h-4 w-4" />
