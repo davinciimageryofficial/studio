@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, X } from "lucide-react";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, X, Apple, AppWindow } from "lucide-react";
 import Link from "next/link";
 import { EngagementChart } from "./charts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -231,8 +231,26 @@ export default function DashboardPage() {
             </CardContent>
         </Card>
       </div>
+      
+      <div className="mt-8">
+        <Card>
+            <CardHeader>
+                <CardTitle>Get Sentry for Desktop</CardTitle>
+                <CardDescription>Experience Sentry on your desktop for a more integrated and focused workflow.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col sm:flex-row gap-4">
+                <Button size="lg" className="w-full">
+                    <Apple className="mr-2 h-5 w-5" />
+                    Download for Mac
+                </Button>
+                <Button size="lg" variant="outline" className="w-full">
+                    <AppWindow className="mr-2 h-5 w-5" />
+                    Download for Windows
+                </Button>
+            </CardContent>
+        </Card>
+      </div>
+
     </div>
   );
 }
-
-    
