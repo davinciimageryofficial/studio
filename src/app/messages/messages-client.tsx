@@ -34,6 +34,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 
 type Message = (typeof placeholderMessages)[0]['messages'][0];
 
@@ -53,6 +54,7 @@ export function MessagesClient() {
   const [linkPreview, setLinkPreview] = useState<{url: string, title: string, description: string, image: string} | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
 
   useEffect(() => {
@@ -307,8 +309,8 @@ export function MessagesClient() {
                 <Button type="button" variant="ghost" size="icon" onClick={() => handleTextFormat('bold')}><Bold className="h-5 w-5" /></Button>
                 <Button type="button" variant="ghost" size="icon" onClick={() => handleTextFormat('italic')}><Italic className="h-5 w-5" /></Button>
                 <Button type="button" variant="ghost" size="icon" onClick={() => handleTextFormat('code')}><Code className="h-5 w-5" /></Button>
-                <Button type="button" variant="ghost" size="icon"><Paperclip className="h-5 w-5" /></Button>
-                <Button type="button" variant="ghost" size="icon"><Smile className="h-5 w-5" /></Button>
+                <Button type="button" variant="ghost" size="icon" onClick={() => toast({ title: "Coming Soon!", description: "File attachment functionality would be here."})}><Paperclip className="h-5 w-5" /></Button>
+                <Button type="button" variant="ghost" size="icon" onClick={() => toast({ title: "Coming Soon!", description: "An emoji picker would appear here."})}><Smile className="h-5 w-5" /></Button>
             </div>
           </form>
         </div>
