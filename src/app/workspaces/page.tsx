@@ -21,6 +21,7 @@ const formatTime = (seconds: number) => {
 };
 
 type SessionType = "solo" | "team" | null;
+type User = typeof placeholderUsers[0];
 
 export default function WorkspacesPage() {
   const [time, setTime] = useState(0);
@@ -31,9 +32,9 @@ export default function WorkspacesPage() {
   const [monthlyFlowHours, setMonthlyFlowHours] = useState(25.5); // Example starting hours
   const monthlyGoal = 50;
   const [isRewardSectionVisible, setIsRewardSectionVisible] = useState(true);
+  const [initialParticipant, setInitialParticipant] = useState<User | null>(null);
+  
   const rewardTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef(0);
   const onlineUsers = placeholderUsers.slice(0, 5);
@@ -84,8 +85,15 @@ export default function WorkspacesPage() {
     } else {
         setIsActive(true);
     }
+    setInitialParticipant(null); // Clear initial participant for general start
     setSessionType(type);
     setIsDialogOpen(false);
+  };
+
+  const handleInviteAndStart = (user: User) => {
+    setInitialParticipant(user);
+    setSessionType('team');
+    setIsActive(true);
   };
   
   const handleToggleTimer = () => {
@@ -99,6 +107,7 @@ export default function WorkspacesPage() {
     setIsActive(false);
     setSessionType(null);
     setTime(0);
+    setInitialParticipant(null);
     if (rewardTimerRef.current) {
         clearTimeout(rewardTimerRef.current);
     }
@@ -213,6 +222,7 @@ export default function WorkspacesPage() {
             formatTime={formatTime}
             onToggleTimer={handleToggleTimer}
             onEndSession={handleEndSession}
+            initialParticipant={initialParticipant}
           />
         )}
         {!sessionType && (
@@ -306,7 +316,7 @@ export default function WorkspacesPage() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <Button variant="ghost" size="icon" disabled>
+                                        <Button variant="ghost" size="icon" onClick={() => handleInviteAndStart(user)}>
                                             <Plus className="h-5 w-5" />
                                             <span className="sr-only">Invite {user.name}</span>
                                         </Button>
@@ -324,5 +334,7 @@ export default function WorkspacesPage() {
     </div>
   );
 }
+
+    
 
     

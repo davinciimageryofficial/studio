@@ -18,9 +18,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
+type User = typeof placeholderUsers[0];
 
 type ParticipantCardProps = {
-  user: typeof placeholderUsers[0];
+  user: User;
   isRemovable?: boolean;
   onRemove?: (id: string) => void;
   isCameraOn: boolean;
@@ -110,13 +111,24 @@ type WorkspaceTeamProps = {
     formatTime: (seconds: number) => string;
     onToggleTimer: () => void;
     onEndSession: () => void;
+    initialParticipant?: User | null;
 }
 
-export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEndSession }: WorkspaceTeamProps) {
+export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEndSession, initialParticipant = null }: WorkspaceTeamProps) {
     const allUsers = placeholderUsers;
-    const initialParticipants = allUsers.slice(0, 5); // Start with more users to demonstrate layout
+    // Current user is always a participant
+    const currentUser = allUsers.find(u => u.id === '2'); // Assuming 'me' is Bob Williams (id: 2)
     
-    const [participants, setParticipants] = useState(initialParticipants);
+    // Setup initial participants with current user and optional invited user
+    const getInitialParticipants = () => {
+        const initial = [currentUser!];
+        if (initialParticipant && initialParticipant.id !== currentUser!.id) {
+            initial.push(initialParticipant);
+        }
+        return initial;
+    };
+    
+    const [participants, setParticipants] = useState<User[]>(getInitialParticipants());
     const [activeSpeakerId, setActiveSpeakerId] = useState<string | null>(null);
     const [isCameraOn, setIsCameraOn] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
@@ -209,7 +221,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
 
     const onlineUsers = allUsers.filter(u => !participants.some(p => p.id === u.id));
 
-    const handleInvite = (user: typeof placeholderUsers[0]) => {
+    const handleInvite = (user: User) => {
         if (participants.length < 15) {
             setParticipants(prev => [...prev, user]);
             toast({ title: "User Invited", description: `${user.name} has been added to the workspace.` });
@@ -418,5 +430,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
         </div>
     )
 }
+
+    
 
     
