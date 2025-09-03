@@ -61,9 +61,11 @@ export default function FeedPage() {
       <div className="flex h-full min-h-screen">
         <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
           <div className="mx-auto max-w-2xl">
-            <ClientOnly>
-                <CreatePostCard onPostGenerated={addPost} />
-            </ClientOnly>
+            <div className="sticky top-[70px] z-10 bg-background pb-6">
+              <ClientOnly>
+                  <CreatePostCard onPostGenerated={addPost} />
+              </ClientOnly>
+            </div>
             <div className="mt-6 space-y-6">
               {posts.map((post) => (
                 <ClientOnly key={post.id}>
@@ -284,8 +286,8 @@ function PostCard({ post }: { post: Post }) {
                 <Image
                   src={post.image}
                   alt="Post image"
-                  width={600}
-                  height={400}
+                  width={800}
+                  height={600}
                   className="h-auto w-full object-cover"
                   data-ai-hint="abstract texture"
                 />
