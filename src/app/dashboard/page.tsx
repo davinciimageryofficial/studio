@@ -30,10 +30,18 @@ export default function DashboardPage() {
         },
         {
             user: placeholderUsers[4],
+            action: "viewed your profile.",
+            time: "1 day ago",
+        },
+        {
+            user: placeholderUsers[5],
             action: "accepted your connection request.",
             time: "2 days ago",
         },
     ];
+    
+    const recentViewers = recentActivities.filter(a => a.action.includes("viewed"));
+
 
     const pendingInvitations = placeholderUsers.slice(3, 6);
     const newConnections = placeholderUsers.slice(2, 5);
@@ -48,18 +56,44 @@ export default function DashboardPage() {
       </header>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Stat Cards */}
-        <Link href="/dashboard">
-            <Card className="transition-all hover:scale-105 hover:shadow-xl">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
-                <Eye className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">1,204</div>
-                <p className="text-xs text-muted-foreground">+20.1% from last month</p>
-              </CardContent>
-            </Card>
-        </Link>
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
+                    <Eye className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">1,204</div>
+                    <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+                  </CardContent>
+                </Card>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-80" align="end">
+                <DropdownMenuLabel>Recent Viewers</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {recentViewers.map(activity => (
+                    <DropdownMenuItem key={activity.user.id} className="flex items-center justify-between gap-2 p-2">
+                        <div className="flex items-center gap-3">
+                            <Avatar className="h-9 w-9">
+                                <AvatarImage src={activity.user.avatar} alt={activity.user.name} />
+                                <AvatarFallback>{activity.user.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="font-semibold">{activity.user.name}</p>
+                                <p className="text-xs text-muted-foreground">{activity.user.headline}</p>
+                            </div>
+                        </div>
+                    </DropdownMenuItem>
+                ))}
+                 <DropdownMenuSeparator />
+                 <DropdownMenuItem asChild>
+                    <Link href="#recent-activity" className="w-full justify-center">
+                        View all in Recent Activity
+                    </Link>
+                 </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
@@ -170,7 +204,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Recent Activity */}
-        <Card>
+        <Card id="recent-activity">
             <CardHeader>
                 <CardTitle>Recent Activity</CardTitle>
             </CardHeader>
