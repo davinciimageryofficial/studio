@@ -6,12 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, CheckCircle, Award, ArrowUp } from "lucide-react";
+import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, CheckCircle, Award, ArrowUp, Zap } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { WorkspaceTeam } from "./workspace-team";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 const formatTime = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
@@ -33,6 +35,7 @@ export default function WorkspacesPage() {
   const monthlyGoal = 50;
   const [isRewardSectionVisible, setIsRewardSectionVisible] = useState(true);
   const [initialParticipant, setInitialParticipant] = useState<User | null>(null);
+  const [isLitMode, setIsLitMode] = useState(false);
   
   const rewardTimerRef = useRef<NodeJS.Timeout | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -128,7 +131,7 @@ export default function WorkspacesPage() {
     <div className="relative h-full min-h-screen">
       <div className="p-4 sm:p-6 md:p-8">
         {sessionType === 'solo' && (
-           <Card className="relative">
+           <Card className={cn("relative", isLitMode && "lit-mode-border")}>
               <CardHeader className="text-center">
                 <CardTitle>Solo Focus Session</CardTitle>
                 <CardDescription>You are in a solo session. Keep up the great work!</CardDescription>
@@ -194,6 +197,12 @@ export default function WorkspacesPage() {
                     </>
                   )}
               </CardContent>
+               {!isStartingFlow && (
+                <div className="absolute top-4 right-4 flex items-center space-x-2">
+                    <Label htmlFor="lit-mode-switch" className="text-sm font-medium text-muted-foreground">Lit Mode</Label>
+                    <Switch id="lit-mode-switch" checked={isLitMode} onCheckedChange={setIsLitMode} />
+                </div>
+               )}
                {!isStartingFlow && (
                  <TooltipProvider>
                     <Tooltip>

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +17,11 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import Image from "next/image";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+
 
 type User = typeof placeholderUsers[0];
 
@@ -137,7 +142,9 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
     const [hasScreenPermission, setHasScreenPermission] = useState<boolean | null>(null);
     const [isControlsCollapsed, setIsControlsCollapsed] = useState(false);
     const [showAvatars, setShowAvatars] = useState(true);
-
+    const [isLitMode, setIsLitMode] = useState(false);
+    const [musicSource, setMusicSource] = useState<string | null>(null);
+    const [streamMode, setStreamMode] = useState('self');
 
     const { toast } = useToast();
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -267,7 +274,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-6">
-                <Card className="flex flex-col">
+                <Card className={cn("flex flex-col", isLitMode && "lit-mode-border")}>
                     <CardHeader className="p-4">
                     <div className="flex items-center justify-between">
                         <CardTitle>Team Workspace</CardTitle>
@@ -380,10 +387,17 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                 <Card>
                     <Tabs defaultValue="invites">
                         <CardHeader>
-                            <CardTitle>Manage Team</CardTitle>
-                            <TabsList className="grid w-full grid-cols-2 mt-2">
+                            <div className="flex justify-between items-center">
+                                <CardTitle>Manage Team</CardTitle>
+                                 <div className="flex items-center space-x-2">
+                                    <Label htmlFor="lit-mode-switch" className="text-sm font-medium">Lit Mode</Label>
+                                    <Switch id="lit-mode-switch" checked={isLitMode} onCheckedChange={setIsLitMode} />
+                                </div>
+                            </div>
+                            <TabsList className="grid w-full grid-cols-3 mt-2">
                                 <TabsTrigger value="invites">Invite Users</TabsTrigger>
                                 <TabsTrigger value="chat">Live Chat</TabsTrigger>
+                                <TabsTrigger value="music">Music</TabsTrigger>
                             </TabsList>
                         </CardHeader>
                         <TabsContent value="invites" className="p-0">
@@ -415,6 +429,57 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                             <div className="h-[24rem]">
                                 <WorkspaceChat />
                             </div>
+                        </TabsContent>
+                         <TabsContent value="music" className="p-0">
+                           <div className="h-[24rem]">
+                            <CardContent className="pt-6">
+                                {musicSource ? (
+                                    <div className="space-y-4">
+                                        <Card className="overflow-hidden">
+                                            <div className="flex items-center gap-4 p-4">
+                                                <Image src="https://picsum.photos/seed/album-art/100/100" width={64} height={64} alt="Album Art" className="rounded-md" />
+                                                <div className="flex-1">
+                                                    <p className="font-semibold">Song Title Placeholder</p>
+                                                    <p className="text-sm text-muted-foreground">Artist Name</p>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                        <div>
+                                            <Label className="font-semibold">Stream Mode</Label>
+                                            <RadioGroup value={streamMode} onValueChange={setStreamMode} className="mt-2">
+                                                <div className="flex items-center space-x-2">
+                                                    <RadioGroupItem value="self" id="self" />
+                                                    <Label htmlFor="self" className="flex items-center gap-2">
+                                                        <Mic className="h-4 w-4" /> Stream for Self
+                                                    </Label>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <RadioGroupItem value="crew" id="crew" />
+                                                    <Label htmlFor="crew" className="flex items-center gap-2">
+                                                        <Radio className="h-4 w-4" /> Stream for Crew
+                                                    </Label>
+                                                </div>
+                                            </RadioGroup>
+                                        </div>
+                                        <Button variant="outline" onClick={() => setMusicSource(null)}>Disconnect</Button>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4 text-center">
+                                         <p className="text-sm text-muted-foreground">Connect a music service to start listening.</p>
+                                         <div className="flex flex-col gap-2">
+                                            <Button variant="outline" onClick={() => setMusicSource('spotify')}>
+                                                <Music2 className="mr-2 h-4 w-4" />
+                                                Connect Spotify
+                                            </Button>
+                                            <Button variant="outline" onClick={() => setMusicSource('youtube')}>
+                                                <Podcast className="mr-2 h-4 w-4" />
+                                                Connect YouTube Music
+                                            </Button>
+                                         </div>
+                                    </div>
+                                )}
+                            </CardContent>
+                           </div>
                         </TabsContent>
                     </Tabs>
                 </Card>
