@@ -167,14 +167,10 @@ function CreatePostCard({ onPostGenerated, isMinimized, onExpand }: { onPostGene
         <Card className="cursor-pointer transition-all bg-black/80 backdrop-blur-sm hover:bg-black" onClick={onExpand}>
             <CardContent className="p-2">
                 <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
-                        <AvatarImage src="https://picsum.photos/id/1005/40/40" data-ai-hint="man portrait" />
-                        <AvatarFallback>ME</AvatarFallback>
-                    </Avatar>
-                    <div className="text-white/80 flex-1">Write a post...</div>
-                    <Button variant="ghost" size="icon" className="text-white/80 hover:bg-white/10 hover:text-white">
+                    <Button variant="ghost" size="icon" className="text-white/80 hover:bg-white/10 hover:text-white flex-shrink-0 h-8 w-8">
                         <PenSquare className="h-5 w-5" />
                     </Button>
+                    <div className="text-white/80 flex-1">Write a post...</div>
                 </div>
             </CardContent>
         </Card>
