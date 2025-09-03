@@ -20,7 +20,6 @@ import {
   AlertCircle,
   Briefcase,
   Bot,
-  PenSquare,
 } from "lucide-react";
 import Image from "next/image";
 import { ConversationStarters } from "../conversation-starters";
@@ -39,34 +38,12 @@ import { generatePost, PostGeneratorOutput } from "@/ai/flows/post-generator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
 import { ClientOnly } from "@/components/layout/client-only";
-import { cn } from "@/lib/utils";
 
 type Post = (typeof placeholderPosts)[0];
 
 export default function FeedPage() {
     const [posts, setPosts] = useState<Post[]>(placeholderPosts);
-    const [isCreatePostExpanded, setIsCreatePostExpanded] = useState(true);
-    const [isHovering, setIsHovering] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const offset = window.scrollY;
-            if (offset > 50) {
-                if (!isHovering) {
-                  setIsCreatePostExpanded(false);
-                }
-            } else {
-                setIsCreatePostExpanded(true);
-            }
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, [isHovering]);
     
     const addPost = (newPostData: PostGeneratorOutput) => {
         const author = placeholderUsers.find(u => u.id === newPostData.authorId);
@@ -79,35 +56,10 @@ export default function FeedPage() {
         }
     };
 
-    const handleMouseEnter = () => {
-        setIsHovering(true);
-        if (window.scrollY > 50) {
-            setIsCreatePostExpanded(true);
-        }
-    };
-
-    const handleMouseLeave = () => {
-        setIsHovering(false);
-        if (window.scrollY > 50) {
-            setIsCreatePostExpanded(false);
-        }
-    };
-
   return (
       <div className="flex h-full min-h-screen">
         <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
           <div className="mx-auto max-w-2xl">
-            <div className="sticky top-[70px] z-10 bg-background transition-all duration-300 pb-2">
-              <ClientOnly>
-                  <CreatePostCard 
-                    onPostGenerated={addPost} 
-                    isMinimized={!isCreatePostExpanded}
-                    onExpand={() => setIsCreatePostExpanded(true)}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                  />
-              </ClientOnly>
-            </div>
             <div className="mt-6 space-y-6">
               {posts.map((post) => (
                 <ClientOnly key={post.id}>
@@ -118,33 +70,27 @@ export default function FeedPage() {
           </div>
         </main>
         <aside className="hidden w-80 flex-col border-l p-6 lg:flex">
+          <div className="sticky top-[84px] space-y-6">
             <ClientOnly>
               <ConversationStarters />
+              <CreatePostCard onPostGenerated={addPost} />
             </ClientOnly>
+          </div>
         </aside>
       </div>
   );
 }
 
 function CreatePostCard({ 
-    onPostGenerated, 
-    isMinimized, 
-    onExpand,
-    onMouseEnter,
-    onMouseLeave,
+    onPostGenerated,
 }: { 
     onPostGenerated: (post: PostGeneratorOutput) => void, 
-    isMinimized: boolean, 
-    onExpand: () => void,
-    onMouseEnter: () => void,
-    onMouseLeave: () => void,
 }) {
   const [postContent, setPostContent] = useState("");
   const [analysisResult, setAnalysisResult] = useState<AnalyzePostOutput | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isFocused, setIsFocused] = useState(false);
 
   const handleAnalyze = async () => {
     if (!postContent.trim()) {
@@ -193,49 +139,22 @@ function CreatePostCard({
         setIsGenerating(false);
     }
   }
-  
-  const handleMouseLeaveCard = () => {
-    if (!isFocused) {
-        onMouseLeave();
-    }
-  }
-
-  if (isMinimized) {
-    return (
-        <Card 
-            className="cursor-pointer transition-all bg-black/80 backdrop-blur-sm hover:bg-black" 
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            onClick={onExpand}
-        >
-            <CardContent className="p-2">
-                <div className="flex items-center gap-3">
-                    <Button variant="ghost" size="icon" className="text-white/80 hover:bg-white/10 hover:text-white flex-shrink-0 h-8 w-8">
-                        <PenSquare className="h-5 w-5" />
-                    </Button>
-                    <div className="text-white/80 flex-1">Write a post...</div>
-                </div>
-            </CardContent>
-        </Card>
-    )
-  }
 
   return (
-    <Card className="transition-all" onMouseEnter={onMouseEnter} onMouseLeave={handleMouseLeaveCard}>
-      <CardContent className="p-4">
+    <Card>
+       <CardContent className="p-4">
         <div className="flex items-start gap-4">
           <Avatar>
             <AvatarImage src="https://picsum.photos/id/1005/40/40" data-ai-hint="man portrait" />
             <AvatarFallback>ME</AvatarFallback>
           </Avatar>
           <div className="w-full">
+             <h3 className="text-lg font-semibold mb-2">Create Post</h3>
             <Textarea
               placeholder="What's on your mind?"
               className="mb-2 min-h-20 w-full resize-none border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
               value={postContent}
               onChange={(e) => setPostContent(e.target.value)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
             />
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -408,11 +327,3 @@ function PostCard({ post }: { post: Post }) {
     </Card>
   );
 }
-
-    
-
-    
-
-    
-
-
