@@ -88,27 +88,36 @@ body {
 }
 
 @layer utilities {
-  .flow-effect::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(ellipse 80% 80% at 50% -20%,rgba(120,119,198,0.5),rgba(45,7,99,0.2));
-    background-size: 200% 200%;
-    animation: flow-state 8s ease-in-out infinite;
-    opacity: 0.8;
+  .mood-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background-size: 400% 400%;
+    animation: mood-gradient 15s ease infinite;
     pointer-events: none;
-    border-radius: inherit;
+    opacity: 0.3;
   }
 }
 
-@keyframes flow-state {
-    0%{background-position:50% 0%}
-    50%{background-position:50% 100%}
-    100%{background-position:50% 0%}
+
+@keyframes mood-gradient {
+  0% {
+    background-image: linear-gradient(to top right, #3a1c71, #d76d77, #ffaf7b);
+  }
+  25% {
+    background-image: linear-gradient(to top right, #4A00E0, #8E2DE2);
+  }
+  50% {
+    background-image: linear-gradient(to top right, #1D2B64, #F8CDDA);
+  }
+  75% {
+    background-image: linear-gradient(to top right, #009FFF, #ec2F4B);
+  }
+  100% {
+    background-image: linear-gradient(to top right, #3a1c71, #d76d77, #ffaf7b);
+  }
 }
+
 
 @keyframes lit-mode-spin {
   from {
@@ -116,5 +125,43 @@ body {
   }
   to {
     --angle: 360deg;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes grid-pulse {
+  '0%, 100%' {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  '50%' {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes packet-stream {
+  '0%' {
+    motion-offset: 0%;
+  }
+  '100%' {
+    motion-offset: 100%;
   }
 }

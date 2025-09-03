@@ -33,10 +33,9 @@ type ParticipantCardProps = {
   isScreenSharing: boolean;
   isSpeaking: boolean;
   showAvatars: boolean;
-  isLitMode: boolean;
 }
 
-function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isScreenSharing, isSpeaking, showAvatars, isLitMode }: ParticipantCardProps) {
+function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isScreenSharing, isSpeaking, showAvatars }: ParticipantCardProps) {
   const [isMuted, setIsMuted] = useState(Math.random() > 0.5);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { toast } = useToast();
@@ -61,7 +60,6 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isSc
     <div className={cn(
         "relative group/participant aspect-video overflow-hidden rounded-lg bg-muted transition-all duration-300",
         isSpeaking && "ring-2 ring-primary ring-offset-2 ring-offset-background",
-        isLitMode && "flow-effect"
     )}>
       {isScreenSharing ? (
          <div className="w-full h-full flex flex-col items-center justify-center bg-blue-900/20 text-blue-200">
@@ -275,6 +273,7 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
 
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+             {isLitMode && <div className="mood-overlay" />}
             <div className="lg:col-span-2 space-y-6">
                 <Card>
                     <CardHeader className="p-4">
@@ -298,7 +297,6 @@ export function WorkspaceTeam({ time, isActive, formatTime, onToggleTimer, onEnd
                             isScreenSharing={isScreenSharing && user.id === placeholderUsers[1].id}
                             isSpeaking={user.id === activeSpeakerId}
                             showAvatars={showAvatars}
-                            isLitMode={isLitMode}
                           />
                         ))}
                     </div>
