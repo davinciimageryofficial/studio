@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Send, Smile, Phone, Video, Settings, UserPlus, Bold, Italic, Code, Paperclip, Link2, CaseSensitive } from "lucide-react";
+import { Search, Send, Smile, Phone, Video, Settings, UserPlus, Bold, Italic, Code, Paperclip, Link2, CaseSensitive, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -29,6 +29,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
@@ -79,38 +80,52 @@ export default function MessagesPage() {
           <div className="border-b p-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold">Messages</h2>
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <UserPlus className="h-5 w-5" />
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>New Conversation</DialogTitle>
-                        </DialogHeader>
-                         <div className="relative mt-4">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                            <Input placeholder="Search people..." className="pl-10" />
-                        </div>
-                        <ScrollArea className="mt-4 h-72">
-                            <div className="space-y-2">
-                               {placeholderUsers.map(user => (
-                                    <div key={user.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-accent cursor-pointer">
-                                        <Avatar>
-                                            <AvatarImage src={user.avatar} />
-                                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <p className="font-semibold">{user.name}</p>
-                                            <p className="text-sm text-muted-foreground">{user.headline}</p>
-                                        </div>
-                                    </div>
-                               ))}
+                <div className="flex items-center">
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" onClick={() => setShowAvatars(!showAvatars)}>
+                                    {showAvatars ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>{showAvatars ? 'Hide profile pictures' : 'Show profile pictures'}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <UserPlus className="h-5 w-5" />
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>New Conversation</DialogTitle>
+                            </DialogHeader>
+                             <div className="relative mt-4">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                <Input placeholder="Search people..." className="pl-10" />
                             </div>
-                        </ScrollArea>
-                    </DialogContent>
-                </Dialog>
+                            <ScrollArea className="mt-4 h-72">
+                                <div className="space-y-2">
+                                   {placeholderUsers.map(user => (
+                                        <div key={user.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-accent cursor-pointer">
+                                            <Avatar>
+                                                <AvatarImage src={user.avatar} />
+                                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <p className="font-semibold">{user.name}</p>
+                                                <p className="text-sm text-muted-foreground">{user.headline}</p>
+                                            </div>
+                                        </div>
+                                   ))}
+                                </div>
+                            </ScrollArea>
+                        </DialogContent>
+                    </Dialog>
+                </div>
             </div>
             <div className="relative mt-4">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -128,10 +143,12 @@ export default function MessagesPage() {
                 )}
               >
                 <div className="flex items-start gap-3">
-                  <Avatar>
-                    <AvatarImage src={convo.avatar} />
-                    <AvatarFallback>{convo.name?.charAt(0)}</AvatarFallback>
-                  </Avatar>
+                  {showAvatars && (
+                    <Avatar>
+                      <AvatarImage src={convo.avatar} />
+                      <AvatarFallback>{convo.name?.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  )}
                   <div className="flex-1 overflow-hidden">
                     <div className="flex justify-between">
                       <span className="font-semibold truncate">{convo.name}</span>
