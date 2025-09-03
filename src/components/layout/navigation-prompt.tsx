@@ -20,7 +20,8 @@ export function NavigationPrompt() {
     nextPath, 
     confirmNavigation, 
     cancelNavigation, 
-    endSession 
+    endSession,
+    sessionType
   } = useWorkspace();
   
   const router = useRouter();
@@ -36,23 +37,32 @@ export function NavigationPrompt() {
      if(nextPath) router.push(nextPath);
   }
 
+  const isSoloSession = sessionType === 'solo';
+
   return (
     <AlertDialog open={isPromptOpen} onOpenChange={cancelNavigation}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>You are in an active session</AlertDialogTitle>
+          <AlertDialogTitle>
+            {isSoloSession ? "You are in a focus session" : "You are in an active call"}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            You can stay in the call and browse other pages, or end the call and leave.
+            {isSoloSession 
+              ? "You can continue the session in the background or end it now."
+              : "You can stay in the call and browse other pages, or end the call and leave."
+            }
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={cancelNavigation}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleStay}>Stay in Call</AlertDialogAction>
+          <AlertDialogAction onClick={handleStay}>
+            {isSoloSession ? "Continue in Background" : "Stay in Call"}
+          </AlertDialogAction>
           <AlertDialogAction
             onClick={handleConfirm}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            End Call & Leave
+            {isSoloSession ? "End Focus Session" : "End Call & Leave"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
