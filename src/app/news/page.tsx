@@ -64,7 +64,7 @@ export default function NewsPage() {
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <header className="mb-8 border-b pb-4">
-        <h1 className="text-4xl font-bold tracking-tighter font-headline-serif">SENTRY News</h1>
+        <h1 className="text-4xl font-bold tracking-tighter font-headline-serif">SENTRY NEWS</h1>
         <p className="mt-1 text-muted-foreground">
           The latest in tech, creative industries, and the future of work.
         </p>
