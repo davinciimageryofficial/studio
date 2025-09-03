@@ -1,6 +1,6 @@
 
 import type { Metadata } from "next";
-import { Inter, Michroma } from "next/font/google";
+import { Inter, Michroma, Lora } from "next/font/google";
 import { AppSidebar } from "@/components/layout/sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
@@ -13,6 +13,8 @@ import { NavigationPrompt } from "@/components/layout/navigation-prompt";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const michroma = Michroma({ weight: ["400"], subsets: ["latin"], variable: "--font-michroma" });
+const lora = Lora({ weight: ["400"], subsets: ["latin"], variable: "--font-lora", style: 'italic' });
+
 
 export const metadata: Metadata = {
   title: "Sentry",
@@ -26,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${michroma.variable} font-body antialiased`}>
+      <body className={`${inter.variable} ${michroma.variable} ${lora.variable} font-body antialiased`}>
         <WorkspaceProvider>
           <SidebarProvider>
             <ClientOnly>
