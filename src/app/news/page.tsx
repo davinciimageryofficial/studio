@@ -62,6 +62,7 @@ export default function NewsPage() {
   
   const mainCategories: Category[] = ["Personalized", "Trending", "Statistics", "Events", "Platforms", "Spotlight"];
   const dropdownCategories: Category[] = ["Tech", "Design", "Writing", "Development", "Freelance", "AI & Machine Learning", "Cybersecurity", "Data Science", "Cloud Computing", "UI/UX"];
+  const allCategories: Category[] = ["All", ...mainCategories, ...dropdownCategories];
   const isDropdownCategorySelected = dropdownCategories.includes(selectedCategory);
 
 
@@ -74,15 +75,15 @@ export default function NewsPage() {
         </p>
       </header>
 
-      <div className="mb-8 flex justify-center">
-        <Tabs value={isDropdownCategorySelected ? "more" : selectedCategory} onValueChange={(value) => setSelectedCategory(value as Category)}>
+      <Tabs value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as Category)} className="w-full">
+        <div className="mb-8 flex justify-center">
             <TabsList className="bg-black text-muted-foreground/80">
                 {mainCategories.map(category => (
                     <TabsTrigger key={category} value={category}>{category}</TabsTrigger>
                 ))}
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <TabsTrigger value="more" className={cn(isDropdownCategorySelected && "bg-background text-foreground shadow-sm")}>
+                        <TabsTrigger value={isDropdownCategorySelected ? selectedCategory : "more"} className={cn(isDropdownCategorySelected && "bg-background text-foreground shadow-sm")}>
                             {isDropdownCategorySelected ? selectedCategory : "More"}
                             <ChevronDown className="ml-2 h-4 w-4" />
                         </TabsTrigger>
@@ -98,16 +99,19 @@ export default function NewsPage() {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </TabsList>
-        </Tabs>
-      </div>
-      
-      {selectedCategory === 'Statistics' ? (
-        <TabsContent value="Statistics" forceMount>
-          <StatisticsView />
-        </TabsContent>
-      ) : (
-        <NewsGrid articles={getArticlesForCategory(selectedCategory)} />
-      )}
+        </div>
+        
+        {allCategories.map(category => (
+          <TabsContent key={category} value={category}>
+            {category === 'Statistics' ? (
+              <StatisticsView />
+            ) : (
+              <NewsGrid articles={getArticlesForCategory(category)} />
+            )}
+          </TabsContent>
+        ))}
+
+      </Tabs>
     </div>
   );
 }
