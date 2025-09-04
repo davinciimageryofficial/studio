@@ -264,8 +264,7 @@ export function WorkspaceTeam() {
     const hiddenParticipants = participants.slice(maxVisibleParticipants);
 
     const getLitModeClass = () => {
-        if (litMode === 'off') return '';
-        if (litMode === 'procedural') return ''; // Handled by inline style
+        if (litMode === 'off' || litMode === 'procedural') return '';
         return `lit-mode-${litMode}`;
     }
 
@@ -577,5 +576,7 @@ function ProceduralLitModeDialog({ children, onGenerate }: { children: React.Rea
         </Dialog>
     )
 }
+
+    
 
     
