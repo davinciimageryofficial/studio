@@ -63,7 +63,7 @@ export default function FeedPage() {
   };
 
   return (
-    <div className="flex h-full min-h-screen">
+    <div className="flex h-full">
       <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-2xl">
           <div className="space-y-6">
@@ -314,5 +314,3 @@ function PostCard({ post }: { post: Post }) {
     </Card>
   );
 }
-
-    

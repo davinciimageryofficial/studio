@@ -83,7 +83,7 @@ export default function WorkspacesPage() {
 
 
   return (
-    <div className="relative h-full min-h-screen">
+    <div className="relative h-full">
       <div className="p-4 sm:p-6 md:p-8">
         {sessionType === 'solo' && (
            <Card>

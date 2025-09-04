@@ -90,7 +90,7 @@ export default function ProfilePage() {
 
 
   return (
-    <div className="bg-muted/40 min-h-screen">
+    <div className="bg-muted/40">
       {/* Profile Header */}
       <Card className="rounded-none relative">
         <div className="relative h-40 w-full md:h-48 group">
