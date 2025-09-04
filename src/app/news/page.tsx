@@ -76,8 +76,8 @@ export default function NewsPage() {
       </header>
 
       <Tabs value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as Category)} className="w-full">
-        <div className="mb-8 flex justify-center">
-            <TabsList className="bg-black text-muted-foreground/80">
+        <div className="mb-8">
+            <TabsList className="grid w-full grid-cols-7 bg-black text-muted-foreground/80">
                 {mainCategories.map(category => (
                     <TabsTrigger key={category} value={category}>{category}</TabsTrigger>
                 ))}
@@ -102,7 +102,7 @@ export default function NewsPage() {
         </div>
         
         {allCategories.map(category => (
-          <TabsContent key={category} value={category}>
+          <TabsContent key={category} value={category} forceMount={category === 'Statistics'}>
             {category === 'Statistics' ? (
               <StatisticsView />
             ) : (
