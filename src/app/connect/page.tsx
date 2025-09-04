@@ -56,7 +56,7 @@ function CoursesPageInternal() {
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight font-headline-tech">Courses</h1>
+        <h1 className="text-3xl font-bold tracking-tight font-headline-tech uppercase">COURSES</h1>
         <p className="mt-1 text-muted-foreground">
           Level up your skills with courses from industry experts.
         </p>
