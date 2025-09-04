@@ -34,11 +34,12 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, User, SlidersHorizontal } from "lucide-react";
+import { AlertCircle, User, SlidersHorizontal, Zap } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { placeholderUsers } from "@/lib/placeholder-data";
 
 
 const formSchema = z.object({
@@ -267,6 +268,7 @@ function TraitPickerDialog({ onSave }: { onSave: (traits: string) => void }) {
 export function WorkmateRadarForm() {
   const [result, setResult] = useState<AIWorkmateRadarOutput | null>(null);
   const [loading, setLoading] = useState(false);
+  const [autoMatching, setAutoMatching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
@@ -280,6 +282,7 @@ export function WorkmateRadarForm() {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
+    setAutoMatching(false);
     setError(null);
     setResult(null);
     try {
@@ -296,6 +299,31 @@ export function WorkmateRadarForm() {
   const handleTraitsSave = (traits: string) => {
       form.setValue("userProfile", traits, { shouldValidate: true });
   }
+
+  const handleAutomatch = async () => {
+    setAutoMatching(true);
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    try {
+        // Using placeholderUser[1] (Bob Williams) as the current user for this example
+        const currentUser = placeholderUsers[1];
+        const autoProfile = `This user has the headline "${currentUser.headline}". Their bio is: "${currentUser.bio}". Their skills include: ${currentUser.skills.join(", ")}. Find collaborators who would complement this user's profile.`;
+        
+        const output = await aiWorkmateRadar({
+            userProfile: autoProfile,
+            categorization: form.getValues("categorization"),
+            teamSize: form.getValues("teamSize"),
+        });
+        setResult(output);
+    } catch (e) {
+        setError("An unexpected error occurred during automatch. Please try again.");
+        console.error(e);
+    } finally {
+        setLoading(false);
+        setAutoMatching(false);
+    }
+  };
 
   return (
     <div>
@@ -373,10 +401,15 @@ export function WorkmateRadarForm() {
               )}
             />
           </div>
-
-          <Button type="submit" disabled={loading}>
-            {loading ? "Analyzing..." : "Find My Dream Team"}
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Button type="submit" disabled={loading} className="flex-1">
+              {loading && !autoMatching ? "Analyzing..." : "Find My Dream Team"}
+            </Button>
+             <Button type="button" variant="outline" disabled={loading} onClick={handleAutomatch} className="flex-1">
+                <Zap className="mr-2 h-4 w-4" />
+                {loading && autoMatching ? "Automatching..." : "Automatch From My Profile"}
+            </Button>
+          </div>
         </form>
       </Form>
 
