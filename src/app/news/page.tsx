@@ -18,7 +18,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { StatisticsView } from "./statistics";
 
 type Category = 
   | "All" 
@@ -36,7 +37,8 @@ type Category =
   | "UI/UX"
   | "Events"
   | "Platforms"
-  | "Spotlight";
+  | "Spotlight"
+  | "Statistics";
 
 export default function NewsPage() {
   const [selectedCategory, setSelectedCategory] = useState<Category>("All");
@@ -49,6 +51,8 @@ export default function NewsPage() {
         return placeholderNews.slice(2,6);
       case "Trending":
         return placeholderNews.slice(0, 4); // Placeholder for trending
+      case "Statistics":
+        return []; // Statistics tab has its own component
       default:
         return placeholderNews.filter(
           (article) => article.category.toLowerCase() === category.toLowerCase()
@@ -56,7 +60,7 @@ export default function NewsPage() {
     }
   };
   
-  const mainCategories: Category[] = ["Personalized", "Trending", "Events", "Platforms", "Spotlight"];
+  const mainCategories: Category[] = ["Personalized", "Trending", "Statistics", "Events", "Platforms", "Spotlight"];
   const dropdownCategories: Category[] = ["Tech", "Design", "Writing", "Development", "Freelance", "AI & Machine Learning", "Cybersecurity", "Data Science", "Cloud Computing", "UI/UX"];
   const isDropdownCategorySelected = dropdownCategories.includes(selectedCategory);
 
@@ -97,7 +101,13 @@ export default function NewsPage() {
         </Tabs>
       </div>
       
-      <NewsGrid articles={getArticlesForCategory(selectedCategory)} />
+      {selectedCategory === 'Statistics' ? (
+        <TabsContent value="Statistics" forceMount>
+          <StatisticsView />
+        </TabsContent>
+      ) : (
+        <NewsGrid articles={getArticlesForCategory(selectedCategory)} />
+      )}
     </div>
   );
 }
