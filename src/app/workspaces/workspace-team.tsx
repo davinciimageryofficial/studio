@@ -160,13 +160,24 @@ export function WorkspaceTeam() {
         if (!activeSpeakerId) return;
 
         setParticipants(prev => {
-            const speakerIndex = prev.findIndex(p => p.id === activeSpeakerId);
-            if (speakerIndex === -1 || speakerIndex === 0) return prev; // Not found or already first
+            const speaker = prev.find(p => p.id === activeSpeakerId);
+            if (!speaker) return prev;
 
-            const newParticipants = [...prev];
-            const [speaker] = newParticipants.splice(speakerIndex, 1);
-            newParticipants.unshift(speaker);
-            return newParticipants;
+            // Ensure the speaker is not already in the list to avoid duplicates
+            const otherParticipants = prev.filter(p => p.id !== activeSpeakerId);
+            const uniqueParticipants = [speaker, ...otherParticipants];
+
+            // Filter out duplicate users to ensure uniqueness
+            const uniqueUserIds = new Set();
+            const uniqueParticipantsList = uniqueParticipants.filter(participant => {
+                if (uniqueUserIds.has(participant.id)) {
+                    return false; // Skip duplicate user
+                }
+                uniqueUserIds.add(participant.id);
+                return true; // Keep unique user
+            });
+          
+            return uniqueParticipantsList;
         });
 
     }, [activeSpeakerId, setParticipants]);
@@ -576,6 +587,8 @@ function ProceduralLitModeDialog({ children, onGenerate }: { children: React.Rea
         </Dialog>
     )
 }
+
+    
 
     
 
