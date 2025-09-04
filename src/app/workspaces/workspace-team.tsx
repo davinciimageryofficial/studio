@@ -485,5 +485,3 @@ export function WorkspaceTeam() {
         </div>
     )
 }
-
-    
