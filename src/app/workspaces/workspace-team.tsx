@@ -376,7 +376,7 @@ export function WorkspaceTeam() {
             <div className="flex flex-col gap-6">
                 <Card>
                     <Tabs defaultValue="invites">
-                        <CardHeader>
+                        <CardHeader className="p-4">
                             <div className="flex justify-between items-center">
                                 <CardTitle>Manage Team</CardTitle>
                                  <div className="flex items-center space-x-2">
@@ -485,3 +485,5 @@ export function WorkspaceTeam() {
         </div>
     )
 }
+
+    
