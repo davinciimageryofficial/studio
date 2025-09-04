@@ -321,7 +321,7 @@ export function WorkspaceTeam() {
                         </Alert>
                     )}
                     </CardContent>
-                    <CardFooter className="p-2 bg-card">
+                    <CardFooter className="px-2 py-1 bg-card">
                          <div className="flex justify-center flex-wrap gap-2 w-full">
                            <Button onClick={toggleTimer} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
                                 {isActive ? <Pause /> : <Play />}
@@ -485,3 +485,5 @@ export function WorkspaceTeam() {
         </div>
     )
 }
+
+    
