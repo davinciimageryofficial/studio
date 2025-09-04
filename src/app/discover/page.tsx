@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +29,7 @@ export default function DiscoverPage() {
       </div>
 
       <Tabs defaultValue="All" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-4 bg-black text-muted-foreground">
           {categories.map((category) => (
             <TabsTrigger key={category} value={category}>
               {category}
