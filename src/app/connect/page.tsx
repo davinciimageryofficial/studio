@@ -27,6 +27,7 @@ function CoursesPageInternal() {
   const [category, setCategory] = useState("all");
   const [priceRange, setPriceRange] = useState([0, 300]);
   const [sortBy, setSortBy] = useState("relevance");
+  const [skillLevel, setSkillLevel] = useState("all");
 
   const allCategories = [
     ...new Set(placeholderCourses.map(c => c.category))
@@ -37,7 +38,8 @@ function CoursesPageInternal() {
       const matchesCategory = category === 'all' || course.category.toLowerCase() === category.toLowerCase();
       const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) || course.author.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesPrice = course.price >= priceRange[0] && course.price <= priceRange[1];
-      return matchesCategory && matchesSearch && matchesPrice;
+      const matchesLevel = skillLevel === 'all' || course.level.toLowerCase() === skillLevel.toLowerCase();
+      return matchesCategory && matchesSearch && matchesPrice && matchesLevel;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -95,7 +97,7 @@ function CoursesPageInternal() {
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="mt-4 rounded-md border p-6">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <div>
                   <Label htmlFor="price-range">Price Range: ${priceRange[0]} - ${priceRange[1]}</Label>
                   <Slider
@@ -119,6 +121,20 @@ function CoursesPageInternal() {
                       <SelectItem value="price-asc">Price: Low to High</SelectItem>
                       <SelectItem value="price-desc">Price: High to Low</SelectItem>
                       <SelectItem value="newest">Newest</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                   <Label htmlFor="skill-level">Skill Level</Label>
+                   <Select value={skillLevel} onValueChange={setSkillLevel}>
+                    <SelectTrigger id="skill-level" className="w-full mt-2">
+                      <SelectValue placeholder="Skill Level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Levels</SelectItem>
+                      <SelectItem value="Beginner">Beginner</SelectItem>
+                      <SelectItem value="Intermediate">Intermediate</SelectItem>
+                      <SelectItem value="Advanced">Advanced</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -161,6 +177,7 @@ function ContentCard({ content }: { content: any }) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
              <Badge className="absolute top-3 right-3">{content.category}</Badge>
+             <Badge variant="secondary" className="absolute top-3 left-3">{content.level}</Badge>
         </div>
       <CardContent className="p-4">
         <h3 className="font-semibold text-lg truncate">{content.title}</h3>

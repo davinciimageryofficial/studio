@@ -457,6 +457,7 @@ export const placeholderCourses = [
         category: "Development",
         description: "Take your TypeScript skills to the next level. Learn advanced patterns, decorators, and how to build type-safe, enterprise-grade applications.",
         imageUrl: "https://picsum.photos/seed/course1/600/400",
+        level: "Advanced",
     },
     {
         id: "course2",
@@ -466,6 +467,7 @@ export const placeholderCourses = [
         category: "Design",
         description: "A comprehensive guide to Figma. Master components, auto layout, and prototyping to create stunning and efficient designs.",
         imageUrl: "https://picsum.photos/seed/course2/600/400",
+        level: "Beginner",
     },
     {
         id: "course3",
@@ -475,6 +477,7 @@ export const placeholderCourses = [
         category: "Writing",
         description: "Learn how to create a content strategy that drives organic traffic. This course covers keyword research, on-page SEO, and content promotion.",
         imageUrl: "https://picsum.photos/seed/course3/600/400",
+        level: "Intermediate",
     },
      {
         id: "course4",
@@ -484,6 +487,7 @@ export const placeholderCourses = [
         category: "Development",
         description: "Learn how to build, deploy, and scale serverless APIs on AWS using Node.js, API Gateway, and Lambda. No servers, no problem.",
         imageUrl: "https://picsum.photos/seed/course4/600/400",
+        level: "Intermediate",
     },
     {
         id: "course5",
@@ -493,6 +497,7 @@ export const placeholderCourses = [
         category: "AI & Machine Learning",
         description: "Explore the fundamentals of generative AI, including large language models, diffusion models, and their applications.",
         imageUrl: "https://picsum.photos/seed/course5/600/400",
+        level: "Beginner",
     },
     {
         id: "course6",
@@ -502,6 +507,7 @@ export const placeholderCourses = [
         category: "Data Science",
         description: "Get hands-on experience with Pandas, Scikit-learn, and Matplotlib to analyze data and build predictive models.",
         imageUrl: "https://picsum.photos/seed/course6/600/400",
+        level: "Intermediate",
     },
 ];
 
