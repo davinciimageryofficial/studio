@@ -93,11 +93,23 @@ body {
     position: fixed;
     inset: 0;
     z-index: 50;
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 400%;
+    background-size: 400% 400% !important;
     animation: mood-gradient 15s ease infinite;
     pointer-events: none;
     opacity: 0.3;
+  }
+
+  .lit-mode-default {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  }
+  .lit-mode-sunset {
+      background: linear-gradient(-45deg, #ff7e5f, #feb47b, #ffb571, #ff9a8b);
+  }
+  .lit-mode-ocean {
+      background: linear-gradient(-45deg, #00c6ff, #0072ff, #0052d4, #43cea2);
+  }
+  .lit-mode-synthwave {
+      background: linear-gradient(-45deg, #f72585, #7209b7, #3a0ca3, #4361ee);
   }
 }
 

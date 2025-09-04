@@ -6,12 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2 } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { GlobalSearch } from "@/components/layout/global-search";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -22,6 +22,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useWorkspace } from "@/context/workspace-context";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { generateGradient } from "@/ai/flows/gradient-generator";
 
 
 type User = typeof placeholderUsers[0];
@@ -131,7 +134,8 @@ export function WorkspaceTeam() {
     const [hasScreenPermission, setHasScreenPermission] = useState<boolean | null>(null);
     const [isControlsCollapsed, setIsControlsCollapsed] = useState(false);
     const [showAvatars, setShowAvatars] = useState(true);
-    const [isLitMode, setIsLitMode] = useState(false);
+    const [litMode, setLitMode] = useState<string>('off');
+    const [proceduralGradient, setProceduralGradient] = useState('');
     const [musicSource, setMusicSource] = useState<string | null>(null);
     const [streamMode, setStreamMode] = useState('self');
 
@@ -259,10 +263,22 @@ export function WorkspaceTeam() {
     const visibleParticipants = participants.slice(0, maxVisibleParticipants);
     const hiddenParticipants = participants.slice(maxVisibleParticipants);
 
+    const getLitModeClass = () => {
+        if (litMode === 'off') return '';
+        if (litMode === 'procedural') return ''; // Handled by inline style
+        return `lit-mode-${litMode}`;
+    }
+
+    const getLitModeStyle = () => {
+        if (litMode === 'procedural' && proceduralGradient) {
+            return { background: proceduralGradient };
+        }
+        return {};
+    }
 
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-             {isLitMode && <div className="mood-overlay" />}
+             {litMode !== 'off' && <div className={cn("mood-overlay", getLitModeClass())} style={getLitModeStyle()} />}
             <div className="lg:col-span-2 space-y-6">
                 <Card>
                     <CardHeader className="p-2">
@@ -379,10 +395,28 @@ export function WorkspaceTeam() {
                         <CardHeader className="p-4">
                             <div className="flex justify-between items-center">
                                 <CardTitle>Manage Team</CardTitle>
-                                 <div className="flex items-center space-x-2">
-                                    <Label htmlFor="lit-mode-switch" className="text-sm font-medium">Lit Mode</Label>
-                                    <Switch id="lit-mode-switch" checked={isLitMode} onCheckedChange={setIsLitMode} />
-                                </div>
+                                 <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" size="sm">
+                                            <Palette className="mr-2 h-4 w-4" />
+                                            Lit Mode
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuItem onSelect={() => setLitMode('default')}>Default</DropdownMenuItem>
+                                        <DropdownMenuItem onSelect={() => setLitMode('sunset')}>Sunset</DropdownMenuItem>
+                                        <DropdownMenuItem onSelect={() => setLitMode('ocean')}>Ocean</DropdownMenuItem>
+                                        <DropdownMenuItem onSelect={() => setLitMode('synthwave')}>Synthwave</DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <ProceduralLitModeDialog onGenerate={(grad) => { setProceduralGradient(grad); setLitMode('procedural'); }}>
+                                            <button className="relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full">
+                                                <Wand2 /> Procedural...
+                                            </button>
+                                        </ProceduralLitModeDialog>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onSelect={() => setLitMode('off')}>Off</DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                 </DropdownMenu>
                             </div>
                             <TabsList className="grid w-full grid-cols-3 mt-2">
                                 <TabsTrigger value="invites">Invite Users</TabsTrigger>
@@ -483,6 +517,64 @@ export function WorkspaceTeam() {
             </div>
              <Toaster />
         </div>
+    )
+}
+
+function ProceduralLitModeDialog({ children, onGenerate }: { children: React.ReactNode, onGenerate: (gradient: string) => void }) {
+    const [description, setDescription] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    const handleGenerate = async () => {
+        if (!description.trim()) {
+            setError('Please enter a description.');
+            return;
+        }
+        setIsLoading(true);
+        setError('');
+        try {
+            const result = await generateGradient({ description });
+            onGenerate(result.gradient);
+            setIsDialogOpen(false); // Close dialog on success
+        } catch (e) {
+            console.error(e);
+            setError('Failed to generate gradient. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
+    return (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Procedural Lit Mode</DialogTitle>
+                    <p className="text-sm text-muted-foreground">Describe the mood or color scheme you want, and AI will generate a gradient for you.</p>
+                </DialogHeader>
+                <div className="py-4 space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="gradient-description">Description</Label>
+                        <Input 
+                            id="gradient-description"
+                            placeholder="e.g., 'a fiery sunset', 'calm ocean morning'"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                        />
+                    </div>
+                    {error && <p className="text-sm text-destructive">{error}</p>}
+                </div>
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button variant="ghost">Cancel</Button>
+                    </DialogClose>
+                    <Button onClick={handleGenerate} disabled={isLoading}>
+                        {isLoading ? 'Generating...' : 'Generate'}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     )
 }
 
