@@ -72,7 +72,7 @@ export default function NewsPage() {
 
       <div className="mb-8 flex justify-center">
         <Tabs value={isDropdownCategorySelected ? "more" : selectedCategory} onValueChange={(value) => setSelectedCategory(value as Category)}>
-            <TabsList>
+            <TabsList className="bg-black text-muted-foreground/80">
                 {mainCategories.map(category => (
                     <TabsTrigger key={category} value={category}>{category}</TabsTrigger>
                 ))}
