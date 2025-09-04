@@ -265,7 +265,7 @@ export function WorkspaceTeam() {
              {isLitMode && <div className="mood-overlay" />}
             <div className="lg:col-span-2 space-y-6">
                 <Card>
-                    <CardHeader className="p-4">
+                    <CardHeader className="p-2">
                     <div className="flex items-center justify-between">
                         <CardTitle>Team Workspace</CardTitle>
                         <div className="flex items-center gap-2 font-mono text-lg font-bold">
