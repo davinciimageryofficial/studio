@@ -26,6 +26,7 @@ import {
   Home,
   Mic,
   Fullscreen,
+  Briefcase,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -43,6 +44,7 @@ const menuItems = [
 const productivityItems = [
     { href: "/workspaces", label: "Workspaces", icon: Mic },
     { href: "/workmate-radar", label: "Workmate Radar", icon: Radar },
+    { href: "/skill-sync-net", label: "Skill Sync Net", icon: Briefcase },
 ];
 
 const contentItems = [
