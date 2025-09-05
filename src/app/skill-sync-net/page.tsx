@@ -294,7 +294,7 @@ function ClientView() {
             const output = await skillSyncNet(input);
             setResult(output);
         } catch (e) {
-            setError("Failed to find a match. The AI engine may be busy. Please try again.");
+            setError("Failed to find a match. The AI engine may be busy or has hit its rate limit. Please try again later.");
             console.error(e);
         } finally {
             setLoading(false);
@@ -425,7 +425,7 @@ function FreelancerView() {
             const output = await skillSyncNet(input);
             setResult(output);
         } catch (e) {
-            setError("Failed to find a project. The AI engine may be busy. Please try again.");
+            setError("Failed to find a project. The AI engine may be busy or has hit its rate limit. Please try again later.");
             console.error(e);
         } finally {
             setLoading(false);
@@ -614,5 +614,3 @@ export default function SkillSyncNetPage() {
         </ClientOnly>
     );
 }
-
-    

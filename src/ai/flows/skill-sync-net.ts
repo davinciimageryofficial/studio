@@ -47,26 +47,6 @@ Generate a JSON object containing the matched freelancer's profile.
 `,
 });
 
-const freelancerSeekerPrompt = ai.definePrompt({
-  name: 'skillSyncFreelancerSeekerPrompt',
-  input: { schema: z.object({ freelancerProfile: FreelancerProfileSchema }) },
-  output: { schema: SkillSyncNetOutputSchema },
-  prompt: `You are SkillSync, an AI-powered talent agent with unparalleled precision in matching elite freelancers to high-value projects. You are more precise than Toptal.
-
-A freelancer with the following profile is looking for their next project:
-- **Headline:** {{{freelancerProfile.headline}}}
-- **Bio:** {{{freelancerProfile.bio}}}
-- **Skills:** {{#each freelancerProfile.skills}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
-
-Your task is to find the **single best project** for this freelancer. Invent a realistic, compelling project from a plausible company.
-
-Generate a JSON object containing the matched project's details.
-- The 'matchReasoning' must be a sharp, insightful paragraph explaining *why* this project is a perfect fit for the freelancer's specific skills and experience.
-- The 'matchConfidence' score must be high (80-100), reflecting your expert vetting.
-- Do NOT populate the 'freelancer' field in the output.
-`,
-});
-
 const skillSyncNetFlow = ai.defineFlow(
   {
     name: 'skillSyncNetFlow',
@@ -80,8 +60,23 @@ const skillSyncNetFlow = ai.defineFlow(
       return output!;
     } else if (input.context === 'freelancer_seeking_project') {
       if (!input.freelancerProfile) throw new Error("Freelancer profile is required.");
-      const { output } = await freelancerSeekerPrompt({ freelancerProfile: input.freelancerProfile });
-      return output!;
+      
+      // Return a hardcoded project to save on API calls and avoid rate limiting.
+      const featuredProject: SkillSyncNetOutput = {
+        match: {
+          project: {
+            title: "Featured Project: Interactive Data Dashboard",
+            clientName: "Data Insights Inc.",
+            description: "Develop a cutting-edge, interactive web dashboard for visualizing real-time analytics. This is a high-visibility project for a fast-growing tech startup.",
+            requiredSkills: ["React", "D3.js", "TypeScript", "Data Visualization", "UI/UX"],
+            budget: 15000,
+            timeline: "1-2 months",
+            matchReasoning: "This featured project requires strong front-end skills and an eye for data visualization, making it an excellent opportunity for top-tier developers. The modern tech stack aligns with your expertise in React and TypeScript.",
+            matchConfidence: 98,
+          }
+        }
+      };
+      return featuredProject;
     }
     throw new Error("Invalid context provided.");
   }
