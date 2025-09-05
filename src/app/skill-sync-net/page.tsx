@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Zap, AlertCircle, Kanban, CircleDollarSign, Clock, SlidersHorizontal, Settings2 } from "lucide-react";
+import { User, Zap, AlertCircle, Kanban, CircleDollarSign, Clock, SlidersHorizontal, Settings2, Building } from "lucide-react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { skillSyncNet, type SkillSyncNetInput, type SkillSyncNetOutput } from "@/ai/flows/skill-sync-net";
@@ -277,7 +277,7 @@ function ClientView() {
     const handleNicheSave = (niches: string[]) => {
         setSelectedNiches(niches);
         const currentSkills = form.getValues("requiredSkills").split(',').map(s => s.trim()).filter(s => s && !Object.values(freelanceNiches).flat().includes(s));
-        const newSkills = [...niches, ...currentSkills].join(', ');
+        const newSkills = [...currentSkills, ...niches].join(', ');
         form.setValue("requiredSkills", newSkills, { shouldValidate: true });
     };
 
@@ -302,7 +302,7 @@ function ClientView() {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <Card>
                 <CardHeader>
                     <CardTitle>Post a Project</CardTitle>
@@ -433,7 +433,7 @@ function FreelancerView() {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <Card>
                 <CardHeader className="text-center">
                     <CardTitle>Instant Project Matching</CardTitle>
@@ -441,7 +441,7 @@ function FreelancerView() {
                 </CardHeader>
                 <CardContent className="text-center p-12">
                     <p className="mb-6 text-muted-foreground">Ready for your next gig? Let our AI find a project that perfectly matches your skills and experience.</p>
-                    <Button size="lg" className="h-16 text-lg" onClick={handleFindProject} disabled={loading}>
+                    <Button size="lg" className="h-16 text-lg bg-black text-white hover:bg-gray-800" onClick={handleFindProject} disabled={loading}>
                         <Zap className="mr-3 h-6 w-6" />
                         {loading ? "Scanning for Projects..." : "Find Instant Match"}
                     </Button>
@@ -614,7 +614,5 @@ export default function SkillSyncNetPage() {
         </ClientOnly>
     );
 }
-
-    
 
     
