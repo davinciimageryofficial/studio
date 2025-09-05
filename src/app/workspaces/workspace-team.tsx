@@ -11,7 +11,7 @@ import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose, DialogDescription } from "@/components/ui/dialog";
 import { GlobalSearch } from "@/components/layout/global-search";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -164,12 +164,14 @@ export function WorkspaceTeam() {
             if (!speaker) return currentParticipants;
 
             const otherParticipants = currentParticipants.filter(p => p.id !== activeSpeakerId);
-
+            
+            const finalParticipants = [speaker, ...otherParticipants];
+            
             const participantMap = new Map<string, User>();
-            [speaker, ...otherParticipants].forEach(p => participantMap.set(p.id, p));
+            finalParticipants.forEach(p => participantMap.set(p.id, p));
 
             const uniqueParticipants = Array.from(participantMap.values());
-            
+
             if (JSON.stringify(uniqueParticipants) !== JSON.stringify(currentParticipants)) {
                 return uniqueParticipants;
             }
@@ -308,6 +310,12 @@ export function WorkspaceTeam() {
         }
         return {};
     }
+    
+    const handleProceduralGenerate = (gradient: string) => {
+        setProceduralGradient(gradient);
+        setLitMode('procedural');
+    };
+
 
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -429,14 +437,9 @@ export function WorkspaceTeam() {
                             <div className="flex justify-between items-center">
                                 <CardTitle>Manage Team</CardTitle>
                                 <ProceduralLitModeDialog 
-                                    onGenerate={(grad) => { setProceduralGradient(grad); setLitMode('procedural'); }}
+                                    onGenerate={handleProceduralGenerate}
                                     onClose={() => setLitMode('off')}
-                                >
-                                    <Button variant="outline" size="sm">
-                                        <Wand2 className="mr-2 h-4 w-4" />
-                                        Procedural Mode
-                                    </Button>
-                                </ProceduralLitModeDialog>
+                                />
                             </div>
                             <TabsList className="grid w-full grid-cols-3 mt-2">
                                 <TabsTrigger value="invites">Invite Users</TabsTrigger>
@@ -540,7 +543,7 @@ export function WorkspaceTeam() {
     )
 }
 
-function ProceduralLitModeDialog({ children, onGenerate, onClose }: { children: React.ReactNode, onGenerate: (gradient: string) => void, onClose: () => void }) {
+function ProceduralLitModeDialog({ onGenerate, onClose }: { onGenerate: (gradient: string) => void, onClose: () => void }) {
     const [description, setDescription] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -567,7 +570,6 @@ function ProceduralLitModeDialog({ children, onGenerate, onClose }: { children: 
     
     const handleOpenChange = (open: boolean) => {
         if (!open) {
-            // If the dialog is closed without generating, call the onClose callback
             const proceduralGradientActive = document.querySelector('.mood-overlay')?.getAttribute('style')?.includes('background');
             if (!proceduralGradientActive) {
                  onClose();
@@ -579,11 +581,16 @@ function ProceduralLitModeDialog({ children, onGenerate, onClose }: { children: 
 
     return (
         <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
-            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                    <Wand2 className="mr-2 h-4 w-4" />
+                    Procedural Mode
+                </Button>
+            </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Procedural Lit Mode</DialogTitle>
-                    <p className="text-sm text-muted-foreground">Describe the mood or color scheme you want, and AI will generate a gradient for you.</p>
+                    <DialogDescription>Describe the mood or color scheme you want, and AI will generate a gradient for you.</DialogDescription>
                 </DialogHeader>
                 <div className="py-4 space-y-4">
                     <div className="space-y-2">
@@ -609,3 +616,5 @@ function ProceduralLitModeDialog({ children, onGenerate, onClose }: { children: 
         </Dialog>
     )
 }
+
+    
