@@ -145,7 +145,14 @@ export function AppSidebar() {
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
-            <SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+             <SidebarMenuItem>
+                <SidebarTrigger className="h-8 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full justify-start" />
+            </SidebarMenuItem>
+             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={toggleFullscreen}
                 tooltip={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
@@ -154,13 +161,6 @@ export function AppSidebar() {
                 <Fullscreen />
                 <span>{isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}</span>
               </SidebarMenuButton>
-            </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-             <SidebarMenuItem>
-                <SidebarTrigger className="h-8 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full justify-start" />
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Profile" className="justify-start">
