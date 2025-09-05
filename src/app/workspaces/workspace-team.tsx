@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2, LogOut } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2, LogOut, Users } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +24,7 @@ import { Switch } from "@/components/ui/switch";
 import { useWorkspace } from "@/context/workspace-context";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 
 type User = typeof placeholderUsers[0];
@@ -85,7 +86,7 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isSc
         </div>
       )}
       <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between opacity-0 group-hover/participant:opacity-100 transition-opacity">
-        <p className="truncate text-sm font-medium text-black">{user.name}</p>
+        <p className="truncate text-sm font-medium text-white bg-black/30 px-2 py-1 rounded-md">{user.name}</p>
         <Button size="icon" variant="ghost" className="h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white" onClick={() => setIsMuted(!isMuted)}>
           {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
         </Button>
@@ -156,18 +157,21 @@ export function WorkspaceTeam() {
     // Reorder participants when active speaker changes
     useEffect(() => {
         if (!activeSpeakerId) return;
-
+    
         setParticipants(currentParticipants => {
-            const speaker = currentParticipants.find(p => p.id === activeSpeakerId);
-            if (!speaker) return currentParticipants;
-            
-            // Filter out the active speaker and then add them to the front.
-            const otherParticipants = currentParticipants.filter(p => p.id !== activeSpeakerId);
-            const finalParticipants = [speaker, ...otherParticipants];
-
+            const speakerIndex = currentParticipants.findIndex(p => p.id === activeSpeakerId);
+            if (speakerIndex === -1) return currentParticipants; // Speaker not found
+    
+            // Create a new array with the speaker moved to the front.
+            const newParticipants = [
+                currentParticipants[speakerIndex],
+                ...currentParticipants.slice(0, speakerIndex),
+                ...currentParticipants.slice(speakerIndex + 1)
+            ];
+    
             // Deep comparison to prevent unnecessary re-renders if the order is already correct.
-            if (JSON.stringify(finalParticipants) !== JSON.stringify(currentParticipants)) {
-                return finalParticipants;
+            if (JSON.stringify(newParticipants) !== JSON.stringify(currentParticipants)) {
+                return newParticipants;
             }
             return currentParticipants;
         });
@@ -261,9 +265,7 @@ export function WorkspaceTeam() {
         });
     }
 
-    const maxVisibleParticipants = 4;
-    const visibleParticipants = participants.slice(0, maxVisibleParticipants);
-    const hiddenParticipants = participants.slice(maxVisibleParticipants);
+    const visibleParticipants = participants.slice(0, 4);
     
     const ControlButton = ({ tooltip, onClick, children, variant = "default", className }: { tooltip: string, onClick?: () => void, children: React.ReactNode, variant?: "default" | "secondary" | "destructive" | "outline" | "ghost" | "link", className?: string }) => (
         <TooltipProvider>
@@ -285,67 +287,35 @@ export function WorkspaceTeam() {
     );
 
     return (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2 space-y-6">
-                <Card className="flex flex-col h-full">
-                    <CardHeader className="p-4 border-b">
-                    <div className="flex items-center justify-between">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
+            {/* Main Content Area */}
+            <div className="lg:col-span-3 flex flex-col gap-6">
+                 <Card className="flex-1 flex flex-col">
+                    <CardHeader className="p-4 border-b flex-row items-center justify-between">
                         <CardTitle>Team Workspace</CardTitle>
                         <div className="flex items-center gap-2 font-mono text-lg font-bold">
-                        <TimerIcon className="h-5 w-5"/>
-                        {formatTime(time)}
+                            <TimerIcon className="h-5 w-5"/>
+                            {formatTime(time)}
                         </div>
-                    </div>
                     </CardHeader>
                     <CardContent className="flex-1 p-4">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        {visibleParticipants.map(user => (
-                          <ParticipantCard 
-                            key={user.id} 
-                            user={user} 
-                            isRemovable={user.id !== placeholderUsers[1].id} // Can't remove self
-                            onRemove={handleRemove}
-                            isCameraOn={isCameraOn && user.id === placeholderUsers[1].id} // Example: only my camera is on
-                            isScreenSharing={isScreenSharing && user.id === placeholderUsers[1].id}
-                            isSpeaking={user.id === activeSpeakerId}
-                            showAvatars={showAvatars}
-                          />
-                        ))}
-                    </div>
-                    {hiddenParticipants.length > 0 && (
-                        <div className="mt-4 flex items-center gap-4 rounded-md border p-3">
-                            <div className="flex -space-x-2 overflow-hidden">
-                                <TooltipProvider>
-                                {hiddenParticipants.map(user => (
-                                    <Tooltip key={user.id}>
-                                        <TooltipTrigger asChild>
-                                            <Avatar className={cn("h-8 w-8 border-2 border-background", user.id === activeSpeakerId && "ring-2 ring-primary")}>
-                                                {showAvatars && <AvatarImage src={user.avatar} />}
-                                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>{user.name}</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                ))}
-                                </TooltipProvider>
-                            </div>
-                            <p className="text-sm text-muted-foreground">
-                                +{hiddenParticipants.length} more participant{hiddenParticipants.length > 1 ? 's' : ''}
-                            </p>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                             {visibleParticipants.map(user => (
+                                <ParticipantCard 
+                                    key={user.id} 
+                                    user={user} 
+                                    isRemovable={user.id !== placeholderUsers[1].id} // Can't remove self
+                                    onRemove={handleRemove}
+                                    isCameraOn={isCameraOn && user.id === placeholderUsers[1].id} // Example: only my camera is on
+                                    isScreenSharing={isScreenSharing && user.id === placeholderUsers[1].id}
+                                    isSpeaking={user.id === activeSpeakerId}
+                                    showAvatars={showAvatars}
+                                />
+                             ))}
                         </div>
-                    )}
-                     {hasCameraPermission === false && (
-                         <Alert variant="destructive" className="mt-4">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>Camera Access Denied</AlertTitle>
-                            <AlertDescription>Please enable camera permissions in your browser settings to use this feature.</AlertDescription>
-                        </Alert>
-                    )}
                     </CardContent>
                     <CardFooter className="p-2 border-t bg-card">
-                        <div className="flex justify-between items-center w-full gap-2">
+                         <div className="flex justify-between items-center w-full gap-2">
                             {/* Left Controls */}
                             <div className="flex gap-2">
                                 <ControlButton tooltip={isActive ? 'Pause Timer' : 'Resume Timer'} onClick={toggleTimer}>
@@ -406,7 +376,16 @@ export function WorkspaceTeam() {
                         </div>
                     </CardFooter>
                 </Card>
+                 {hasCameraPermission === false && (
+                    <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>Camera Access Denied</AlertTitle>
+                        <AlertDescription>Please enable camera permissions in your browser settings to use this feature.</AlertDescription>
+                    </Alert>
+                )}
             </div>
+
+            {/* Right Sidebar */}
             <div className="flex flex-col gap-6">
                 <Card className="flex flex-col">
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1">
@@ -421,7 +400,7 @@ export function WorkspaceTeam() {
                             </TabsList>
                         </CardHeader>
                         <TabsContent value="invites" className="p-0 flex-1">
-                           <CardContent className="space-y-4 max-h-80 overflow-y-auto">
+                           <CardContent className="p-4 space-y-4 max-h-80 overflow-y-auto">
                                 {onlineUsers.map(user => (
                                     <div key={user.id} className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
@@ -444,6 +423,12 @@ export function WorkspaceTeam() {
                                     </div>
                                 ))}
                            </CardContent>
+                            <CardFooter className="p-4 border-t">
+                                <Button size="lg" className="w-full" onClick={handleCopyLink}>
+                                    <Copy className="mr-2 h-4 w-4"/>
+                                    Copy Invite Link
+                                </Button>
+                            </CardFooter>
                         </TabsContent>
                          <TabsContent value="chat" className="p-0 flex-1">
                             <div className="h-[24rem]">
@@ -501,21 +486,36 @@ export function WorkspaceTeam() {
                             </CardContent>
                            </div>
                         </TabsContent>
-                        <CardFooter className="p-4 border-t">
-                            {activeTab === 'invites' && (
-                                <Button size="lg" className="w-full" onClick={handleCopyLink}>
-                                    <Copy className="mr-2 h-4 w-4"/>
-                                    Copy Invite Link
-                                </Button>
-                            )}
-                             {activeTab !== 'invites' && <div className="h-10 w-full" />}
-                        </CardFooter>
                     </Tabs>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Users className="h-5 w-5" />
+                            <span>Participants ({participants.length})</span>
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ScrollArea className="h-48">
+                            <div className="space-y-4">
+                                {participants.map(user => (
+                                    <div key={user.id} className="flex items-center gap-3">
+                                        <Avatar className={cn("h-9 w-9", user.id === activeSpeakerId && "ring-2 ring-primary ring-offset-1 ring-offset-background")}>
+                                            <AvatarImage src={user.avatar} />
+                                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                            <p className="font-semibold text-sm">{user.name}</p>
+                                            <p className="text-xs text-muted-foreground">{user.headline}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </ScrollArea>
+                    </CardContent>
                 </Card>
             </div>
              <Toaster />
         </div>
     )
 }
-
-    
