@@ -68,7 +68,7 @@ export default function SignupPage() {
           </CardHeader>
           <CardContent className="p-6 pt-0">
             <Form {...form}>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
                 <FormField
                   control={control}
                   name="fullName"
