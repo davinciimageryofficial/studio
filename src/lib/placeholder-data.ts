@@ -37,7 +37,7 @@ export const placeholderUsers: User[] = [
   },
   {
     id: "2",
-    name: "Charlie Williams",
+    name: "CHRISTIAN PETA",
     handle: "bobw",
     headline: "Senior Frontend Developer | React & Next.js Expert",
     bio: "Building performant and scalable web applications. I love TypeScript and clean code. Always eager to learn new technologies.",
