@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { Search, Bell, Lightbulb, Bot, User, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { searchAI, SearchAIOutput } from "@/ai/schemas/search-ai";
+import { searchAI, type SearchAIOutput } from "@/ai/flows/search-ai";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
@@ -41,7 +41,7 @@ export function GlobalSearch() {
     setIsSuggestionsActive(false);
 
     try {
-      const output = await searchAI({ query: searchQuery });
+      const output: SearchAIOutput = await searchAI({ query: searchQuery });
       
       const aiResponse: Message = { sender: 'ai', text: output.answer };
       if (output.destination) {

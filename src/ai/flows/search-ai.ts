@@ -8,9 +8,11 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { SearchAIInputSchema, SearchAIOutputSchema, SearchAIInput, SearchAIOutput } from '@/ai/schemas/search-ai';
+import { SearchAIInputSchema, SearchAIOutputSchema, type SearchAIInput, type SearchAIOutput } from '@/ai/schemas/search-ai';
 import { searchTheWeb } from '../tools/web-search';
 import { navigateTo } from '../tools/navigation';
+
+export type { SearchAIInput, SearchAIOutput };
 
 export async function searchAI(input: SearchAIInput): Promise<SearchAIOutput> {
   return searchAIFlow(input);
