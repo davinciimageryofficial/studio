@@ -28,18 +28,23 @@ const prompt = ai.definePrompt({
   name: 'gradientGeneratorPrompt',
   input: { schema: GradientGeneratorInputSchema },
   output: { schema: GradientGeneratorOutputSchema },
-  prompt: `You are a CSS gradient generator. Based on the user's description, create a visually appealing CSS linear-gradient string.
+  prompt: `You are a CSS gradient generator specializing in vibrant, animated backgrounds for a "Lit Mode" or "party mode" feature.
 
-The gradient should be smooth and use 3 to 5 color stops. The output must be a single, valid CSS linear-gradient value.
+Based on the user's description, create a visually stunning CSS linear-gradient string.
+
+**Requirements:**
+- The gradient must be suitable for animation, so use at least 4-6 vibrant, contrasting, and interesting color stops.
+- The gradient should be complex and exciting, fitting a "disco" or "pop culture" theme.
+- The output must be a single, valid CSS linear-gradient value.
 
 **User Description:** {{{description}}}
 
 **Example Output:**
-"linear-gradient(135deg, #f6d365 0%, #fda085 100%)"
-"linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%)"
+"linear-gradient(135deg, #ff00ff, #00ffff, #ffff00, #ff0000)"
+"linear-gradient(-45deg, #fc5c7d, #6a82fb, #05dfd7, #f7b733)"
 
 **Your Task:**
-Generate a single CSS linear-gradient value for the user's description.
+Generate a single, vibrant CSS linear-gradient value for the user's description.
 `,
 });
 
