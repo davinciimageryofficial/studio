@@ -222,10 +222,15 @@ export function WorkspaceTeam() {
 
     const onlineUsers = allUsers.filter(u => !participants.some(p => p.id === u.id));
 
-    const handleInvite = (user: User) => {
+    const handleInvite = (userToInvite: User) => {
+        if (participants.some(p => p.id === userToInvite.id)) {
+            toast({ variant: "default", title: "Already in Session", description: `${userToInvite.name} is already in the workspace.` });
+            return;
+        }
+
         if (participants.length < 15) {
-            setParticipants(prev => [...prev, user]);
-            toast({ title: "User Invited", description: `${user.name} has been added to the workspace.` });
+            setParticipants(prev => [...prev, userToInvite]);
+            toast({ title: "User Invited", description: `${userToInvite.name} has been added to the workspace.` });
         } else {
             toast({ variant: "destructive", title: "Workspace Full", description: "You cannot invite more than 15 participants." });
         }
