@@ -51,109 +51,33 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const traitCategories = {
-    "Professional Skills Development": {
-      "Technical Skills": ["Python", "JavaScript", "Web Development", "Graphic Design", "Video Editing", "UX/UI Design", "Data Analysis", "Cybersecurity", "AI/ML", "Cloud Computing"],
-      "Creative Skills": ["Copywriting", "Content Writing", "Technical Writing", "Illustration", "Photography", "Animation", "Music Production", "Voice Acting"],
-      "Soft Skills": ["Communication", "Time Management", "Negotiation", "Problem-solving", "Adaptability", "Emotional Intelligence"],
-      "Industry-Specific Knowledge": ["Marketing", "Healthcare", "Finance", "Education", "E-commerce"],
-      "Portfolio Building": ["Curating a portfolio"],
+    "Core Expertise": {
+        "Seniority": ["Junior", "Mid-Level", "Senior", "Lead", "Principal"],
+        "Key Responsibilities": ["Strategy & Planning", "Execution & Production", "Management & Leadership", "Research & Analysis"],
+        "Tool Proficiency": ["Figma", "Adobe Creative Suite", "VS Code", "Microsoft Excel", "Google Analytics", "HubSpot"],
     },
-    "Business and Entrepreneurship": {
-      "Branding and Marketing": ["Personal Branding", "Social Media Marketing", "SEO", "Content Marketing", "Email Marketing"],
-      "Client Acquisition": ["Upwork", "Fiverr", "LinkedIn", "Pitching", "Networking", "Cold Emailing"],
-      "Pricing and Negotiation": ["Setting Rates", "Value-Based Pricing", "Scope Creep", "Contract Negotiation"],
-      "Financial Management": ["Budgeting", "Invoicing", "Expense Tracking", "Tax Preparation", "Retirement Planning"],
-      "Business Operations": ["Trello", "Asana", "Time Tracking", "CRM"],
-      "Legal Considerations": ["Contracts", "NDAs", "Intellectual Property", "Freelancing Laws"],
-      "Scaling a Freelance Business": ["Hiring Subcontractors", "Agency Model", "Outsourcing Tasks"],
+    "Project Scope & Complexity": {
+        "Project Type": ["New build from scratch", "Feature enhancement", "Redesign", "Maintenance/Support", "Consulting"],
+        "Project Length": ["Short-term (days)", "Medium-term (weeks)", "Long-term (months)"],
+        "Team Structure": ["Solo Contributor", "Works with a small team (2-5)", "Works with a large team (5+)"],
     },
-    "Technology and Tools": {
-      "Productivity Tools": ["Notion", "ClickUp", "Slack", "Zoom", "Google Drive", "Dropbox"],
-      "Creative Software": ["Adobe Creative Suite", "Canva", "Final Cut Pro", "Blender", "Pro Tools"],
-      "Development Tools": ["VS Code", "Git", "Testing Frameworks"],
-      "Automation and AI": ["ChatGPT", "Jasper", "Workflow Automation"],
-      "Cybersecurity Tools": ["VPNs", "Secure File Transfers", "Password Management"],
-      "Website and Online Presence": ["Personal Website Building", "Domain Management", "Hosting Services", "WordPress"],
+    "Collaboration & Workflow": {
+        "Communication Style": ["Highly communicative", "Prefers asynchronous", "Daily standups"],
+        "Meeting Cadence": ["Multiple times a day", "Daily", "A few times a week", "Weekly"],
+        "Project Management": ["Agile/Scrum", "Kanban", "Waterfall", "Notion", "Jira", "Asana"],
+        "Feedback Style": ["Direct & candid", "Structured & formal", "Collaborative & iterative"],
     },
-    "Marketing and Self-Promotion": {
-      "Social Media": ["LinkedIn", "X", "Instagram", "TikTok"],
-      "Content Creation": ["Blogging", "Vlogging", "Podcasting"],
-      "SEO and Online Visibility": ["Keyword Research", "Freelance Platform Optimization", "Google My Business"],
-      "Networking": ["Virtual Events", "In-person Events", "Professional Groups", "Collaborations"],
-      "Testimonials and Reviews": ["Collecting Client Feedback", "Case Studies"],
-      "Advertising": ["Google Ads", "LinkedIn Ads", "Sponsored Content"],
+    "Deliverables & Quality": {
+        "Pace": ["Fast-paced, high-urgency", "Steady and consistent", "Flexible and iterative"],
+        "Attention to Detail": ["Pixel-perfect precision required", "General concept is enough", "High level of polish expected"],
+        "Documentation": ["Extensive documentation required", "Minimal documentation needed"],
     },
-    "Personal Development and Well-Being": {
-      "Work-Life Balance": ["Managing Burnout", "Setting Boundaries", "Sustainable Schedule"],
-      "Mental Health": ["Stress Management", "Mindfulness", "Therapy Resources"],
-      "Physical Health": ["Ergonomics", "Exercise Routines"],
-      "Motivation and Discipline": ["Goal Setting", "Overcoming Procrastination", "Building Habits"],
-      "Continuous Learning": ["Reading Blogs", "Listening to Podcasts", "Attending Webinars"],
+    "Industry & Domain Knowledge": {
+        "Industry Experience": ["SaaS", "Fintech", "Healthcare", "E-commerce", "Gaming", "Education", "Marketing"],
+        "Company Size": ["Startup (1-50)", "Scale-up (51-500)", "Enterprise (500+)"],
+        "Audience": ["B2B", "B2C", "Internal stakeholders"],
     },
-    "Finance and Economics": {
-      "Income Diversification": ["Digital Products", "Online Courses"],
-      "Tax Compliance": ["Self-Employment Taxes", "Deductions", "Quarterly Payments"],
-      "Invoicing and Payments": ["PayPal", "Stripe", "Wise", "Handling Late Payments"],
-      "Budgeting for Irregular Income": ["Cash Flow Management", "Emergency Funds"],
-      "Investing": ["SEP IRA", "Solo 401(k)", "Stock Market Basics"],
-    },
-    "Client and Project Management": {
-      "Client Communication": ["Managing Expectations", "Handling Difficult Clients"],
-      "Project Scoping": ["Defining Deliverables", "Timelines", "Milestones"],
-      "Conflict Resolution": ["Handling Disputes", "Managing Scope Creep"],
-      "Feedback Loops": ["Gathering Feedback", "Iterative Improvements"],
-      "Time Management": ["Prioritizing Tasks", "Meeting Deadlines"],
-    },
-    "Industry-Specific Trends": {
-      "Gig Economy": ["Freelance Marketplaces", "Remote Work Trends"],
-      "Emerging Technologies": ["Blockchain", "Web3", "AR/VR", "Generative AI", "IoT"],
-      "Sustainability": ["Green Freelancing", "Eco-conscious Clients"],
-      "Global Markets": ["International Freelancing", "Currency Exchange"],
-      "Niche Specialization": ["Fintech", "Edtech", "Healthtech", "Gaming"],
-    },
-    "Community and Networking": {
-      "Freelance Communities": ["Reddit", "Discord", "Local Meetups", "Coworking Spaces"],
-      "Mentorship": ["Finding Mentors", "Peer Accountability"],
-      "Collaborations": ["Partnering with Freelancers"],
-      "Professional Associations": ["Freelancers Union"],
-    },
-    "Legal and Ethical Considerations": {
-      "Contracts and Agreements": ["Drafting Contracts", "Understanding Terms"],
-      "Intellectual Property": ["Copyright", "Trademarks", "Licensing"],
-      "Ethics": ["Transparency", "Avoiding Conflicts of Interest", "Data Privacy"],
-      "Compliance": ["Adhering to Labor Laws", "GDPR"],
-    },
-    "Education and Training": {
-      "Online Learning Platforms": ["Coursera", "Udemy", "LinkedIn Learning", "Skillshare"],
-      "Events": ["Workshops", "Conferences", "Webinars", "Virtual Summits"],
-      "Peer Learning": ["Study Groups", "Masterminds"],
-      "Language Skills": ["Spanish", "Mandarin"],
-    },
-    "Lifestyle and Remote Work": {
-      "Remote Work Setup": ["Home Office Ergonomics", "Internet Reliability", "Hardware"],
-      "Digital Nomadism": ["Traveling while Freelancing", "Visas", "Coworking Abroad"],
-      "Time Zone Management": ["Working with Global Clients"],
-      "Minimalism and Productivity": ["Decluttering Workspaces", "Simplifying Workflows"],
-    },
-    "Data and Analytics": {
-      "Performance Tracking": ["Measuring Project Success", "Client Satisfaction", "ROI"],
-      "Analytics Tools": ["Google Analytics", "Social Media Insights"],
-      "Data-Driven Decisions": ["Optimizing Pricing", "Marketing Strategy"],
-      "Client Reporting": ["Creating Reports", "Dashboards", "Visualizations"],
-    },
-    "Creative and Innovation": {
-      "Ideation Techniques": ["Brainstorming", "Mind Mapping", "Design Thinking"],
-      "Experimentation": ["Testing New Services", "New Niches"],
-      "Trend Awareness": ["Following Design Trends", "Tech Trends", "Cultural Trends"],
-      "Storytelling": ["Branding Narratives", "Client Pitches"],
-    },
-    "Risk Management": {
-      "Insurance": ["Health Insurance", "Liability Insurance"],
-      "Backup Plans": ["Data Backups", "Income Diversification", "Client Diversification"],
-      "Client Vetting": ["Identifying Red Flags", "Avoiding Scams"],
-      "Crisis Management": ["Handling Project Failures", "Client Disputes"],
-    },
-  };
+};
 
 type TraitCategory = keyof typeof traitCategories;
 type SelectedTraits = Record<TraitCategory, Record<string, string[]>>;

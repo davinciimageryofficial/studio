@@ -35,28 +35,32 @@ const clientFormSchema = z.object({
 type ClientFormValues = z.infer<typeof clientFormSchema>;
 
 const requirementCategories = {
-    "Technical Proficiency": {
-      "Expertise Level": ["Senior", "Mid-Level", "Junior"],
-      "Specific Technologies": ["React", "Vue", "Angular", "Node.js", "Python", "Go", "Rust", "Swift", "Kotlin"],
-      "Cloud Platforms": ["AWS", "Google Cloud", "Azure"],
-      "Databases": ["PostgreSQL", "MongoDB", "MySQL", "Redis"],
+    "Core Expertise": {
+        "Seniority": ["Junior", "Mid-Level", "Senior", "Lead", "Principal"],
+        "Key Responsibilities": ["Strategy & Planning", "Execution & Production", "Management & Leadership", "Research & Analysis"],
+        "Tool Proficiency": ["Figma", "Adobe Creative Suite", "VS Code", "Microsoft Excel", "Google Analytics", "HubSpot"],
     },
-    "Soft Skills & Collaboration": {
-      "Communication Style": ["Proactive", "Responsive", "Asynchronous-friendly"],
-      "Teamwork": ["Independent Contributor", "Collaborative Pair Programmer", "Team Lead Potential"],
-      "Problem Solving": ["Innovative", "Methodical", "Pragmatic"],
-      "Availability": ["Full-time (40h/week)", "Part-time (20h/week)", "Flexible Hours"],
+    "Project Scope & Complexity": {
+        "Project Type": ["New build from scratch", "Feature enhancement", "Redesign", "Maintenance/Support", "Consulting"],
+        "Project Length": ["Short-term (days)", "Medium-term (weeks)", "Long-term (months)"],
+        "Team Structure": ["Solo Contributor", "Works with a small team (2-5)", "Works with a large team (5+)"],
     },
-    "Experience & Portfolio": {
-        "Industry Experience": ["Fintech", "Healthcare", "E-commerce", "SaaS", "Gaming"],
-        "Project Scale": ["Startup MVP", "Enterprise Application", "Feature Enhancement"],
-        "Portfolio Quality": ["Visually Polished", "Complex Functionality", "Strong Case Studies"],
+    "Collaboration & Workflow": {
+        "Communication Style": ["Highly communicative", "Prefers asynchronous", "Daily standups"],
+        "Meeting Cadence": ["Multiple times a day", "Daily", "A few times a week", "Weekly"],
+        "Project Management": ["Agile/Scrum", "Kanban", "Waterfall", "Notion", "Jira", "Asana"],
+        "Feedback Style": ["Direct & candid", "Structured & formal", "Collaborative & iterative"],
     },
-     "Project Management": {
-        "Methodology": ["Agile/Scrum", "Kanban", "Waterfall"],
-        "Tooling": ["Jira", "Asana", "Trello", "Linear"],
-        "Reporting": ["Daily Standups", "Weekly Reports", "Demo-driven"],
-    }
+    "Deliverables & Quality": {
+        "Pace": ["Fast-paced, high-urgency", "Steady and consistent", "Flexible and iterative"],
+        "Attention to Detail": ["Pixel-perfect precision required", "General concept is enough", "High level of polish expected"],
+        "Documentation": ["Extensive documentation required", "Minimal documentation needed"],
+    },
+    "Industry & Domain Knowledge": {
+        "Industry Experience": ["SaaS", "Fintech", "Healthcare", "E-commerce", "Gaming", "Education", "Marketing"],
+        "Company Size": ["Startup (1-50)", "Scale-up (51-500)", "Enterprise (500+)"],
+        "Audience": ["B2B", "B2C", "Internal stakeholders"],
+    },
 };
 
 type ReqCategory = keyof typeof requirementCategories;
