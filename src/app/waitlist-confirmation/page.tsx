@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, User, Mail, Briefcase, Sparkles } from "lucide-react";
+import { CheckCircle, User, Mail, Briefcase } from "lucide-react";
 import { ClientOnly } from "@/components/layout/client-only";
 
 type WaitlistData = {
@@ -78,7 +78,7 @@ export default function WaitlistConfirmationPage() {
               </div>
               {waitlistData.earlyAccess && (
                  <div className="flex items-center gap-4">
-                  <Sparkles className="h-5 w-5 text-muted-foreground" />
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-muted-foreground"><circle cx="12" cy="12" r="7"></circle><line x1="19" y1="5" x2="19" y2="19"></line></svg>
                   <div>
                     <p className="text-sm text-muted-foreground">Early Access</p>
                     <p className="font-medium">You'll be notified about beta testing opportunities!</p>
