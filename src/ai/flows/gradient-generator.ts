@@ -28,7 +28,6 @@ const prompt = ai.definePrompt({
   name: 'gradientGeneratorPrompt',
   input: { schema: GradientGeneratorInputSchema },
   output: { schema: GradientGeneratorOutputSchema },
-  model: 'googleai/gemini-pro',
   prompt: `You are a CSS gradient generator. Based on the user's description, create a visually appealing CSS linear-gradient string.
 
 The gradient should be smooth and use 3 to 5 color stops. The output must be a single, valid CSS linear-gradient value.
