@@ -410,7 +410,7 @@ export function WorkspaceTeam() {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
                                         <DropdownMenuItem onSelect={() => setLitMode('default')}>Default</DropdownMenuItem>
-                                        <DropdownMenuItem onSelect={() => setLitMode('synthwave')}>Sunset</DropdownMenuItem>
+                                        <DropdownMenuItem onSelect={() => setLitMode('sunset')}>Sunset</DropdownMenuItem>
                                         <DropdownMenuItem onSelect={() => setLitMode('ocean')}>Ocean</DropdownMenuItem>
                                         <DropdownMenuItem onSelect={() => setLitMode('synthwave')}>Synthwave</DropdownMenuItem>
                                         <DropdownMenuSeparator />
