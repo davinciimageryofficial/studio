@@ -158,28 +158,38 @@ export function WorkspaceTeam() {
     // Reorder participants when active speaker changes
     useEffect(() => {
         if (!activeSpeakerId) return;
-
-        setParticipants(prev => {
-            const speaker = prev.find(p => p.id === activeSpeakerId);
-            if (!speaker) return prev;
-
-            // Ensure the speaker is not already in the list to avoid duplicates
-            const otherParticipants = prev.filter(p => p.id !== activeSpeakerId);
-            const uniqueParticipants = [speaker, ...otherParticipants];
-
-            // Filter out duplicate users to ensure uniqueness
-            const uniqueUserIds = new Set();
-            const uniqueParticipantsList = uniqueParticipants.filter(participant => {
-                if (uniqueUserIds.has(participant.id)) {
-                    return false; // Skip duplicate user
+    
+        setParticipants(currentParticipants => {
+            const speaker = currentParticipants.find(p => p.id === activeSpeakerId);
+            if (!speaker) return currentParticipants;
+    
+            // Create a map to ensure uniqueness, with the speaker potentially being added twice but overwritten
+            const participantMap = new Map<string, User>();
+            // Add other participants first
+            currentParticipants.forEach(p => {
+                if (p.id !== activeSpeakerId) {
+                    participantMap.set(p.id, p);
                 }
-                uniqueUserIds.add(participant.id);
-                return true; // Keep unique user
             });
-          
-            return uniqueParticipantsList;
+            // Add speaker last so they are moved to the front if they exist.
+            participantMap.set(speaker.id, speaker);
+    
+            const uniqueParticipants = Array.from(participantMap.values());
+            const speakerIndex = uniqueParticipants.findIndex(p => p.id === activeSpeakerId);
+    
+            // Move speaker to the front
+            if (speakerIndex > 0) {
+                const [speakerData] = uniqueParticipants.splice(speakerIndex, 1);
+                uniqueParticipants.unshift(speakerData);
+            }
+    
+            // Compare with current state to avoid unnecessary re-renders
+            if (JSON.stringify(uniqueParticipants) === JSON.stringify(currentParticipants)) {
+                return currentParticipants;
+            }
+    
+            return uniqueParticipants;
         });
-
     }, [activeSpeakerId, setParticipants]);
 
     const handleToggleCamera = async () => {
@@ -587,6 +597,8 @@ function ProceduralLitModeDialog({ children, onGenerate }: { children: React.Rea
         </Dialog>
     )
 }
+
+    
 
     
 
