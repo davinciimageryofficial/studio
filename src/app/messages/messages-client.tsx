@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff } from "lucide-react";
+import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -294,9 +294,7 @@ export function MessagesClient() {
         ) : (
              <div className="hidden md:flex flex-col items-center justify-center md:col-span-2 lg:col-span-3 text-center p-8">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                    <svg className="size-10 text-muted-foreground" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-9h4v2h-4v-2zm0-3h4v2h-4v-2z"/>
-                    </svg>
+                    <Kanban className="size-10 text-muted-foreground" />
                 </div>
                 <h3 className="text-xl font-semibold">Select a conversation</h3>
                 <p className="text-muted-foreground">Choose from your existing conversations to start chatting.</p>

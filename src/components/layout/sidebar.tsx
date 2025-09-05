@@ -27,6 +27,7 @@ import {
   Mic,
   Fullscreen,
   Briefcase,
+  Kanban,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -74,9 +75,7 @@ export function AppSidebar() {
       <SidebarHeader>
         <div className="flex w-full items-center justify-between p-2">
             <div className="flex items-center gap-2 font-headline-tech [&>span]:font-bold [&>span]:text-lg [&>span]:tracking-wide">
-                <svg className="size-7" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-9h4v2h-4v-2zm0-3h4v2h-4v-2z"/>
-                </svg>
+                <Kanban className="size-7" />
                 <span className="duration-200 group-data-[collapsible=icon]:-ml-8 group-data-[collapsible=icon]:opacity-0">WORKFLOW</span>
             </div>
         </div>

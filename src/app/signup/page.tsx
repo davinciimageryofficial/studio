@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ClientOnly } from "@/components/layout/client-only";
+import { Kanban } from "lucide-react";
 
 const signupSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters."),
@@ -60,9 +61,7 @@ export default function SignupPage() {
         <Card className="w-full max-w-lg shadow-2xl">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <svg className="size-7 text-primary" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-9h4v2h-4v-2zm0-3h4v2h-4v-2z"/>
-              </svg>
+              <Kanban className="size-7 text-primary" />
             </div>
             <CardTitle className="text-3xl font-bold tracking-tighter">Join the Sentry Waitlist</CardTitle>
             <CardDescription className="mt-2 text-muted-foreground">

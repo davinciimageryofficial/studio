@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle } from "lucide-react";
+import { ArrowRight, CheckCircle, Kanban } from "lucide-react";
 import { ClientOnly } from "@/components/layout/client-only";
 import Link from "next/link";
 
@@ -14,9 +14,7 @@ export default function LandingPage() {
         <div className="relative mx-auto w-full max-w-6xl overflow-hidden rounded-2xl border bg-card shadow-2xl">
             <div className="grid lg:grid-cols-2">
                 <div className="flex flex-col justify-center p-8 sm:p-12">
-                    <svg className="size-10 mb-4 text-primary" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-9h4v2h-4v-2zm0-3h4v2h-4v-2z"/>
-                    </svg>
+                    <Kanban className="size-10 mb-4 text-primary" />
                     <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">The Future of Collaboration is Here</h1>
                     <p className="mt-4 text-lg text-muted-foreground">
                         Sentry is an AI-powered platform for top-tier freelancers and creative professionals to connect, collaborate, and build their dream teams.
@@ -45,9 +43,7 @@ export default function LandingPage() {
                     </div>
                 </div>
                 <div className="relative hidden lg:flex items-center justify-center bg-muted/20 p-8">
-                    <svg className="size-48 text-muted-foreground/40" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-9h4v2h-4v-2zm0-3h4v2h-4v-2z"/>
-                    </svg>
+                    <Kanban className="size-48 text-muted-foreground/40" />
                 </div>
             </div>
         </div>
