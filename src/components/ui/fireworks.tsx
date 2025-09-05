@@ -10,8 +10,9 @@ export function Fireworks() {
     useEffect(() => {
         const interval = setInterval(() => {
             if (document.visibilityState === 'visible') {
-                const newFireworks = Array.from({ length: 15 }).map(() => ({
-                    id: Date.now() + Math.random(),
+                const now = Date.now();
+                const newFireworks = Array.from({ length: 15 }).map((_, index) => ({
+                    id: `${now}-${index}`, // Combine timestamp with index for a unique key
                     x: Math.random() * 100,
                     y: Math.random() * 100,
                     hue: Math.random() * 360,
