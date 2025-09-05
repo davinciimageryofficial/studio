@@ -600,7 +600,7 @@ export default function SkillSyncNetPage() {
                             <Kanban className="h-5 w-5" /> Businesses
                         </TabsTrigger>
                         <TabsTrigger value="freelancer" className="gap-2">
-                            <User className="h-5 w-5" /> Freelancers
+                            <Kanban className="h-5 w-5" /> Freelancers
                         </TabsTrigger>
                     </TabsList>
                     <TabsContent value="client" className="mt-8">
