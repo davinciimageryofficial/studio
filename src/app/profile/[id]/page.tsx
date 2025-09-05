@@ -114,8 +114,8 @@ export default function ProfilePage() {
                 />
             )}
         </div>
-        <CardContent className="p-4 py-16 sm:p-6 sm:py-16">
-            <div className="flex flex-col items-center text-center sm:flex-row sm:items-end sm:gap-6 -mt-28 sm:-mt-24">
+        <CardContent className="p-4 pb-6 pt-20 sm:p-6 sm:pb-6 sm:pt-16">
+            <div className="flex flex-col items-center text-center sm:flex-row sm:items-end sm:gap-6 -mt-32 sm:-mt-24">
                 <div className="relative group flex-shrink-0">
                     <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-card">
                       <AvatarImage src={user.avatar} />
