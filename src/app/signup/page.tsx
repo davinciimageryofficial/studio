@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -39,7 +38,7 @@ export default function SignupPage() {
     },
   });
 
-  const { handleSubmit, control, formState: { errors } } = form;
+  const { handleSubmit, control } = form;
 
   const onSubmit: SubmitHandler<SignupFormValues> = (data) => {
     console.log("Signup submission:", data);
@@ -57,9 +56,9 @@ export default function SignupPage() {
 
   return (
     <ClientOnly>
-      <div className="flex flex-1 items-center justify-center p-4">
+      <div className="flex-1 flex items-center justify-center p-4">
         <Card className="w-full max-w-lg shadow-2xl">
-          <CardHeader className="text-center p-6">
+          <CardHeader className="text-center p-8">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
               <Kanban className="size-7 text-primary" />
             </div>
@@ -68,7 +67,7 @@ export default function SignupPage() {
               Get ready to connect, collaborate, and create with the best talent in the industry.
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6 pt-0">
+          <CardContent className="p-8 pt-0">
             <Form {...form}>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
