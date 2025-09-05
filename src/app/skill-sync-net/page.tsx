@@ -61,7 +61,7 @@ function ClientView() {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8 max-w-3xl mx-auto">
             <Card>
                 <CardHeader>
                     <CardTitle>Post a Project</CardTitle>
@@ -122,12 +122,12 @@ function ClientView() {
             </Card>
 
             <div className="space-y-6">
-                <h2 className="text-2xl font-bold">Your AI-Vetted Match</h2>
+                <h2 className="text-2xl font-bold text-center">Your AI-Vetted Match</h2>
                 {loading && <MatchSkeleton isClientView={true} />}
                 {error && <Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
                 {result && result.match && result.match.freelancer && <FreelancerMatchCard freelancer={result.match.freelancer} />}
                 {!loading && !result && !error && (
-                    <Card className="flex items-center justify-center h-full border-dashed">
+                    <Card className="flex flex-col items-center justify-center h-full border-dashed min-h-80">
                         <div className="text-center text-muted-foreground p-8">
                             <Zap className="mx-auto h-12 w-12 mb-4" />
                             <h3 className="text-lg font-semibold">Your matched freelancer will appear here.</h3>
@@ -172,9 +172,9 @@ function FreelancerView() {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8 max-w-3xl mx-auto">
             <Card>
-                <CardHeader>
+                <CardHeader className="text-center">
                     <CardTitle>Instant Project Matching</CardTitle>
                     <CardDescription>Our AI analyzes your profile to find the perfect project for you, on demand.</CardDescription>
                 </CardHeader>
@@ -187,12 +187,12 @@ function FreelancerView() {
                 </CardContent>
             </Card>
             <div className="space-y-6">
-                <h2 className="text-2xl font-bold">Your AI-Matched Project</h2>
+                <h2 className="text-2xl font-bold text-center">Your AI-Matched Project</h2>
                 {loading && <MatchSkeleton isClientView={false} />}
                 {error && <Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
                 {result && result.match && result.match.project && <ProjectMatchCard project={result.match.project} />}
                  {!loading && !result && !error && (
-                    <Card className="flex items-center justify-center h-full border-dashed">
+                    <Card className="flex flex-col items-center justify-center h-full border-dashed min-h-80">
                         <div className="text-center text-muted-foreground p-8">
                             <Zap className="mx-auto h-12 w-12 mb-4" />
                             <h3 className="text-lg font-semibold">Your matched project will appear here.</h3>
