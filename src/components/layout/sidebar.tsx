@@ -75,7 +75,7 @@ export function AppSidebar() {
       <SidebarHeader>
         <div className="flex w-full items-center justify-between p-2">
             <div className="flex items-center gap-2 font-headline-tech [&>span]:font-bold [&>span]:text-lg [&>span]:tracking-wide">
-                <Kanban className="size-7" />
+                <Kanban className="h-full" />
                 <span className="duration-200 group-data-[collapsible=icon]:-ml-8 group-data-[collapsible=icon]:opacity-0">WORKFLOW</span>
             </div>
         </div>
