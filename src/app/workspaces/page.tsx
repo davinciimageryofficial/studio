@@ -284,7 +284,12 @@ export default function WorkspacesPage() {
                                                                 <TooltipTrigger asChild>
                                                                     <div className="flex items-center gap-1.5 cursor-default">
                                                                         <span className="h-2 w-2 rounded-full bg-primary" />
-                                                                        <p className="text-xs text-muted-foreground">In a session</p>
+                                                                        <p className="text-xs text-muted-foreground">
+                                                                            In a session
+                                                                            {mutualFriend && (
+                                                                                <> with <span className="font-semibold text-foreground">{mutualFriend.name}</span></>
+                                                                            )}
+                                                                        </p>
                                                                     </div>
                                                                 </TooltipTrigger>
                                                                 <TooltipContent>
@@ -309,7 +314,7 @@ export default function WorkspacesPage() {
                                                             </Button>
                                                         </TooltipTrigger>
                                                         <TooltipContent>
-                                                            <p>Nudge {mutualFriend.name} for an invite</p>
+                                                            <p>Nudge {mutualFriend.name} for an invite to {user.name}'s session</p>
                                                         </TooltipContent>
                                                     </Tooltip>
                                                 </TooltipProvider>
