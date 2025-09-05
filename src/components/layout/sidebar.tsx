@@ -150,7 +150,7 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
              <SidebarMenuItem>
-                <SidebarTrigger className="h-8 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full justify-start" />
+                <SidebarTrigger className="w-full justify-start" />
             </SidebarMenuItem>
              <SidebarMenuItem>
               <SidebarMenuButton
