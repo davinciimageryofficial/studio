@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { CheckCircle, User, Mail, Briefcase } from "lucide-react";
 import { ClientOnly } from "@/components/layout/client-only";
+import { Fireworks } from "@/components/ui/fireworks";
 
 type WaitlistData = {
   fullName: string;
@@ -41,8 +42,9 @@ export default function WaitlistConfirmationPage() {
 
   return (
     <ClientOnly>
-      <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
-        <Card className="w-full max-w-lg text-center shadow-2xl">
+      <div className="relative flex min-h-[calc(100vh-4.5rem)] items-center justify-center bg-muted/40 p-4 overflow-hidden">
+        <Fireworks />
+        <Card className="w-full max-w-lg text-center shadow-2xl z-10">
           <CardHeader className="p-8 sm:p-12">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50">
               <CheckCircle className="size-10 text-green-600 dark:text-green-400" />
