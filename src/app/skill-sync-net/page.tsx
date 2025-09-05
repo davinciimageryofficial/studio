@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -23,6 +24,7 @@ import { z } from "zod";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
 
 const clientFormSchema = z.object({
   projectTitle: z.string().min(5, "Project title must be at least 5 characters."),
@@ -535,6 +537,12 @@ function FreelancerMatchCard({ freelancer }: { freelancer: NonNullable<NonNullab
 }
 
 function ProjectMatchCard({ project }: { project: NonNullable<NonNullable<SkillSyncNetOutput['match']>['project']>}) {
+    const projectData = {
+        clientName: project.clientName,
+        projectTitle: project.title,
+    }
+    const query = new URLSearchParams({ project: JSON.stringify(projectData) }).toString();
+
     return (
         <Card className="shadow-lg">
             <CardHeader>
@@ -577,7 +585,9 @@ function ProjectMatchCard({ project }: { project: NonNullable<NonNullable<SkillS
                 </div>
             </CardContent>
             <CardFooter>
-                <Button className="w-full" size="lg">Accept Project Instantly</Button>
+                <Button asChild className="w-full" size="lg">
+                    <Link href={`/messages?${query}`}>Accept Project Instantly</Link>
+                </Button>
             </CardFooter>
         </Card>
     );

@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -34,53 +35,120 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
+import { useSearchParams } from "next/navigation";
 
-type Message = (typeof placeholderMessages)[0]['messages'][0];
+type Message = (typeof placeholderMessages)[0]['messages'][0] & { fromName?: string };
+type Conversation = (typeof placeholderUsers[0]) & { lastMessage: Message, messages?: Message[] };
 
 export function MessagesClient() {
-  const [conversations, setConversations] = useState(placeholderMessages.map(msg => {
-    const user = placeholderUsers.find(u => u.id === msg.userId);
-    return { ...user, lastMessage: msg.messages[msg.messages.length - 1] };
+  const [conversations, setConversations] = useState<Conversation[]>(() => 
+    placeholderMessages.map(msg => {
+        const user = placeholderUsers.find(u => u.id === msg.userId);
+        return { 
+            ...user!, 
+            lastMessage: msg.messages[msg.messages.length - 1],
+            messages: msg.messages
+        };
   }));
   const [activeConversationId, setActiveConversationId] = useState(conversations[0]?.id);
   const [fontSize, setFontSize] = useState("base");
   const [showAvatars, setShowAvatars] = useState(true);
   
   const activeConversation = conversations.find(c => c.id === activeConversationId);
-  const [activeMessages, setActiveMessages] = useState<Message[]>([]);
-  
   const [newMessage, setNewMessage] = useState("");
   const [linkPreview, setLinkPreview] = useState<{url: string, title: string, description: string, image: string} | null>(null);
   const editorRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const searchParams = useSearchParams();
 
 
   useEffect(() => {
-    // When the active conversation changes, update the messages
-    const messages = placeholderMessages.find(m => m.userId === activeConversationId)?.messages || [];
-    setActiveMessages(messages);
-  }, [activeConversationId]);
+    const projectParam = searchParams.get('project');
+    if (projectParam) {
+        try {
+            const project = JSON.parse(projectParam);
+            const clientName = project.clientName || 'New Client';
+            const projectTitle = project.projectTitle || 'New Project';
+
+            // Check if a conversation with this client already exists
+            let clientConversation = conversations.find(c => c.name === clientName);
+
+            const initialMessageText = `Hi, I'm interested in the "${projectTitle}" project. Let's discuss the details.`;
+            const newMessageObj: Message = {
+                from: 'me',
+                text: initialMessageText,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            };
+            
+            if (clientConversation) {
+                // Add message to existing conversation
+                clientConversation.messages?.push(newMessageObj);
+                clientConversation.lastMessage = newMessageObj;
+                setConversations([...conversations]);
+                setActiveConversationId(clientConversation.id);
+            } else {
+                // Create a new conversation
+                const newClientId = `client-${Date.now()}`;
+                const newConversation: Conversation = {
+                    id: newClientId,
+                    name: clientName,
+                    handle: clientName.toLowerCase().replace(' ', ''),
+                    avatar: `https://picsum.photos/seed/${newClientId}/200/200`,
+                    headline: "Project Client",
+                    bio: "",
+                    coverImage: "",
+                    skills: [],
+                    portfolio: [],
+                    category: 'development', // Placeholder
+                    lastMessage: newMessageObj,
+                    messages: [newMessageObj],
+                };
+                setConversations(prev => [newConversation, ...prev]);
+                setActiveConversationId(newClientId);
+            }
+
+        } catch (error) {
+            console.error("Failed to parse project data from URL", error);
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Could not start conversation from project link."
+            });
+        }
+    }
+  }, [searchParams, toast]);
 
   useEffect(() => {
     // Scroll to the bottom when new messages are added
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
     }
-  }, [activeMessages]);
+  }, [activeConversation?.messages]);
 
   const handleSendMessage = (e?: React.FormEvent) => {
     e?.preventDefault();
     const messageContent = editorRef.current?.innerHTML || '';
-    if (!messageContent.trim()) return;
+    if (!messageContent.trim() || !activeConversationId) return;
 
-    const currentUser = placeholderUsers[1]; // Assuming 'me' is Bob Williams
-    const message: Message = {
+    const newMessageObj: Message = {
       from: 'me',
       text: messageContent,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
-    setActiveMessages(prev => [...prev, message]);
+
+    setConversations(prev => 
+        prev.map(convo => {
+            if (convo.id === activeConversationId) {
+                return {
+                    ...convo,
+                    messages: [...(convo.messages || []), newMessageObj],
+                    lastMessage: newMessageObj,
+                }
+            }
+            return convo;
+        })
+    );
     
     if (editorRef.current) {
         editorRef.current.innerHTML = "";
@@ -179,7 +247,7 @@ export function MessagesClient() {
                       <span className="font-semibold truncate">{convo.name}</span>
                       <span className="text-xs text-muted-foreground flex-shrink-0">{convo.lastMessage.time}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-1">{convo.lastMessage.text}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-1" dangerouslySetInnerHTML={{ __html: convo.lastMessage.text }} />
                   </div>
                 </div>
               </button>
@@ -239,11 +307,11 @@ export function MessagesClient() {
           {/* Messages */}
           <ScrollArea className="flex-1 bg-muted/20 p-4 sm:p-6" ref={scrollAreaRef}>
             <div className={`space-y-6 text-${fontSize}`}>
-              {activeMessages.map((message, index) => (
+              {activeConversation.messages?.map((message, index) => (
                 <div key={index} className={cn("flex items-end gap-2", message.from === 'me' ? 'justify-end' : 'justify-start')}>
                   {message.from !== 'me' && showAvatars && activeConversation.avatar && <Avatar className="h-8 w-8"><AvatarImage src={activeConversation.avatar} /></Avatar>}
                   <div className={cn("max-w-xs rounded-lg px-4 py-2 sm:max-w-md", message.from === 'me' ? 'bg-primary text-primary-foreground' : 'bg-card shadow')}>
-                    <div className="prose prose-sm dark:prose-invert" dangerouslySetInnerHTML={{ __html: message.text }} />
+                    <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: message.text }} />
                     <p className={cn("text-xs mt-1 text-right", message.from === 'me' ? 'text-primary-foreground/70' : 'text-muted-foreground')}>{message.time}</p>
                   </div>
                 </div>
