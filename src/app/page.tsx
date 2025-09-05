@@ -26,7 +26,7 @@ export default function LandingPage() {
                                 <ArrowRight className="ml-2 h-5 w-5" />
                             </Link>
                         </Button>
-                        <Button asChild variant="outline" size="lg" className="h-12">
+                        <Button asChild variant="outline" size="lg" className="h-12 text-muted-foreground">
                             <Link href="/faq">
                                 FAQ
                             </Link>
@@ -56,3 +56,4 @@ export default function LandingPage() {
     </ClientOnly>
   );
 }
+
