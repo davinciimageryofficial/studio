@@ -1,59 +1,75 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import { Search, Bell, Lightbulb } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Search, Bell, Lightbulb, Bot, User, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { searchAI } from "@/ai/flows/search-ai";
-import { SearchAIOutput } from "@/ai/schemas/search-ai";
+import { searchAI, SearchAIOutput } from "@/ai/schemas/search-ai";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { placeholderUsers } from "@/lib/placeholder-data";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useSidebar } from "../ui/sidebar";
+import { useRouter } from "next/navigation";
+import { ScrollArea } from "../ui/scroll-area";
+
+type Message = {
+    sender: 'user' | 'ai';
+    text: string;
+    destination?: string;
+};
 
 export function GlobalSearch() {
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState<SearchAIOutput | null>(null);
+  const [conversation, setConversation] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isActive, setIsActive] = useState(false);
+  const [isSuggestionsActive, setIsSuggestionsActive] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const { state: sidebarState } = useSidebar();
+  const router = useRouter();
+  const followUpInputRef = useRef<HTMLInputElement>(null);
 
 
-  const handleSearch = async (e?: React.FormEvent, suggestion?: string) => {
-    e?.preventDefault();
-    const searchQuery = suggestion || query;
+  const handleSearch = async (searchQuery: string) => {
     if (!searchQuery.trim()) return;
 
-    if (!suggestion) {
-        setQuery(searchQuery);
-    }
-
     setLoading(true);
-    setResult(null);
-    setShowResults(true); // Show results pane
-    setIsActive(false); // Close suggestions on search
+    setConversation(prev => [...prev, { sender: 'user', text: searchQuery }]);
+    if (!showResults) setShowResults(true); 
+    setIsSuggestionsActive(false);
 
     try {
       const output = await searchAI({ query: searchQuery });
-      setResult(output);
+      
+      const aiResponse: Message = { sender: 'ai', text: output.answer };
+      if (output.destination) {
+        aiResponse.destination = output.destination;
+      }
+      setConversation(prev => [...prev, aiResponse]);
+
+      if (output.destination) {
+        const path = output.destination === 'profile' ? '/profile/me' : `/${output.destination}`;
+        router.push(path);
+        // We might want to close the search pane on navigation
+        // For now, we'll leave it open so the user sees the confirmation message.
+      }
+
     } catch (error) {
       console.error("AI search failed:", error);
-      setResult({ answer: "Sorry, I couldn't process that request. Please try again." });
+      const errorResponse: Message = { sender: 'ai', text: "Sorry, I couldn't process that request. Please try again." };
+      setConversation(prev => [...prev, errorResponse]);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (loading && followUpInputRef.current) {
+        followUpInputRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [loading]);
   
   const notifications = [
     { user: placeholderUsers[2], action: "viewed your profile.", time: "2h" },
@@ -62,41 +78,51 @@ export function GlobalSearch() {
   ];
 
   const suggestions = [
-    "Find a React developer with TypeScript skills",
+    "Open the courses page",
     "Who are the top designers in London?",
-    "Draft a post about the future of AI",
+    "Show me my profile",
     "What are the latest trends in content marketing?",
   ];
 
   const handleSuggestionClick = (suggestion: string) => {
     setQuery(suggestion);
-    handleSearch(undefined, suggestion);
+    handleSearch(suggestion);
   };
   
-  const searchContainerClass = showResults ? "flex-col h-full" : "";
+  const searchContainerClass = showResults ? "flex-col h-full absolute top-0 left-0 right-0 bg-background/80 backdrop-blur-lg z-40 p-4" : "";
   const searchBarClass = showResults ? "w-full" : "w-full transition-all duration-300 ease-in-out";
 
+  const closeSearch = () => {
+    setShowResults(false);
+    setConversation([]);
+    setQuery("");
+  }
+
   return (
-    <div className={cn("sticky top-0 z-30 w-full border-b bg-background/80 py-2 backdrop-blur-lg transition-all duration-300", searchContainerClass)}>
-        <div className="container flex items-center justify-center gap-4 px-4">
+    <div className={cn(
+        "sticky top-0 z-30 w-full border-b bg-background/80 py-2 backdrop-blur-lg transition-all duration-300", 
+        showResults ? "h-[calc(100vh-8rem)]" : ""
+    )}>
+        <div className={cn("container flex items-center justify-center gap-4 px-4", showResults && "flex-col h-full")}>
             <div className={cn(
                 "flex items-center justify-center gap-2", 
                 searchBarClass,
-                sidebarState === 'collapsed' ? 'max-w-5xl' : 'max-w-3xl'
+                sidebarState === 'collapsed' ? 'max-w-5xl' : 'max-w-3xl',
+                showResults && "!max-w-full"
             )}>
                 <form 
-                    onSubmit={handleSearch} 
+                    onSubmit={(e) => { e.preventDefault(); handleSearch(query); }} 
                     className="relative w-full"
-                    onFocus={() => setIsActive(true)}
+                    onFocus={() => setIsSuggestionsActive(true)}
                     onBlur={(e) => {
                       if (!e.currentTarget.contains(e.relatedTarget)) {
-                        setIsActive(false);
+                        setIsSuggestionsActive(false);
                       }
                     }}
                     >
                     <div className="relative w-full transition-all duration-300 ease-in-out">
                       <Input
-                          placeholder="Ask AI anything..."
+                          placeholder="Ask AI anything or type a command..."
                           className="pl-10"
                           value={query}
                           onChange={(e) => setQuery(e.target.value)}
@@ -105,8 +131,8 @@ export function GlobalSearch() {
                           Search
                       </Button>
                     </div>
-                     {isActive && (
-                        <div className="absolute top-full mt-2 w-full rounded-md border bg-background/80 backdrop-blur-lg shadow-lg">
+                     {isSuggestionsActive && !showResults && (
+                        <div className="absolute top-full mt-2 w-full rounded-md border bg-background/95 backdrop-blur-lg shadow-lg">
                             <ul>
                                 {suggestions.map((s, i) => (
                                     <li key={i}>
@@ -155,51 +181,68 @@ export function GlobalSearch() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}
+                 {showResults && (
+                    <Button variant="ghost" size="icon" onClick={closeSearch}>
+                        <X className="h-5 w-5" />
+                        <span className="sr-only">Close Search</span>
+                    </Button>
+                 )}
             </div>
-        </div>
-
-      {showResults && (
-        <div className="p-4 mt-4 space-y-4 overflow-y-auto flex-1">
-            <div className="font-semibold">Answer:</div>
-            {loading ? (
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-3/4" />
-              </div>
-            ) : (
-              <div className="p-3 rounded-md bg-muted whitespace-pre-wrap">
-                {result?.answer}
-              </div>
+             {showResults && (
+                <div className="flex flex-col h-full w-full max-w-3xl overflow-hidden">
+                    <ScrollArea className="flex-1 pr-4 -mr-4">
+                        <div className="space-y-6">
+                            {conversation.map((msg, index) => (
+                                <div key={index} className="flex items-start gap-4">
+                                    <div className="flex-shrink-0">
+                                        {msg.sender === 'ai' ? (
+                                            <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                                                <Bot className="h-5 w-5" />
+                                            </div>
+                                        ) : (
+                                            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                                                <User className="h-5 w-5" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex-1 rounded-md p-3 bg-muted">
+                                        <p className="whitespace-pre-wrap">{msg.text}</p>
+                                    </div>
+                                </div>
+                            ))}
+                            {loading && (
+                                <div className="flex items-start gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center animate-pulse">
+                                        <Bot className="h-5 w-5" />
+                                    </div>
+                                    <div className="flex-1 space-y-2 rounded-md p-3 bg-muted">
+                                        <Skeleton className="h-4 w-full" />
+                                        <Skeleton className="h-4 w-5/6" />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </ScrollArea>
+                    <form 
+                        onSubmit={(e) => { e.preventDefault(); const val = (e.target as any).elements.followup.value; handleSearch(val); (e.target as any).reset(); }}
+                        className="mt-4 border-t pt-4"
+                    >
+                        <div className="relative">
+                            <Input
+                                name="followup"
+                                ref={followUpInputRef}
+                                placeholder="Ask a follow-up..."
+                                className="pr-12"
+                                disabled={loading}
+                            />
+                             <Button type="submit" size="sm" className="absolute right-1 top-1/2 -translate-y-1/2 h-8" disabled={loading}>
+                                Send
+                            </Button>
+                        </div>
+                    </form>
+                </div>
             )}
-          </div>
-      )}
-
-      {!showResults && (
-         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-[625px]">
-            <DialogHeader>
-              <DialogTitle>AI Assistant</DialogTitle>
-            </DialogHeader>
-            <div className="mt-4 space-y-4">
-              <div className="font-semibold">Your question:</div>
-              <p className="p-3 rounded-md bg-muted">{query}</p>
-              <div className="font-semibold">Answer:</div>
-              {loading ? (
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-3/4" />
-                </div>
-              ) : (
-                <div className="p-3 rounded-md bg-muted whitespace-pre-wrap">
-                  {result?.answer}
-                </div>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
+        </div>
     </div>
   );
 }

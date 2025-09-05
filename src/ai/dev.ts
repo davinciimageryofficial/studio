@@ -8,3 +8,4 @@ import '@/ai/flows/conversation-starters.ts';
 import '@/ai/flows/post-analyzer.ts';
 import '@/ai/flows/post-generator.ts';
 import '@/ai/tools/web-search.ts';
+import '@/ai/tools/navigation.ts';
