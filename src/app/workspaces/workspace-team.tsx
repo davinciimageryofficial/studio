@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2 } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2, LogOut } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -135,6 +135,7 @@ export function WorkspaceTeam() {
     const [showAvatars, setShowAvatars] = useState(true);
     const [musicSource, setMusicSource] = useState<string | null>(null);
     const [streamMode, setStreamMode] = useState('self');
+    const [activeTab, setActiveTab] = useState("invites");
 
     const { toast } = useToast();
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -271,8 +272,8 @@ export function WorkspaceTeam() {
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-6">
-                <Card>
-                    <CardHeader className="p-2">
+                <Card className="flex flex-col h-full">
+                    <CardHeader className="p-4 border-b">
                     <div className="flex items-center justify-between">
                         <CardTitle>Team Workspace</CardTitle>
                         <div className="flex items-center gap-2 font-mono text-lg font-bold">
@@ -281,7 +282,7 @@ export function WorkspaceTeam() {
                         </div>
                     </div>
                     </CardHeader>
-                    <CardContent className="flex-1">
+                    <CardContent className="flex-1 p-4">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         {visibleParticipants.map(user => (
                           <ParticipantCard 
@@ -328,7 +329,7 @@ export function WorkspaceTeam() {
                         </Alert>
                     )}
                     </CardContent>
-                    <CardFooter className="px-2 py-1 bg-card">
+                    <CardFooter className="p-2 border-t bg-card">
                          <div className="flex justify-center flex-wrap gap-2 w-full">
                            <Button onClick={toggleTimer} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
                                 {isActive ? <Pause /> : <Play />}
@@ -376,13 +377,19 @@ export function WorkspaceTeam() {
                              <Button size="icon" onClick={() => setIsControlsCollapsed(!isControlsCollapsed)} className="h-8 w-8 bg-black hover:bg-gray-800">
                                 {isControlsCollapsed ? <PanelRight /> : <PanelLeft />}
                             </Button>
+                            <div className="hidden sm:block ml-auto">
+                                <Button variant="destructive" className="text-xs h-8" onClick={endSession}>
+                                    <LogOut />
+                                    {!isControlsCollapsed && <span className="ml-2">Leave Session</span>}
+                                </Button>
+                            </div>
                         </div>
                     </CardFooter>
                 </Card>
             </div>
             <div className="flex flex-col gap-6">
-                <Card>
-                    <Tabs defaultValue="invites">
+                <Card className="flex flex-col">
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1">
                         <CardHeader className="p-4">
                             <div className="flex justify-between items-center">
                                 <CardTitle>Manage Team</CardTitle>
@@ -393,7 +400,7 @@ export function WorkspaceTeam() {
                                 <TabsTrigger value="music">Music</TabsTrigger>
                             </TabsList>
                         </CardHeader>
-                        <TabsContent value="invites" className="p-0">
+                        <TabsContent value="invites" className="p-0 flex-1">
                            <CardContent className="space-y-4 max-h-80 overflow-y-auto">
                                 {onlineUsers.map(user => (
                                     <div key={user.id} className="flex items-center justify-between">
@@ -418,12 +425,12 @@ export function WorkspaceTeam() {
                                 ))}
                            </CardContent>
                         </TabsContent>
-                         <TabsContent value="chat" className="p-0">
+                         <TabsContent value="chat" className="p-0 flex-1">
                             <div className="h-[24rem]">
                                 <WorkspaceChat />
                             </div>
                         </TabsContent>
-                         <TabsContent value="music" className="p-0">
+                         <TabsContent value="music" className="p-0 flex-1">
                            <div className="h-[24rem]">
                             <CardContent className="pt-6">
                                 {musicSource ? (
@@ -474,15 +481,17 @@ export function WorkspaceTeam() {
                             </CardContent>
                            </div>
                         </TabsContent>
+                        <CardFooter className="p-4 border-t">
+                            {activeTab === 'invites' && (
+                                <Button size="lg" className="w-full" onClick={handleCopyLink}>
+                                    <Copy className="mr-2 h-4 w-4"/>
+                                    Copy Invite Link
+                                </Button>
+                            )}
+                             {activeTab !== 'invites' && <div className="h-10 w-full" />}
+                        </CardFooter>
                     </Tabs>
                 </Card>
-                <Button size="lg" onClick={handleCopyLink}>
-                    <Copy className="mr-2 h-4 w-4"/>
-                    Copy Invite Link
-                </Button>
-                <Button size="lg" variant="destructive" onClick={endSession}>
-                    End Session
-                </Button>
             </div>
              <Toaster />
         </div>
