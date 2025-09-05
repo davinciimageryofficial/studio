@@ -10,19 +10,20 @@ export function Fireworks() {
     useEffect(() => {
         const interval = setInterval(() => {
             if (document.visibilityState === 'visible') {
-                const newFirework = {
+                const newFireworks = Array.from({ length: 15 }).map(() => ({
                     id: Date.now() + Math.random(),
                     x: Math.random() * 100,
                     y: Math.random() * 100,
                     hue: Math.random() * 360,
-                };
-                setFireworks(fw => [...fw, newFirework]);
+                }));
+                
+                setFireworks(fw => [...fw, ...newFireworks]);
 
                 setTimeout(() => {
-                    setFireworks(fw => fw.filter(f => f.id !== newFirework.id));
+                    setFireworks(fw => fw.filter(f => !newFireworks.some(nf => nf.id === f.id)));
                 }, 2000);
             }
-        }, 400); // Launch a new firework every 400ms
+        }, 1000); // Launch a burst of 15 fireworks every 1000ms (1 second)
 
         return () => clearInterval(interval);
     }, []);
