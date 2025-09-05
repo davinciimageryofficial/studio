@@ -59,7 +59,7 @@ export default function SignupPage() {
     <ClientOnly>
       <div className="flex items-center justify-center bg-muted/40 p-4">
         <Card className="w-full max-w-lg shadow-2xl">
-          <CardHeader className="text-center">
+          <CardHeader className="text-center p-6">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
               <Kanban className="size-7 text-primary" />
             </div>
@@ -68,7 +68,7 @@ export default function SignupPage() {
               Get ready to connect, collaborate, and create with the best talent in the industry.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6 pt-0">
             <Form {...form}>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
