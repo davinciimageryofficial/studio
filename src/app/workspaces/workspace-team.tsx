@@ -156,25 +156,21 @@ export function WorkspaceTeam() {
 
     // Reorder participants when active speaker changes
     useEffect(() => {
-        if (!activeSpeakerId) return;
-    
-        setParticipants(currentParticipants => {
-            const speakerIndex = currentParticipants.findIndex(p => p.id === activeSpeakerId);
-            if (speakerIndex === -1) return currentParticipants; // Speaker not found
-    
-            // Create a new array with the speaker moved to the front.
-            const newParticipants = [
-                currentParticipants[speakerIndex],
-                ...currentParticipants.slice(0, speakerIndex),
-                ...currentParticipants.slice(speakerIndex + 1)
-            ];
-    
-            // Deep comparison to prevent unnecessary re-renders if the order is already correct.
-            if (JSON.stringify(newParticipants) !== JSON.stringify(currentParticipants)) {
-                return newParticipants;
-            }
-            return currentParticipants;
-        });
+      if (!activeSpeakerId) return;
+  
+      setParticipants(currentParticipants => {
+          const activeSpeaker = currentParticipants.find(p => p.id === activeSpeakerId);
+          if (!activeSpeaker) return currentParticipants;
+
+          const otherParticipants = currentParticipants.filter(p => p.id !== activeSpeakerId);
+          const newParticipants = [activeSpeaker, ...otherParticipants];
+  
+          // Deep comparison to prevent unnecessary re-renders if the order is already correct.
+          if (JSON.stringify(newParticipants) !== JSON.stringify(currentParticipants)) {
+              return newParticipants;
+          }
+          return currentParticipants;
+      });
     }, [activeSpeakerId, setParticipants]);
 
     const handleToggleCamera = async () => {
@@ -287,7 +283,7 @@ export function WorkspaceTeam() {
     );
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Main Content Area */}
             <div className="lg:col-span-3 flex flex-col gap-6">
                  <Card className="flex-1 flex flex-col">
