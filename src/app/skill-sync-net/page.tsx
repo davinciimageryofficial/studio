@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState } from "react";
@@ -88,7 +87,7 @@ const freelanceNiches = {
     "Miscellaneous": ["Voice Acting for AI/Apps", "Astrology/Tarot Services", "Personal Styling", "Travel Planning", "Genealogy Research", "Virtual Tour Creation", "NFT Creation & Consulting", "Podcast Guest Booking"],
 };
 type FreelanceNiche = keyof typeof freelanceNiches;
-type SelectedNiches = Record<string, string[]>>;
+type SelectedNiches = Record<string, string[]>;
 
 
 function NichePickerDialog({ onSave, initialNiches }: { onSave: (niches: string[]) => void, initialNiches: string[] }) {
@@ -459,10 +458,10 @@ function FreelancerView() {
                     <Card className="flex flex-col items-center justify-center border-dashed min-h-[500px]">
                         <CardHeader className="text-center">
                             <Zap className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
-                            <h2 className="text-2xl font-bold">Your AI-Matched Project</h2>
                         </CardHeader>
                         <CardContent className="text-center text-muted-foreground p-8 pt-0">
-                            <h3 className="text-lg font-semibold">Your matched project will appear here.</h3>
+                            <h2 className="text-2xl font-bold">Your AI-Matched Project</h2>
+                            <h3 className="text-lg font-semibold mt-4">Your matched project will appear here.</h3>
                             <p>Click the "Find Instant Match" button to start.</p>
                         </CardContent>
                     </Card>
@@ -636,5 +635,3 @@ export default function SkillSyncNetPage() {
         </ClientOnly>
     );
 }
-
-    
