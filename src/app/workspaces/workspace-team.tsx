@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2, LogOut, Users } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2, LogOut, Users, UserPlus } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -385,7 +385,7 @@ export function WorkspaceTeam() {
                                     <LogOut />
                                     {!isControlsCollapsed && <span className="ml-2">Leave</span>}
                                 </ControlButton>
-                                <Button size="icon" variant="outline" onClick={() => setIsControlsCollapsed(!isControlsCollapsed)} className="h-8 w-8">
+                                <Button size="icon" variant="outline" onClick={()={() => setIsControlsCollapsed(!isControlsCollapsed)} className="h-8 w-8">
                                     {isControlsCollapsed ? <PanelRight /> : <PanelLeft />}
                                 </Button>
                             </div>
@@ -433,7 +433,7 @@ export function WorkspaceTeam() {
                                             </div>
                                         </div>
                                         <Button variant="outline" size="sm" onClick={() => handleInvite(user)} disabled={participants.length >= 15}>
-                                            <Plus className="h-4 w-4 mr-2" />
+                                            <UserPlus className="h-4 w-4 mr-2" />
                                             Invite
                                         </Button>
                                     </div>
@@ -535,3 +535,5 @@ export function WorkspaceTeam() {
         </div>
     )
 }
+
+    

@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -8,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban } from "lucide-react";
+import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban, UserPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -276,6 +275,7 @@ export function MessagesClient() {
             <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon"><Phone /></Button>
                 <Button variant="ghost" size="icon"><Video /></Button>
+                <Button variant="ghost" size="icon"><UserPlus /></Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon"><Settings /></Button>
@@ -372,3 +372,5 @@ export function MessagesClient() {
     </div>
   );
 }
+
+    
