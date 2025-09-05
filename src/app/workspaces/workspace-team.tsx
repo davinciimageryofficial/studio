@@ -153,11 +153,11 @@ export function WorkspaceTeam() {
     const screenStreamRef = useRef<MediaStream | null>(null);
     
     const pinnedParticipant = participants.find(p => p.id === (pinnedUserId || activeSpeakerId)) || participants[0];
-    const thumbnailParticipants = participants.filter(p => p.id !== pinnedParticipant.id);
+    const thumbnailParticipants = participants.filter(p => p.id !== pinnedParticipant?.id);
 
     // Simulate active speaker change
     useEffect(() => {
-        if (participants.length > 1) {
+        if (participants.length > 1 && !pinnedUserId) {
             const interval = setInterval(() => {
                 const nonPinnedParticipants = participants.filter(p => p.id !== pinnedUserId);
                 if (nonPinnedParticipants.length > 0) {
@@ -288,7 +288,7 @@ export function WorkspaceTeam() {
     );
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             {/* Main Content Area */}
             <div className="lg:col-span-3 flex flex-col gap-6">
                  <Card className="flex-1 flex flex-col">
@@ -402,7 +402,7 @@ export function WorkspaceTeam() {
             </div>
 
             {/* Right Sidebar */}
-            <div className="flex flex-col gap-6">
+            <div className="lg:col-span-2 flex flex-col gap-6">
                 <Card className="flex flex-col">
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1">
                         <CardHeader className="p-4">
@@ -415,8 +415,8 @@ export function WorkspaceTeam() {
                                 <TabsTrigger value="music">Music</TabsTrigger>
                             </TabsList>
                         </CardHeader>
-                        <TabsContent value="invites" className="p-0 flex-1">
-                           <CardContent className="p-4 space-y-4 max-h-80 overflow-y-auto">
+                        <TabsContent value="invites" className="p-0 flex-1 flex flex-col">
+                           <CardContent className="p-4 space-y-4 flex-1 overflow-y-auto">
                                 {onlineUsers.map(user => (
                                     <div key={user.id} className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
