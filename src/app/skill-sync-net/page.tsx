@@ -12,7 +12,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Briefcase, User, Zap, AlertCircle, Kanban, CircleDollarSign, Clock } from "lucide-react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { skillSyncNet, type SkillSyncNetInput, type SkillSyncNetOutput } from "@/ai/flows/skill-sync-net";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -20,6 +19,7 @@ import { Progress } from "@/components/ui/progress";
 import { ClientOnly } from "@/components/layout/client-only";
 import { placeholderUsers } from "@/lib/placeholder-data";
 import { Badge } from "@/components/ui/badge";
+import { z } from "zod";
 
 const clientFormSchema = z.object({
   projectTitle: z.string().min(5, "Project title must be at least 5 characters."),
@@ -61,7 +61,7 @@ function ClientView() {
     };
 
     return (
-        <div className="grid grid-cols-1 gap-8 max-w-3xl mx-auto">
+        <div className="space-y-8">
             <Card>
                 <CardHeader>
                     <CardTitle>Post a Project</CardTitle>
@@ -172,7 +172,7 @@ function FreelancerView() {
     };
 
     return (
-        <div className="grid grid-cols-1 gap-8 max-w-3xl mx-auto">
+        <div className="space-y-8">
             <Card>
                 <CardHeader className="text-center">
                     <CardTitle>Instant Project Matching</CardTitle>
@@ -336,7 +336,7 @@ export default function SkillSyncNetPage() {
                 <Tabs defaultValue="client" className="w-full">
                     <TabsList className="grid w-full grid-cols-2 max-w-sm mx-auto">
                         <TabsTrigger value="client" className="gap-2">
-                            <Kanban className="h-5 w-5" /> For Clients
+                            <Kanban className="h-5 w-5" /> For Business
                         </TabsTrigger>
                         <TabsTrigger value="freelancer" className="gap-2">
                             <User className="h-5 w-5" /> For Freelancers
