@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Search, Bell, Lightbulb, Bot, User, X } from "lucide-react";
+import { Search, Bell, Lightbulb, Sparkles, User, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { searchAI, type SearchAIOutput } from "@/ai/flows/search-ai";
@@ -197,7 +197,7 @@ export function GlobalSearch() {
                                     <div className="flex-shrink-0">
                                         {msg.sender === 'ai' ? (
                                             <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                                                <Bot className="h-5 w-5" />
+                                                <Sparkles className="h-5 w-5" />
                                             </div>
                                         ) : (
                                             <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
@@ -213,7 +213,7 @@ export function GlobalSearch() {
                             {loading && (
                                 <div className="flex items-start gap-4">
                                     <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center animate-pulse">
-                                        <Bot className="h-5 w-5" />
+                                        <Sparkles className="h-5 w-5" />
                                     </div>
                                     <div className="flex-1 space-y-2 rounded-md p-3 bg-muted">
                                         <Skeleton className="h-4 w-full" />
@@ -246,3 +246,5 @@ export function GlobalSearch() {
     </div>
   );
 }
+
+    
