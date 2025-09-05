@@ -42,7 +42,7 @@ export const placeholderUsers: User[] = [
     headline: "Senior Frontend Developer | React & Next.js Expert",
     bio: "Building performant and scalable web applications. I love TypeScript and clean code. Always eager to learn new technologies.",
     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxvY2VhbnxlbnwwfHx8fDE3NTcxMTMxODB8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    coverImage: "https://images.unsplash.com/photo-1518399681705-1c1a55e5e883?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxOXx8a2lsbGVyJTIwd2hhbGV8ZW58MHx8fHwxNzU3MTEyOTMzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+    coverImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxidXNpbmVzc3xlbnwwfHx8fDE3NTcxMTMxMDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
     skills: ["React", "Next.js", "TypeScript", "GraphQL", "Tailwind CSS"],
     portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p2-${i}/400/300`),
     category: "development",
