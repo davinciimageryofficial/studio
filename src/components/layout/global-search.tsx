@@ -89,7 +89,7 @@ export function GlobalSearch() {
     handleSearch(suggestion);
   };
   
-  const searchContainerClass = showResults ? "flex-col h-full absolute top-0 left-0 right-0 bg-background/80 backdrop-blur-lg z-40 p-4" : "";
+  const searchContainerClass = showResults ? "flex-col h-full absolute top-0 left-0 right-0 bg-background/40 backdrop-blur-xl z-40 p-4" : "";
   const searchBarClass = showResults ? "w-full" : "w-full transition-all duration-300 ease-in-out";
 
   const closeSearch = () => {
@@ -248,4 +248,6 @@ export function GlobalSearch() {
 }
 
     
+    
+
     
