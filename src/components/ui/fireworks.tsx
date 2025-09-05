@@ -22,7 +22,7 @@ export function Fireworks() {
                     setFireworks(fw => fw.filter(f => f.id !== newFirework.id));
                 }, 2000);
             }
-        }, 800); // Launch a new firework every 800ms
+        }, 400); // Launch a new firework every 400ms
 
         return () => clearInterval(interval);
     }, []);
