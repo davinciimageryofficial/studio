@@ -10,15 +10,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Briefcase, User, Zap, AlertCircle, Building, CircleDollarSign, Clock } from "lucide-react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { skillSyncNet, SkillSyncNetInput, SkillSyncNetOutput } from "@/ai/flows/skill-sync-net";
+import { skillSyncNet, type SkillSyncNetInput, type SkillSyncNetOutput } from "@/ai/flows/skill-sync-net";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { ClientOnly } from "@/components/layout/client-only";
 import { placeholderUsers } from "@/lib/placeholder-data";
+import { Badge } from "@/components/ui/badge";
 
 const clientFormSchema = z.object({
   projectTitle: z.string().min(5, "Project title must be at least 5 characters."),
@@ -124,7 +125,7 @@ function ClientView() {
                 <h2 className="text-2xl font-bold">Your AI-Vetted Match</h2>
                 {loading && <MatchSkeleton isClientView={true} />}
                 {error && <Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
-                {result && result.match && <FreelancerMatchCard freelancer={result.match.freelancer!} />}
+                {result && result.match && result.match.freelancer && <FreelancerMatchCard freelancer={result.match.freelancer} />}
                 {!loading && !result && !error && (
                     <Card className="flex items-center justify-center h-full border-dashed">
                         <div className="text-center text-muted-foreground p-8">
@@ -189,7 +190,7 @@ function FreelancerView() {
                 <h2 className="text-2xl font-bold">Your AI-Matched Project</h2>
                 {loading && <MatchSkeleton isClientView={false} />}
                 {error && <Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
-                {result && result.match && <ProjectMatchCard project={result.match.project!} />}
+                {result && result.match && result.match.project && <ProjectMatchCard project={result.match.project} />}
                  {!loading && !result && !error && (
                     <Card className="flex items-center justify-center h-full border-dashed">
                         <div className="text-center text-muted-foreground p-8">
@@ -236,7 +237,7 @@ function MatchSkeleton({ isClientView }: { isClientView: boolean }) {
     )
 }
 
-function FreelancerMatchCard({ freelancer }: { freelancer: NonNullable<SkillSyncNetOutput['match']>['freelancer']}) {
+function FreelancerMatchCard({ freelancer }: { freelancer: NonNullable<NonNullable<SkillSyncNetOutput['match']>['freelancer']>}) {
      return (
         <Card className="shadow-lg">
             <CardHeader>
@@ -272,7 +273,7 @@ function FreelancerMatchCard({ freelancer }: { freelancer: NonNullable<SkillSync
     );
 }
 
-function ProjectMatchCard({ project }: { project: NonNullable<SkillSyncNetOutput['match']>['project']}) {
+function ProjectMatchCard({ project }: { project: NonNullable<NonNullable<SkillSyncNetOutput['match']>['project']>}) {
     return (
         <Card className="shadow-lg">
             <CardHeader>
