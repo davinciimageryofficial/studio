@@ -294,7 +294,10 @@ export function MessagesClient() {
         ) : (
              <div className="hidden md:flex flex-col items-center justify-center md:col-span-2 lg:col-span-3 text-center p-8">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                    <svg className="size-10 text-muted-foreground" fill="currentColor" viewBox="0 0 256 256"><path d="M152,24a80,80,0,1,0,59.4,136H152V88a8,8,0,0,0,-16,0v72H68.6a80,80,0,1,0,83.4-136ZM128,200a64,64,0,1,1,64-64A64.07,64.07,0,0,1,128,200Z"></path></svg>
+                    <svg className="size-10 text-muted-foreground" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path>
+                    </svg>
                 </div>
                 <h3 className="text-xl font-semibold">Select a conversation</h3>
                 <p className="text-muted-foreground">Choose from your existing conversations to start chatting.</p>

@@ -27,7 +27,10 @@ export default function LogoutPage() {
       <Card className="w-full max-w-lg text-center shadow-2xl">
         <CardHeader className="p-8 sm:p-12">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                 <svg className="size-7 text-primary" fill="currentColor" viewBox="0 0 256 256"><path d="M152,24a80,80,0,1,0,59.4,136H152V88a8,8,0,0,0,-16,0v72H68.6a80,80,0,1,0,83.4-136ZM128,200a64,64,0,1,1,64-64A64.07,64.07,0,0,1,128,200Z"></path></svg>
+                 <svg className="size-7 text-primary" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path>
+                </svg>
             </div>
             <CardTitle className="text-3xl font-bold tracking-tighter">You're Logged Out</CardTitle>
             <CardDescription className="mt-2 text-lg text-muted-foreground">
