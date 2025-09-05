@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Zap, AlertCircle, Kanban, CircleDollarSign, Clock } from "lucide-react";
+import { User, Zap, AlertCircle, Kanban, CircleDollarSign, Clock, SlidersHorizontal } from "lucide-react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { skillSyncNet, type SkillSyncNetInput, type SkillSyncNetOutput } from "@/ai/flows/skill-sync-net";
@@ -20,6 +20,9 @@ import { ClientOnly } from "@/components/layout/client-only";
 import { placeholderUsers } from "@/lib/placeholder-data";
 import { Badge } from "@/components/ui/badge";
 import { z } from "zod";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const clientFormSchema = z.object({
   projectTitle: z.string().min(5, "Project title must be at least 5 characters."),
@@ -31,6 +34,124 @@ const clientFormSchema = z.object({
 
 type ClientFormValues = z.infer<typeof clientFormSchema>;
 
+const requirementCategories = {
+    "Technical Proficiency": {
+      "Expertise Level": ["Senior", "Mid-Level", "Junior"],
+      "Specific Technologies": ["React", "Vue", "Angular", "Node.js", "Python", "Go", "Rust", "Swift", "Kotlin"],
+      "Cloud Platforms": ["AWS", "Google Cloud", "Azure"],
+      "Databases": ["PostgreSQL", "MongoDB", "MySQL", "Redis"],
+    },
+    "Soft Skills & Collaboration": {
+      "Communication Style": ["Proactive", "Responsive", "Asynchronous-friendly"],
+      "Teamwork": ["Independent Contributor", "Collaborative Pair Programmer", "Team Lead Potential"],
+      "Problem Solving": ["Innovative", "Methodical", "Pragmatic"],
+      "Availability": ["Full-time (40h/week)", "Part-time (20h/week)", "Flexible Hours"],
+    },
+    "Experience & Portfolio": {
+        "Industry Experience": ["Fintech", "Healthcare", "E-commerce", "SaaS", "Gaming"],
+        "Project Scale": ["Startup MVP", "Enterprise Application", "Feature Enhancement"],
+        "Portfolio Quality": ["Visually Polished", "Complex Functionality", "Strong Case Studies"],
+    },
+     "Project Management": {
+        "Methodology": ["Agile/Scrum", "Kanban", "Waterfall"],
+        "Tooling": ["Jira", "Asana", "Trello", "Linear"],
+        "Reporting": ["Daily Standups", "Weekly Reports", "Demo-driven"],
+    }
+};
+
+type ReqCategory = keyof typeof requirementCategories;
+type SelectedReqs = Record<ReqCategory, Record<string, string[]>>;
+
+
+function AdvancedRequirementsDialog({ onSave }: { onSave: (reqs: string) => void }) {
+    const [selectedReqs, setSelectedReqs] = useState<SelectedReqs>({} as SelectedReqs);
+
+    const handleSelect = (mainCategory: ReqCategory, subCategory: string, req: string) => {
+        setSelectedReqs(prev => {
+            const newSelections = JSON.parse(JSON.stringify(prev));
+            if (!newSelections[mainCategory]) newSelections[mainCategory] = {};
+            if (!newSelections[mainCategory][subCategory]) newSelections[mainCategory][subCategory] = [];
+            
+            const currentReqs: string[] = newSelections[mainCategory][subCategory];
+            const isSelected = currentReqs.includes(req);
+
+            if (isSelected) {
+                newSelections[mainCategory][subCategory] = currentReqs.filter(r => r !== req);
+            } else {
+                newSelections[mainCategory][subCategory].push(req);
+            }
+            return newSelections;
+        });
+    };
+
+    const handleSaveChanges = () => {
+        let advancedDescription = "\n\n**Advanced Requirements:**\n";
+        const allSelections: string[] = [];
+
+        for (const mainCategory in selectedReqs) {
+            const subCategories = selectedReqs[mainCategory as ReqCategory];
+            for (const subCategory in subCategories) {
+                const reqs = subCategories[subCategory];
+                if (reqs.length > 0) {
+                    allSelections.push(`- **${subCategory}:** ${reqs.join(', ')}`);
+                }
+            }
+        }
+        
+        if (allSelections.length > 0) {
+            advancedDescription += allSelections.join('\n');
+            onSave(advancedDescription);
+        } else {
+            onSave(""); // Save an empty string if no selections
+        }
+    };
+
+    return (
+        <DialogContent className="sm:max-w-3xl">
+            <DialogHeader>
+                <DialogTitle>Advanced Requirements Picker</DialogTitle>
+                <DialogDescription>Specify detailed criteria to help the AI find the absolute best match for your project.</DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-2 max-h-[60vh] overflow-y-auto pr-4">
+                 <Accordion type="multiple" className="w-full">
+                     {Object.entries(requirementCategories).map(([mainCategory, subCategories]) => (
+                        <AccordionItem key={mainCategory} value={mainCategory}>
+                            <AccordionTrigger className="text-lg font-semibold">{mainCategory}</AccordionTrigger>
+                            <AccordionContent>
+                                <div className="space-y-4 pl-2">
+                                {Object.entries(subCategories).map(([subCategory, reqs]) => (
+                                    <div key={subCategory}>
+                                        <h5 className="font-medium mb-3">{subCategory}</h5>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-3">
+                                            {reqs.map(req => (
+                                                <div key={req} className="flex items-center space-x-2">
+                                                    <Checkbox
+                                                        id={`${mainCategory}-${subCategory}-${req}`}
+                                                        checked={selectedReqs[mainCategory as ReqCategory]?.[subCategory]?.includes(req) || false}
+                                                        onCheckedChange={() => handleSelect(mainCategory as ReqCategory, subCategory, req)}
+                                                    />
+                                                    <label htmlFor={`${mainCategory}-${subCategory}-${req}`} className="text-sm font-medium leading-none">
+                                                        {req}
+                                                    </label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
+            </div>
+             <DialogFooter>
+                <DialogClose asChild><Button type="button" variant="secondary">Cancel</Button></DialogClose>
+                <DialogClose asChild><Button type="button" onClick={handleSaveChanges}>Add Requirements</Button></DialogClose>
+            </DialogFooter>
+        </DialogContent>
+    );
+}
+
 function ClientView() {
     const [result, setResult] = useState<SkillSyncNetOutput | null>(null);
     const [loading, setLoading] = useState(false);
@@ -38,7 +159,17 @@ function ClientView() {
 
     const form = useForm<ClientFormValues>({
         resolver: zodResolver(clientFormSchema),
+        defaultValues: {
+            projectDescription: "",
+        }
     });
+
+    const handleAdvancedSave = (requirements: string) => {
+        const currentDescription = form.getValues("projectDescription");
+        // Simple way to avoid duplicating the advanced section if user re-opens picker
+        const baseDescription = currentDescription.split("\n\n**Advanced Requirements:**")[0];
+        form.setValue("projectDescription", baseDescription + requirements, { shouldValidate: true });
+    };
 
     const onSubmit: SubmitHandler<ClientFormValues> = async (data) => {
         setLoading(true);
@@ -75,7 +206,15 @@ function ClientView() {
                             {form.formState.errors.projectTitle && <p className="text-sm text-destructive">{form.formState.errors.projectTitle.message}</p>}
                         </div>
                          <div className="space-y-2">
-                            <Label htmlFor="projectDescription">Project Description</Label>
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="projectDescription">Project Description</Label>
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button type="button" variant="outline" size="sm"><SlidersHorizontal className="mr-2 h-4 w-4" /> Add Advanced Requirements</Button>
+                                    </DialogTrigger>
+                                    <AdvancedRequirementsDialog onSave={handleAdvancedSave} />
+                                </Dialog>
+                            </div>
                             <Textarea id="projectDescription" {...form.register("projectDescription")} placeholder="Describe the project goals, deliverables, and any specific requirements..." className="min-h-32" />
                             {form.formState.errors.projectDescription && <p className="text-sm text-destructive">{form.formState.errors.projectDescription.message}</p>}
                         </div>

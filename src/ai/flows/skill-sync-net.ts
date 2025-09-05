@@ -38,9 +38,10 @@ A client has submitted the following project brief:
 - **Timeline:** {{{clientBrief.timeline}}}
 
 Your task is to find the **single best freelance candidate** for this project. Invent a realistic, top-tier freelance professional.
+Carefully analyze all provided information, especially any "Advanced Requirements" in the description, to inform your choice.
 
 Generate a JSON object containing the matched freelancer's profile.
-- The 'matchReasoning' must be a sharp, insightful paragraph explaining *why* this person is the perfect fit, referencing specific details from the project brief.
+- The 'matchReasoning' must be a sharp, insightful paragraph explaining *why* this person is the perfect fit, referencing specific details from the project brief and any advanced requirements.
 - The 'matchConfidence' score must be high (80-100), reflecting your expert vetting.
 - Do NOT populate the 'project' field in the output.
 `,
