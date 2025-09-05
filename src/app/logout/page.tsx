@@ -27,11 +27,9 @@ export default function LogoutPage() {
       <Card className="w-full max-w-lg text-center shadow-2xl">
         <CardHeader className="p-8 sm:p-12">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                 <svg className="size-7 text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M2 7L12 12L22 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M12 12V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                 </svg>
+                 <svg className="size-7 text-primary" viewBox="0 0 256 256" fill="currentColor">
+                    <path d="M152.3,26.1,128,14,103.7,26.1a16,16,0,0,0-8.2,14.3V61.8H48a16,16,0,0,0-16,16V178.2a16,16,0,0,0,16,16H95.5V215.6a16,16,0,0,0,8.2,14.3L128,242l24.3-12.1a16,16,0,0,0,8.2-14.3V194.2H208a16,16,0,0,0,16-16V77.8a16,16,0,0,0-16-16H160.5V40.4A16,16,0,0,0,152.3,26.1ZM144.5,194.2V215.6l-16.5,8.3-16.5-8.3V194.2h33Zm-49-16.4V61.8h57v16H112a16,16,0,0,0-16,16v84.4Zm102.6-16H112V93.8h87.1V177.8ZM208,77.8v.1H95.5V77.8H208ZM144.5,61.8V40.4l-16.5-8.2-16.5,8.2V61.8Z"/>
+                </svg>
             </div>
             <CardTitle className="text-3xl font-bold tracking-tighter">You're Logged Out</CardTitle>
             <CardDescription className="mt-2 text-lg text-muted-foreground">
