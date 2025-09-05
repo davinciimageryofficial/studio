@@ -160,18 +160,14 @@ export function WorkspaceTeam() {
         setParticipants(currentParticipants => {
             const speaker = currentParticipants.find(p => p.id === activeSpeakerId);
             if (!speaker) return currentParticipants;
-
+            
+            // Filter out the active speaker and then add them to the front.
             const otherParticipants = currentParticipants.filter(p => p.id !== activeSpeakerId);
-            
             const finalParticipants = [speaker, ...otherParticipants];
-            
-            const participantMap = new Map<string, User>();
-            finalParticipants.forEach(p => participantMap.set(p.id, p));
 
-            const uniqueParticipants = Array.from(participantMap.values());
-
-            if (JSON.stringify(uniqueParticipants) !== JSON.stringify(currentParticipants)) {
-                return uniqueParticipants;
+            // Deep comparison to prevent unnecessary re-renders if the order is already correct.
+            if (JSON.stringify(finalParticipants) !== JSON.stringify(currentParticipants)) {
+                return finalParticipants;
             }
             return currentParticipants;
         });
@@ -521,3 +517,5 @@ export function WorkspaceTeam() {
         </div>
     )
 }
+
+    
