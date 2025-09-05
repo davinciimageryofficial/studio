@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Search, Bell, Lightbulb, User, X } from "lucide-react";
+import { Search, Bell, Lightbulb, User, X, Kanban } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { searchAI, type SearchAIOutput } from "@/ai/flows/search-ai";
@@ -89,7 +89,7 @@ export function GlobalSearch() {
     handleSearch(suggestion);
   };
   
-  const searchContainerClass = showResults ? "flex-col h-full absolute top-0 left-0 right-0 bg-background/40 backdrop-blur-xl z-40 p-4" : "";
+  const searchContainerClass = showResults ? "flex-col h-full absolute top-0 left-0 right-0 bg-background/20 backdrop-blur-2xl z-40 p-4" : "";
   const searchBarClass = showResults ? "w-full" : "w-full transition-all duration-300 ease-in-out";
 
   const closeSearch = () => {
@@ -197,7 +197,7 @@ export function GlobalSearch() {
                                     <div className="flex-shrink-0">
                                         {msg.sender === 'ai' ? (
                                             <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><circle cx="12" cy="12" r="7"></circle><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+                                                <Kanban className="h-5 w-5" />
                                             </div>
                                         ) : (
                                             <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
@@ -213,7 +213,7 @@ export function GlobalSearch() {
                             {loading && (
                                 <div className="flex items-start gap-4">
                                     <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center animate-pulse">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><circle cx="12" cy="12" r="7"></circle><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+                                        <Kanban className="h-5 w-5" />
                                     </div>
                                     <div className="flex-1 space-y-2 rounded-md p-3 bg-muted">
                                         <Skeleton className="h-4 w-full" />
@@ -248,6 +248,8 @@ export function GlobalSearch() {
 }
 
     
+    
+
     
 
     
