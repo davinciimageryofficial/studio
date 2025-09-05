@@ -24,22 +24,23 @@ import { Switch } from "@/components/ui/switch";
 import { useWorkspace } from "@/context/workspace-context";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 
 type User = typeof placeholderUsers[0];
 
 type ParticipantCardProps = {
   user: User;
-  isRemovable?: boolean;
   onRemove?: (id: string) => void;
   isCameraOn: boolean;
   isScreenSharing: boolean;
   isSpeaking: boolean;
   showAvatars: boolean;
+  onClick?: () => void;
+  isThumbnail?: boolean;
 }
 
-function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isScreenSharing, isSpeaking, showAvatars }: ParticipantCardProps) {
+function ParticipantCard({ user, onRemove, isCameraOn, isScreenSharing, isSpeaking, showAvatars, onClick, isThumbnail = false }: ParticipantCardProps) {
   const [isMuted, setIsMuted] = useState(Math.random() > 0.5);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { toast } = useToast();
@@ -61,22 +62,26 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isSc
 
 
   return (
-    <div className={cn(
-        "relative group/participant aspect-video overflow-hidden rounded-lg bg-muted transition-all duration-300",
-        isSpeaking && "ring-2 ring-primary ring-offset-2 ring-offset-background",
-    )}>
+    <div 
+        className={cn(
+            "relative group/participant aspect-video overflow-hidden rounded-lg bg-muted transition-all duration-300",
+            isSpeaking && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+            isThumbnail ? 'cursor-pointer' : ''
+        )}
+        onClick={onClick}
+    >
       {isScreenSharing ? (
          <div className="w-full h-full flex flex-col items-center justify-center bg-blue-900/20 text-blue-200">
-            <ScreenShare className="h-10 w-10" />
-            <p className="mt-2 text-sm font-semibold">Presenting</p>
+            <ScreenShare className={cn(isThumbnail ? "h-6 w-6" : "h-10 w-10")} />
+            <p className={cn("mt-2 font-semibold", isThumbnail ? "text-xs" : "text-sm")}>Presenting</p>
         </div>
       ) : isCameraOn ? (
          <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted />
       ) : (
         <div className="w-full h-full flex items-center justify-center">
-            <Avatar className="h-20 w-20">
+            <Avatar className={cn(isThumbnail ? "h-12 w-12" : "h-20 w-20")}>
                 {showAvatars && <AvatarImage src={user.avatar} className="object-cover" />}
-                <AvatarFallback className="text-4xl">{user.name.charAt(0)}</AvatarFallback>
+                <AvatarFallback className={cn(isThumbnail ? "text-2xl" : "text-4xl")}>{user.name.charAt(0)}</AvatarFallback>
             </Avatar>
         </div>
       )}
@@ -87,19 +92,23 @@ function ParticipantCard({ user, isRemovable = false, onRemove, isCameraOn, isSc
       )}
       <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between opacity-0 group-hover/participant:opacity-100 transition-opacity">
         <p className="truncate text-sm font-medium text-white bg-black/30 px-2 py-1 rounded-md">{user.name}</p>
-        <Button size="icon" variant="ghost" className="h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white" onClick={() => setIsMuted(!isMuted)}>
-          {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-        </Button>
+        {!isThumbnail &&
+            <Button size="icon" variant="ghost" className="h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white" onClick={() => setIsMuted(!isMuted)}>
+                {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+            </Button>
+        }
       </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute top-2 left-2 h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white opacity-0 group-hover/participant:opacity-100 transition-opacity"
-        onClick={handleFullScreen}
-        >
-        <Maximize className="h-4 w-4" />
-      </Button>
-       {isRemovable && onRemove && (
+      {!isThumbnail &&
+        <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-2 left-2 h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white opacity-0 group-hover/participant:opacity-100 transition-opacity"
+            onClick={handleFullScreen}
+            >
+            <Maximize className="h-4 w-4" />
+        </Button>
+      }
+       {onRemove && (
          <Button
             variant="destructive"
             size="icon"
@@ -126,7 +135,8 @@ export function WorkspaceTeam() {
     } = useWorkspace();
     const allUsers = placeholderUsers;
     
-    const [activeSpeakerId, setActiveSpeakerId] = useState<string | null>(null);
+    const [activeSpeakerId, setActiveSpeakerId] = useState<string | null>(participants[0]?.id || null);
+    const [pinnedUserId, setPinnedUserId] = useState<string | null>(null);
     const [isCameraOn, setIsCameraOn] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
     const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
@@ -141,37 +151,26 @@ export function WorkspaceTeam() {
     const { toast } = useToast();
     const videoRef = useRef<HTMLVideoElement>(null);
     const screenStreamRef = useRef<MediaStream | null>(null);
+    
+    const pinnedParticipant = participants.find(p => p.id === (pinnedUserId || activeSpeakerId)) || participants[0];
+    const thumbnailParticipants = participants.filter(p => p.id !== pinnedParticipant.id);
 
     // Simulate active speaker change
     useEffect(() => {
         if (participants.length > 1) {
             const interval = setInterval(() => {
-                const randomIndex = Math.floor(Math.random() * participants.length);
-                const newSpeakerId = participants[randomIndex].id;
-                setActiveSpeakerId(newSpeakerId);
+                const nonPinnedParticipants = participants.filter(p => p.id !== pinnedUserId);
+                if (nonPinnedParticipants.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * nonPinnedParticipants.length);
+                    setActiveSpeakerId(nonPinnedParticipants[randomIndex].id);
+                } else if (participants.length > 0) {
+                    setActiveSpeakerId(participants[0].id);
+                }
             }, 3000); // Change speaker every 3 seconds
             return () => clearInterval(interval);
         }
-    }, [participants]);
+    }, [participants, pinnedUserId]);
 
-    // Reorder participants when active speaker changes
-    useEffect(() => {
-      if (!activeSpeakerId) return;
-  
-      setParticipants(currentParticipants => {
-          const activeSpeaker = currentParticipants.find(p => p.id === activeSpeakerId);
-          if (!activeSpeaker) return currentParticipants;
-
-          const otherParticipants = currentParticipants.filter(p => p.id !== activeSpeakerId);
-          const newParticipants = [activeSpeaker, ...otherParticipants];
-  
-          // Deep comparison to prevent unnecessary re-renders if the order is already correct.
-          if (JSON.stringify(newParticipants) !== JSON.stringify(currentParticipants)) {
-              return newParticipants;
-          }
-          return currentParticipants;
-      });
-    }, [activeSpeakerId, setParticipants]);
 
     const handleToggleCamera = async () => {
         if (!isCameraOn) {
@@ -236,6 +235,9 @@ export function WorkspaceTeam() {
         const removedUser = participants.find(p => p.id === userId);
         if (removedUser) {
             setParticipants(prev => prev.filter(p => p.id !== userId));
+            if (pinnedUserId === userId) {
+                setPinnedUserId(null); // Unpin if the removed user was pinned
+            }
             toast({ title: "User Removed", description: `${removedUser.name} has been removed from the workspace.` });
         }
     };
@@ -261,8 +263,6 @@ export function WorkspaceTeam() {
         });
     }
 
-    const visibleParticipants = participants.slice(0, 4);
-    
     const ControlButton = ({ tooltip, onClick, children, variant = "default", className }: { tooltip: string, onClick?: () => void, children: React.ReactNode, variant?: "default" | "secondary" | "destructive" | "outline" | "ghost" | "link", className?: string }) => (
         <TooltipProvider>
             <Tooltip>
@@ -294,26 +294,44 @@ export function WorkspaceTeam() {
                             {formatTime(time)}
                         </div>
                     </CardHeader>
-                    <CardContent className="flex-1 p-4">
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                             {visibleParticipants.map(user => (
-                                <ParticipantCard 
-                                    key={user.id} 
-                                    user={user} 
-                                    isRemovable={user.id !== placeholderUsers[1].id} // Can't remove self
-                                    onRemove={handleRemove}
-                                    isCameraOn={isCameraOn && user.id === placeholderUsers[1].id} // Example: only my camera is on
-                                    isScreenSharing={isScreenSharing && user.id === placeholderUsers[1].id}
-                                    isSpeaking={user.id === activeSpeakerId}
-                                    showAvatars={showAvatars}
-                                />
-                             ))}
+                    <CardContent className="flex-1 p-4 flex flex-col">
+                       {pinnedParticipant && (
+                        <div className="flex-1">
+                            <ParticipantCard
+                                user={pinnedParticipant}
+                                isCameraOn={isCameraOn && pinnedParticipant.id === placeholderUsers[1].id}
+                                isScreenSharing={isScreenSharing && pinnedParticipant.id === placeholderUsers[1].id}
+                                isSpeaking={pinnedParticipant.id === activeSpeakerId}
+                                showAvatars={showAvatars}
+                             />
                         </div>
+                       )}
+                        
+                        {thumbnailParticipants.length > 0 && (
+                            <ScrollArea className="w-full whitespace-nowrap pt-4">
+                                <div className="flex w-max space-x-4">
+                                    {thumbnailParticipants.map(user => (
+                                         <div key={user.id} className="w-40 flex-shrink-0">
+                                            <ParticipantCard
+                                                user={user}
+                                                isCameraOn={false}
+                                                isScreenSharing={false}
+                                                isSpeaking={user.id === activeSpeakerId}
+                                                showAvatars={showAvatars}
+                                                onClick={() => setPinnedUserId(user.id)}
+                                                isThumbnail={true}
+                                            />
+                                         </div>
+                                    ))}
+                                </div>
+                                <ScrollBar orientation="horizontal" />
+                            </ScrollArea>
+                        )}
                     </CardContent>
                     <CardFooter className="p-2 border-t bg-card">
                          <div className="flex justify-between items-center w-full gap-2">
                             {/* Left Controls */}
-                            <div className="flex gap-2">
+                             <div className="flex items-center gap-2">
                                 <ControlButton tooltip={isActive ? 'Pause Timer' : 'Resume Timer'} onClick={toggleTimer}>
                                     {isActive ? <Pause /> : <Play />}
                                     {!isControlsCollapsed && <span className="ml-2">{isActive ? 'Pause' : 'Resume'}</span>}
@@ -321,7 +339,7 @@ export function WorkspaceTeam() {
                             </div>
 
                             {/* Center Controls */}
-                            <div className="flex gap-2">
+                             <div className="flex items-center gap-2">
                                 <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant={isCameraOn ? "secondary" : "default"}>
                                     {isCameraOn ? <VideoOff /> : <Video />}
                                 </ControlButton>
@@ -360,7 +378,7 @@ export function WorkspaceTeam() {
                             </div>
                             
                             {/* Right Controls */}
-                            <div className="flex gap-2">
+                             <div className="flex items-center gap-2">
                                  <ControlButton tooltip="Leave Session" variant="destructive" onClick={endSession}>
                                     <LogOut />
                                     {!isControlsCollapsed && <span className="ml-2">Leave</span>}
