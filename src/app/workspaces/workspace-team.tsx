@@ -162,18 +162,20 @@ export function WorkspaceTeam() {
         setParticipants(currentParticipants => {
             const speaker = currentParticipants.find(p => p.id === activeSpeakerId);
             if (!speaker) return currentParticipants;
-        
+
             const otherParticipants = currentParticipants.filter(p => p.id !== activeSpeakerId);
-            
+
+            // Use a Map to ensure all participants are unique before setting state
             const participantMap = new Map<string, User>();
             [speaker, ...otherParticipants].forEach(p => participantMap.set(p.id, p));
 
             const uniqueParticipants = Array.from(participantMap.values());
-        
+
+            // Only update state if the order has actually changed
             if (JSON.stringify(uniqueParticipants) === JSON.stringify(currentParticipants)) {
                 return currentParticipants;
             }
-        
+
             return uniqueParticipants;
         });
     }, [activeSpeakerId, setParticipants]);
@@ -270,11 +272,6 @@ export function WorkspaceTeam() {
     const visibleParticipants = participants.slice(0, maxVisibleParticipants);
     const hiddenParticipants = participants.slice(maxVisibleParticipants);
 
-    const getLitModeClass = () => {
-        if (litMode === 'off' || litMode === 'procedural') return '';
-        return `lit-mode-${litMode}`;
-    }
-
     const getLitModeStyle = () => {
         if (litMode === 'procedural' && proceduralGradient) {
             return { background: proceduralGradient };
@@ -284,7 +281,7 @@ export function WorkspaceTeam() {
 
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-             {litMode !== 'off' && <div className={cn("mood-overlay", getLitModeClass())} style={getLitModeStyle()} />}
+             {litMode !== 'off' && <div className="mood-overlay" style={getLitModeStyle()} />}
             <div className="lg:col-span-2 space-y-6">
                 <Card>
                     <CardHeader className="p-2">
@@ -401,28 +398,15 @@ export function WorkspaceTeam() {
                         <CardHeader className="p-4">
                             <div className="flex justify-between items-center">
                                 <CardTitle>Manage Team</CardTitle>
-                                 <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="outline" size="sm">
-                                            <Palette className="mr-2 h-4 w-4" />
-                                            Lit Mode
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuItem onSelect={() => setLitMode('default')}>Default</DropdownMenuItem>
-                                        <DropdownMenuItem onSelect={() => setLitMode('sunset')}>Sunset</DropdownMenuItem>
-                                        <DropdownMenuItem onSelect={() => setLitMode('ocean')}>Ocean</DropdownMenuItem>
-                                        <DropdownMenuItem onSelect={() => setLitMode('synthwave')}>Synthwave</DropdownMenuItem>
-                                        <DropdownMenuSeparator />
-                                        <ProceduralLitModeDialog onGenerate={(grad) => { setProceduralGradient(grad); setLitMode('procedural'); }}>
-                                            <button className="relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full">
-                                                <Wand2 /> Procedural...
-                                            </button>
-                                        </ProceduralLitModeDialog>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem onSelect={() => setLitMode('off')}>Off</DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                 </DropdownMenu>
+                                 <ProceduralLitModeDialog 
+                                    onGenerate={(grad) => { setProceduralGradient(grad); setLitMode('procedural'); }}
+                                    onClose={() => setLitMode('off')}
+                                >
+                                    <Button variant="outline" size="sm">
+                                        <Wand2 className="mr-2 h-4 w-4" />
+                                        Procedural Mode
+                                    </Button>
+                                </ProceduralLitModeDialog>
                             </div>
                             <TabsList className="grid w-full grid-cols-3 mt-2">
                                 <TabsTrigger value="invites">Invite Users</TabsTrigger>
@@ -526,7 +510,7 @@ export function WorkspaceTeam() {
     )
 }
 
-function ProceduralLitModeDialog({ children, onGenerate }: { children: React.ReactNode, onGenerate: (gradient: string) => void }) {
+function ProceduralLitModeDialog({ children, onGenerate, onClose }: { children: React.ReactNode, onGenerate: (gradient: string) => void, onClose: () => void }) {
     const [description, setDescription] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -551,8 +535,20 @@ function ProceduralLitModeDialog({ children, onGenerate }: { children: React.Rea
         }
     };
     
+    const handleOpenChange = (open: boolean) => {
+        if (!open) {
+            // If the dialog is closed without generating, call the onClose callback
+            const proceduralGradientActive = document.querySelector('.mood-overlay')?.getAttribute('style')?.includes('background');
+            if (!proceduralGradientActive) {
+                 onClose();
+            }
+        }
+        setIsDialogOpen(open);
+    }
+
+
     return (
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -593,3 +589,4 @@ function ProceduralLitModeDialog({ children, onGenerate }: { children: React.Rea
     
 
     
+
