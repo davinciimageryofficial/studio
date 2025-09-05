@@ -34,6 +34,7 @@ import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useWorkspace } from "@/context/workspace-context";
 import { useFullscreen } from "@/hooks/use-fullscreen";
+import { placeholderUsers } from "@/lib/placeholder-data";
 
 const menuItems = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
@@ -62,6 +63,7 @@ export function AppSidebar() {
   const { setNextPath, isActive: isSessionActive } = useWorkspace();
   const { isFullscreen, toggleFullscreen } = useFullscreen();
   const isActive = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href) && href !== "/");
+  const currentUser = placeholderUsers[1];
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (pathname.startsWith('/workspaces') && isSessionActive) {
@@ -170,8 +172,8 @@ export function AppSidebar() {
                 <Link href="/profile/me">
                     <UserCircle className="hidden group-data-[collapsible=icon]:block" />
                     <Avatar className="size-7 group-data-[collapsible=icon]:hidden">
-                      <AvatarImage src="https://picsum.photos/id/1005/40/40" data-ai-hint="man portrait" />
-                      <AvatarFallback>ME</AvatarFallback>
+                      <AvatarImage src={currentUser.avatar} />
+                      <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <span className="text-sm font-medium">My Profile</span>
                 </Link>
