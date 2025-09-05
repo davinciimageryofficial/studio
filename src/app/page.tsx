@@ -19,11 +19,16 @@ export default function LandingPage() {
                     <p className="mt-4 text-lg text-muted-foreground">
                         Sentry is an AI-powered platform for businesses, top-tier freelancers and creative professionals to connect, collaborate, and build their dream teams.
                     </p>
-                    <div className="mt-8">
+                    <div className="mt-8 flex items-center gap-4">
                         <Button asChild size="lg" className="h-12">
                             <Link href="/signup">
                                 Join Waitlist
                                 <ArrowRight className="ml-2 h-5 w-5" />
+                            </Link>
+                        </Button>
+                        <Button asChild variant="outline" size="lg" className="h-12">
+                            <Link href="/faq">
+                                FAQ
                             </Link>
                         </Button>
                     </div>
