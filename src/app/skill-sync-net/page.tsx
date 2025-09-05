@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Zap, AlertCircle, Kanban, CircleDollarSign, Clock, SlidersHorizontal, Settings2, Building } from "lucide-react";
+import { User, Zap, AlertCircle, Kanban, CircleDollarSign, Clock, SlidersHorizontal, Settings2, Building, UserPlus } from "lucide-react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { skillSyncNet, type SkillSyncNetInput, type SkillSyncNetOutput } from "@/ai/flows/skill-sync-net";
@@ -88,7 +88,7 @@ const freelanceNiches = {
     "Miscellaneous": ["Voice Acting for AI/Apps", "Astrology/Tarot Services", "Personal Styling", "Travel Planning", "Genealogy Research", "Virtual Tour Creation", "NFT Creation & Consulting", "Podcast Guest Booking"],
 };
 type FreelanceNiche = keyof typeof freelanceNiches;
-type SelectedNiches = Record<string, string[]>;
+type SelectedNiches = Record<string, string[]>>;
 
 
 function NichePickerDialog({ onSave, initialNiches }: { onSave: (niches: string[]) => void, initialNiches: string[] }) {
@@ -386,17 +386,19 @@ function ClientView() {
             </Card>
 
             <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-center">Your AI-Vetted Match</h2>
                 {loading && <MatchSkeleton isClientView={true} />}
                 {error && <Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
                 {result && result.match && result.match.freelancer && <FreelancerMatchCard freelancer={result.match.freelancer} />}
                 {!loading && !result && !error && (
-                    <Card className="flex flex-col items-center justify-center h-full border-dashed min-h-80">
-                        <div className="text-center text-muted-foreground p-8">
-                            <Zap className="mx-auto h-12 w-12 mb-4" />
+                    <Card className="flex flex-col items-center justify-center border-dashed min-h-[500px]">
+                         <CardHeader className="text-center">
+                            <Zap className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
+                            <h2 className="text-2xl font-bold">Your AI-Vetted Match</h2>
+                        </CardHeader>
+                        <CardContent className="text-center text-muted-foreground p-8 pt-0">
                             <h3 className="text-lg font-semibold">Your matched freelancer will appear here.</h3>
                             <p>Fill out the project details to get started.</p>
-                        </div>
+                        </CardContent>
                     </Card>
                 )}
             </div>
@@ -450,17 +452,19 @@ function FreelancerView() {
                 </CardContent>
             </Card>
             <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-center">Your AI-Matched Project</h2>
                 {loading && <MatchSkeleton isClientView={false} />}
                 {error && <Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
                 {result && result.match && result.match.project && <ProjectMatchCard project={result.match.project} />}
                  {!loading && !result && !error && (
-                    <Card className="flex flex-col items-center justify-center h-full border-dashed min-h-80">
-                        <div className="text-center text-muted-foreground p-8">
-                            <Zap className="mx-auto h-12 w-12 mb-4" />
+                    <Card className="flex flex-col items-center justify-center border-dashed min-h-[500px]">
+                        <CardHeader className="text-center">
+                            <Zap className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
+                            <h2 className="text-2xl font-bold">Your AI-Matched Project</h2>
+                        </CardHeader>
+                        <CardContent className="text-center text-muted-foreground p-8 pt-0">
                             <h3 className="text-lg font-semibold">Your matched project will appear here.</h3>
                             <p>Click the "Find Instant Match" button to start.</p>
-                        </div>
+                        </CardContent>
                     </Card>
                 )}
             </div>
@@ -474,8 +478,12 @@ function MatchSkeleton({ isClientView }: { isClientView: boolean }) {
             <CardHeader>
                 <div className="flex items-center gap-4">
                     {isClientView && <Skeleton className="h-16 w-16 rounded-full" />}
-                    <div className="flex-1 space-y-2">
-                        <Skeleton className="h-6 w-3/4" />
+                     <div className="flex-1 space-y-2">
+                        {isClientView ? (
+                             <Skeleton className="h-6 w-3/4" />
+                        ) : (
+                            <Skeleton className="h-6 w-full" />
+                        )}
                         <Skeleton className="h-4 w-1/2" />
                     </div>
                 </div>
@@ -504,7 +512,8 @@ function FreelancerMatchCard({ freelancer }: { freelancer: NonNullable<NonNullab
      return (
         <Card className="shadow-lg">
             <CardHeader>
-                <div className="flex items-center gap-4">
+                <h2 className="text-2xl font-bold text-center mb-2">Your AI-Vetted Match</h2>
+                <div className="flex items-center gap-4 pt-4">
                     <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                         <User className="h-8 w-8 text-muted-foreground" />
                     </div>
@@ -546,8 +555,11 @@ function ProjectMatchCard({ project }: { project: NonNullable<NonNullable<SkillS
     return (
         <Card className="shadow-lg">
             <CardHeader>
-                <CardTitle className="text-2xl">{project.title}</CardTitle>
-                <CardDescription>Posted by: {project.clientName}</CardDescription>
+                <h2 className="text-2xl font-bold text-center mb-2">Your AI-Matched Project</h2>
+                <div className="pt-4">
+                    <CardTitle className="text-2xl">{project.title}</CardTitle>
+                    <CardDescription>Posted by: {project.clientName}</CardDescription>
+                </div>
             </CardHeader>
             <CardContent className="space-y-6">
                 <div>
@@ -607,7 +619,7 @@ export default function SkillSyncNetPage() {
                 <Tabs defaultValue="client" className="w-full">
                     <TabsList className="grid w-full grid-cols-2 max-w-sm mx-auto bg-black text-muted-foreground">
                         <TabsTrigger value="client" className="gap-2">
-                            <Kanban className="h-5 w-5" /> Businesses
+                            <Building className="h-5 w-5" /> Businesses
                         </TabsTrigger>
                         <TabsTrigger value="freelancer" className="gap-2">
                             <Kanban className="h-5 w-5" /> Freelancers
@@ -624,3 +636,5 @@ export default function SkillSyncNetPage() {
         </ClientOnly>
     );
 }
+
+    
