@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -67,9 +66,9 @@ export default function SignupPage() {
               Get ready to connect, collaborate, and create with the best talent in the industry.
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6 pt-0">
+          <CardContent className="p-6 pt-2">
             <Form {...form}>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={control}
                   name="fullName"
