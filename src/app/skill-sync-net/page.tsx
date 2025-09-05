@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Briefcase, User, Zap, AlertCircle, Building, CircleDollarSign, Clock } from "lucide-react";
+import { Briefcase, User, Zap, AlertCircle, Kanban, CircleDollarSign, Clock } from "lucide-react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -336,7 +336,7 @@ export default function SkillSyncNetPage() {
                 <Tabs defaultValue="client" className="w-full">
                     <TabsList className="grid w-full grid-cols-2 max-w-sm mx-auto">
                         <TabsTrigger value="client" className="gap-2">
-                            <Building className="h-5 w-5" /> For Clients
+                            <Kanban className="h-5 w-5" /> For Clients
                         </TabsTrigger>
                         <TabsTrigger value="freelancer" className="gap-2">
                             <User className="h-5 w-5" /> For Freelancers
