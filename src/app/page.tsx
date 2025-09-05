@@ -15,8 +15,9 @@ export default function LandingPage() {
             <div className="grid lg:grid-cols-2">
                 <div className="flex flex-col justify-center p-8 sm:p-12">
                     <svg className="size-10 mb-4 text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8 8H4C4 4 8 4 8 8ZM8 8V12C8 16 4 16 4 12H8ZM8 8H12C16 8 16 4 12 4V8H8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M16 16H20C20 20 16 20 16 16ZM16 16V12C16 8 20 8 20 12H16ZM16 16H12C8 16 8 20 12 20V16H16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M2 7L12 12L22 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M12 12V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                     <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">The Future of Collaboration is Here</h1>
                     <p className="mt-4 text-lg text-muted-foreground">
@@ -47,8 +48,9 @@ export default function LandingPage() {
                 </div>
                 <div className="relative hidden lg:flex items-center justify-center bg-muted/20 p-8">
                     <svg className="size-48 text-muted-foreground/40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8 8H4C4 4 8 4 8 8ZM8 8V12C8 16 4 16 4 12H8ZM8 8H12C16 8 16 4 12 4V8H8Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M16 16H20C20 20 16 20 16 16ZM16 16V12C16 8 20 8 20 12H16ZM16 16H12C8 16 8 20 12 20V16H16Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M2 7L12 12L22 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M12 12V22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                 </div>
             </div>
