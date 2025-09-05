@@ -57,7 +57,7 @@ export default function SignupPage() {
 
   return (
     <ClientOnly>
-      <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
+      <div className="flex items-center justify-center bg-muted/40 p-4">
         <Card className="w-full max-w-lg shadow-2xl">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
