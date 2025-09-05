@@ -100,7 +100,7 @@ export function GlobalSearch() {
 
   return (
     <div className={cn(
-        "sticky top-0 z-30 w-full border-b bg-background/80 py-2 backdrop-blur-lg transition-all duration-300", 
+        "sticky top-0 z-30 w-full border-b bg-background/60 py-2 backdrop-blur-xl transition-all duration-300", 
         showResults ? "h-[calc(100vh-8rem)]" : ""
     )}>
         <div className={cn("container flex items-center justify-center gap-4 px-4", showResults && "flex-col h-full")}>
@@ -247,4 +247,5 @@ export function GlobalSearch() {
   );
 }
 
+    
     
