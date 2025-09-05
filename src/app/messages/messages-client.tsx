@@ -294,11 +294,9 @@ export function MessagesClient() {
         ) : (
              <div className="hidden md:flex flex-col items-center justify-center md:col-span-2 lg:col-span-3 text-center p-8">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                    <svg className="size-10 text-muted-foreground" fill="currentColor" viewBox="0 0 256 256">
-                        <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" opacity="0.2"></path>
-                        <path d="M152.2,60.2a52,52,0,0,0-73.5,73.5l-2.3,2.3a12,12,0,0,0,0,17,12,12,0,0,0,17,0l2.3-2.3a52,52,0,0,0,73.5-73.5l2.3-2.3a12,12,0,0,0-17-17ZM135.2,149a28,28,0,0,1-39.6-39.6l19.8-19.8a28,28,0,0,1,39.6,39.6Z"></path>
-                        <path d="M103.8,195.8a52,52,0,0,0,73.5-73.5l2.3-2.3a12,12,0,0,0-17-17l-2.3,2.3a52,52,0,0,0-73.5,73.5l-2.3,2.3a12,12,0,1,0,17,17Z" opacity="0.2"></path>
-                        <path d="M198,34s-4,6-8,8-10,0-10,0l-2,4a80.14,80.14,0,0,0-28,16l-4-2s-6-4-8-2-4,10-4,10l-4,2a80.14,80.14,0,0,0-16,28l-2,4s-4-4-10-4-8,2-8,2l-4,2a80.14,80.14,0,0,0-16,28l-2,4s-6-4-8-2-4,10-4,10l-2,4a80.14,80.14,0,0,0,16,28l4,2s4,6,2,8,10,4,10,4l4-2a80.14,80.14,0,0,0,28-16l2-4s4,4,10,4,8-2,8-2l4-2a80.14,80.14,0,0,0,28-16l2-4s4-4,8-2,4,10,4,10l2-4a80.14,80.14,0,0,0,16-28l2-4s-4-6-2-8-10-4-10-4l-4,2a80.14,80.14,0,0,0-28,16l-2,4s-4,4-8,2-4-10-4-10l-2-4a80.14,80.14,0,0,0-16-28Z" opacity="0.2"></path>
+                    <svg className="size-10 text-muted-foreground" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 8H4C4 4 8 4 8 8ZM8 8V12C8 16 4 16 4 12H8ZM8 8H12C16 8 16 4 12 4V8H8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M16 16H20C20 20 16 20 16 16ZM16 16V12C16 8 20 8 20 12H16ZM16 16H12C8 16 8 20 12 20V16H16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                 </div>
                 <h3 className="text-xl font-semibold">Select a conversation</h3>
