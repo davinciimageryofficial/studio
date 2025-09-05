@@ -294,8 +294,8 @@ export function MessagesClient() {
         ) : (
              <div className="hidden md:flex flex-col items-center justify-center md:col-span-2 lg:col-span-3 text-center p-8">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                    <svg className="size-10 text-muted-foreground" viewBox="0 0 256 256" fill="currentColor">
-                        <path d="M208,32H48A16,16,0,0,0,32,48V160a16,16,0,0,0,16,16H80v32a16,16,0,0,0,24.4,14.5l40-24A15.9,15.9,0,0,0,152,184V176h24a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,128H176V128a16,16,0,0,0-16-16H112a16,16,0,0,0-16,16v32H48V48H208Zm-48-48a8,8,0,0,1-8,8H112a8,8,0,0,1,0-16h40A8,8,0,0,1,160,112Z"/>
+                    <svg className="size-10 text-muted-foreground" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-9h4v2h-4v-2zm0-3h4v2h-4v-2z"/>
                     </svg>
                 </div>
                 <h3 className="text-xl font-semibold">Select a conversation</h3>
