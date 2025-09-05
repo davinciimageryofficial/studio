@@ -25,11 +25,13 @@ import {
   CreditCard,
   Home,
   Mic,
+  Fullscreen,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useWorkspace } from "@/context/workspace-context";
+import { useFullscreen } from "@/hooks/use-fullscreen";
 
 const menuItems = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
@@ -55,6 +57,7 @@ const secondaryMenuItems = [
 export function AppSidebar() {
   const pathname = usePathname();
   const { setNextPath, isActive: isSessionActive } = useWorkspace();
+  const { isFullscreen, toggleFullscreen } = useFullscreen();
   const isActive = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href) && href !== "/");
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -142,6 +145,16 @@ export function AppSidebar() {
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                onClick={toggleFullscreen}
+                tooltip={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                className="justify-start"
+              >
+                <Fullscreen />
+                <span>{isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
