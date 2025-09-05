@@ -165,20 +165,50 @@ export function WorkspaceTeam() {
 
             const otherParticipants = currentParticipants.filter(p => p.id !== activeSpeakerId);
 
-            // Use a Map to ensure all participants are unique before setting state
             const participantMap = new Map<string, User>();
             [speaker, ...otherParticipants].forEach(p => participantMap.set(p.id, p));
 
             const uniqueParticipants = Array.from(participantMap.values());
-
-            // Only update state if the order has actually changed
-            if (JSON.stringify(uniqueParticipants) === JSON.stringify(currentParticipants)) {
-                return currentParticipants;
+            
+            if (JSON.stringify(uniqueParticipants) !== JSON.stringify(currentParticipants)) {
+                return uniqueParticipants;
             }
-
-            return uniqueParticipants;
+            return currentParticipants;
         });
     }, [activeSpeakerId, setParticipants]);
+
+    useEffect(() => {
+        const createRipple = (e: MouseEvent | TouchEvent) => {
+            if (litMode === 'off') return;
+
+            const ripple = document.createElement("div");
+            ripple.className = "cursor-ripple";
+            document.body.appendChild(ripple);
+
+            const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+            const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
+            ripple.style.left = `${clientX - ripple.clientWidth / 2}px`;
+            ripple.style.top = `${clientY - ripple.clientHeight / 2}px`;
+
+
+            ripple.addEventListener("animationend", () => {
+                ripple.remove();
+            });
+        };
+
+        const handleInteraction = (e: MouseEvent | TouchEvent) => {
+            createRipple(e);
+        };
+
+        document.addEventListener("mousemove", handleInteraction);
+        document.addEventListener("click", handleInteraction);
+
+        return () => {
+            document.removeEventListener("mousemove", handleInteraction);
+            document.removeEventListener("click", handleInteraction);
+        };
+    }, [litMode]);
 
     const handleToggleCamera = async () => {
         if (!isCameraOn) {
@@ -398,7 +428,7 @@ export function WorkspaceTeam() {
                         <CardHeader className="p-4">
                             <div className="flex justify-between items-center">
                                 <CardTitle>Manage Team</CardTitle>
-                                 <ProceduralLitModeDialog 
+                                <ProceduralLitModeDialog 
                                     onGenerate={(grad) => { setProceduralGradient(grad); setLitMode('procedural'); }}
                                     onClose={() => setLitMode('off')}
                                 >
@@ -579,14 +609,3 @@ function ProceduralLitModeDialog({ children, onGenerate, onClose }: { children: 
         </Dialog>
     )
 }
-
-    
-
-    
-
-    
-
-    
-
-    
-
