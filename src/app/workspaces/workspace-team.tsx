@@ -24,7 +24,6 @@ import { Switch } from "@/components/ui/switch";
 import { useWorkspace } from "@/context/workspace-context";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { generateGradient } from "@/ai/flows/gradient-generator";
 
 
 type User = typeof placeholderUsers[0];
@@ -134,8 +133,6 @@ export function WorkspaceTeam() {
     const [hasScreenPermission, setHasScreenPermission] = useState<boolean | null>(null);
     const [isControlsCollapsed, setIsControlsCollapsed] = useState(false);
     const [showAvatars, setShowAvatars] = useState(true);
-    const [litMode, setLitMode] = useState<string>('off');
-    const [proceduralGradient, setProceduralGradient] = useState('');
     const [musicSource, setMusicSource] = useState<string | null>(null);
     const [streamMode, setStreamMode] = useState('self');
 
@@ -178,39 +175,6 @@ export function WorkspaceTeam() {
             return currentParticipants;
         });
     }, [activeSpeakerId, setParticipants]);
-
-    useEffect(() => {
-        const createRipple = (e: MouseEvent | TouchEvent) => {
-            if (litMode === 'off') return;
-
-            const ripple = document.createElement("div");
-            ripple.className = "cursor-ripple";
-            document.body.appendChild(ripple);
-
-            const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-            const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-
-            ripple.style.left = `${clientX - ripple.clientWidth / 2}px`;
-            ripple.style.top = `${clientY - ripple.clientHeight / 2}px`;
-
-
-            ripple.addEventListener("animationend", () => {
-                ripple.remove();
-            });
-        };
-
-        const handleInteraction = (e: MouseEvent | TouchEvent) => {
-            createRipple(e);
-        };
-
-        document.addEventListener("mousemove", handleInteraction);
-        document.addEventListener("click", handleInteraction);
-
-        return () => {
-            document.removeEventListener("mousemove", handleInteraction);
-            document.removeEventListener("click", handleInteraction);
-        };
-    }, [litMode]);
 
     const handleToggleCamera = async () => {
         if (!isCameraOn) {
@@ -304,22 +268,8 @@ export function WorkspaceTeam() {
     const visibleParticipants = participants.slice(0, maxVisibleParticipants);
     const hiddenParticipants = participants.slice(maxVisibleParticipants);
 
-    const getLitModeStyle = () => {
-        if (litMode === 'procedural' && proceduralGradient) {
-            return { background: proceduralGradient };
-        }
-        return {};
-    }
-    
-    const handleProceduralGenerate = (gradient: string) => {
-        setProceduralGradient(gradient);
-        setLitMode('procedural');
-    };
-
-
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-             {litMode !== 'off' && <div className="mood-overlay" style={getLitModeStyle()} />}
             <div className="lg:col-span-2 space-y-6">
                 <Card>
                     <CardHeader className="p-2">
@@ -436,10 +386,6 @@ export function WorkspaceTeam() {
                         <CardHeader className="p-4">
                             <div className="flex justify-between items-center">
                                 <CardTitle>Manage Team</CardTitle>
-                                <ProceduralLitModeDialog 
-                                    onGenerate={handleProceduralGenerate}
-                                    onClose={() => setLitMode('off')}
-                                />
                             </div>
                             <TabsList className="grid w-full grid-cols-3 mt-2">
                                 <TabsTrigger value="invites">Invite Users</TabsTrigger>
@@ -542,79 +488,3 @@ export function WorkspaceTeam() {
         </div>
     )
 }
-
-function ProceduralLitModeDialog({ onGenerate, onClose }: { onGenerate: (gradient: string) => void, onClose: () => void }) {
-    const [description, setDescription] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-    const handleGenerate = async () => {
-        if (!description.trim()) {
-            setError('Please enter a description.');
-            return;
-        }
-        setIsLoading(true);
-        setError('');
-        try {
-            const result = await generateGradient({ description });
-            onGenerate(result.gradient);
-            setIsDialogOpen(false); // Close dialog on success
-        } catch (e) {
-            console.error(e);
-            setError('Failed to generate gradient. Please try again.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-    
-    const handleOpenChange = (open: boolean) => {
-        if (!open) {
-            const proceduralGradientActive = document.querySelector('.mood-overlay')?.getAttribute('style')?.includes('background');
-            if (!proceduralGradientActive) {
-                 onClose();
-            }
-        }
-        setIsDialogOpen(open);
-    }
-
-
-    return (
-        <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
-            <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                    <Wand2 className="mr-2 h-4 w-4" />
-                    Procedural Mode
-                </Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Procedural Lit Mode</DialogTitle>
-                    <DialogDescription>Describe the mood or color scheme you want, and AI will generate a gradient for you.</DialogDescription>
-                </DialogHeader>
-                <div className="py-4 space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="gradient-description">Description</Label>
-                        <Input 
-                            id="gradient-description"
-                            placeholder="e.g., 'a fiery sunset', 'calm ocean morning'"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                        />
-                    </div>
-                    {error && <p className="text-sm text-destructive">{error}</p>}
-                </div>
-                <DialogFooter>
-                    <DialogClose asChild>
-                        <Button variant="ghost">Cancel</Button>
-                    </DialogClose>
-                    <Button onClick={handleGenerate} disabled={isLoading}>
-                        {isLoading ? 'Generating...' : 'Generate'}
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-    )
-}
-
-    
