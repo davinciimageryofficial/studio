@@ -17,7 +17,7 @@ export default function LandingPage() {
                     <Kanban className="size-10 mb-4 text-primary" />
                     <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">The Future of Collaboration is Here</h1>
                     <p className="mt-4 text-lg text-muted-foreground">
-                        Sentry is an AI-powered platform for top-tier freelancers and creative professionals to connect, collaborate, and build their dream teams.
+                        Sentry is an AI-powered platform for businesses, top-tier freelancers and creative professionals to connect, collaborate, and build their dream teams.
                     </p>
                     <div className="mt-8">
                         <Button asChild size="lg" className="h-12">
