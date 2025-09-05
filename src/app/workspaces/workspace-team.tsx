@@ -385,7 +385,7 @@ export function WorkspaceTeam() {
                                     <LogOut />
                                     {!isControlsCollapsed && <span className="ml-2">Leave</span>}
                                 </ControlButton>
-                                <Button size="icon" variant="outline" onClick={()={() => setIsControlsCollapsed(!isControlsCollapsed)} className="h-8 w-8">
+                                <Button size="icon" variant="outline" onClick={() => setIsControlsCollapsed(!isControlsCollapsed)} className="h-8 w-8">
                                     {isControlsCollapsed ? <PanelRight /> : <PanelLeft />}
                                 </Button>
                             </div>
@@ -535,5 +535,3 @@ export function WorkspaceTeam() {
         </div>
     )
 }
-
-    
