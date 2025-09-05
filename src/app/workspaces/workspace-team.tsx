@@ -337,10 +337,7 @@ export function WorkspaceTeam() {
                          <div className="flex justify-between items-center w-full gap-2">
                             {/* Left Controls */}
                              <div className="flex items-center gap-2">
-                                <ControlButton tooltip={isActive ? 'Pause Timer' : 'Resume Timer'} onClick={toggleTimer}>
-                                    {isActive ? <Pause /> : <Play />}
-                                    {!isControlsCollapsed && <span className="ml-2">{isActive ? 'Pause' : 'Resume'}</span>}
-                                </ControlButton>
+                                {/* Placeholder for left controls if needed */}
                             </div>
 
                             {/* Center Controls */}
