@@ -59,7 +59,7 @@ export default function SignupPage() {
       <div className="flex min-h-[calc(100vh-4.5rem)] items-center justify-center p-4">
         <Card className="w-full max-w-lg shadow-2xl">
           <CardHeader className="text-center p-6">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
               <Kanban className="size-7 text-primary" />
             </div>
             <CardTitle className="text-3xl font-bold tracking-tighter">Join the Sentry Waitlist</CardTitle>
