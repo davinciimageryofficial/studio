@@ -158,36 +158,22 @@ export function WorkspaceTeam() {
     // Reorder participants when active speaker changes
     useEffect(() => {
         if (!activeSpeakerId) return;
-    
+
         setParticipants(currentParticipants => {
             const speaker = currentParticipants.find(p => p.id === activeSpeakerId);
             if (!speaker) return currentParticipants;
-    
-            // Create a map to ensure uniqueness, with the speaker potentially being added twice but overwritten
+        
+            const otherParticipants = currentParticipants.filter(p => p.id !== activeSpeakerId);
+            
             const participantMap = new Map<string, User>();
-            // Add other participants first
-            currentParticipants.forEach(p => {
-                if (p.id !== activeSpeakerId) {
-                    participantMap.set(p.id, p);
-                }
-            });
-            // Add speaker last so they are moved to the front if they exist.
-            participantMap.set(speaker.id, speaker);
-    
+            [speaker, ...otherParticipants].forEach(p => participantMap.set(p.id, p));
+
             const uniqueParticipants = Array.from(participantMap.values());
-            const speakerIndex = uniqueParticipants.findIndex(p => p.id === activeSpeakerId);
-    
-            // Move speaker to the front
-            if (speakerIndex > 0) {
-                const [speakerData] = uniqueParticipants.splice(speakerIndex, 1);
-                uniqueParticipants.unshift(speakerData);
-            }
-    
-            // Compare with current state to avoid unnecessary re-renders
+        
             if (JSON.stringify(uniqueParticipants) === JSON.stringify(currentParticipants)) {
                 return currentParticipants;
             }
-    
+        
             return uniqueParticipants;
         });
     }, [activeSpeakerId, setParticipants]);
@@ -424,7 +410,7 @@ export function WorkspaceTeam() {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
                                         <DropdownMenuItem onSelect={() => setLitMode('default')}>Default</DropdownMenuItem>
-                                        <DropdownMenuItem onSelect={() => setLitMode('sunset')}>Sunset</DropdownMenuItem>
+                                        <DropdownMenuItem onSelect={() => setLitMode('synthwave')}>Sunset</DropdownMenuItem>
                                         <DropdownMenuItem onSelect={() => setLitMode('ocean')}>Ocean</DropdownMenuItem>
                                         <DropdownMenuItem onSelect={() => setLitMode('synthwave')}>Synthwave</DropdownMenuItem>
                                         <DropdownMenuSeparator />
@@ -597,6 +583,8 @@ function ProceduralLitModeDialog({ children, onGenerate }: { children: React.Rea
         </Dialog>
     )
 }
+
+    
 
     
 
