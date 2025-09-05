@@ -99,7 +99,7 @@ export default function ProfilePage() {
               alt={`${user.name}'s cover image`}
               fill
               className="object-cover"
-              data-ai-hint="abstract landscape"
+              data-ai-hint="killer whale"
             />
             {isMyProfile && (
                  <EditImageDialog

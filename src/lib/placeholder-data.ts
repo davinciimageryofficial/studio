@@ -42,7 +42,7 @@ export const placeholderUsers: User[] = [
     headline: "Senior Frontend Developer | React & Next.js Expert",
     bio: "Building performant and scalable web applications. I love TypeScript and clean code. Always eager to learn new technologies.",
     avatar: "https://picsum.photos/seed/1005/200/200",
-    coverImage: "https://picsum.photos/seed/uidev/1200/400",
+    coverImage: "https://picsum.photos/seed/killer-whale/1200/400",
     skills: ["React", "Next.js", "TypeScript", "GraphQL", "Tailwind CSS"],
     portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p2-${i}/400/300`),
     category: "development",
