@@ -268,6 +268,25 @@ export function WorkspaceTeam() {
     const maxVisibleParticipants = 4;
     const visibleParticipants = participants.slice(0, maxVisibleParticipants);
     const hiddenParticipants = participants.slice(maxVisibleParticipants);
+    
+    const ControlButton = ({ tooltip, onClick, children, variant = "default", className }: { tooltip: string, onClick?: () => void, children: React.ReactNode, variant?: "default" | "secondary" | "destructive" | "outline" | "ghost" | "link", className?: string }) => (
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button
+                        variant={variant}
+                        onClick={onClick}
+                        className={cn("text-xs bg-black hover:bg-gray-800 h-8", className, isControlsCollapsed && "w-8 px-0")}
+                    >
+                        {children}
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{tooltip}</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+    );
 
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -330,57 +349,62 @@ export function WorkspaceTeam() {
                     )}
                     </CardContent>
                     <CardFooter className="p-2 border-t bg-card">
-                         <div className="flex justify-center flex-wrap gap-2 w-full">
-                           <Button onClick={toggleTimer} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
-                                {isActive ? <Pause /> : <Play />}
-                                {!isControlsCollapsed && <span className="ml-2">{isActive ? 'Pause Timer' : 'Resume Timer'}</span>}
-                            </Button>
-                           <Button variant={isCameraOn ? "secondary" : "default"} onClick={handleToggleCamera} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
-                                {isCameraOn ? <VideoOff /> : <Video />}
-                                {!isControlsCollapsed && <span className="ml-2">{isCameraOn ? 'Turn Off Camera' : 'Use Camera'}</span>}
-                            </Button>
-                            <Button variant={isScreenSharing ? "secondary" : "default"} onClick={handleToggleScreenShare} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
-                                {isScreenSharing ? <ScreenShareOff /> : <ScreenShare />}
-                                {!isControlsCollapsed && <span className="ml-2">{isScreenSharing ? 'Stop Sharing' : 'Share Screen'}</span>}
-                            </Button>
-                           <Button variant={isRecording ? "destructive" : "default"} onClick={handleToggleRecording} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
-                                <CircleDot />
-                                {!isControlsCollapsed && <span className="ml-2">{isRecording ? 'Stop Recording' : 'Record Session'}</span>}
-                            </Button>
-                             <Separator orientation="vertical" className="h-8 hidden sm:block" />
-                            <Button className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
-                                <PenSquare />
-                                {!isControlsCollapsed && <span className="ml-2">Whiteboard</span>}
-                            </Button>
-                             <Button onClick={handleToggleAvatars} className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
-                                <UserX />
-                                {!isControlsCollapsed && <span className="ml-2">{showAvatars ? 'Hide Pictures' : 'Show Pictures'}</span>}
-                            </Button>
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button className={cn("text-xs bg-black hover:bg-gray-800 h-8", !isControlsCollapsed && "flex-1 sm:flex-none")}>
-                                        <Lightbulb />
-                                        {!isControlsCollapsed && <span className="ml-2">Pocket Guide</span>}
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-4xl h-3/4 flex flex-col p-0">
-                                    <div className="p-4 border-b">
-                                       <DialogHeader>
-                                            <DialogTitle>AI Assistant</DialogTitle>
-                                        </DialogHeader>
-                                    </div>
-                                    <div className="flex-1 overflow-hidden">
-                                        <GlobalSearch />
-                                    </div>
-                                </DialogContent>
-                            </Dialog>
-                             <Button size="icon" onClick={() => setIsControlsCollapsed(!isControlsCollapsed)} className="h-8 w-8 bg-black hover:bg-gray-800">
-                                {isControlsCollapsed ? <PanelRight /> : <PanelLeft />}
-                            </Button>
-                            <div className="hidden sm:block ml-auto">
-                                <Button variant="destructive" className="text-xs h-8" onClick={endSession}>
+                        <div className="flex justify-between items-center w-full gap-2">
+                            {/* Left Controls */}
+                            <div className="flex gap-2">
+                                <ControlButton tooltip={isActive ? 'Pause Timer' : 'Resume Timer'} onClick={toggleTimer}>
+                                    {isActive ? <Pause /> : <Play />}
+                                    {!isControlsCollapsed && <span className="ml-2">{isActive ? 'Pause' : 'Resume'}</span>}
+                                </ControlButton>
+                            </div>
+
+                            {/* Center Controls */}
+                            <div className="flex gap-2">
+                                <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant={isCameraOn ? "secondary" : "default"}>
+                                    {isCameraOn ? <VideoOff /> : <Video />}
+                                </ControlButton>
+                                <ControlButton tooltip={isScreenSharing ? 'Stop Sharing' : 'Share Screen'} onClick={handleToggleScreenShare} variant={isScreenSharing ? "secondary" : "default"}>
+                                    {isScreenSharing ? <ScreenShareOff /> : <ScreenShare />}
+                                </ControlButton>
+                                 <ControlButton tooltip={isRecording ? 'Stop Recording' : 'Start Recording'} onClick={handleToggleRecording} variant={isRecording ? "destructive" : "default"}>
+                                    <CircleDot />
+                                </ControlButton>
+                                <Separator orientation="vertical" className="h-8" />
+                                <ControlButton tooltip="Whiteboard">
+                                    <PenSquare />
+                                </ControlButton>
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <div> 
+                                            <ControlButton tooltip="AI Assistant">
+                                                <Lightbulb />
+                                            </ControlButton>
+                                        </div>
+                                    </DialogTrigger>
+                                     <DialogContent className="max-w-4xl h-3/4 flex flex-col p-0">
+                                        <div className="p-4 border-b">
+                                           <DialogHeader>
+                                                <DialogTitle>AI Assistant</DialogTitle>
+                                            </DialogHeader>
+                                        </div>
+                                        <div className="flex-1 overflow-hidden">
+                                            <GlobalSearch />
+                                        </div>
+                                    </DialogContent>
+                                </Dialog>
+                                <ControlButton tooltip={showAvatars ? 'Hide Pictures' : 'Show Pictures'} onClick={handleToggleAvatars}>
+                                    <UserX />
+                                </ControlButton>
+                            </div>
+                            
+                            {/* Right Controls */}
+                            <div className="flex gap-2">
+                                 <ControlButton tooltip="Leave Session" variant="destructive" onClick={endSession}>
                                     <LogOut />
-                                    {!isControlsCollapsed && <span className="ml-2">Leave Session</span>}
+                                    {!isControlsCollapsed && <span className="ml-2">Leave</span>}
+                                </ControlButton>
+                                <Button size="icon" variant="outline" onClick={() => setIsControlsCollapsed(!isControlsCollapsed)} className="h-8 w-8">
+                                    {isControlsCollapsed ? <PanelRight /> : <PanelLeft />}
                                 </Button>
                             </div>
                         </div>
