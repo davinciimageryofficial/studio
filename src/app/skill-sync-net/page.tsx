@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Zap, AlertCircle, Kanban, CircleDollarSign, Clock, SlidersHorizontal } from "lucide-react";
+import { User, Zap, AlertCircle, Kanban, CircleDollarSign, Clock, SlidersHorizontal, Settings2 } from "lucide-react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { skillSyncNet, type SkillSyncNetInput, type SkillSyncNetOutput } from "@/ai/flows/skill-sync-net";
@@ -65,6 +65,105 @@ const requirementCategories = {
 type ReqCategory = keyof typeof requirementCategories;
 type SelectedReqs = Record<ReqCategory, Record<string, string[]>>;
 
+const freelanceNiches = {
+    "Writing & Content Creation": ["Blog Writing", "Copywriting", "Technical Writing", "SEO Writing", "Content Strategy", "Ghostwriting", "Grant Writing", "Scriptwriting", "Editing & Proofreading", "Social Media Content Creation", "Press Release Writing", "UX Writing", "Creative Writing", "Resume & Cover Letter Writing", "Newsletter Writing", "Product Description Writing"],
+    "Design & Creative": ["Graphic Design", "UI/UX Design", "Web Design", "Illustration", "Animation", "Video Editing", "Photography", "Photo Editing/Retouching", "3D Modeling & Rendering", "Game Art Design", "Presentation Design", "Packaging Design", "Infographic Design", "Book Cover Design", "Fashion Design", "Interior Design"],
+    "Development & IT": ["Web Development (frontend, backend, full-stack)", "Mobile App Development", "Software Development", "Game Development", "WordPress Development", "Shopify Development", "E-commerce Platform Development", "Database Management", "API Integration", "DevOps & Cloud Computing", "Cybersecurity Consulting", "Blockchain Development", "AI/ML Model Development", "Chatbot Development", "IT Support & Network Administration", "SaaS Product Development"],
+    "Marketing & Advertising": ["Digital Marketing Strategy", "SEO", "SEM", "Social Media Marketing", "Email Marketing", "Content Marketing", "Affiliate Marketing", "Influencer Marketing", "PPC Campaign Management", "Marketing Analytics", "Brand Strategy", "Market Research", "Public Relations", "Crowdfunding Campaign Management", "Conversion Rate Optimization (CRO)"],
+    "Business & Consulting": ["Business Plan Writing", "Financial Consulting", "Bookkeeping & Accounting", "Tax Preparation", "Management Consulting", "HR Consulting", "Project Management", "Operations Consulting", "Startup Consulting", "Virtual CFO Services", "Fundraising Consulting", "Risk Management Consulting", "Supply Chain Consulting", "CRM Setup", "E-commerce Business Consulting"],
+    "Admin & Customer Support": ["Virtual Assistance", "Data Entry", "Customer Service", "Technical Support", "Order Processing", "Calendar Management", "Email Management", "Transcription", "Appointment Setting", "Research Assistance", "CRM Data Management", "Community Management"],
+    "Sales & Lead Generation": ["Lead Generation", "Cold Calling", "Email Outreach", "Sales Funnel Creation", "B2B Sales Consulting", "LinkedIn Lead Generation", "Telesales", "Customer Retention Strategy", "Sales Copywriting"],
+    "Education & Training": ["Online Tutoring", "Course Creation", "Instructional Design", "Corporate Training", "Life Coaching", "Career Coaching", "Test Prep Coaching", "Public Speaking Coaching", "Skill Workshop Facilitation", "Language Instruction", "Music Instruction", "Fitness Coaching"],
+    "Audio & Music": ["Voiceover Acting", "Audio Editing & Mixing", "Podcast Production", "Music Composition", "Sound Design", "Audio Restoration", "Jingles & Ad Music Production", "Voice Synthesis & AI Voice Creation", "DJ Services"],
+    "Translation & Localization": ["Document Translation", "Website Localization", "Software Localization", "Subtitling & Captioning", "Technical Translation", "Medical Translation", "Legal Translation", "Literary Translation", "Multilingual SEO"],
+    "Legal & Compliance": ["Contract Drafting", "Legal Research", "Paralegal Services", "Intellectual Property Consulting", "Compliance Consulting", "GDPR/Data Privacy Consulting", "Immigration Consulting"],
+    "Engineering & Architecture": ["CAD Design", "Mechanical Engineering", "Electrical Engineering", "Civil Engineering", "Structural Engineering", "Architectural Design", "Product Design", "Industrial Design", "Prototyping & 3D Printing"],
+    "Science & Research": ["Data Analysis", "Statistical Analysis", "Scientific Writing", "Research Paper Editing", "Grant Research", "Qualitative Research", "Quantitative Research", "Bioinformatics Consulting", "Environmental Consulting"],
+    "Healthcare & Wellness": ["Telehealth Consulting", "Medical Writing", "Health Coaching", "Nutrition Consulting", "Mental Health Coaching", "Wellness Program Design", "Medical Billing & Coding", "Healthcare Marketing"],
+    "Event & Entertainment": ["Event Planning", "Virtual Event Management", "Wedding Planning", "Entertainment Booking", "Stage Design", "Live Streaming Setup", "Virtual Reality Event Production"],
+    "Gaming & Esports": ["Game Testing", "Esports Coaching", "Game Streaming Setup", "Game Content Creation", "Esports Event Management", "Game Modding"],
+    "AI & Emerging Tech": ["AI Prompt Engineering", "Machine Learning Consulting", "Data Annotation & Labeling", "AI Ethics Consulting", "AR/VR Development", "IoT Consulting", "Metaverse Content Creation"],
+    "Miscellaneous": ["Voice Acting for AI/Apps", "Astrology/Tarot Services", "Personal Styling", "Travel Planning", "Genealogy Research", "Virtual Tour Creation", "NFT Creation & Consulting", "Podcast Guest Booking"],
+};
+type FreelanceNiche = keyof typeof freelanceNiches;
+type SelectedNiches = Record<string, string[]>;
+
+
+function NichePickerDialog({ onSave, initialNiches }: { onSave: (niches: string[]) => void, initialNiches: string[] }) {
+    const [selected, setSelected] = useState<SelectedNiches>(() => {
+        const initialState: SelectedNiches = {};
+        initialNiches.forEach(niche => {
+            for (const category in freelanceNiches) {
+                if (freelanceNiches[category as FreelanceNiche].includes(niche)) {
+                    if (!initialState[category]) {
+                        initialState[category] = [];
+                    }
+                    initialState[category].push(niche);
+                }
+            }
+        });
+        return initialState;
+    });
+
+    const handleSelect = (category: string, subNiche: string) => {
+        setSelected(prev => {
+            const newSelection = { ...prev };
+            if (!newSelection[category]) {
+                newSelection[category] = [];
+            }
+            const isSelected = newSelection[category].includes(subNiche);
+            if (isSelected) {
+                newSelection[category] = newSelection[category].filter(s => s !== subNiche);
+            } else {
+                newSelection[category].push(subNiche);
+            }
+            return newSelection;
+        });
+    };
+    
+    const handleSaveChanges = () => {
+        const allSelected = Object.values(selected).flat();
+        onSave(allSelected);
+    };
+
+    return (
+        <DialogContent className="sm:max-w-3xl">
+            <DialogHeader>
+                <DialogTitle>Choose Freelancer Category</DialogTitle>
+                <DialogDescription>Select the specific skills and niches that best suit your project needs.</DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-2 max-h-[60vh] overflow-y-auto pr-4">
+                 <Accordion type="multiple" className="w-full">
+                     {Object.entries(freelanceNiches).map(([category, subNiches]) => (
+                        <AccordionItem key={category} value={category}>
+                            <AccordionTrigger className="text-base font-semibold">{category}</AccordionTrigger>
+                            <AccordionContent>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-3 pl-2">
+                                    {subNiches.map(subNiche => (
+                                        <div key={subNiche} className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id={`${category}-${subNiche}`}
+                                                checked={selected[category]?.includes(subNiche) || false}
+                                                onCheckedChange={() => handleSelect(category, subNiche)}
+                                            />
+                                            <label htmlFor={`${category}-${subNiche}`} className="text-sm font-medium leading-none">
+                                                {subNiche}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
+            </div>
+             <DialogFooter>
+                <DialogClose asChild><Button type="button" variant="secondary">Cancel</Button></DialogClose>
+                <DialogClose asChild><Button type="button" onClick={handleSaveChanges}>Apply Selection</Button></DialogClose>
+            </DialogFooter>
+        </DialogContent>
+    );
+}
 
 function AdvancedRequirementsDialog({ onSave }: { onSave: (reqs: string) => void }) {
     const [selectedReqs, setSelectedReqs] = useState<SelectedReqs>({} as SelectedReqs);
@@ -159,19 +258,27 @@ function ClientView() {
     const [result, setResult] = useState<SkillSyncNetOutput | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [selectedNiches, setSelectedNiches] = useState<string[]>([]);
 
     const form = useForm<ClientFormValues>({
         resolver: zodResolver(clientFormSchema),
         defaultValues: {
             projectDescription: "",
+            requiredSkills: ""
         }
     });
 
     const handleAdvancedSave = (requirements: string) => {
         const currentDescription = form.getValues("projectDescription");
-        // Simple way to avoid duplicating the advanced section if user re-opens picker
         const baseDescription = currentDescription.split("\n\n**Advanced Requirements:**")[0];
         form.setValue("projectDescription", baseDescription + requirements, { shouldValidate: true });
+    };
+
+    const handleNicheSave = (niches: string[]) => {
+        setSelectedNiches(niches);
+        const currentSkills = form.getValues("requiredSkills").split(',').map(s => s.trim()).filter(s => s && !Object.values(freelanceNiches).flat().includes(s));
+        const newSkills = [...niches, ...currentSkills].join(', ');
+        form.setValue("requiredSkills", newSkills, { shouldValidate: true });
     };
 
     const onSubmit: SubmitHandler<ClientFormValues> = async (data) => {
@@ -204,7 +311,15 @@ function ClientView() {
                 <CardContent>
                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <div className="space-y-2">
-                            <Label htmlFor="projectTitle">Project Title</Label>
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="projectTitle">Project Title</Label>
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button type="button" variant="outline" size="sm"><Settings2 className="mr-2 h-4 w-4" /> Choose Category</Button>
+                                    </DialogTrigger>
+                                    <NichePickerDialog onSave={handleNicheSave} initialNiches={selectedNiches} />
+                                </Dialog>
+                            </div>
                             <Input id="projectTitle" {...form.register("projectTitle")} placeholder="e.g., Redesign of E-commerce Checkout Flow" />
                             {form.formState.errors.projectTitle && <p className="text-sm text-destructive">{form.formState.errors.projectTitle.message}</p>}
                         </div>
@@ -222,8 +337,13 @@ function ClientView() {
                             {form.formState.errors.projectDescription && <p className="text-sm text-destructive">{form.formState.errors.projectDescription.message}</p>}
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="requiredSkills">Required Skills</Label>
+                            <Label htmlFor="requiredSkills">Required Skills & Niches</Label>
                             <Input id="requiredSkills" {...form.register("requiredSkills")} placeholder="e.g., Figma, UX Research, Prototyping" />
+                            <div className="flex flex-wrap gap-1 pt-1">
+                                {selectedNiches.map(niche => (
+                                    <Badge key={niche} variant="secondary">{niche}</Badge>
+                                ))}
+                            </div>
                              {form.formState.errors.requiredSkills && <p className="text-sm text-destructive">{form.formState.errors.requiredSkills.message}</p>}
                         </div>
                         <div className="grid grid-cols-2 gap-4">
@@ -293,7 +413,6 @@ function FreelancerView() {
         setResult(null);
 
         try {
-            // Using placeholderUsers[1] (Bob Williams) as the current freelancer for this example
             const currentUser = placeholderUsers.find(u => u.id === '2');
             const input: SkillSyncNetInput = {
                 context: "freelancer_seeking_project",
@@ -495,3 +614,5 @@ export default function SkillSyncNetPage() {
         </ClientOnly>
     );
 }
+
+    
