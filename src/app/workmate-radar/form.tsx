@@ -51,32 +51,31 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const traitCategories = {
-    "Core Expertise": {
-        "Seniority": ["Junior", "Mid-Level", "Senior", "Lead", "Principal"],
-        "Key Responsibilities": ["Strategy & Planning", "Execution & Production", "Management & Leadership", "Research & Analysis"],
-        "Tool Proficiency": ["Figma", "Adobe Creative Suite", "VS Code", "Microsoft Excel", "Google Analytics", "HubSpot"],
+    "Project & Scope": {
+        "Project Type": ["One-time task", "Short-term project", "Long-term engagement", "Full-time contract", "Consultation"],
+        "Project Scale": ["Small (Individual Contributor)", "Medium (Small Team Collaboration)", "Large (Complex, Multi-team)"],
+        "Deliverables": ["Strategy/Plan", "Creative Assets (e.g., designs, content)", "Code/Software", "Analysis & Reports", "Hands-on Implementation"],
     },
-    "Project Scope & Complexity": {
-        "Project Type": ["New build from scratch", "Feature enhancement", "Redesign", "Maintenance/Support", "Consulting"],
-        "Project Length": ["Short-term (days)", "Medium-term (weeks)", "Long-term (months)"],
-        "Team Structure": ["Solo Contributor", "Works with a small team (2-5)", "Works with a large team (5+)"],
+    "Experience Level & Seniority": {
+        "Seniority": ["Entry-Level/Junior", "Mid-Level", "Senior", "Expert/Lead"],
+        "Key Attributes": ["Strategic Thinker", "Technical Specialist", "Creative Visionary", "Project Manager", "Data-driven"],
+        "Tool Proficiency": ["Beginner", "Intermediate", "Advanced", "Expert"],
     },
-    "Collaboration & Workflow": {
-        "Communication Style": ["Highly communicative", "Prefers asynchronous", "Daily standups"],
-        "Meeting Cadence": ["Multiple times a day", "Daily", "A few times a week", "Weekly"],
-        "Project Management": ["Agile/Scrum", "Kanban", "Waterfall", "Notion", "Jira", "Asana"],
-        "Feedback Style": ["Direct & candid", "Structured & formal", "Collaborative & iterative"],
+    "Collaboration & Communication": {
+        "Working Style": ["Independent/Autonomous", "Highly Collaborative", "Agile/Scrum", "Asynchronous"],
+        "Communication": ["Daily Check-ins", "Weekly Syncs", "Prefers Written Updates", "Client-facing"],
+        "Team Structure": ["Works directly with client", "Integrates with an existing team", "Leads a team"],
     },
-    "Deliverables & Quality": {
-        "Pace": ["Fast-paced, high-urgency", "Steady and consistent", "Flexible and iterative"],
-        "Attention to Detail": ["Pixel-perfect precision required", "General concept is enough", "High level of polish expected"],
-        "Documentation": ["Extensive documentation required", "Minimal documentation needed"],
+    "Industry & Domain": {
+        "Industry Experience": ["Tech/SaaS", "Creative/Media", "Business/Finance", "Healthcare/Science", "Education", "E-commerce/Retail", "Legal/Compliance"],
+        "Company Size": ["Startup (1-50)", "Scale-up (51-500)", "Enterprise (500+)", "Non-profit"],
+        "Target Audience": ["B2B", "B2C", "Internal", "Specialized/Niche"],
     },
-    "Industry & Domain Knowledge": {
-        "Industry Experience": ["SaaS", "Fintech", "Healthcare", "E-commerce", "Gaming", "Education", "Marketing"],
-        "Company Size": ["Startup (1-50)", "Scale-up (51-500)", "Enterprise (500+)"],
-        "Audience": ["B2B", "B2C", "Internal stakeholders"],
-    },
+    "Soft Skills & Professionalism": {
+        "Pace & Urgency": ["Fast-paced, deadline-driven", "Steady and planned", "Flexible and iterative"],
+        "Attention to Detail": ["Pixel-perfect precision", "High-level concepts", "Balanced approach"],
+        "Problem Solving": ["Requires strong analytical skills", "Needs creative problem-solving", "Prefers structured guidance"],
+    }
 };
 
 type TraitCategory = keyof typeof traitCategories;
