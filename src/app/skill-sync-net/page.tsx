@@ -375,7 +375,7 @@ function ClientView() {
                                 {form.formState.errors.timeline && <p className="text-sm text-destructive">{form.formState.errors.timeline.message}</p>}
                             </div>
                         </div>
-                         <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                         <Button type="submit" className="w-full bg-black text-white hover:bg-gray-800" size="lg" disabled={loading}>
                             <Zap className="mr-2 h-5 w-5" />
                             {loading ? "Finding Your Perfect Match..." : "Find My Freelancer"}
                         </Button>
