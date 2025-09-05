@@ -13,6 +13,10 @@ export type User = {
   jobTitle?: string;
   company?: string;
   verified?: boolean;
+  currentSession?: {
+    workspaceName: string;
+    with: string[]; // Array of user IDs
+  };
 };
 
 export const placeholderUsers: User[] = [
@@ -72,6 +76,10 @@ export const placeholderUsers: User[] = [
     skills: ["Node.js", "Python", "AWS", "Serverless", "PostgreSQL"],
     portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p4-${i}/400/300`),
     category: "development",
+    currentSession: {
+        workspaceName: "Project Phoenix",
+        with: ["1"], // With Alice Johnson
+    }
   },
   {
     id: "5",

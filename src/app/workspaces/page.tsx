@@ -6,13 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, CheckCircle, Award, ArrowUp, Zap } from "lucide-react";
+import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, CheckCircle, Award, ArrowUp, Zap, Hand } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { WorkspaceTeam } from "./workspace-team";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useWorkspace } from "@/context/workspace-context";
+import { useToast } from "@/hooks/use-toast";
 
 type User = typeof placeholderUsers[0];
 
@@ -24,7 +25,8 @@ export default function WorkspacesPage() {
         startSession, 
         endSession, 
         toggleTimer, 
-        formatTime
+        formatTime,
+        participants
     } = useWorkspace();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -34,7 +36,11 @@ export default function WorkspacesPage() {
   const [isRewardSectionVisible, setIsRewardSectionVisible] = useState(true);
   
   const rewardTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const onlineUsers = placeholderUsers.slice(0, 5);
+  const { toast } = useToast();
+
+  // Let's assume the current user (Bob) is connected with Alice and Charlie
+  const myConnections = ["1", "3"]; 
+  const onlineUsers = placeholderUsers.slice(0, 5).filter(u => u.id !== '2'); // Exclude self
   
 
   useEffect(() => {
@@ -76,6 +82,13 @@ export default function WorkspacesPage() {
     // This local reset is fine as it's for the non-session state
     endSession();
   };
+  
+  const handleNudge = (userName: string, mutualFriendName: string) => {
+    toast({
+        title: "Nudge Sent!",
+        description: `A request to join has been sent to ${mutualFriendName} in ${userName}'s session.`
+    })
+  }
 
   const hourlyProgressValue = (time / 3600) * 100; // Calculate progress towards one hour
   const monthlyProgressValue = (monthlyFlowHours / monthlyGoal) * 100;
@@ -252,27 +265,63 @@ export default function WorkspacesPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {onlineUsers.map(user => (
-                                    <div key={user.id} className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <Avatar>
-                                                <AvatarImage src={user.avatar} />
-                                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            <div>
-                                                <p className="font-semibold">{user.name}</p>
-                                                <div className="flex items-center gap-1.5">
-                                                <span className="h-2 w-2 rounded-full bg-green-500" />
-                                                <p className="text-xs text-muted-foreground">Online</p>
+                                {onlineUsers.map(user => {
+                                    const mutualConnectionId = user.currentSession?.with.find(participantId => myConnections.includes(participantId));
+                                    const mutualFriend = mutualConnectionId ? placeholderUsers.find(u => u.id === mutualConnectionId) : null;
+
+                                    return (
+                                        <div key={user.id} className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <Avatar>
+                                                    <AvatarImage src={user.avatar} />
+                                                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                                <div>
+                                                    <p className="font-semibold">{user.name}</p>
+                                                    {user.currentSession ? (
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <div className="flex items-center gap-1.5 cursor-default">
+                                                                        <span className="h-2 w-2 rounded-full bg-primary" />
+                                                                        <p className="text-xs text-muted-foreground">In a session</p>
+                                                                    </div>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>
+                                                                    <p>In: {user.currentSession.workspaceName}</p>
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                    ) : (
+                                                        <div className="flex items-center gap-1.5">
+                                                            <span className="h-2 w-2 rounded-full bg-green-500" />
+                                                            <p className="text-xs text-muted-foreground">Online</p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
+                                            {user.currentSession && mutualFriend ? (
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button variant="ghost" size="icon" onClick={() => handleNudge(user.name, mutualFriend.name)}>
+                                                                <Hand className="h-5 w-5 text-primary" />
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            <p>Nudge {mutualFriend.name} for an invite</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+                                            ) : !user.currentSession && (
+                                                <Button variant="ghost" size="icon" onClick={() => handleStart('team', user)}>
+                                                    <Plus className="h-5 w-5" />
+                                                    <span className="sr-only">Invite {user.name}</span>
+                                                </Button>
+                                            )}
                                         </div>
-                                        <Button variant="ghost" size="icon" onClick={() => handleStart('team', user)}>
-                                            <Plus className="h-5 w-5" />
-                                            <span className="sr-only">Invite {user.name}</span>
-                                        </Button>
-                                    </div>
-                                ))}
+                                    )
+                                })}
                             </div>
                         </CardContent>
                         </Card>
