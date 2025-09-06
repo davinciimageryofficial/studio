@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, CheckCircle, Award, ArrowUp, Zap, Hand } from "lucide-react";
+import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, CheckCircle, Award, ArrowUp, Zap, Hand, User } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { WorkspaceTeam } from "./workspace-team";
 import { Progress } from "@/components/ui/progress";
@@ -15,7 +15,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useWorkspace } from "@/context/workspace-context";
 import { useToast } from "@/hooks/use-toast";
 
-type User = typeof placeholderUsers[0];
+type UserType = typeof placeholderUsers[0];
 
 export default function WorkspacesPage() {
     const { 
@@ -59,7 +59,7 @@ export default function WorkspacesPage() {
   }, [sessionType, isStartingFlow]);
 
 
-  const handleStart = (type: "solo" | "team", initialParticipant: User | null = null) => {
+  const handleStart = (type: "solo" | "team", initialParticipant: UserType | null = null) => {
     if (type === 'solo') {
         setIsStartingFlow(true);
         setTimeout(() => {
@@ -273,8 +273,9 @@ export default function WorkspacesPage() {
                                         <div key={user.id} className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
                                                 <Avatar>
-                                                    <AvatarImage src={user.avatar} />
-                                                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                                    <AvatarFallback>
+                                                        <User className="h-5 w-5" />
+                                                    </AvatarFallback>
                                                 </Avatar>
                                                 <div>
                                                     <p className="font-semibold">{user.name}</p>

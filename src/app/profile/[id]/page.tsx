@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut } from "lucide-react";
+import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
@@ -118,8 +118,9 @@ export default function ProfilePage() {
             <div className="flex flex-col items-center text-center sm:flex-row sm:items-end sm:gap-6 -mt-32 sm:-mt-24">
                 <div className="relative group flex-shrink-0">
                     <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-card">
-                      {user.avatar && <AvatarImage src={user.avatar} />}
-                      <AvatarFallback className="text-5xl">{user.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="text-5xl">
+                        <UserIcon className="h-16 w-16" />
+                      </AvatarFallback>
                     </Avatar>
                      {isMyProfile && (
                         <EditImageDialog

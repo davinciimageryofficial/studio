@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { placeholderUsers, User } from "@/lib/placeholder-data";
-import { Search } from "lucide-react";
+import { Search, User as UserIcon } from "lucide-react";
 
 export default function DiscoverPage() {
   const categories = ["All", "Design", "Writing", "Development"];
@@ -71,8 +71,9 @@ function ProfileCard({ user }: { user: User }) {
       <CardContent className="p-0 text-center">
         <div className="h-20 bg-muted-foreground/20" />
         <Avatar className="mx-auto -mt-10 h-20 w-20 border-4 border-card">
-          <AvatarImage src={user.avatar} />
-          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+          <AvatarFallback>
+            <UserIcon className="h-10 w-10" />
+          </AvatarFallback>
         </Avatar>
         <div className="p-4">
           <h3 className="font-semibold">{user.name}</h3>

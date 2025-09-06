@@ -167,8 +167,9 @@ export function GlobalSearch() {
                       {notifications.map((item, index) => (
                         <DropdownMenuItem key={index} className="flex items-start gap-3 p-3">
                           <Avatar className="h-9 w-9">
-                              <AvatarImage src={item.user.avatar} alt={item.user.name} />
-                              <AvatarFallback>{item.user.name.charAt(0)}</AvatarFallback>
+                              <AvatarFallback>
+                                <User className="h-5 w-5" />
+                              </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
                               <p className="text-sm whitespace-normal">
@@ -246,10 +247,3 @@ export function GlobalSearch() {
     </div>
   );
 }
-
-    
-    
-
-    
-
-    

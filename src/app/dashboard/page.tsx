@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, X, Apple, AppWindow } from "lucide-react";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, X, Apple, AppWindow, User } from "lucide-react";
 import Link from "next/link";
 import { EngagementChart } from "./charts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -78,8 +78,9 @@ export default function DashboardPage() {
                     <DropdownMenuItem key={activity.user.id} className="flex items-center justify-between gap-2 p-2">
                         <div className="flex items-center gap-3">
                             <Avatar className="h-9 w-9">
-                                <AvatarImage src={activity.user.avatar} alt={activity.user.name} />
-                                <AvatarFallback>{activity.user.name.charAt(0)}</AvatarFallback>
+                                <AvatarFallback>
+                                    <User className="h-5 w-5" />
+                                </AvatarFallback>
                             </Avatar>
                             <div>
                                 <p className="font-semibold">{activity.user.name}</p>
@@ -116,8 +117,9 @@ export default function DashboardPage() {
                     <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
                         <div className="flex items-center gap-3">
                             <Avatar className="h-9 w-9">
-                                <AvatarImage src={user.avatar} alt={user.name} />
-                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                <AvatarFallback>
+                                    <User className="h-5 w-5" />
+                                </AvatarFallback>
                             </Avatar>
                             <div>
                                 <p className="font-semibold">{user.name}</p>
@@ -154,8 +156,9 @@ export default function DashboardPage() {
                     <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
                         <div className="flex items-center gap-3">
                             <Avatar className="h-9 w-9">
-                                <AvatarImage src={user.avatar} alt={user.name} />
-                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                <AvatarFallback>
+                                    <User className="h-5 w-5" />
+                                </AvatarFallback>
                             </Avatar>
                             <div>
                                 <p className="font-semibold">{user.name}</p>
@@ -215,8 +218,9 @@ export default function DashboardPage() {
                     {recentActivities.map((activity, index) => (
                         <div key={index} className="flex items-center gap-3">
                             <Avatar className="h-9 w-9">
-                                <AvatarImage src={activity.user.avatar} alt={activity.user.name} />
-                                <AvatarFallback>{activity.user.name.charAt(0)}</AvatarFallback>
+                                <AvatarFallback>
+                                    <User className="h-5 w-5" />
+                                </AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
                                 <p className="text-sm">

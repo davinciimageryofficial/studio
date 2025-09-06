@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban, UserPlus } from "lucide-react";
+import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban, UserPlus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -237,8 +237,9 @@ export function MessagesClient() {
                 <div className="flex items-start gap-3">
                   {showAvatars && (
                     <Avatar>
-                      <AvatarImage src={convo.avatar} />
-                      <AvatarFallback>{convo.name?.charAt(0)}</AvatarFallback>
+                        <AvatarFallback>
+                            <User className="h-5 w-5" />
+                        </AvatarFallback>
                     </Avatar>
                   )}
                   <div className="flex-1 overflow-hidden">
@@ -261,8 +262,9 @@ export function MessagesClient() {
           <div className="flex items-center gap-3 border-b p-4">
             {showAvatars && (
                 <Avatar>
-                  <AvatarImage src={activeConversation.avatar} />
-                  <AvatarFallback>{activeConversation.name?.charAt(0)}</AvatarFallback>
+                    <AvatarFallback>
+                        <User className="h-5 w-5" />
+                    </AvatarFallback>
                 </Avatar>
             )}
             <div className="flex-1">
@@ -309,7 +311,13 @@ export function MessagesClient() {
             <div className={`space-y-6 text-${fontSize}`}>
               {activeConversation.messages?.map((message, index) => (
                 <div key={index} className={cn("flex items-end gap-2", message.from === 'me' ? 'justify-end' : 'justify-start')}>
-                  {message.from !== 'me' && showAvatars && activeConversation.avatar && <Avatar className="h-8 w-8"><AvatarImage src={activeConversation.avatar} /></Avatar>}
+                  {message.from !== 'me' && showAvatars && (
+                    <Avatar className="h-8 w-8">
+                        <AvatarFallback>
+                            <User className="h-4 w-4" />
+                        </AvatarFallback>
+                    </Avatar>
+                  )}
                   <div className={cn("max-w-xs rounded-lg px-4 py-2 sm:max-w-md", message.from === 'me' ? 'bg-primary text-primary-foreground' : 'bg-card shadow')}>
                     <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: message.text }} />
                     <p className={cn("text-xs mt-1 text-right", message.from === 'me' ? 'text-primary-foreground/70' : 'text-muted-foreground')}>{message.time}</p>

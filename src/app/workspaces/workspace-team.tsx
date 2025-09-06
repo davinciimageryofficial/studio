@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2, LogOut, Users, UserPlus, MoreVertical, LayoutGrid, Square, MessageSquare } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2, LogOut, Users, UserPlus, MoreVertical, LayoutGrid, Square, MessageSquare, User } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -27,11 +27,11 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 
-type User = typeof placeholderUsers[0];
+type UserType = typeof placeholderUsers[0];
 type LayoutMode = 'speaker' | 'grid';
 
 type ParticipantCardProps = {
-  user: User;
+  user: UserType;
   onRemove?: (id: string) => void;
   isCameraOn: boolean;
   isScreenSharing: boolean;
@@ -87,10 +87,11 @@ function ParticipantCard({ user, onRemove, isCameraOn, isScreenSharing, isSpeaki
          <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted />
       ) : (
         <div className="w-full h-full flex items-center justify-center">
-             {showAvatars && user.avatar ? (
+             {showAvatars ? (
                 <Avatar className={cn(isThumbnail ? "h-12 w-12" : "h-20 w-20")}>
-                    <AvatarImage src={user.avatar} />
-                    <AvatarFallback className={cn(isThumbnail ? "text-2xl" : "text-4xl")}>{user.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback className={cn(isThumbnail ? "text-2xl" : "text-4xl")}>
+                        <User className={cn(isThumbnail ? "h-6 w-6" : "h-10 w-10")} />
+                    </AvatarFallback>
                 </Avatar>
              ) : (
                 <div className={cn("flex items-center justify-center rounded-full bg-muted-foreground/20", isThumbnail ? "h-12 w-12" : "h-20 w-20")}>
@@ -262,7 +263,7 @@ export function WorkspaceTeam() {
 
     const onlineUsers = allUsers.filter(u => !participants.some(p => p.id === u.id));
 
-    const handleInvite = (userToInvite: User) => {
+    const handleInvite = (userToInvite: UserType) => {
         if (participants.some(p => p.id === userToInvite.id)) {
             toast({ variant: "default", title: "Already in Session", description: `${userToInvite.name} is already in the workspace.` });
             return;
@@ -439,8 +440,9 @@ export function WorkspaceTeam() {
                                                 {participants.map(user => (
                                                     <div key={user.id} className="flex items-center gap-3">
                                                         <Avatar className={cn("h-9 w-9", user.id === activeSpeakerId && "ring-2 ring-primary ring-offset-1 ring-offset-background")}>
-                                                            {user.avatar && <AvatarImage src={user.avatar} />}
-                                                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                                            <AvatarFallback>
+                                                                <User className="h-5 w-5" />
+                                                            </AvatarFallback>
                                                         </Avatar>
                                                         <div className="flex-1"><p className="font-semibold text-sm">{user.name}</p><p className="text-xs text-muted-foreground">{user.headline}</p></div>
                                                     </div>
@@ -460,7 +462,11 @@ export function WorkspaceTeam() {
                                             {onlineUsers.map(user => (
                                                 <div key={user.id} className="flex items-center justify-between">
                                                     <div className="flex items-center gap-3">
-                                                        <Avatar>{showAvatars && user.avatar && <AvatarImage src={user.avatar} />}<AvatarFallback>{user.name.charAt(0)}</AvatarFallback></Avatar>
+                                                        <Avatar>
+                                                            <AvatarFallback>
+                                                                <User className="h-5 w-5" />
+                                                            </AvatarFallback>
+                                                        </Avatar>
                                                         <div><p className="font-semibold">{user.name}</p><div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-green-500" /><p className="text-xs text-muted-foreground">Online</p></div></div>
                                                     </div>
                                                     <Button variant="outline" size="sm" onClick={() => handleInvite(user)} disabled={participants.length >= 15}><UserPlus className="h-4 w-4 mr-2" />Invite</Button>

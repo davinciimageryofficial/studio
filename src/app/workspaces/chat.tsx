@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Send, MessageSquare } from "lucide-react";
+import { Send, MessageSquare, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { placeholderUsers } from "@/lib/placeholder-data";
 
@@ -54,8 +54,9 @@ export function WorkspaceChat() {
               {messages.map((message, index) => (
                 <div key={index} className="flex items-start gap-3">
                   <Avatar className="h-8 w-8">
-                      <AvatarImage src={message.user.avatar} />
-                      <AvatarFallback>{message.user.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback>
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
                       <div className="flex items-baseline gap-2">

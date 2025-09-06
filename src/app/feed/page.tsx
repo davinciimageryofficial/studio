@@ -29,6 +29,7 @@ import {
   Save,
   Share2,
   UserPlus,
+  User,
 } from "lucide-react";
 import Image from "next/image";
 import { ConversationStarters } from "../conversation-starters";
@@ -100,8 +101,9 @@ export default function FeedPage() {
                         <CardContent className="p-4">
                             <div className="flex items-center gap-4">
                                 <Avatar>
-                                    <AvatarImage src="https://picsum.photos/id/1005/40/40" data-ai-hint="man portrait" />
-                                    <AvatarFallback>ME</AvatarFallback>
+                                    <AvatarFallback>
+                                        <User className="h-5 w-5" />
+                                    </AvatarFallback>
                                 </Avatar>
                                 <p className="text-muted-foreground">Write a post...</p>
                             </div>
@@ -199,8 +201,9 @@ function CreatePostDialog({
       </DialogHeader>
       <div className="flex items-start gap-4 pt-4">
         <Avatar>
-          <AvatarImage src="https://picsum.photos/id/1005/40/40" data-ai-hint="man portrait" />
-          <AvatarFallback>ME</AvatarFallback>
+          <AvatarFallback>
+            <User className="h-5 w-5" />
+          </AvatarFallback>
         </Avatar>
         <div className="w-full">
           <Textarea
@@ -283,9 +286,8 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
       <CardContent className="p-4">
         <div className="flex items-start gap-4">
           <Avatar>
-            <AvatarImage src={author.avatar} />
             <AvatarFallback>
-              {author.name.charAt(0)}
+                <User className="h-5 w-5" />
             </AvatarFallback>
           </Avatar>
           <div className="flex-1">
@@ -390,5 +392,3 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
     </Card>
   );
 }
-
-    

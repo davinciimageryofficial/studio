@@ -28,6 +28,7 @@ import {
   Fullscreen,
   Briefcase,
   Kanban,
+  User,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -178,8 +179,9 @@ export function AppSidebar() {
                 <Link href="/profile/me">
                     <UserCircle className="hidden group-data-[collapsible=icon]:block" />
                     <Avatar className="size-7 group-data-[collapsible=icon]:hidden">
-                      {currentUser.avatar && <AvatarImage src={currentUser.avatar} />}
-                      <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback>
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
                     </Avatar>
                     <span className="text-sm font-medium">My Profile</span>
                 </Link>
