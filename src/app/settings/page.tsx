@@ -36,7 +36,7 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" defaultValue="Bob Williams" />
+                <Input id="name" defaultValue="Christian Peta" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="headline">Headline</Label>
