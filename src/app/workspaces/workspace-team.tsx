@@ -88,10 +88,16 @@ function ParticipantCard({ user, onRemove, isCameraOn, isScreenSharing, isSpeaki
          <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted />
       ) : (
         <div className="w-full h-full flex items-center justify-center">
-            <Avatar className={cn(isThumbnail ? "h-12 w-12" : "h-20 w-20")}>
-                {showAvatars && user.avatar && <AvatarImage src={user.avatar} className="object-cover" />}
-                <AvatarFallback className={cn(isThumbnail ? "text-2xl" : "text-4xl")}>{user.name.charAt(0)}</AvatarFallback>
-            </Avatar>
+             {user.avatar ? (
+                 <Avatar className={cn(isThumbnail ? "h-12 w-12" : "h-20 w-20")}>
+                    <AvatarImage src={user.avatar} className="object-cover" />
+                    <AvatarFallback className={cn(isThumbnail ? "text-2xl" : "text-4xl")}>{user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+             ) : (
+                <div className={cn("flex items-center justify-center rounded-full bg-muted-foreground/20", isThumbnail ? "h-12 w-12" : "h-20 w-20")}>
+                    <span className={cn(isThumbnail ? "text-2xl" : "text-4xl", "font-semibold text-muted-foreground")}>{user.name.charAt(0)}</span>
+                </div>
+            )}
         </div>
       )}
        {isSpeaking && (
@@ -332,16 +338,11 @@ export function WorkspaceTeam() {
     };
 
     return (
-        <div className={cn("grid grid-cols-1 gap-4", isSidebarCollapsed ? "lg:grid-cols-12" : "lg:grid-cols-4")}>
+        <div className={cn("grid grid-cols-1", isSidebarCollapsed ? "lg:grid-cols-12" : "lg:grid-cols-4")}>
             {/* Main Content Area */}
-            <div className={cn("flex flex-col gap-4", isSidebarCollapsed ? "lg:col-span-11" : "lg:col-span-3")}>
+            <div className={cn("flex flex-col", isSidebarCollapsed ? "lg:col-span-11" : "lg:col-span-3")}>
                  <Card className="flex-1 flex flex-col">
-                    <CardHeader className="p-4 border-b flex-row items-center justify-between">
-                        <CardTitle>Team Workspace</CardTitle>
-                        <div className="flex items-center gap-2 font-mono text-lg font-bold">
-                            <TimerIcon className="h-5 w-5"/>
-                            {formatTime(time)}
-                        </div>
+                    <CardHeader className="p-0 border-b">
                     </CardHeader>
                     <CardContent className="flex-1 p-4 flex flex-col bg-muted/30">
                         {layout === 'speaker' && pinnedParticipant && (
@@ -635,4 +636,3 @@ export function WorkspaceTeam() {
         </div>
     )
 }
-
