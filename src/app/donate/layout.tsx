@@ -7,7 +7,7 @@ export default function DonateLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="overflow-hidden">
         {children}
       </body>
     </html>
