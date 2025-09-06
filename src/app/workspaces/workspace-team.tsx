@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2, LogOut, Users, UserPlus, MoreVertical } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2, LogOut, Users, UserPlus, MoreVertical, LayoutGrid, Square } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -28,6 +28,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 
 type User = typeof placeholderUsers[0];
+type LayoutMode = 'speaker' | 'grid';
 
 type ParticipantCardProps = {
   user: User;
@@ -71,7 +72,7 @@ function ParticipantCard({ user, onRemove, isCameraOn, isScreenSharing, isSpeaki
   return (
     <div 
         className={cn(
-            "relative group/participant aspect-video overflow-hidden rounded-lg bg-muted transition-all duration-300",
+            "relative group/participant aspect-video overflow-hidden rounded-lg bg-muted transition-all duration-300 w-full h-full",
             isSpeaking && "ring-2 ring-primary ring-offset-2 ring-offset-background",
             isThumbnail ? 'cursor-pointer' : ''
         )}
@@ -179,6 +180,7 @@ export function WorkspaceTeam() {
     const [musicSource, setMusicSource] = useState<string | null>(null);
     const [streamMode, setStreamMode] = useState('self');
     const [activeTab, setActiveTab] = useState("invites");
+    const [layout, setLayout] = useState<LayoutMode>('speaker');
 
     const { toast } = useToast();
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -300,14 +302,15 @@ export function WorkspaceTeam() {
         });
     }
 
-    const ControlButton = ({ tooltip, onClick, children, variant = "default", className }: { tooltip: string, onClick?: () => void, children: React.ReactNode, variant?: "default" | "secondary" | "destructive" | "outline" | "ghost" | "link", className?: string }) => (
+    const ControlButton = ({ tooltip, onClick, children, variant = "default", className, 'data-active': dataActive }: { tooltip: string, onClick?: () => void, children: React.ReactNode, variant?: "default" | "secondary" | "destructive" | "outline" | "ghost" | "link", className?: string, 'data-active'?: boolean }) => (
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Button
                         variant={variant}
                         onClick={onClick}
-                        className={cn("text-xs bg-black hover:bg-gray-800 h-8", className, isControlsCollapsed && "w-8 px-0")}
+                        className={cn("text-xs bg-black hover:bg-gray-800 h-8", className)}
+                        data-active={dataActive}
                     >
                         {children}
                     </Button>
@@ -318,6 +321,14 @@ export function WorkspaceTeam() {
             </Tooltip>
         </TooltipProvider>
     );
+
+    const getGridLayout = (count: number) => {
+        if (count <= 2) return 'grid-cols-1 grid-rows-2 sm:grid-cols-2 sm:grid-rows-1';
+        if (count <= 4) return 'grid-cols-2 grid-rows-2';
+        if (count <= 6) return 'grid-cols-3 grid-rows-2';
+        if (count <= 9) return 'grid-cols-3 grid-rows-3';
+        return 'grid-cols-4 grid-rows-4';
+    };
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -331,46 +342,68 @@ export function WorkspaceTeam() {
                             {formatTime(time)}
                         </div>
                     </CardHeader>
-                    <CardContent className="flex-1 p-4 flex flex-col">
-                       {pinnedParticipant && (
-                        <div className="flex-1">
-                            <ParticipantCard
-                                user={pinnedParticipant}
-                                onRemove={handleRemove}
-                                isCameraOn={isCameraOn && pinnedParticipant.id === placeholderUsers[1].id}
-                                isScreenSharing={isScreenSharing && pinnedParticipant.id === placeholderUsers[1].id}
-                                isSpeaking={pinnedParticipant.id === activeSpeakerId}
-                                showAvatars={showAvatars}
-                             />
-                        </div>
-                       )}
-                        
-                        {thumbnailParticipants.length > 0 && (
-                            <ScrollArea className="w-full whitespace-nowrap pt-4">
-                                <div className="flex w-max space-x-4">
-                                    {thumbnailParticipants.map(user => (
-                                         <div key={user.id} className="w-40 flex-shrink-0">
-                                            <ParticipantCard
-                                                user={user}
-                                                isCameraOn={false}
-                                                isScreenSharing={false}
-                                                isSpeaking={user.id === activeSpeakerId}
-                                                showAvatars={showAvatars}
-                                                onClick={() => setPinnedUserId(user.id)}
-                                                isThumbnail={true}
-                                            />
-                                         </div>
-                                    ))}
+                    <CardContent className="flex-1 p-4 flex flex-col bg-muted/30">
+                        {layout === 'speaker' && pinnedParticipant && (
+                            <div className="flex-1 flex flex-col gap-4">
+                                <div className="flex-1">
+                                    <ParticipantCard
+                                        user={pinnedParticipant}
+                                        onRemove={handleRemove}
+                                        isCameraOn={isCameraOn && pinnedParticipant.id === placeholderUsers[1].id}
+                                        isScreenSharing={isScreenSharing && pinnedParticipant.id === placeholderUsers[1].id}
+                                        isSpeaking={pinnedParticipant.id === activeSpeakerId}
+                                        showAvatars={showAvatars}
+                                    />
                                 </div>
-                                <ScrollBar orientation="horizontal" />
-                            </ScrollArea>
+                                {thumbnailParticipants.length > 0 && (
+                                    <ScrollArea className="w-full whitespace-nowrap">
+                                        <div className="flex w-max space-x-4">
+                                            {thumbnailParticipants.map(user => (
+                                                <div key={user.id} className="w-40 flex-shrink-0">
+                                                    <ParticipantCard
+                                                        user={user}
+                                                        isCameraOn={false}
+                                                        isScreenSharing={false}
+                                                        isSpeaking={user.id === activeSpeakerId}
+                                                        showAvatars={showAvatars}
+                                                        onClick={() => setPinnedUserId(user.id)}
+                                                        isThumbnail={true}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <ScrollBar orientation="horizontal" />
+                                    </ScrollArea>
+                                )}
+                            </div>
+                        )}
+
+                        {layout === 'grid' && (
+                            <div className={cn("grid gap-4 flex-1", getGridLayout(participants.length))}>
+                                {participants.map(user => (
+                                    <ParticipantCard
+                                        key={user.id}
+                                        user={user}
+                                        onRemove={handleRemove}
+                                        isCameraOn={isCameraOn && user.id === placeholderUsers[1].id}
+                                        isScreenSharing={isScreenSharing && user.id === placeholderUsers[1].id}
+                                        isSpeaking={user.id === activeSpeakerId}
+                                        showAvatars={showAvatars}
+                                    />
+                                ))}
+                            </div>
                         )}
                     </CardContent>
                     <CardFooter className="p-2 border-t bg-card">
                          <div className="flex justify-between items-center w-full gap-2">
                             {/* Left Controls */}
                              <div className="flex items-center gap-2">
-                                {/* Placeholder for left controls if needed */}
+                                <ControlButton tooltip="Speaker View" onClick={() => setLayout('speaker')} variant={layout === 'speaker' ? 'secondary' : 'ghost'} data-active={layout === 'speaker'}>
+                                    <Square />
+                                </ControlButton>
+                                <ControlButton tooltip="Grid View" onClick={() => setLayout('grid')} variant={layout === 'grid' ? 'secondary' : 'ghost'} data-active={layout === 'grid'}>
+                                    <LayoutGrid />
+                                </ControlButton>
                             </div>
 
                             {/* Center Controls */}
@@ -416,11 +449,7 @@ export function WorkspaceTeam() {
                              <div className="flex items-center gap-2">
                                  <ControlButton tooltip="Leave Session" variant="destructive" onClick={endSession}>
                                     <LogOut />
-                                    {!isControlsCollapsed && <span className="ml-2">Leave</span>}
                                 </ControlButton>
-                                <Button size="icon" variant="outline" onClick={() => setIsControlsCollapsed(!isControlsCollapsed)} className="h-8 w-8">
-                                    {isControlsCollapsed ? <PanelRight /> : <PanelLeft />}
-                                </Button>
                             </div>
                         </div>
                     </CardFooter>
