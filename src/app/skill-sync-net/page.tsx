@@ -618,7 +618,7 @@ export default function SkillSyncNetPage() {
                 <Tabs defaultValue="client" className="w-full">
                     <TabsList className="grid w-full grid-cols-2 max-w-sm mx-auto bg-black text-muted-foreground">
                         <TabsTrigger value="client" className="gap-2">
-                            <Building className="h-5 w-5" /> Businesses
+                            <Kanban className="h-5 w-5" /> Businesses
                         </TabsTrigger>
                         <TabsTrigger value="freelancer" className="gap-2">
                             <Kanban className="h-5 w-5" /> Freelancers
