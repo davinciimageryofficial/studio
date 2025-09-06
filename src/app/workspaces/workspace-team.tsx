@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2, LogOut, Users, UserPlus } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2, LogOut, Users, UserPlus, MoreVertical } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -53,6 +53,13 @@ function ParticipantCard({ user, onRemove, isCameraOn, isScreenSharing, isSpeaki
     }
   }, [isCameraOn]);
   
+  const handleAction = (action: string, userName: string) => {
+    toast({
+        title: `${action}`,
+        description: `This action would be applied to ${userName}.`
+    });
+  };
+
   const handleFullScreen = () => {
     toast({
         title: "Fullscreen Mode",
@@ -98,26 +105,51 @@ function ParticipantCard({ user, onRemove, isCameraOn, isScreenSharing, isSpeaki
             </Button>
         }
       </div>
-      {!isThumbnail &&
-        <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-2 left-2 h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white opacity-0 group-hover/participant:opacity-100 transition-opacity"
-            onClick={handleFullScreen}
-            >
-            <Maximize className="h-4 w-4" />
-        </Button>
-      }
-       {onRemove && (
-         <Button
-            variant="destructive"
-            size="icon"
-            className="absolute top-2 right-2 h-7 w-7 rounded-full opacity-0 group-hover/participant:opacity-100 transition-opacity"
-            onClick={() => onRemove(user.id)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-       )}
+        <div className="absolute top-2 left-2 flex items-center gap-1 opacity-0 group-hover/participant:opacity-100 transition-opacity">
+             {!isThumbnail &&
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white"
+                                onClick={handleFullScreen}
+                                >
+                                <Maximize className="h-4 w-4" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent><p>Fullscreen</p></TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            }
+        </div>
+        <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover/participant:opacity-100 transition-opacity">
+            {onRemove && (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full bg-black/30 text-white hover:bg-black/50 hover:text-white">
+                            <MoreVertical className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleAction('Mute', user.name)}>
+                            <MicOff className="mr-2 h-4 w-4" />
+                            <span>Mute {user.name}</span>
+                        </DropdownMenuItem>
+                         <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive" onClick={() => onRemove(user.id)}>
+                            <UserX className="mr-2 h-4 w-4" />
+                            <span>Remove from call</span>
+                        </DropdownMenuItem>
+                         <DropdownMenuItem className="text-destructive" onClick={() => handleAction('Ban', user.name)}>
+                            <Ban className="mr-2 h-4 w-4" />
+                            <span>Ban from workspace</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            )}
+        </div>
     </div>
   );
 }
@@ -304,6 +336,7 @@ export function WorkspaceTeam() {
                         <div className="flex-1">
                             <ParticipantCard
                                 user={pinnedParticipant}
+                                onRemove={handleRemove}
                                 isCameraOn={isCameraOn && pinnedParticipant.id === placeholderUsers[1].id}
                                 isScreenSharing={isScreenSharing && pinnedParticipant.id === placeholderUsers[1].id}
                                 isSpeaking={pinnedParticipant.id === activeSpeakerId}
