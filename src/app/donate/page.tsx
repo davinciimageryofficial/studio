@@ -18,7 +18,6 @@ function DonatePageInternal() {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center p-6">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full">
@@ -65,14 +64,15 @@ function DonatePageInternal() {
            </Button>
         </CardContent>
       </Card>
-    </div>
   );
 }
 
 export default function DonatePage() {
     return (
         <ClientOnly>
-            <DonatePageInternal />
+            <div className="flex min-h-[calc(100vh-4.5rem)] items-center justify-center bg-muted/40 p-4">
+                <DonatePageInternal />
+            </div>
         </ClientOnly>
     )
 }
