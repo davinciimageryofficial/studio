@@ -182,11 +182,10 @@ export function WorkspaceTeam() {
     const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
     const [isScreenSharing, setIsScreenSharing] = useState(false);
     const [hasScreenPermission, setHasScreenPermission] = useState<boolean | null>(null);
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    const [isChatOpen, setIsChatOpen] = useState(true);
     const [showAvatars, setShowAvatars] = useState(true);
     const [musicSource, setMusicSource] = useState<string | null>(null);
     const [streamMode, setStreamMode] = useState('self');
-    const [activeTab, setActiveTab] = useState("participants");
     const [layout, setLayout] = useState<LayoutMode>('speaker');
 
     const { toast } = useToast();
@@ -338,9 +337,9 @@ export function WorkspaceTeam() {
     };
 
     return (
-        <div className={cn("grid grid-cols-1", isSidebarCollapsed ? "lg:grid-cols-12" : "lg:grid-cols-4")}>
+        <div className={cn("grid grid-cols-1", isChatOpen ? "lg:grid-cols-4" : "lg:grid-cols-12")}>
             {/* Main Content Area */}
-            <div className={cn("flex flex-col h-screen", isSidebarCollapsed ? "lg:col-span-11" : "lg:col-span-3")}>
+            <div className={cn("flex flex-col h-screen", isChatOpen ? "lg:col-span-3" : "lg:col-span-12")}>
                  <Card className="flex-1 flex flex-col rounded-none border-0">
                     <CardHeader className="p-0 border-b">
                     </CardHeader>
@@ -449,6 +448,71 @@ export function WorkspaceTeam() {
                             
                             {/* Right Controls */}
                              <div className="flex items-center gap-2">
+                                <ControlButton tooltip="Chat" onClick={() => setIsChatOpen(prev => !prev)} variant={isChatOpen ? "secondary" : "ghost"}>
+                                    <MessageSquare />
+                                </ControlButton>
+                                <Dialog>
+                                    <DialogTrigger asChild><ControlButton tooltip="Team"><Users /></ControlButton></DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader><DialogTitle>Participants</DialogTitle></DialogHeader>
+                                        <ScrollArea className="max-h-[60vh] pr-4">
+                                            <div className="space-y-4">
+                                                {participants.map(user => (
+                                                    <div key={user.id} className="flex items-center gap-3">
+                                                        <Avatar className={cn("h-9 w-9", user.id === activeSpeakerId && "ring-2 ring-primary ring-offset-1 ring-offset-background")}>
+                                                            {user.avatar && <AvatarImage src={user.avatar} />}
+                                                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                                        </Avatar>
+                                                        <div className="flex-1"><p className="font-semibold text-sm">{user.name}</p><p className="text-xs text-muted-foreground">{user.headline}</p></div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </ScrollArea>
+                                    </DialogContent>
+                                </Dialog>
+                                <Dialog>
+                                     <DialogTrigger asChild><ControlButton tooltip="Invite"><UserPlus /></ControlButton></DialogTrigger>
+                                     <DialogContent>
+                                        <DialogHeader><DialogTitle>Invite to Workspace</DialogTitle></DialogHeader>
+                                        <ScrollArea className="max-h-[60vh] pr-4">
+                                            <div className="space-y-4">
+                                            {onlineUsers.map(user => (
+                                                <div key={user.id} className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                        <Avatar>{showAvatars && user.avatar && <AvatarImage src={user.avatar} />}<AvatarFallback>{user.name.charAt(0)}</AvatarFallback></Avatar>
+                                                        <div><p className="font-semibold">{user.name}</p><div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-green-500" /><p className="text-xs text-muted-foreground">Online</p></div></div>
+                                                    </div>
+                                                    <Button variant="outline" size="sm" onClick={() => handleInvite(user)} disabled={participants.length >= 15}><UserPlus className="h-4 w-4 mr-2" />Invite</Button>
+                                                </div>
+                                            ))}
+                                            </div>
+                                        </ScrollArea>
+                                        <DialogFooter>
+                                            <Button size="lg" className="w-full" onClick={handleCopyLink}><Copy className="mr-2 h-4 w-4"/>Copy Invite Link</Button>
+                                        </DialogFooter>
+                                     </DialogContent>
+                                </Dialog>
+                                <Dialog>
+                                    <DialogTrigger asChild><ControlButton tooltip="Music"><Music2 /></ControlButton></DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader><DialogTitle>Music</DialogTitle></DialogHeader>
+                                        {musicSource ? (
+                                        <div className="space-y-4">
+                                            <Card className="overflow-hidden"><div className="flex items-center gap-4 p-4"><Image src="https://picsum.photos/seed/album-art/100/100" width={64} height={64} alt="Album Art" className="rounded-md" /><div className="flex-1"><p className="font-semibold">Song Title Placeholder</p><p className="text-sm text-muted-foreground">Artist Name</p></div></div></Card>
+                                            <div>
+                                                <Label className="font-semibold">Stream Mode</Label>
+                                                <RadioGroup value={streamMode} onValueChange={setStreamMode} className="mt-2"><div className="flex items-center space-x-2"><RadioGroupItem value="self" id="self" /><Label htmlFor="self" className="flex items-center gap-2"><Mic className="h-4 w-4" /> Stream for Self</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="crew" id="crew" /><Label htmlFor="crew" className="flex items-center gap-2"><Radio className="h-4 w-4" /> Stream for Crew</Label></div></RadioGroup>
+                                            </div>
+                                            <Button variant="outline" onClick={() => setMusicSource(null)}>Disconnect</Button>
+                                        </div>
+                                        ) : (
+                                            <div className="space-y-4 text-center py-8">
+                                                <p className="text-sm text-muted-foreground">Connect a music service to start listening.</p>
+                                                <div className="flex flex-col gap-2"><Button variant="outline" onClick={() => setMusicSource('spotify')}><Music2 className="mr-2 h-4 w-4" />Connect Spotify</Button><Button variant="outline" onClick={() => setMusicSource('youtube')}><Podcast className="mr-2 h-4 w-4" />Connect YouTube Music</Button></div>
+                                            </div>
+                                        )}
+                                    </DialogContent>
+                                </Dialog>
                                  <ControlButton tooltip="Leave Session" variant="destructive" onClick={endSession}>
                                     <LogOut />
                                 </ControlButton>
@@ -466,170 +530,17 @@ export function WorkspaceTeam() {
             </div>
 
             {/* Right Sidebar */}
-             <div className={cn("transition-all duration-300", isSidebarCollapsed ? "lg:col-span-1" : "lg:col-span-1")}>
+             <div className={cn("transition-all duration-300", !isChatOpen && "hidden")}>
                 <Card className="h-full flex flex-col rounded-none border-l">
-                    <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1">
-                        <CardHeader className="p-2 border-b">
-                            <div className="flex items-center justify-between">
-                                <TabsList className={cn("grid w-full bg-black text-muted-foreground", isSidebarCollapsed ? "grid-cols-1" : "grid-cols-4")}>
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <TabsTrigger value="participants">
-                                                    <Users className="h-5 w-5"/>
-                                                    <span className={cn("ml-2", isSidebarCollapsed && "hidden")}>Team</span>
-                                                </TabsTrigger>
-                                            </TooltipTrigger>
-                                            {isSidebarCollapsed && <TooltipContent side="left"><p>Participants</p></TooltipContent>}
-                                        </Tooltip>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                 <TabsTrigger value="invites">
-                                                    <UserPlus className="h-5 w-5"/>
-                                                     <span className={cn("ml-2", isSidebarCollapsed && "hidden")}>Invite</span>
-                                                 </TabsTrigger>
-                                            </TooltipTrigger>
-                                            {isSidebarCollapsed && <TooltipContent side="left"><p>Invite</p></TooltipContent>}
-                                        </Tooltip>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                 <TabsTrigger value="chat">
-                                                    <MessageSquare className="h-5 w-5"/>
-                                                     <span className={cn("ml-2", isSidebarCollapsed && "hidden")}>Chat</span>
-                                                 </TabsTrigger>
-                                            </TooltipTrigger>
-                                            {isSidebarCollapsed && <TooltipContent side="left"><p>Chat</p></TooltipContent>}
-                                        </Tooltip>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                 <TabsTrigger value="music">
-                                                    <Music2 className="h-5 w-5"/>
-                                                     <span className={cn("ml-2", isSidebarCollapsed && "hidden")}>Music</span>
-                                                 </TabsTrigger>
-                                            </TooltipTrigger>
-                                            {isSidebarCollapsed && <TooltipContent side="left"><p>Music</p></TooltipContent>}
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                </TabsList>
-                                <Button variant="ghost" size="icon" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}>
-                                    {isSidebarCollapsed ? <PanelLeft /> : <PanelRight />}
-                                </Button>
-                            </div>
-                        </CardHeader>
-                        <div className={cn(isSidebarCollapsed && "hidden", "flex-1 flex flex-col min-h-0")}>
-                            <TabsContent value="participants" className="p-0 m-0 flex-1">
-                                <CardContent className="p-4 space-y-4 h-full">
-                                    <ScrollArea className="h-full">
-                                        <div className="space-y-4 pr-4">
-                                            {participants.map(user => (
-                                                <div key={user.id} className="flex items-center gap-3">
-                                                    <Avatar className={cn("h-9 w-9", user.id === activeSpeakerId && "ring-2 ring-primary ring-offset-1 ring-offset-background")}>
-                                                        {user.avatar && <AvatarImage src={user.avatar} />}
-                                                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                                    </Avatar>
-                                                    <div className="flex-1">
-                                                        <p className="font-semibold text-sm">{user.name}</p>
-                                                        <p className="text-xs text-muted-foreground">{user.headline}</p>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </ScrollArea>
-                                </CardContent>
-                            </TabsContent>
-                            <TabsContent value="invites" className="p-0 m-0 flex-1 flex flex-col">
-                               <CardContent className="p-4 space-y-4 flex-1">
-                                    <ScrollArea className="h-full">
-                                        <div className="pr-4 space-y-4">
-                                            {onlineUsers.map(user => (
-                                                <div key={user.id} className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-3">
-                                                        <Avatar>
-                                                            {showAvatars && user.avatar && <AvatarImage src={user.avatar} />}
-                                                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                                        </Avatar>
-                                                        <div>
-                                                            <p className="font-semibold">{user.name}</p>
-                                                            <div className="flex items-center gap-1.5">
-                                                            <span className="h-2 w-2 rounded-full bg-green-500" />
-                                                            <p className="text-xs text-muted-foreground">Online</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <Button variant="outline" size="sm" onClick={() => handleInvite(user)} disabled={participants.length >= 15}>
-                                                        <UserPlus className="h-4 w-4 mr-2" />
-                                                        Invite
-                                                    </Button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </ScrollArea>
-                               </CardContent>
-                                <CardFooter className="p-4 border-t">
-                                    <Button size="lg" className="w-full" onClick={handleCopyLink}>
-                                        <Copy className="mr-2 h-4 w-4"/>
-                                        Copy Invite Link
-                                    </Button>
-                                </CardFooter>
-                            </TabsContent>
-                            <TabsContent value="chat" className="p-0 m-0 flex-1">
-                                <div className="h-full">
-                                    <WorkspaceChat />
-                                </div>
-                            </TabsContent>
-                            <TabsContent value="music" className="p-0 m-0 flex-1">
-                               <div className="h-full">
-                                <CardContent className="pt-6">
-                                    {musicSource ? (
-                                        <div className="space-y-4">
-                                            <Card className="overflow-hidden">
-                                                <div className="flex items-center gap-4 p-4">
-                                                    <Image src="https://picsum.photos/seed/album-art/100/100" width={64} height={64} alt="Album Art" className="rounded-md" />
-                                                    <div className="flex-1">
-                                                        <p className="font-semibold">Song Title Placeholder</p>
-                                                        <p className="text-sm text-muted-foreground">Artist Name</p>
-                                                    </div>
-                                                </div>
-                                            </Card>
-                                            <div>
-                                                <Label className="font-semibold">Stream Mode</Label>
-                                                <RadioGroup value={streamMode} onValueChange={setStreamMode} className="mt-2">
-                                                    <div className="flex items-center space-x-2">
-                                                        <RadioGroupItem value="self" id="self" />
-                                                        <Label htmlFor="self" className="flex items-center gap-2">
-                                                            <Mic className="h-4 w-4" /> Stream for Self
-                                                        </Label>
-                                                    </div>
-                                                    <div className="flex items-center space-x-2">
-                                                        <RadioGroupItem value="crew" id="crew" />
-                                                        <Label htmlFor="crew" className="flex items-center gap-2">
-                                                            <Radio className="h-4 w-4" /> Stream for Crew
-                                                        </Label>
-                                                    </div>
-                                                </RadioGroup>
-                                            </div>
-                                            <Button variant="outline" onClick={() => setMusicSource(null)}>Disconnect</Button>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-4 text-center">
-                                             <p className="text-sm text-muted-foreground">Connect a music service to start listening.</p>
-                                             <div className="flex flex-col gap-2">
-                                                <Button variant="outline" onClick={() => setMusicSource('spotify')}>
-                                                    <Music2 className="mr-2 h-4 w-4" />
-                                                    Connect Spotify
-                                                </Button>
-                                                <Button variant="outline" onClick={() => setMusicSource('youtube')}>
-                                                    <Podcast className="mr-2 h-4 w-4" />
-                                                    Connect YouTube Music
-                                                </Button>
-                                             </div>
-                                        </div>
-                                    )}
-                                </CardContent>
-                               </div>
-                            </TabsContent>
-                        </div>
-                    </Tabs>
+                   <CardHeader className="p-4 border-b flex items-center justify-between">
+                        <CardTitle className="text-xl">Chat</CardTitle>
+                        <Button variant="ghost" size="icon" onClick={() => setIsChatOpen(false)}>
+                            <X className="h-5 w-5" />
+                        </Button>
+                   </CardHeader>
+                   <div className="flex-1 flex flex-col min-h-0">
+                     <WorkspaceChat />
+                   </div>
                 </Card>
             </div>
              <Toaster />
