@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2, LogOut, Users, UserPlus, MoreVertical, LayoutGrid, Square } from "lucide-react";
+import { Timer as TimerIcon, Mic, MicOff, Copy, Plus, X, Video, VideoOff, CircleDot, PenSquare, Hand, Lightbulb, Play, Pause, AlertCircle, ScreenShare, ScreenShareOff, PanelLeft, PanelRight, Maximize, Volume2, Ban, UserX, Music2, Radio, Podcast, Palette, Wand2, LogOut, Users, UserPlus, MoreVertical, LayoutGrid, Square, MessageSquare } from "lucide-react";
 import { WorkspaceChat } from "./chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -179,7 +179,8 @@ export function WorkspaceTeam() {
     const [showAvatars, setShowAvatars] = useState(true);
     const [musicSource, setMusicSource] = useState<string | null>(null);
     const [streamMode, setStreamMode] = useState('self');
-    const [activeTab, setActiveTab] = useState("participants");
+    const [activeTeamTab, setActiveTeamTab] = useState("participants");
+    const [activeToolsTab, setActiveToolsTab] = useState("chat");
     const [layout, setLayout] = useState<LayoutMode>('speaker');
 
     const { toast } = useToast();
@@ -465,19 +466,17 @@ export function WorkspaceTeam() {
 
             {/* Right Sidebar */}
             <div className="lg:col-span-2 flex flex-col gap-6">
-                <Card className="flex flex-col flex-1">
-                    <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1">
+                <Card>
+                    <Tabs value={activeTeamTab} onValueChange={setActiveTeamTab} className="flex flex-col">
                         <CardHeader className="p-4">
                             <CardTitle>Manage Team</CardTitle>
-                            <TabsList className="grid w-full grid-cols-4 mt-2">
+                            <TabsList className="grid w-full grid-cols-2 mt-2">
                                 <TabsTrigger value="participants">Participants ({participants.length})</TabsTrigger>
                                 <TabsTrigger value="invites">Invite</TabsTrigger>
-                                <TabsTrigger value="chat">Chat</TabsTrigger>
-                                <TabsTrigger value="music">Music</TabsTrigger>
                             </TabsList>
                         </CardHeader>
-                        <TabsContent value="participants" className="p-0 flex-1 flex flex-col">
-                            <CardContent className="p-4 space-y-4 flex-1 overflow-y-auto">
+                        <TabsContent value="participants" className="p-0">
+                            <CardContent className="p-4 space-y-4 max-h-48 overflow-y-auto">
                                 <ScrollArea className="h-full">
                                     <div className="space-y-4 pr-4">
                                         {participants.map(user => (
@@ -496,8 +495,8 @@ export function WorkspaceTeam() {
                                 </ScrollArea>
                             </CardContent>
                         </TabsContent>
-                        <TabsContent value="invites" className="p-0 flex-1 flex flex-col">
-                           <CardContent className="p-4 space-y-4 flex-1 overflow-y-auto">
+                        <TabsContent value="invites" className="p-0">
+                           <CardContent className="p-4 space-y-4 max-h-48 overflow-y-auto">
                                 {onlineUsers.map(user => (
                                     <div key={user.id} className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
@@ -527,6 +526,18 @@ export function WorkspaceTeam() {
                                 </Button>
                             </CardFooter>
                         </TabsContent>
+                    </Tabs>
+                </Card>
+
+                <Card className="flex flex-col flex-1">
+                     <Tabs value={activeToolsTab} onValueChange={setActiveToolsTab} className="flex flex-col flex-1">
+                        <CardHeader className="p-4">
+                            <CardTitle>Session Tools</CardTitle>
+                            <TabsList className="grid w-full grid-cols-2 mt-2">
+                                <TabsTrigger value="chat">Chat</TabsTrigger>
+                                <TabsTrigger value="music">Music</TabsTrigger>
+                            </TabsList>
+                        </CardHeader>
                          <TabsContent value="chat" className="p-0 flex-1">
                             <div className="h-[24rem]">
                                 <WorkspaceChat />
