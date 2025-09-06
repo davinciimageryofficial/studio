@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -331,9 +332,9 @@ export function WorkspaceTeam() {
     };
 
     return (
-        <div className={cn("grid grid-cols-1 gap-6", isSidebarCollapsed ? "lg:grid-cols-12" : "lg:grid-cols-4")}>
+        <div className={cn("grid grid-cols-1 gap-4", isSidebarCollapsed ? "lg:grid-cols-12" : "lg:grid-cols-4")}>
             {/* Main Content Area */}
-            <div className={cn("flex flex-col gap-6", isSidebarCollapsed ? "lg:col-span-11" : "lg:col-span-3")}>
+            <div className={cn("flex flex-col gap-4", isSidebarCollapsed ? "lg:col-span-11" : "lg:col-span-3")}>
                  <Card className="flex-1 flex flex-col">
                     <CardHeader className="p-4 border-b flex-row items-center justify-between">
                         <CardTitle>Team Workspace</CardTitle>
@@ -514,9 +515,9 @@ export function WorkspaceTeam() {
                                 </Button>
                             </div>
                         </CardHeader>
-                        <div className={cn(isSidebarCollapsed && "hidden")}>
-                            <TabsContent value="participants" className="p-0">
-                                <CardContent className="p-4 space-y-4 max-h-60 overflow-y-auto">
+                        <div className={cn(isSidebarCollapsed && "hidden", "flex-1 flex flex-col min-h-0")}>
+                            <TabsContent value="participants" className="p-0 m-0 flex-1">
+                                <CardContent className="p-4 space-y-4 h-full">
                                     <ScrollArea className="h-full">
                                         <div className="space-y-4 pr-4">
                                             {participants.map(user => (
@@ -535,29 +536,33 @@ export function WorkspaceTeam() {
                                     </ScrollArea>
                                 </CardContent>
                             </TabsContent>
-                            <TabsContent value="invites" className="p-0">
-                               <CardContent className="p-4 space-y-4 max-h-60 overflow-y-auto">
-                                    {onlineUsers.map(user => (
-                                        <div key={user.id} className="flex items-center justify-between">
-                                            <div className="flex items-center gap-3">
-                                                <Avatar>
-                                                    {showAvatars && user.avatar && <AvatarImage src={user.avatar} />}
-                                                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                                </Avatar>
-                                                <div>
-                                                    <p className="font-semibold">{user.name}</p>
-                                                    <div className="flex items-center gap-1.5">
-                                                    <span className="h-2 w-2 rounded-full bg-green-500" />
-                                                    <p className="text-xs text-muted-foreground">Online</p>
+                            <TabsContent value="invites" className="p-0 m-0 flex-1 flex flex-col">
+                               <CardContent className="p-4 space-y-4 flex-1">
+                                    <ScrollArea className="h-full">
+                                        <div className="pr-4 space-y-4">
+                                            {onlineUsers.map(user => (
+                                                <div key={user.id} className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                        <Avatar>
+                                                            {showAvatars && user.avatar && <AvatarImage src={user.avatar} />}
+                                                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                                        </Avatar>
+                                                        <div>
+                                                            <p className="font-semibold">{user.name}</p>
+                                                            <div className="flex items-center gap-1.5">
+                                                            <span className="h-2 w-2 rounded-full bg-green-500" />
+                                                            <p className="text-xs text-muted-foreground">Online</p>
+                                                            </div>
+                                                        </div>
                                                     </div>
+                                                    <Button variant="outline" size="sm" onClick={() => handleInvite(user)} disabled={participants.length >= 15}>
+                                                        <UserPlus className="h-4 w-4 mr-2" />
+                                                        Invite
+                                                    </Button>
                                                 </div>
-                                            </div>
-                                            <Button variant="outline" size="sm" onClick={() => handleInvite(user)} disabled={participants.length >= 15}>
-                                                <UserPlus className="h-4 w-4 mr-2" />
-                                                Invite
-                                            </Button>
+                                            ))}
                                         </div>
-                                    ))}
+                                    </ScrollArea>
                                </CardContent>
                                 <CardFooter className="p-4 border-t">
                                     <Button size="lg" className="w-full" onClick={handleCopyLink}>
@@ -567,12 +572,12 @@ export function WorkspaceTeam() {
                                 </CardFooter>
                             </TabsContent>
                             <TabsContent value="chat" className="p-0 m-0 flex-1">
-                                <div className="h-[calc(100vh-16rem)]">
+                                <div className="h-full">
                                     <WorkspaceChat />
                                 </div>
                             </TabsContent>
                             <TabsContent value="music" className="p-0 m-0 flex-1">
-                               <div className="h-[calc(100vh-16rem)]">
+                               <div className="h-full">
                                 <CardContent className="pt-6">
                                     {musicSource ? (
                                         <div className="space-y-4">
@@ -630,3 +635,4 @@ export function WorkspaceTeam() {
         </div>
     )
 }
+
