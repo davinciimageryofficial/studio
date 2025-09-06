@@ -116,7 +116,7 @@ export default function WaitlistConfirmationPage() {
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="flex-col sm:flex-col sm:space-x-0 gap-2">
-                  <Button size="lg" onClick={() => handleNavigation('/billing?tab=donate')}>
+                  <Button size="lg" onClick={() => handleNavigation('/donate')}>
                     Support the Platform
                   </Button>
                   <DialogClose asChild>

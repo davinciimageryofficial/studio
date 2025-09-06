@@ -11,6 +11,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export default function BillingPage() {
   const searchParams = useSearchParams();
@@ -70,14 +71,6 @@ export default function BillingPage() {
   ];
   const currentPlan = plans.find(p => p.current);
   const otherPlans = plans.filter(p => !p.current);
-
-  const [donationAmount, setDonationAmount] = useState("15");
-
-  const presetAmounts = ["5", "15", "50", "100"];
-
-  const handlePresetClick = (amount: string) => {
-    setDonationAmount(amount);
-  }
 
   return (
     <div className="p-4 sm:p-6 md:p-8 h-full">
@@ -224,35 +217,14 @@ export default function BillingPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                        {presetAmounts.map(amount => (
-                             <Button 
-                                key={amount} 
-                                variant={donationAmount === amount ? "default" : "outline"}
-                                className="h-16 text-lg"
-                                onClick={() => handlePresetClick(amount)}
-                            >
-                                ${amount}
-                            </Button>
-                        ))}
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="custom-amount">Or enter a custom amount</Label>
-                        <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                             <Input 
-                                id="custom-amount" 
-                                type="number" 
-                                placeholder="25.00"
-                                className="pl-6 text-lg"
-                                value={donationAmount}
-                                onChange={(e) => setDonationAmount(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                    <Button size="lg" className="w-full">
-                        <Gift className="mr-2 h-5 w-5" />
-                        Donate ${donationAmount}
+                    <p className="text-center text-muted-foreground">
+                        To make a donation, please visit our dedicated donation page.
+                    </p>
+                    <Button size="lg" className="w-full" asChild>
+                        <Link href="/donate">
+                             <Gift className="mr-2 h-5 w-5" />
+                            Go to Donation Page
+                        </Link>
                     </Button>
                 </CardContent>
              </Card>
