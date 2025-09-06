@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Heart, Gift } from "lucide-react";
 import Link from "next/link";
+import { ClientOnly } from "@/components/layout/client-only";
 
-export default function DonatePage() {
+function DonatePageInternal() {
   const [donationAmount, setDonationAmount] = useState("15");
   const presetAmounts = ["5", "15", "50", "100"];
 
@@ -69,3 +70,10 @@ export default function DonatePage() {
   );
 }
 
+export default function DonatePage() {
+    return (
+        <ClientOnly>
+            <DonatePageInternal />
+        </ClientOnly>
+    )
+}
