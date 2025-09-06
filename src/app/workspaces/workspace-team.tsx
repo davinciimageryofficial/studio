@@ -179,7 +179,7 @@ export function WorkspaceTeam() {
     const [showAvatars, setShowAvatars] = useState(true);
     const [musicSource, setMusicSource] = useState<string | null>(null);
     const [streamMode, setStreamMode] = useState('self');
-    const [activeTab, setActiveTab] = useState("invites");
+    const [activeTab, setActiveTab] = useState("participants");
     const [layout, setLayout] = useState<LayoutMode>('speaker');
 
     const { toast } = useToast();
@@ -465,18 +465,37 @@ export function WorkspaceTeam() {
 
             {/* Right Sidebar */}
             <div className="lg:col-span-2 flex flex-col gap-6">
-                <Card className="flex flex-col">
+                <Card className="flex flex-col flex-1">
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1">
                         <CardHeader className="p-4">
-                            <div className="flex justify-between items-center">
-                                <CardTitle>Manage Team</CardTitle>
-                            </div>
-                            <TabsList className="grid w-full grid-cols-3 mt-2">
-                                <TabsTrigger value="invites">Invite Users</TabsTrigger>
-                                <TabsTrigger value="chat">Live Chat</TabsTrigger>
+                            <CardTitle>Manage Team</CardTitle>
+                            <TabsList className="grid w-full grid-cols-4 mt-2">
+                                <TabsTrigger value="participants">Participants ({participants.length})</TabsTrigger>
+                                <TabsTrigger value="invites">Invite</TabsTrigger>
+                                <TabsTrigger value="chat">Chat</TabsTrigger>
                                 <TabsTrigger value="music">Music</TabsTrigger>
                             </TabsList>
                         </CardHeader>
+                        <TabsContent value="participants" className="p-0 flex-1 flex flex-col">
+                            <CardContent className="p-4 space-y-4 flex-1 overflow-y-auto">
+                                <ScrollArea className="h-full">
+                                    <div className="space-y-4 pr-4">
+                                        {participants.map(user => (
+                                            <div key={user.id} className="flex items-center gap-3">
+                                                <Avatar className={cn("h-9 w-9", user.id === activeSpeakerId && "ring-2 ring-primary ring-offset-1 ring-offset-background")}>
+                                                    {user.avatar && <AvatarImage src={user.avatar} />}
+                                                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                                <div className="flex-1">
+                                                    <p className="font-semibold text-sm">{user.name}</p>
+                                                    <p className="text-xs text-muted-foreground">{user.headline}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </ScrollArea>
+                            </CardContent>
+                        </TabsContent>
                         <TabsContent value="invites" className="p-0 flex-1 flex flex-col">
                            <CardContent className="p-4 space-y-4 flex-1 overflow-y-auto">
                                 {onlineUsers.map(user => (
@@ -565,32 +584,6 @@ export function WorkspaceTeam() {
                            </div>
                         </TabsContent>
                     </Tabs>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Users className="h-5 w-5" />
-                            <span>Participants ({participants.length})</span>
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <ScrollArea className="h-48">
-                            <div className="space-y-4">
-                                {participants.map(user => (
-                                    <div key={user.id} className="flex items-center gap-3">
-                                        <Avatar className={cn("h-9 w-9", user.id === activeSpeakerId && "ring-2 ring-primary ring-offset-1 ring-offset-background")}>
-                                            {user.avatar && <AvatarImage src={user.avatar} />}
-                                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <p className="font-semibold text-sm">{user.name}</p>
-                                            <p className="text-xs text-muted-foreground">{user.headline}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </ScrollArea>
-                    </CardContent>
                 </Card>
             </div>
              <Toaster />
