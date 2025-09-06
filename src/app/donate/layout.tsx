@@ -13,7 +13,7 @@ export default function DonateLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${michroma.variable} ${sourceSerif4.variable} font-body antialiased overflow-hidden`}>
         {children}
       </body>
