@@ -64,6 +64,9 @@ export function AppSidebar() {
   const { isFullscreen, toggleFullscreen } = useFullscreen();
   const isActive = (href: string) => (href === "/dashboard" ? pathname === href : pathname.startsWith(href) && href !== "/dashboard");
   const currentUser = placeholderUsers[1];
+  const { state } = useSidebar();
+  const label = state === 'collapsed' ? 'Expand' : 'Collapse';
+
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (pathname.startsWith('/workspaces') && isSessionActive) {
@@ -155,17 +158,20 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
             <SidebarMenuItem>
-                <div className="flex flex-col gap-1 w-full">
-                    <SidebarMenuButton
-                        onClick={toggleFullscreen}
-                        tooltip={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-                        className="w-full justify-start"
-                    >
-                        <Fullscreen />
-                        <span>{isFullscreen ? "Exit Fullscreen" : "Fullscreen"}</span>
-                    </SidebarMenuButton>
-                    <SidebarTrigger className="w-full justify-start" />
-                </div>
+                <SidebarMenuButton
+                    onClick={toggleFullscreen}
+                    tooltip={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                    className="w-full justify-start"
+                >
+                    <Fullscreen />
+                    <span>{isFullscreen ? "Exit Fullscreen" : "Fullscreen"}</span>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+                 <SidebarTrigger className="w-full justify-start">
+                    <PanelLeft className="duration-200 group-data-[state=expanded]:rotate-180" />
+                    <span>{label}</span>
+                 </SidebarTrigger>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Profile" className="justify-start">
