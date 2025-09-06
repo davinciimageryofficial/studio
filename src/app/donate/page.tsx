@@ -30,13 +30,10 @@ function DonatePageInternal() {
     setTimeout(() => {
         setIsLoading(false);
         toast({
-            title: "Thank you for your support!",
-            description: `Your donation of $${donationAmount} has been processed.`,
+            title: "Offline for Now",
+            description: "Transaction processing is currently offline. Thanks for your interest in supporting us!",
         });
-        setTimeout(() => {
-            router.push('/');
-        }, 2000)
-    }, 1500);
+    }, 1000);
   };
 
   return (
