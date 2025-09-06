@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -19,7 +18,7 @@ function DonatePageInternal() {
   };
 
   return (
-    <div className="flex h-svh items-center justify-center bg-muted/40 p-4">
+    <div className="flex h-screen items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center p-6">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full">
