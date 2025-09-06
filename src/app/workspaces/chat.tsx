@@ -36,7 +36,7 @@ export function WorkspaceChat() {
     e.preventDefault();
     if (newMessage.trim() === "") return;
 
-    const currentUser = placeholderUsers[1]; // Assuming 'me' is Bob Williams
+    const currentUser = placeholderUsers[1]; // Assuming 'me' is Christian Peta
     const message: Message = {
       user: currentUser,
       text: newMessage,

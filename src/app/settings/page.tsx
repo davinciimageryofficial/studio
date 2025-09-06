@@ -87,7 +87,7 @@ export default function SettingsPage() {
           <CardContent className="space-y-6">
              <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" defaultValue="bob.williams@example.com" disabled />
+                <Input id="email" type="email" defaultValue="chris.peta@example.com" disabled />
               </div>
               <Button variant="outline">Change Password</Button>
 

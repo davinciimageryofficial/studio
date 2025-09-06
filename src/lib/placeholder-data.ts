@@ -37,8 +37,8 @@ export const placeholderUsers: User[] = [
   },
   {
     id: "2",
-    name: "Bob Williams",
-    handle: "bobw",
+    name: "Christian Peta",
+    handle: "chrisp",
     headline: "Senior Frontend Developer | React & Next.js Expert",
     bio: "Building performant and scalable web applications. I love TypeScript and clean code. Always eager to learn new technologies.",
     avatar: "https://picsum.photos/seed/1005/200/200",
@@ -294,7 +294,7 @@ export const placeholderMessages = [
     id: "msg1",
     userId: "1",
     messages: [
-      { from: "1", text: "Hey Bob, saw your profile on Sentry. Your frontend projects look really solid.", time: "10:31 AM" },
+      { from: "1", text: "Hey Chris, saw your profile on Sentry. Your frontend projects look really solid.", time: "10:31 AM" },
       { from: "me", text: "Thanks, Alice! I appreciate that. Your design work is incredible!", time: "10:30 AM" },
       { from: "1", text: "I'm looking for a developer for a new side project. It's a mobile app for local event discovery. Would you be interested in hearing more?", time: "10:32 AM" },
     ],
@@ -460,7 +460,7 @@ export const placeholderCourses = [
     {
         id: "course1",
         title: "Advanced TypeScript for Modern Applications",
-        author: "Bob Williams",
+        author: "Christian Peta",
         price: 149.99,
         category: "Development",
         description: "Take your TypeScript skills to the next level. Learn advanced patterns, decorators, and how to build type-safe, enterprise-grade applications.",
@@ -531,7 +531,7 @@ export const placeholderPodcasts = [
     {
         id: "podcast2",
         title: "Code & Coffee",
-        author: "Bob Williams",
+        author: "Christian Peta",
         category: "Development",
         description: "A morning show for developers. Join Bob as he discusses the latest news in the world of web development, from new frameworks to career advice.",
         imageUrl: "https://picsum.photos/seed/podcast2/600/400",
