@@ -88,7 +88,7 @@ function ParticipantCard({ user, onRemove, isCameraOn, isScreenSharing, isSpeaki
          <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted />
       ) : (
         <div className="w-full h-full flex items-center justify-center">
-             {user.avatar ? (
+             {showAvatars && user.avatar ? (
                  <Avatar className={cn(isThumbnail ? "h-12 w-12" : "h-20 w-20")}>
                     <AvatarImage src={user.avatar} className="object-cover" />
                     <AvatarFallback className={cn(isThumbnail ? "text-2xl" : "text-4xl")}>{user.name.charAt(0)}</AvatarFallback>
@@ -340,8 +340,8 @@ export function WorkspaceTeam() {
     return (
         <div className={cn("grid grid-cols-1", isSidebarCollapsed ? "lg:grid-cols-12" : "lg:grid-cols-4")}>
             {/* Main Content Area */}
-            <div className={cn("flex flex-col", isSidebarCollapsed ? "lg:col-span-11" : "lg:col-span-3")}>
-                 <Card className="flex-1 flex flex-col">
+            <div className={cn("flex flex-col h-screen", isSidebarCollapsed ? "lg:col-span-11" : "lg:col-span-3")}>
+                 <Card className="flex-1 flex flex-col rounded-none border-0">
                     <CardHeader className="p-0 border-b">
                     </CardHeader>
                     <CardContent className="flex-1 p-4 flex flex-col bg-muted/30">
@@ -467,11 +467,11 @@ export function WorkspaceTeam() {
 
             {/* Right Sidebar */}
              <div className={cn("transition-all duration-300", isSidebarCollapsed ? "lg:col-span-1" : "lg:col-span-1")}>
-                <Card className="h-full flex flex-col">
+                <Card className="h-full flex flex-col rounded-none border-l">
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1">
                         <CardHeader className="p-2 border-b">
                             <div className="flex items-center justify-between">
-                                <TabsList className={cn("grid w-full", isSidebarCollapsed ? "grid-cols-1" : "grid-cols-4")}>
+                                <TabsList className={cn("grid w-full bg-black text-muted-foreground", isSidebarCollapsed ? "grid-cols-1" : "grid-cols-4")}>
                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger asChild>
