@@ -19,23 +19,23 @@ export default function DonatePage() {
 
   return (
     <div className="flex min-h-svh items-center justify-center bg-muted/40 p-4">
-      <Card className="w-full max-w-lg shadow-2xl">
-        <CardHeader className="text-center p-8">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
-            <Heart className="h-8 w-8 text-primary" />
+      <Card className="w-full max-w-md shadow-2xl">
+        <CardHeader className="text-center p-6">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full">
+            <Heart className="h-7 w-7 text-primary" />
           </div>
-          <CardTitle className="text-3xl font-bold">Support Sentry's Development</CardTitle>
-          <CardDescription className="mt-2 text-lg text-muted-foreground">
-            Sentry is built for the community. Your contribution helps us innovate faster and build the best platform for professionals like you.
+          <CardTitle className="text-2xl font-bold">Support Sentry's Development</CardTitle>
+          <CardDescription className="mt-2 text-md text-muted-foreground">
+            Your contribution helps us innovate faster and build the best platform for professionals like you.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6 px-8 pb-8">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <CardContent className="space-y-6 px-6 pb-6">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {presetAmounts.map((amount) => (
               <Button
                 key={amount}
                 variant={donationAmount === amount ? "default" : "outline"}
-                className="h-16 text-xl"
+                className="h-14 text-lg"
                 onClick={() => handlePresetClick(amount)}
               >
                 ${amount}
@@ -50,13 +50,13 @@ export default function DonatePage() {
                 id="custom-amount"
                 type="number"
                 placeholder="25.00"
-                className="pl-7 text-lg"
+                className="pl-7 text-base"
                 value={donationAmount}
                 onChange={(e) => setDonationAmount(e.target.value)}
               />
             </div>
           </div>
-          <Button size="lg" className="w-full h-12 text-lg">
+          <Button size="lg" className="w-full h-11 text-base">
             <Gift className="mr-2 h-5 w-5" />
             Donate ${donationAmount}
           </Button>
