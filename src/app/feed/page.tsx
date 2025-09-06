@@ -61,6 +61,10 @@ export default function FeedPage() {
     }
   };
 
+  const handlePostUpdate = (updatedPost: Post) => {
+    setPosts(posts => posts.map(p => p.id === updatedPost.id ? updatedPost : p));
+  }
+
   return (
     <div className="flex h-full">
       <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
@@ -68,7 +72,7 @@ export default function FeedPage() {
           <div className="space-y-6">
             {posts.map((post) => (
               <ClientOnly key={post.id}>
-                <PostCard post={post} />
+                <PostCard post={post} onUpdate={handlePostUpdate} />
               </ClientOnly>
             ))}
           </div>
@@ -237,8 +241,22 @@ function CreatePostDialog({
 }
 
 
-function PostCard({ post }: { post: Post }) {
+function PostCard({ post, onUpdate }: { post: Post, onUpdate: (post: Post) => void }) {
     const author = post.author;
+    const [isLiked, setIsLiked] = useState(false);
+    const [retweetCount, setRetweetCount] = useState(post.retweets);
+    const likeCount = isLiked ? post.likes + 1 : post.likes;
+
+    const handleLike = () => {
+        setIsLiked(!isLiked);
+    };
+
+    const handleRetweet = () => {
+        // For simplicity, we just increment. A real app would track retweet state.
+        setRetweetCount(prev => prev + 1);
+    }
+
+
   return (
     <Card>
       <CardContent className="p-4">
@@ -287,13 +305,13 @@ function PostCard({ post }: { post: Post }) {
                 <MessageCircle className="h-5 w-5" />
                 <span>{post.comments}</span>
               </Button>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" className="flex items-center gap-2" onClick={handleRetweet}>
                 <Repeat2 className="h-5 w-5" />
-                <span>{post.retweets}</span>
+                <span>{retweetCount}</span>
               </Button>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                <Heart className="h-5 w-5" />
-                <span>{post.likes}</span>
+              <Button variant="ghost" size="sm" className="flex items-center gap-2" onClick={handleLike}>
+                <Heart className={cn("h-5 w-5", isLiked && "fill-current text-red-500")} />
+                <span>{likeCount}</span>
               </Button>
               <Button variant="ghost" size="sm" className="flex items-center gap-2">
                 <svg
