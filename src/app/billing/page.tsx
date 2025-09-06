@@ -10,8 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useSearchParams } from "next/navigation";
 
 export default function BillingPage() {
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get('tab') || "subscription";
+
   const invoices = [
     { id: "INV-2024-001", date: "July 1, 2024", amount: "$99.00", status: "Paid" },
     { id: "INV-2024-002", date: "June 1, 2024", amount: "$99.00", status: "Paid" },
@@ -84,7 +88,7 @@ export default function BillingPage() {
         </p>
       </header>
 
-      <Tabs defaultValue="subscription" className="w-full">
+      <Tabs defaultValue={initialTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 max-w-sm">
             <TabsTrigger value="subscription">Subscription</TabsTrigger>
             <TabsTrigger value="donate">Donate</TabsTrigger>
