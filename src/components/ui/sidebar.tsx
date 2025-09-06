@@ -274,7 +274,7 @@ const SidebarTrigger = React.forwardRef<
   React.ComponentProps<typeof Button>
 >(({ className, children, ...props }, ref) => {
   const { toggleSidebar, state } = useSidebar()
-  const label = state === 'collapsed' ? 'Expand Sidebar' : 'Collapse Sidebar';
+  const label = state === 'collapsed' ? 'Expand' : 'Collapse';
 
   return (
     <SidebarMenuButton

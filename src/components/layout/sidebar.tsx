@@ -154,24 +154,17 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-            <SidebarMenuItem className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
-                <div className="flex items-center gap-1 group-data-[collapsible=icon]:hidden">
-                    <SidebarTrigger />
+            <SidebarMenuItem>
+                <div className="flex flex-col gap-1 w-full">
                     <SidebarMenuButton
                         onClick={toggleFullscreen}
                         tooltip={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                        className="w-full justify-start"
                     >
                         <Fullscreen />
+                        <span>{isFullscreen ? "Exit Fullscreen" : "Fullscreen"}</span>
                     </SidebarMenuButton>
-                </div>
-                 <div className="hidden group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:gap-1">
-                    <SidebarTrigger />
-                    <SidebarMenuButton
-                        onClick={toggleFullscreen}
-                        tooltip={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-                    >
-                        <Fullscreen />
-                    </SidebarMenuButton>
+                    <SidebarTrigger className="w-full justify-start" />
                 </div>
             </SidebarMenuItem>
             <SidebarMenuItem>
