@@ -270,7 +270,7 @@ export function WorkspaceTeam() {
 
         if (participants.length < 15) {
             setParticipants(prev => [...prev, userToInvite]);
-            toast({ title: "User Invited", description: `${userTo_invite.name} has been added to the workspace.` });
+            toast({ title: "User Invited", description: `${userToInvite.name} has been added to the workspace.` });
         } else {
             toast({ variant: "destructive", title: "Workspace Full", description: "You cannot invite more than 15 participants." });
         }
@@ -344,7 +344,7 @@ export function WorkspaceTeam() {
         <div className={cn("grid grid-cols-1", isChatOpen ? "lg:grid-cols-4" : "lg:grid-cols-12")}>
             {/* Main Content Area */}
             <div className={cn("flex flex-col h-screen", isChatOpen ? "lg:col-span-3" : "lg:col-span-12")}>
-                 <Card className="flex-1 flex flex-col rounded-none border-0">
+                 <Card className="rounded-none border-0">
                     <CardHeader className="p-0 border-b">
                     </CardHeader>
                     <CardContent className="flex-1 p-2 flex flex-col bg-muted/30">
