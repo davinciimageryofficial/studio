@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -18,10 +17,10 @@ export default function DonatePage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
+    <div className="flex min-h-svh items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-lg shadow-2xl">
         <CardHeader className="text-center p-8">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
             <Heart className="h-8 w-8 text-primary" />
           </div>
           <CardTitle className="text-3xl font-bold">Support Sentry's Development</CardTitle>
