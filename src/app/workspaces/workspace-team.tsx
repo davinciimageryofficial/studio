@@ -89,8 +89,8 @@ function ParticipantCard({ user, onRemove, isCameraOn, isScreenSharing, isSpeaki
       ) : (
         <div className="w-full h-full flex items-center justify-center">
              {showAvatars && user.avatar ? (
-                 <Avatar className={cn(isThumbnail ? "h-12 w-12" : "h-20 w-20")}>
-                    <AvatarImage src={user.avatar} className="object-cover" />
+                <Avatar className={cn(isThumbnail ? "h-12 w-12" : "h-20 w-20")}>
+                    <AvatarImage src={user.avatar} />
                     <AvatarFallback className={cn(isThumbnail ? "text-2xl" : "text-4xl")}>{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
              ) : (
@@ -344,7 +344,7 @@ export function WorkspaceTeam() {
                  <Card className="flex-1 flex flex-col rounded-none border-0">
                     <CardHeader className="p-0 border-b">
                     </CardHeader>
-                    <CardContent className="flex-1 p-4 flex flex-col bg-muted/30">
+                    <CardContent className="flex-1 p-2 flex flex-col bg-muted/30">
                         {layout === 'speaker' && pinnedParticipant && (
                             <div className="flex-1 flex flex-col gap-4">
                                 <div className="flex-1">
@@ -409,24 +409,24 @@ export function WorkspaceTeam() {
                             </div>
 
                             {/* Center Controls */}
-                             <div className="flex items-center gap-2">
-                                <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant={isCameraOn ? "secondary" : "default"}>
+                             <div className="flex items-center">
+                                <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant={isCameraOn ? "secondary" : "default"} className="rounded-r-none">
                                     {isCameraOn ? <VideoOff /> : <Video />}
                                 </ControlButton>
-                                <ControlButton tooltip={isScreenSharing ? 'Stop Sharing' : 'Share Screen'} onClick={handleToggleScreenShare} variant={isScreenSharing ? "secondary" : "default"}>
+                                <ControlButton tooltip={isScreenSharing ? 'Stop Sharing' : 'Share Screen'} onClick={handleToggleScreenShare} variant={isScreenSharing ? "secondary" : "default"} className="rounded-none border-x-0">
                                     {isScreenSharing ? <ScreenShareOff /> : <ScreenShare />}
                                 </ControlButton>
-                                 <ControlButton tooltip={isRecording ? 'Stop Recording' : 'Start Recording'} onClick={handleToggleRecording} variant={isRecording ? "destructive" : "default"}>
+                                 <ControlButton tooltip={isRecording ? 'Stop Recording' : 'Start Recording'} onClick={handleToggleRecording} variant={isRecording ? "destructive" : "default"} className="rounded-l-none">
                                     <CircleDot />
                                 </ControlButton>
-                                <Separator orientation="vertical" className="h-8" />
-                                <ControlButton tooltip="Whiteboard">
+                                <Separator orientation="vertical" className="h-8 mx-2" />
+                                <ControlButton tooltip="Whiteboard" className="rounded-r-none">
                                     <PenSquare />
                                 </ControlButton>
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <div> 
-                                            <ControlButton tooltip="AI Assistant">
+                                            <ControlButton tooltip="AI Assistant" className="rounded-none border-x-0">
                                                 <Lightbulb />
                                             </ControlButton>
                                         </div>
@@ -442,7 +442,7 @@ export function WorkspaceTeam() {
                                         </div>
                                     </DialogContent>
                                 </Dialog>
-                                <ControlButton tooltip={showAvatars ? 'Hide Pictures' : 'Show Pictures'} onClick={handleToggleAvatars}>
+                                <ControlButton tooltip={showAvatars ? 'Hide Pictures' : 'Show Pictures'} onClick={handleToggleAvatars} className="rounded-l-none">
                                     <UserX />
                                 </ControlButton>
                             </div>
