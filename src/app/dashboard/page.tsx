@@ -242,11 +242,11 @@ export default function DashboardPage() {
                     <CardDescription>Experience Sentry on your desktop for a more integrated and focused workflow.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col sm:flex-row gap-4">
-                    <Button size="lg" className="w-full" onClick={() => setIsAppDownloaded(true)}>
+                    <Button size="lg" className="w-full sm:w-auto" onClick={() => setIsAppDownloaded(true)}>
                         <Apple className="mr-2 h-5 w-5" />
                         Download for Mac
                     </Button>
-                    <Button size="lg" className="w-full" onClick={() => setIsAppDownloaded(true)}>
+                    <Button size="lg" className="w-full sm:w-auto" onClick={() => setIsAppDownloaded(true)}>
                         <AppWindow className="mr-2 h-5 w-5" />
                         Download for Windows
                     </Button>

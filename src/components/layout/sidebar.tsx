@@ -62,7 +62,7 @@ export function AppSidebar() {
   const pathname = usePathname();
   const { setNextPath, isActive: isSessionActive } = useWorkspace();
   const { isFullscreen, toggleFullscreen } = useFullscreen();
-  const isActive = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href) && href !== "/");
+  const isActive = (href: string) => (href === "/dashboard" ? pathname === href : pathname.startsWith(href) && href !== "/dashboard");
   const currentUser = placeholderUsers[1];
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -78,7 +78,7 @@ export function AppSidebar() {
         <div className="flex w-full items-center justify-between p-2">
             <div className="flex items-center gap-2 font-headline-tech [&>span]:font-bold [&>span]:text-lg [&>span]:tracking-wide">
                 <Kanban className="h-full" />
-                <span className="duration-200 group-data-[collapsible=icon]:-ml-8 group-data-[collapsible=icon]:opacity-0">WORKFLOW</span>
+                <span className="duration-200 group-data-[collapsible=icon]:-ml-8 group-data-[collapsible=icon]:opacity-0">SENTRY</span>
             </div>
         </div>
       </SidebarHeader>

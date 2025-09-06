@@ -199,7 +199,7 @@ export function MessagesClient() {
 
 
   return (
-    <div className="h-full">
+    <div className="h-[calc(100vh-4.5rem)]">
       <div className="grid h-full grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
         {/* Conversation List */}
         <div className="hidden flex-col border-r md:flex">
@@ -372,5 +372,3 @@ export function MessagesClient() {
     </div>
   );
 }
-
-    

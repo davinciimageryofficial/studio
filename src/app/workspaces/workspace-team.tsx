@@ -341,10 +341,10 @@ export function WorkspaceTeam() {
     };
 
     return (
-        <div className={cn("grid grid-cols-1", isChatOpen ? "lg:grid-cols-4" : "lg:grid-cols-12")}>
+        <div className={cn("grid h-screen grid-cols-1", isChatOpen ? "lg:grid-cols-4" : "lg:grid-cols-12")}>
             {/* Main Content Area */}
-            <div className={cn("flex flex-col h-screen", isChatOpen ? "lg:col-span-3" : "lg:col-span-12")}>
-                 <Card className="rounded-none border-0">
+            <div className={cn("flex flex-col h-full", isChatOpen ? "lg:col-span-3" : "lg:col-span-12")}>
+                 <Card className="rounded-none border-0 h-full flex flex-col">
                     <CardHeader className="p-0 border-b">
                     </CardHeader>
                     <CardContent className="flex-1 p-2 flex flex-col bg-muted/30">

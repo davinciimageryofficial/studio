@@ -37,11 +37,11 @@ export const placeholderUsers: User[] = [
   },
   {
     id: "2",
-    name: "CHRISTIAN PETA",
+    name: "Bob Williams",
     handle: "bobw",
     headline: "Senior Frontend Developer | React & Next.js Expert",
     bio: "Building performant and scalable web applications. I love TypeScript and clean code. Always eager to learn new technologies.",
-    avatar: "",
+    avatar: "https://picsum.photos/seed/1005/200/200",
     coverImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxidXNpbmVzc3xlbnwwfHx8fDE3NTcxMTMxMDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
     skills: ["React", "Next.js", "TypeScript", "GraphQL", "Tailwind CSS"],
     portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p2-${i}/400/300`),
@@ -292,11 +292,11 @@ export const placeholderPosts = [
 export const placeholderMessages = [
   {
     id: "msg1",
-    userId: "2",
+    userId: "1",
     messages: [
-      { from: "2", text: "Hey Alice, saw your profile on Sentry. Your design work is incredible!", time: "10:30 AM" },
-      { from: "me", text: "Thanks, Bob! I appreciate that. Your frontend projects look really solid.", time: "10:31 AM" },
-      { from: "2", text: "I'm looking for a designer for a new side project. It's a mobile app for local event discovery. Would you be interested in hearing more?", time: "10:32 AM" },
+      { from: "1", text: "Hey Bob, saw your profile on Sentry. Your frontend projects look really solid.", time: "10:31 AM" },
+      { from: "me", text: "Thanks, Alice! I appreciate that. Your design work is incredible!", time: "10:30 AM" },
+      { from: "1", text: "I'm looking for a developer for a new side project. It's a mobile app for local event discovery. Would you be interested in hearing more?", time: "10:32 AM" },
     ],
   },
    {
