@@ -270,7 +270,7 @@ export function WorkspaceTeam() {
 
         if (participants.length < 15) {
             setParticipants(prev => [...prev, userToInvite]);
-            toast({ title: "User Invited", description: `${userToInvite.name} has been added to the workspace.` });
+            toast({ title: "User Invited", description: `${userTo_invite.name} has been added to the workspace.` });
         } else {
             toast({ variant: "destructive", title: "Workspace Full", description: "You cannot invite more than 15 participants." });
         }
@@ -397,14 +397,16 @@ export function WorkspaceTeam() {
                     </CardContent>
                     <CardFooter className="p-2 border-t bg-card">
                          <div className="flex justify-between items-center w-full">
-                            <div className="flex items-center gap-2">
-                                <ControlButton tooltip="Speaker View" onClick={() => setLayout('speaker')} variant={layout === 'speaker' ? 'secondary' : 'ghost'} data-active={layout === 'speaker'}>
+                           <div className="flex items-center">
+                                <ControlButton tooltip="Speaker View" onClick={() => setLayout('speaker')} variant={layout === 'speaker' ? 'secondary' : 'ghost'} data-active={layout === 'speaker'} className="rounded-r-none">
                                     <Square />
                                 </ControlButton>
-                                <ControlButton tooltip="Grid View" onClick={() => setLayout('grid')} variant={layout === 'grid' ? 'secondary' : 'ghost'} data-active={layout === 'grid'}>
+                                <ControlButton tooltip="Grid View" onClick={() => setLayout('grid')} variant={layout === 'grid' ? 'secondary' : 'ghost'} data-active={layout === 'grid'} className="rounded-l-none">
                                     <LayoutGrid />
                                 </ControlButton>
-                                <Separator orientation="vertical" className="h-8 mx-2" />
+                           </div>
+
+                            <div className="flex items-center">
                                 <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant={isCameraOn ? "secondary" : "default"} className="rounded-r-none">
                                     {isCameraOn ? <VideoOff /> : <Video />}
                                 </ControlButton>
@@ -414,7 +416,9 @@ export function WorkspaceTeam() {
                                  <ControlButton tooltip={isRecording ? 'Stop Recording' : 'Start Recording'} onClick={handleToggleRecording} variant={isRecording ? "destructive" : "default"} className="rounded-l-none">
                                     <CircleDot />
                                 </ControlButton>
-                                <Separator orientation="vertical" className="h-8 mx-2" />
+                            </div>
+
+                            <div className="flex items-center">
                                 <ControlButton tooltip="Whiteboard" className="rounded-r-none">
                                     <PenSquare />
                                 </ControlButton>
@@ -441,9 +445,6 @@ export function WorkspaceTeam() {
                                     <UserX />
                                 </ControlButton>
                                 <Separator orientation="vertical" className="h-8 mx-2" />
-                                <ControlButton tooltip="Chat" onClick={() => setIsChatOpen(prev => !prev)} variant={isChatOpen ? "secondary" : "ghost"}>
-                                    <MessageSquare />
-                                </ControlButton>
                                 <Dialog>
                                     <DialogTrigger asChild><ControlButton tooltip="Team"><Users /></ControlButton></DialogTrigger>
                                     <DialogContent>
@@ -509,6 +510,10 @@ export function WorkspaceTeam() {
                                  <ControlButton tooltip="Leave Session" variant="destructive" onClick={endSession}>
                                     <LogOut />
                                 </ControlButton>
+                                <Separator orientation="vertical" className="h-8 mx-2" />
+                                <ControlButton tooltip="Chat" onClick={() => setIsChatOpen(prev => !prev)} variant={isChatOpen ? "secondary" : "ghost"}>
+                                    <MessageSquare />
+                                </ControlButton>
                             </div>
                         </div>
                     </CardFooter>
@@ -540,3 +545,4 @@ export function WorkspaceTeam() {
         </div>
     )
 }
+
