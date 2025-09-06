@@ -31,6 +31,21 @@ export function GlobalSearch() {
   const router = useRouter();
   const followUpInputRef = useRef<HTMLInputElement>(null);
 
+  // Load conversation from localStorage on mount
+  useEffect(() => {
+    const savedConversation = localStorage.getItem("geminiChatHistory");
+    if (savedConversation) {
+      setConversation(JSON.parse(savedConversation));
+    }
+  }, []);
+
+  // Save conversation to localStorage whenever it changes
+  useEffect(() => {
+    if (conversation.length > 0) {
+      localStorage.setItem("geminiChatHistory", JSON.stringify(conversation));
+    }
+  }, [conversation]);
+
 
   const handleSearch = async (searchQuery: string) => {
     if (!searchQuery.trim()) return;
@@ -94,9 +109,18 @@ export function GlobalSearch() {
 
   const closeSearch = () => {
     setShowResults(false);
-    setConversation([]);
-    setQuery("");
+    // Do not clear conversation on close, so it persists when reopened
   }
+
+  // Effect to show results if there's a conversation history
+  useEffect(() => {
+    if (conversation.length > 0) {
+      setShowResults(true);
+    } else {
+      setShowResults(false);
+    }
+  }, [conversation]);
+
 
   return (
     <div className={cn(
