@@ -6,10 +6,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram } from "lucide-react";
+import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import { useState, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -332,6 +332,7 @@ function EditProfileDialog({
     onSaveSocials: (socials: SocialLinks) => void,
 }) {
     const [profile, setProfile] = useState(initialProfile);
+    const router = useRouter();
 
     const handleChange = (field: keyof ProfileData, value: string) => {
         setProfile(prev => ({...prev, [field]: value}));
@@ -340,6 +341,10 @@ function EditProfileDialog({
     const handleSaveChanges = () => {
         onSave(profile);
     }
+    
+    const handleLogout = () => {
+        router.push('/logout');
+    };
 
     return (
         <Dialog>
@@ -373,13 +378,19 @@ function EditProfileDialog({
                         triggerButton={<Button variant="outline" className="w-full">Edit Social Links</Button>}
                     />
                 </div>
-                <DialogFooter>
-                    <DialogClose asChild>
-                        <Button type="button" variant="secondary">Cancel</Button>
-                    </DialogClose>
-                    <DialogClose asChild>
-                        <Button type="button" onClick={handleSaveChanges}>Save Changes</Button>
-                    </DialogClose>
+                <DialogFooter className="sm:justify-between">
+                    <Button type="button" variant="ghost" className="text-destructive hover:text-destructive" onClick={handleLogout}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                    </Button>
+                    <div className="flex gap-2">
+                        <DialogClose asChild>
+                            <Button type="button" variant="secondary">Cancel</Button>
+                        </DialogClose>
+                        <DialogClose asChild>
+                            <Button type="button" onClick={handleSaveChanges}>Save Changes</Button>
+                        </DialogClose>
+                    </div>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

@@ -1,14 +1,23 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+'use client';
+
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CheckCircle, Briefcase } from "lucide-react";
+import { CheckCircle, Briefcase, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    router.push('/logout');
+  };
+
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <header className="mb-8">
@@ -94,6 +103,12 @@ export default function SettingsPage() {
                   </div>
               </div>
           </CardContent>
+          <CardFooter>
+            <Button variant="destructive" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+          </CardFooter>
         </Card>
 
 

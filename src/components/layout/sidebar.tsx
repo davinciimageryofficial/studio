@@ -21,7 +21,6 @@ import {
   Newspaper,
   UserCircle,
   Settings,
-  LogOut,
   PanelLeft,
   CreditCard,
   Home,
@@ -191,14 +190,6 @@ export function AppSidebar() {
                 <Link href="/settings">
                   <Settings />
                   <span>Settings</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Logout" className="justify-start">
-                <Link href="/logout">
-                  <LogOut />
-                  <span>Logout</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
