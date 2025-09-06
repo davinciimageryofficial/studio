@@ -175,12 +175,11 @@ export function WorkspaceTeam() {
     const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
     const [isScreenSharing, setIsScreenSharing] = useState(false);
     const [hasScreenPermission, setHasScreenPermission] = useState<boolean | null>(null);
-    const [isControlsCollapsed, setIsControlsCollapsed] = useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [showAvatars, setShowAvatars] = useState(true);
     const [musicSource, setMusicSource] = useState<string | null>(null);
     const [streamMode, setStreamMode] = useState('self');
-    const [activeTeamTab, setActiveTeamTab] = useState("participants");
-    const [activeToolsTab, setActiveToolsTab] = useState("chat");
+    const [activeTab, setActiveTab] = useState("participants");
     const [layout, setLayout] = useState<LayoutMode>('speaker');
 
     const { toast } = useToast();
@@ -332,9 +331,9 @@ export function WorkspaceTeam() {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className={cn("grid grid-cols-1 gap-6", isSidebarCollapsed ? "lg:grid-cols-12" : "lg:grid-cols-4")}>
             {/* Main Content Area */}
-            <div className="lg:col-span-3 flex flex-col gap-6">
+            <div className={cn("flex flex-col gap-6", isSidebarCollapsed ? "lg:col-span-11" : "lg:col-span-3")}>
                  <Card className="flex-1 flex flex-col">
                     <CardHeader className="p-4 border-b flex-row items-center justify-between">
                         <CardTitle>Team Workspace</CardTitle>
@@ -465,135 +464,165 @@ export function WorkspaceTeam() {
             </div>
 
             {/* Right Sidebar */}
-            <div className="lg:col-span-2 flex flex-col gap-6">
-                <Card>
-                    <Tabs value={activeTeamTab} onValueChange={setActiveTeamTab} className="flex flex-col">
-                        <CardHeader className="p-4">
-                            <CardTitle>Manage Team</CardTitle>
-                            <TabsList className="grid w-full grid-cols-2 mt-2">
-                                <TabsTrigger value="participants">Participants ({participants.length})</TabsTrigger>
-                                <TabsTrigger value="invites">Invite</TabsTrigger>
-                            </TabsList>
+             <div className={cn("transition-all duration-300", isSidebarCollapsed ? "lg:col-span-1" : "lg:col-span-1")}>
+                <Card className="h-full flex flex-col">
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1">
+                        <CardHeader className="p-2 border-b">
+                            <div className="flex items-center justify-between">
+                                <TabsList className={cn("grid w-full", isSidebarCollapsed ? "grid-cols-1" : "grid-cols-4")}>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <TabsTrigger value="participants">
+                                                    <Users className="h-5 w-5"/>
+                                                    <span className={cn("ml-2", isSidebarCollapsed && "hidden")}>Team</span>
+                                                </TabsTrigger>
+                                            </TooltipTrigger>
+                                            {isSidebarCollapsed && <TooltipContent side="left"><p>Participants</p></TooltipContent>}
+                                        </Tooltip>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                 <TabsTrigger value="invites">
+                                                    <UserPlus className="h-5 w-5"/>
+                                                     <span className={cn("ml-2", isSidebarCollapsed && "hidden")}>Invite</span>
+                                                 </TabsTrigger>
+                                            </TooltipTrigger>
+                                            {isSidebarCollapsed && <TooltipContent side="left"><p>Invite</p></TooltipContent>}
+                                        </Tooltip>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                 <TabsTrigger value="chat">
+                                                    <MessageSquare className="h-5 w-5"/>
+                                                     <span className={cn("ml-2", isSidebarCollapsed && "hidden")}>Chat</span>
+                                                 </TabsTrigger>
+                                            </TooltipTrigger>
+                                            {isSidebarCollapsed && <TooltipContent side="left"><p>Chat</p></TooltipContent>}
+                                        </Tooltip>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                 <TabsTrigger value="music">
+                                                    <Music2 className="h-5 w-5"/>
+                                                     <span className={cn("ml-2", isSidebarCollapsed && "hidden")}>Music</span>
+                                                 </TabsTrigger>
+                                            </TooltipTrigger>
+                                            {isSidebarCollapsed && <TooltipContent side="left"><p>Music</p></TooltipContent>}
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </TabsList>
+                                <Button variant="ghost" size="icon" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}>
+                                    {isSidebarCollapsed ? <PanelLeft /> : <PanelRight />}
+                                </Button>
+                            </div>
                         </CardHeader>
-                        <TabsContent value="participants" className="p-0">
-                            <CardContent className="p-4 space-y-4 max-h-48 overflow-y-auto">
-                                <ScrollArea className="h-full">
-                                    <div className="space-y-4 pr-4">
-                                        {participants.map(user => (
-                                            <div key={user.id} className="flex items-center gap-3">
-                                                <Avatar className={cn("h-9 w-9", user.id === activeSpeakerId && "ring-2 ring-primary ring-offset-1 ring-offset-background")}>
-                                                    {user.avatar && <AvatarImage src={user.avatar} />}
+                        <div className={cn(isSidebarCollapsed && "hidden")}>
+                            <TabsContent value="participants" className="p-0">
+                                <CardContent className="p-4 space-y-4 max-h-60 overflow-y-auto">
+                                    <ScrollArea className="h-full">
+                                        <div className="space-y-4 pr-4">
+                                            {participants.map(user => (
+                                                <div key={user.id} className="flex items-center gap-3">
+                                                    <Avatar className={cn("h-9 w-9", user.id === activeSpeakerId && "ring-2 ring-primary ring-offset-1 ring-offset-background")}>
+                                                        {user.avatar && <AvatarImage src={user.avatar} />}
+                                                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                                    </Avatar>
+                                                    <div className="flex-1">
+                                                        <p className="font-semibold text-sm">{user.name}</p>
+                                                        <p className="text-xs text-muted-foreground">{user.headline}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </ScrollArea>
+                                </CardContent>
+                            </TabsContent>
+                            <TabsContent value="invites" className="p-0">
+                               <CardContent className="p-4 space-y-4 max-h-60 overflow-y-auto">
+                                    {onlineUsers.map(user => (
+                                        <div key={user.id} className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <Avatar>
+                                                    {showAvatars && user.avatar && <AvatarImage src={user.avatar} />}
                                                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                                                 </Avatar>
-                                                <div className="flex-1">
-                                                    <p className="font-semibold text-sm">{user.name}</p>
-                                                    <p className="text-xs text-muted-foreground">{user.headline}</p>
+                                                <div>
+                                                    <p className="font-semibold">{user.name}</p>
+                                                    <div className="flex items-center gap-1.5">
+                                                    <span className="h-2 w-2 rounded-full bg-green-500" />
+                                                    <p className="text-xs text-muted-foreground">Online</p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
-                                </ScrollArea>
-                            </CardContent>
-                        </TabsContent>
-                        <TabsContent value="invites" className="p-0">
-                           <CardContent className="p-4 space-y-4 max-h-48 overflow-y-auto">
-                                {onlineUsers.map(user => (
-                                    <div key={user.id} className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <Avatar>
-                                                {showAvatars && user.avatar && <AvatarImage src={user.avatar} />}
-                                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                            </Avatar>
+                                            <Button variant="outline" size="sm" onClick={() => handleInvite(user)} disabled={participants.length >= 15}>
+                                                <UserPlus className="h-4 w-4 mr-2" />
+                                                Invite
+                                            </Button>
+                                        </div>
+                                    ))}
+                               </CardContent>
+                                <CardFooter className="p-4 border-t">
+                                    <Button size="lg" className="w-full" onClick={handleCopyLink}>
+                                        <Copy className="mr-2 h-4 w-4"/>
+                                        Copy Invite Link
+                                    </Button>
+                                </CardFooter>
+                            </TabsContent>
+                            <TabsContent value="chat" className="p-0 m-0 flex-1">
+                                <div className="h-[calc(100vh-16rem)]">
+                                    <WorkspaceChat />
+                                </div>
+                            </TabsContent>
+                            <TabsContent value="music" className="p-0 m-0 flex-1">
+                               <div className="h-[calc(100vh-16rem)]">
+                                <CardContent className="pt-6">
+                                    {musicSource ? (
+                                        <div className="space-y-4">
+                                            <Card className="overflow-hidden">
+                                                <div className="flex items-center gap-4 p-4">
+                                                    <Image src="https://picsum.photos/seed/album-art/100/100" width={64} height={64} alt="Album Art" className="rounded-md" />
+                                                    <div className="flex-1">
+                                                        <p className="font-semibold">Song Title Placeholder</p>
+                                                        <p className="text-sm text-muted-foreground">Artist Name</p>
+                                                    </div>
+                                                </div>
+                                            </Card>
                                             <div>
-                                                <p className="font-semibold">{user.name}</p>
-                                                <div className="flex items-center gap-1.5">
-                                                <span className="h-2 w-2 rounded-full bg-green-500" />
-                                                <p className="text-xs text-muted-foreground">Online</p>
-                                                </div>
+                                                <Label className="font-semibold">Stream Mode</Label>
+                                                <RadioGroup value={streamMode} onValueChange={setStreamMode} className="mt-2">
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem value="self" id="self" />
+                                                        <Label htmlFor="self" className="flex items-center gap-2">
+                                                            <Mic className="h-4 w-4" /> Stream for Self
+                                                        </Label>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem value="crew" id="crew" />
+                                                        <Label htmlFor="crew" className="flex items-center gap-2">
+                                                            <Radio className="h-4 w-4" /> Stream for Crew
+                                                        </Label>
+                                                    </div>
+                                                </RadioGroup>
                                             </div>
+                                            <Button variant="outline" onClick={() => setMusicSource(null)}>Disconnect</Button>
                                         </div>
-                                        <Button variant="outline" size="sm" onClick={() => handleInvite(user)} disabled={participants.length >= 15}>
-                                            <UserPlus className="h-4 w-4 mr-2" />
-                                            Invite
-                                        </Button>
-                                    </div>
-                                ))}
-                           </CardContent>
-                            <CardFooter className="p-4 border-t">
-                                <Button size="lg" className="w-full" onClick={handleCopyLink}>
-                                    <Copy className="mr-2 h-4 w-4"/>
-                                    Copy Invite Link
-                                </Button>
-                            </CardFooter>
-                        </TabsContent>
-                    </Tabs>
-                </Card>
-
-                <Card className="flex flex-col flex-1">
-                     <Tabs value={activeToolsTab} onValueChange={setActiveToolsTab} className="flex flex-col flex-1">
-                        <CardHeader className="p-4">
-                            <CardTitle>Session Tools</CardTitle>
-                            <TabsList className="grid w-full grid-cols-2 mt-2">
-                                <TabsTrigger value="chat">Chat</TabsTrigger>
-                                <TabsTrigger value="music">Music</TabsTrigger>
-                            </TabsList>
-                        </CardHeader>
-                         <TabsContent value="chat" className="p-0 flex-1">
-                            <div className="h-[24rem]">
-                                <WorkspaceChat />
-                            </div>
-                        </TabsContent>
-                         <TabsContent value="music" className="p-0 flex-1">
-                           <div className="h-[24rem]">
-                            <CardContent className="pt-6">
-                                {musicSource ? (
-                                    <div className="space-y-4">
-                                        <Card className="overflow-hidden">
-                                            <div className="flex items-center gap-4 p-4">
-                                                <Image src="https://picsum.photos/seed/album-art/100/100" width={64} height={64} alt="Album Art" className="rounded-md" />
-                                                <div className="flex-1">
-                                                    <p className="font-semibold">Song Title Placeholder</p>
-                                                    <p className="text-sm text-muted-foreground">Artist Name</p>
-                                                </div>
-                                            </div>
-                                        </Card>
-                                        <div>
-                                            <Label className="font-semibold">Stream Mode</Label>
-                                            <RadioGroup value={streamMode} onValueChange={setStreamMode} className="mt-2">
-                                                <div className="flex items-center space-x-2">
-                                                    <RadioGroupItem value="self" id="self" />
-                                                    <Label htmlFor="self" className="flex items-center gap-2">
-                                                        <Mic className="h-4 w-4" /> Stream for Self
-                                                    </Label>
-                                                </div>
-                                                <div className="flex items-center space-x-2">
-                                                    <RadioGroupItem value="crew" id="crew" />
-                                                    <Label htmlFor="crew" className="flex items-center gap-2">
-                                                        <Radio className="h-4 w-4" /> Stream for Crew
-                                                    </Label>
-                                                </div>
-                                            </RadioGroup>
+                                    ) : (
+                                        <div className="space-y-4 text-center">
+                                             <p className="text-sm text-muted-foreground">Connect a music service to start listening.</p>
+                                             <div className="flex flex-col gap-2">
+                                                <Button variant="outline" onClick={() => setMusicSource('spotify')}>
+                                                    <Music2 className="mr-2 h-4 w-4" />
+                                                    Connect Spotify
+                                                </Button>
+                                                <Button variant="outline" onClick={() => setMusicSource('youtube')}>
+                                                    <Podcast className="mr-2 h-4 w-4" />
+                                                    Connect YouTube Music
+                                                </Button>
+                                             </div>
                                         </div>
-                                        <Button variant="outline" onClick={() => setMusicSource(null)}>Disconnect</Button>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-4 text-center">
-                                         <p className="text-sm text-muted-foreground">Connect a music service to start listening.</p>
-                                         <div className="flex flex-col gap-2">
-                                            <Button variant="outline" onClick={() => setMusicSource('spotify')}>
-                                                <Music2 className="mr-2 h-4 w-4" />
-                                                Connect Spotify
-                                            </Button>
-                                            <Button variant="outline" onClick={() => setMusicSource('youtube')}>
-                                                <Podcast className="mr-2 h-4 w-4" />
-                                                Connect YouTube Music
-                                            </Button>
-                                         </div>
-                                    </div>
-                                )}
-                            </CardContent>
-                           </div>
-                        </TabsContent>
+                                    )}
+                                </CardContent>
+                               </div>
+                            </TabsContent>
+                        </div>
                     </Tabs>
                 </Card>
             </div>
