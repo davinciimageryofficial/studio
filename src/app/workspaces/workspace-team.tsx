@@ -87,7 +87,7 @@ function ParticipantCard({ user, onRemove, isCameraOn, isScreenSharing, isSpeaki
       ) : (
         <div className="w-full h-full flex items-center justify-center">
             <Avatar className={cn(isThumbnail ? "h-12 w-12" : "h-20 w-20")}>
-                {showAvatars && <AvatarImage src={user.avatar} className="object-cover" />}
+                {showAvatars && user.avatar && <AvatarImage src={user.avatar} className="object-cover" />}
                 <AvatarFallback className={cn(isThumbnail ? "text-2xl" : "text-4xl")}>{user.name.charAt(0)}</AvatarFallback>
             </Avatar>
         </div>
@@ -454,7 +454,7 @@ export function WorkspaceTeam() {
                                     <div key={user.id} className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
                                             <Avatar>
-                                                {showAvatars && <AvatarImage src={user.avatar} />}
+                                                {showAvatars && user.avatar && <AvatarImage src={user.avatar} />}
                                                 <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                                             </Avatar>
                                             <div>
@@ -550,7 +550,7 @@ export function WorkspaceTeam() {
                                 {participants.map(user => (
                                     <div key={user.id} className="flex items-center gap-3">
                                         <Avatar className={cn("h-9 w-9", user.id === activeSpeakerId && "ring-2 ring-primary ring-offset-1 ring-offset-background")}>
-                                            <AvatarImage src={user.avatar} />
+                                            {user.avatar && <AvatarImage src={user.avatar} />}
                                             <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                                         </Avatar>
                                         <div>

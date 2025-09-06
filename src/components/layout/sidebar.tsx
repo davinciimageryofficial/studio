@@ -172,7 +172,7 @@ export function AppSidebar() {
                 <Link href="/profile/me">
                     <UserCircle className="hidden group-data-[collapsible=icon]:block" />
                     <Avatar className="size-7 group-data-[collapsible=icon]:hidden">
-                      <AvatarImage src={currentUser.avatar} />
+                      {currentUser.avatar && <AvatarImage src={currentUser.avatar} />}
                       <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <span className="text-sm font-medium">My Profile</span>
