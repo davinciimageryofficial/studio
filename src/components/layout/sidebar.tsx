@@ -155,6 +155,9 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
              <SidebarMenuItem>
+                <SidebarTrigger className="justify-start" />
+            </SidebarMenuItem>
+             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={toggleFullscreen}
                 tooltip={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
