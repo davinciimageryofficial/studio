@@ -23,6 +23,9 @@ import {
   Italic,
   Code,
   Link2,
+  Edit,
+  Trash2,
+  Flag,
 } from "lucide-react";
 import Image from "next/image";
 import { ConversationStarters } from "../conversation-starters";
@@ -43,6 +46,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { ClientOnly } from "@/components/layout/client-only";
 import { cn } from "@/lib/utils";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 
 type Post = (typeof placeholderPosts)[0];
 
@@ -65,6 +70,10 @@ export default function FeedPage() {
     setPosts(posts => posts.map(p => p.id === updatedPost.id ? updatedPost : p));
   }
 
+  const handleDeletePost = (postId: number) => {
+    setPosts(posts => posts.filter(p => p.id !== postId));
+  }
+
   return (
     <div className="flex h-full">
       <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
@@ -72,7 +81,7 @@ export default function FeedPage() {
           <div className="space-y-6">
             {posts.map((post) => (
               <ClientOnly key={post.id}>
-                <PostCard post={post} onUpdate={handlePostUpdate} />
+                <PostCard post={post} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
               </ClientOnly>
             ))}
           </div>
@@ -241,11 +250,12 @@ function CreatePostDialog({
 }
 
 
-function PostCard({ post, onUpdate }: { post: Post, onUpdate: (post: Post) => void }) {
+function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: Post) => void, onDelete: (postId: number) => void }) {
     const author = post.author;
     const [isLiked, setIsLiked] = useState(false);
     const [retweetCount, setRetweetCount] = useState(post.retweets);
     const likeCount = isLiked ? post.likes + 1 : post.likes;
+    const { toast } = useToast();
 
     const handleLike = () => {
         setIsLiked(!isLiked);
@@ -255,7 +265,15 @@ function PostCard({ post, onUpdate }: { post: Post, onUpdate: (post: Post) => vo
         // For simplicity, we just increment. A real app would track retweet state.
         setRetweetCount(prev => prev + 1);
     }
+    
+    const handleReport = () => {
+        toast({
+            title: "Post Reported",
+            description: "Thank you for your feedback. We will review this post.",
+        });
+    }
 
+    const isMyPost = post.author.id === '2'; // Assuming user '2' is the current user (Bob)
 
   return (
     <Card>
@@ -283,9 +301,32 @@ function PostCard({ post, onUpdate }: { post: Post, onUpdate: (post: Post) => vo
                     </div>
                 )}
               </div>
-              <Button variant="ghost" size="icon">
-                <MoreHorizontal className="h-5 w-5" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="h-5 w-5" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    {isMyPost ? (
+                        <>
+                            <DropdownMenuItem>
+                                <Edit className="mr-2 h-4 w-4" />
+                                <span>Edit Post</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onDelete(post.id)} className="text-destructive">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                <span>Delete Post</span>
+                            </DropdownMenuItem>
+                        </>
+                    ) : (
+                        <DropdownMenuItem onClick={handleReport}>
+                            <Flag className="mr-2 h-4 w-4" />
+                            <span>Report Post</span>
+                        </DropdownMenuItem>
+                    )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <p className="mt-2 whitespace-pre-wrap">{post.content}</p>
             {post.image && (
@@ -331,3 +372,5 @@ function PostCard({ post, onUpdate }: { post: Post, onUpdate: (post: Post) => vo
     </Card>
   );
 }
+
+    
