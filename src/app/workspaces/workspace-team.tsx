@@ -396,19 +396,15 @@ export function WorkspaceTeam() {
                         )}
                     </CardContent>
                     <CardFooter className="p-2 border-t bg-card">
-                         <div className="flex justify-between items-center w-full gap-2">
-                            {/* Left Controls */}
-                             <div className="flex items-center gap-2">
+                         <div className="flex justify-between items-center w-full">
+                            <div className="flex items-center gap-2">
                                 <ControlButton tooltip="Speaker View" onClick={() => setLayout('speaker')} variant={layout === 'speaker' ? 'secondary' : 'ghost'} data-active={layout === 'speaker'}>
                                     <Square />
                                 </ControlButton>
                                 <ControlButton tooltip="Grid View" onClick={() => setLayout('grid')} variant={layout === 'grid' ? 'secondary' : 'ghost'} data-active={layout === 'grid'}>
                                     <LayoutGrid />
                                 </ControlButton>
-                            </div>
-
-                            {/* Center Controls */}
-                             <div className="flex items-center">
+                                <Separator orientation="vertical" className="h-8 mx-2" />
                                 <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant={isCameraOn ? "secondary" : "default"} className="rounded-r-none">
                                     {isCameraOn ? <VideoOff /> : <Video />}
                                 </ControlButton>
@@ -444,10 +440,7 @@ export function WorkspaceTeam() {
                                 <ControlButton tooltip={showAvatars ? 'Hide Pictures' : 'Show Pictures'} onClick={handleToggleAvatars} className="rounded-l-none">
                                     <UserX />
                                 </ControlButton>
-                            </div>
-                            
-                            {/* Right Controls */}
-                             <div className="flex items-center gap-2">
+                                <Separator orientation="vertical" className="h-8 mx-2" />
                                 <ControlButton tooltip="Chat" onClick={() => setIsChatOpen(prev => !prev)} variant={isChatOpen ? "secondary" : "ghost"}>
                                     <MessageSquare />
                                 </ControlButton>
