@@ -154,18 +154,25 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-             <SidebarMenuItem>
-                <SidebarTrigger className="justify-start" />
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                onClick={toggleFullscreen}
-                tooltip={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-                className="justify-start"
-              >
-                <Fullscreen />
-                <span>{isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}</span>
-              </SidebarMenuButton>
+            <SidebarMenuItem className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
+                <div className="flex items-center gap-1 group-data-[collapsible=icon]:hidden">
+                    <SidebarTrigger />
+                    <SidebarMenuButton
+                        onClick={toggleFullscreen}
+                        tooltip={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                    >
+                        <Fullscreen />
+                    </SidebarMenuButton>
+                </div>
+                 <div className="hidden group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:gap-1">
+                    <SidebarTrigger />
+                    <SidebarMenuButton
+                        onClick={toggleFullscreen}
+                        tooltip={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                    >
+                        <Fullscreen />
+                    </SidebarMenuButton>
+                </div>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Profile" className="justify-start">
