@@ -1,8 +1,7 @@
 
-
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -187,6 +186,7 @@ export function WorkspaceTeam() {
     const [musicSource, setMusicSource] = useState<string | null>(null);
     const [streamMode, setStreamMode] = useState('self');
     const [layout, setLayout] = useState<LayoutMode>('speaker');
+    const [isMuted, setIsMuted] = useState(true);
 
     const { toast } = useToast();
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -308,14 +308,18 @@ export function WorkspaceTeam() {
         });
     }
 
-    const ControlButton = ({ tooltip, onClick, children, variant = "default", className, 'data-active': dataActive }: { tooltip: string, onClick?: () => void, children: React.ReactNode, variant?: "default" | "secondary" | "destructive" | "outline" | "ghost" | "link", className?: string, 'data-active'?: boolean }) => (
+    const ControlButton = ({ tooltip, onClick, children, variant = "ghost", size="icon", className, 'data-active': dataActive }: { tooltip: string, onClick?: () => void, children: React.ReactNode, variant?: "default" | "secondary" | "destructive" | "outline" | "ghost" | "link", size?: "default" | "sm" | "lg" | "icon" | null, className?: string, 'data-active'?: boolean }) => (
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Button
                         variant={variant}
+                        size={size}
                         onClick={onClick}
-                        className={cn("text-xs bg-black hover:bg-gray-800 h-8", className)}
+                        className={cn(
+                          "transition-all",
+                          className
+                        )}
                         data-active={dataActive}
                     >
                         {children}
@@ -397,56 +401,37 @@ export function WorkspaceTeam() {
                     </CardContent>
                     <CardFooter className="p-2 border-t bg-card">
                          <div className="flex justify-between items-center w-full">
-                           <div className="flex items-center">
-                                <ControlButton tooltip="Speaker View" onClick={() => setLayout('speaker')} variant={layout === 'speaker' ? 'secondary' : 'ghost'} data-active={layout === 'speaker'} className="rounded-r-none">
+                           <div className="flex items-center bg-muted p-1 rounded-full">
+                                <ControlButton tooltip="Speaker View" onClick={() => setLayout('speaker')} variant={layout === 'speaker' ? 'secondary' : 'ghost'} size="sm" className="rounded-full" data-active={layout === 'speaker'}>
                                     <Square />
                                 </ControlButton>
-                                <ControlButton tooltip="Grid View" onClick={() => setLayout('grid')} variant={layout === 'grid' ? 'secondary' : 'ghost'} data-active={layout === 'grid'} className="rounded-l-none">
+                                <ControlButton tooltip="Grid View" onClick={() => setLayout('grid')} variant={layout === 'grid' ? 'secondary' : 'ghost'} size="sm" className="rounded-full" data-active={layout === 'grid'}>
                                     <LayoutGrid />
                                 </ControlButton>
                            </div>
 
-                            <div className="flex items-center">
-                                <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant={isCameraOn ? "secondary" : "default"} className="rounded-r-none">
-                                    {isCameraOn ? <VideoOff /> : <Video />}
+                            <div className="flex items-center gap-2">
+                                <ControlButton tooltip={isMuted ? 'Unmute' : 'Mute'} onClick={() => setIsMuted(prev => !prev)} variant="secondary" size="lg" className="rounded-full h-12 w-12 bg-muted hover:bg-muted-foreground/20" data-active={!isMuted}>
+                                    {isMuted ? <MicOff /> : <Mic />}
                                 </ControlButton>
-                                <ControlButton tooltip={isScreenSharing ? 'Stop Sharing' : 'Share Screen'} onClick={handleToggleScreenShare} variant={isScreenSharing ? "secondary" : "default"} className="rounded-none border-x-0">
-                                    {isScreenSharing ? <ScreenShareOff /> : <ScreenShare />}
+                                <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant={isCameraOn ? "default" : "secondary"} size="lg" className="rounded-full h-12 w-12 bg-muted hover:bg-muted-foreground/20" data-active={isCameraOn}>
+                                    {isCameraOn ? <Video /> : <VideoOff />}
                                 </ControlButton>
-                                 <ControlButton tooltip={isRecording ? 'Stop Recording' : 'Start Recording'} onClick={handleToggleRecording} variant={isRecording ? "destructive" : "default"} className="rounded-l-none">
+                                <ControlButton tooltip={isScreenSharing ? 'Stop Sharing' : 'Share Screen'} onClick={handleToggleScreenShare} variant={isScreenSharing ? "default" : "secondary"} size="lg" className="rounded-full h-12 w-12 bg-muted hover:bg-muted-foreground/20" data-active={isScreenSharing}>
+                                    {isScreenSharing ? <ScreenShare /> : <ScreenShareOff />}
+                                </ControlButton>
+                                 <ControlButton tooltip={isRecording ? 'Stop Recording' : 'Start Recording'} onClick={handleToggleRecording} variant={isRecording ? "destructive" : "secondary"} size="lg" className="rounded-full h-12 w-12 bg-muted hover:bg-destructive/80" data-active={isRecording}>
                                     <CircleDot />
+                                </ControlButton>
+                                <ControlButton tooltip="Leave Session" variant="destructive" size="lg" onClick={endSession} className="rounded-full h-12 w-12">
+                                    <LogOut />
                                 </ControlButton>
                             </div>
 
-                            <div className="flex items-center">
-                                <ControlButton tooltip="Whiteboard" className="rounded-r-none">
-                                    <PenSquare />
-                                </ControlButton>
-                                <Dialog>
-                                    <DialogTrigger asChild>
-                                        <div> 
-                                            <ControlButton tooltip="AI Assistant" className="rounded-none border-x-0">
-                                                <Lightbulb />
-                                            </ControlButton>
-                                        </div>
-                                    </DialogTrigger>
-                                     <DialogContent className="max-w-4xl h-3/4 flex flex-col p-0">
-                                        <div className="p-4 border-b">
-                                           <DialogHeader>
-                                                <DialogTitle>AI Assistant</DialogTitle>
-                                            </DialogHeader>
-                                        </div>
-                                        <div className="flex-1 overflow-hidden">
-                                            <GlobalSearch />
-                                        </div>
-                                    </DialogContent>
-                                </Dialog>
-                                <ControlButton tooltip={showAvatars ? 'Hide Pictures' : 'Show Pictures'} onClick={handleToggleAvatars} className="rounded-l-none">
-                                    <UserX />
-                                </ControlButton>
-                                <Separator orientation="vertical" className="h-8 mx-2" />
-                                <Dialog>
-                                    <DialogTrigger asChild><ControlButton tooltip="Team"><Users /></ControlButton></DialogTrigger>
+                            <div className="flex items-center bg-muted p-1 rounded-full">
+                                <ControlButton tooltip="Team" variant="ghost" size="sm" className="rounded-full">
+                                   <Dialog>
+                                    <DialogTrigger asChild><span><Users /></span></DialogTrigger>
                                     <DialogContent>
                                         <DialogHeader><DialogTitle>Participants</DialogTitle></DialogHeader>
                                         <ScrollArea className="max-h-[60vh] pr-4">
@@ -464,8 +449,10 @@ export function WorkspaceTeam() {
                                         </ScrollArea>
                                     </DialogContent>
                                 </Dialog>
-                                <Dialog>
-                                     <DialogTrigger asChild><ControlButton tooltip="Invite"><UserPlus /></ControlButton></DialogTrigger>
+                                </ControlButton>
+                                <ControlButton tooltip="Invite" variant="ghost" size="sm" className="rounded-full">
+                                     <Dialog>
+                                     <DialogTrigger asChild><span><UserPlus /></span></DialogTrigger>
                                      <DialogContent>
                                         <DialogHeader><DialogTitle>Invite to Workspace</DialogTitle></DialogHeader>
                                         <ScrollArea className="max-h-[60vh] pr-4">
@@ -486,32 +473,8 @@ export function WorkspaceTeam() {
                                         </DialogFooter>
                                      </DialogContent>
                                 </Dialog>
-                                <Dialog>
-                                    <DialogTrigger asChild><ControlButton tooltip="Music"><Music2 /></ControlButton></DialogTrigger>
-                                    <DialogContent>
-                                        <DialogHeader><DialogTitle>Music</DialogTitle></DialogHeader>
-                                        {musicSource ? (
-                                        <div className="space-y-4">
-                                            <Card className="overflow-hidden"><div className="flex items-center gap-4 p-4"><Image src="https://picsum.photos/seed/album-art/100/100" width={64} height={64} alt="Album Art" className="rounded-md" /><div className="flex-1"><p className="font-semibold">Song Title Placeholder</p><p className="text-sm text-muted-foreground">Artist Name</p></div></div></Card>
-                                            <div>
-                                                <Label className="font-semibold">Stream Mode</Label>
-                                                <RadioGroup value={streamMode} onValueChange={setStreamMode} className="mt-2"><div className="flex items-center space-x-2"><RadioGroupItem value="self" id="self" /><Label htmlFor="self" className="flex items-center gap-2"><Mic className="h-4 w-4" /> Stream for Self</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="crew" id="crew" /><Label htmlFor="crew" className="flex items-center gap-2"><Radio className="h-4 w-4" /> Stream for Crew</Label></div></RadioGroup>
-                                            </div>
-                                            <Button variant="outline" onClick={() => setMusicSource(null)}>Disconnect</Button>
-                                        </div>
-                                        ) : (
-                                            <div className="space-y-4 text-center py-8">
-                                                <p className="text-sm text-muted-foreground">Connect a music service to start listening.</p>
-                                                <div className="flex flex-col gap-2"><Button variant="outline" onClick={() => setMusicSource('spotify')}><Music2 className="mr-2 h-4 w-4" />Connect Spotify</Button><Button variant="outline" onClick={() => setMusicSource('youtube')}><Podcast className="mr-2 h-4 w-4" />Connect YouTube Music</Button></div>
-                                            </div>
-                                        )}
-                                    </DialogContent>
-                                </Dialog>
-                                 <ControlButton tooltip="Leave Session" variant="destructive" onClick={endSession}>
-                                    <LogOut />
                                 </ControlButton>
-                                <Separator orientation="vertical" className="h-8 mx-2" />
-                                <ControlButton tooltip="Chat" onClick={() => setIsChatOpen(prev => !prev)} variant={isChatOpen ? "secondary" : "ghost"}>
+                                <ControlButton tooltip="Chat" variant={isChatOpen ? 'secondary' : 'ghost'} size="sm" onClick={() => setIsChatOpen(prev => !prev)} className="rounded-full">
                                     <MessageSquare />
                                 </ControlButton>
                             </div>
@@ -545,4 +508,3 @@ export function WorkspaceTeam() {
         </div>
     )
 }
-
