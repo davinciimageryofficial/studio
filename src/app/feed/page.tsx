@@ -26,6 +26,9 @@ import {
   Edit,
   Trash2,
   Flag,
+  Save,
+  Share2,
+  UserPlus,
 } from "lucide-react";
 import Image from "next/image";
 import { ConversationStarters } from "../conversation-starters";
@@ -266,14 +269,14 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
         setRetweetCount(prev => prev + 1);
     }
     
-    const handleReport = () => {
+    const handleAction = (action: string) => {
         toast({
-            title: "Post Reported",
-            description: "Thank you for your feedback. We will review this post.",
+            title: `Action: ${action}`,
+            description: "This functionality would be implemented in a real application.",
         });
     }
 
-    const isMyPost = post.author.id === '2'; // Assuming user '2' is the current user (Bob)
+    const isMyPost = post.author.id === '2'; // Assuming user '2' is the current user
 
   return (
     <Card>
@@ -310,7 +313,7 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
                 <DropdownMenuContent align="end">
                     {isMyPost ? (
                         <>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleAction('Edit')}>
                                 <Edit className="mr-2 h-4 w-4" />
                                 <span>Edit Post</span>
                             </DropdownMenuItem>
@@ -320,11 +323,26 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
                             </DropdownMenuItem>
                         </>
                     ) : (
-                        <DropdownMenuItem onClick={handleReport}>
-                            <Flag className="mr-2 h-4 w-4" />
-                            <span>Report Post</span>
-                        </DropdownMenuItem>
+                        <>
+                            <DropdownMenuItem onClick={() => handleAction('Follow')}>
+                                <UserPlus className="mr-2 h-4 w-4" />
+                                <span>Follow @{author.handle}</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleAction('Report')}>
+                                <Flag className="mr-2 h-4 w-4" />
+                                <span>Report Post</span>
+                            </DropdownMenuItem>
+                        </>
                     )}
+                     <DropdownMenuSeparator />
+                     <DropdownMenuItem onClick={() => handleAction('Save')}>
+                        <Save className="mr-2 h-4 w-4" />
+                        <span>Save Post</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleAction('Share')}>
+                        <Share2 className="mr-2 h-4 w-4" />
+                        <span>Share Post</span>
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
