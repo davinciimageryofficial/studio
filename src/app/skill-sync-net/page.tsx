@@ -329,7 +329,7 @@ function ClientView() {
                                 <Label htmlFor="projectDescription">Project Description</Label>
                                 <Dialog>
                                     <DialogTrigger asChild>
-                                        <Button type="button" variant="outline" size="sm"><SlidersHorizontal className="mr-2 h-4 w-4" /> Add Advanced Requirements</Button>
+                                        <Button type="button" variant="outline" size="sm"><SlidersHorizontal className="mr-2 h-4 w-4" /> Add Requirements</Button>
                                     </DialogTrigger>
                                     <AdvancedRequirementsDialog onSave={handleAdvancedSave} />
                                 </Dialog>
@@ -635,5 +635,3 @@ export default function SkillSyncNetPage() {
         </ClientOnly>
     );
 }
-
-    
