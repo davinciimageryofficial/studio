@@ -49,7 +49,7 @@ export default function WaitlistConfirmationPage() {
   };
   
   const handleAccessCodeSubmit = () => {
-    if (accessCode.toUpperCase() === 'SENTRY2024') {
+    if (accessCode === '2004') {
         toast({
             title: "Access Granted!",
             description: "Welcome to Sentry! You've skipped the waitlist.",
