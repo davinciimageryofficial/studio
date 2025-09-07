@@ -242,6 +242,27 @@ export default function DashboardPage() {
       <div className="mt-8 grid grid-cols-1 gap-8">
         <Card>
             <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Zap className="text-primary" />AD-Sentry</CardTitle>
+                <CardDescription>Launch and manage AI-powered ad programs to promote your profile or services.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button size="lg" className="w-full sm:w-auto">Launch Ad Studio</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Ad Studio Coming Soon</DialogTitle>
+                            <DialogDescription>
+                                The full AD-Sentry studio is under construction. Soon you'll be able to create, target, and analyze ad campaigns right from your dashboard.
+                            </DialogDescription>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader>
                 <CardTitle>Download Sentry</CardTitle>
                 <CardDescription>Get the full desktop experience for maximum productivity.</CardDescription>
             </CardHeader>
@@ -280,31 +301,12 @@ export default function DashboardPage() {
                 </Dialog>
             </CardContent>
         </Card>
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Zap className="text-primary" />AD-Sentry</CardTitle>
-                <CardDescription>Launch and manage AI-powered ad programs to promote your profile or services.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button size="lg" className="w-full sm:w-auto">Launch Ad Studio</Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Ad Studio Coming Soon</DialogTitle>
-                            <DialogDescription>
-                                The full AD-Sentry studio is under construction. Soon you'll be able to create, target, and analyze ad campaigns right from your dashboard.
-                            </DialogDescription>
-                        </DialogHeader>
-                    </DialogContent>
-                </Dialog>
-            </CardContent>
-        </Card>
       </div>
 
     </div>
   );
 }
+
+    
 
     
