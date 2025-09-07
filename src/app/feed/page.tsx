@@ -241,7 +241,6 @@ function CreatePostDialog({
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [linkPreview, setLinkPreview] = useState<{url: string, title: string, description: string, image: string} | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
 
@@ -279,28 +278,6 @@ function CreatePostDialog({
     textarea.focus();
   };
 
-  const extractUrl = (text: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const match = text.match(urlRegex);
-    return match ? match[0] : null;
-  }
-
-  useEffect(() => {
-    const url = extractUrl(postContent);
-    if (url) {
-        // In a real app, you would fetch metadata from this URL.
-        // For now, we'll use placeholder data for the preview.
-        setLinkPreview({
-            url,
-            title: "Link Preview Title",
-            description: "This is a placeholder description for the link you shared. In a real application, we would fetch this from the website.",
-            image: "https://picsum.photos/seed/link/400/200"
-        });
-    } else {
-        setLinkPreview(null);
-    }
-  }, [postContent]);
-
   return (
     <DialogContent className="max-w-2xl">
       <DialogHeader>
@@ -320,16 +297,6 @@ function CreatePostDialog({
             value={postContent}
             onChange={(e) => setPostContent(e.target.value)}
           />
-          {linkPreview && (
-              <Card className="mt-2 overflow-hidden">
-                  <Image src={linkPreview.image} width={600} height={300} alt="Link preview" className="w-full object-cover" />
-                  <div className="p-3">
-                      <h4 className="font-semibold truncate">{linkPreview.title}</h4>
-                      <p className="text-xs text-muted-foreground truncate">{linkPreview.description}</p>
-                      <a href={linkPreview.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline">{linkPreview.url}</a>
-                  </div>
-              </Card>
-          )}
         </div>
       </div>
       <DialogFooter className="justify-between">
@@ -338,7 +305,6 @@ function CreatePostDialog({
             <Button variant="ghost" size="icon" onClick={() => handleTextFormat('italic')}><Italic /></Button>
             <Button variant="ghost" size="icon" onClick={() => handleTextFormat('code')}><Code /></Button>
             <Button variant="ghost" size="icon"><Link2 /></Button>
-            <Button variant="ghost" size="icon"><ImageIcon /></Button>
         </div>
         <div className="flex items-center gap-2">
            <Dialog>
@@ -456,18 +422,6 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
               </DropdownMenu>
             </div>
             <p className="mt-2 whitespace-pre-wrap">{post.content}</p>
-            {post.image && (
-              <div className="mt-4 overflow-hidden rounded-lg border">
-                <Image
-                  src={post.image}
-                  alt="Post image"
-                  width={800}
-                  height={600}
-                  className="h-auto w-full object-cover"
-                  data-ai-hint="abstract texture"
-                />
-              </div>
-            )}
             <div className="mt-4 flex items-center justify-between text-muted-foreground">
               <Button variant="ghost" size="sm" className="flex items-center gap-2">
                 <MessageCircle className="h-5 w-5" />

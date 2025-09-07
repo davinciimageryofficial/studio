@@ -21,7 +21,7 @@ const PostGeneratorOutputSchema = z.object({
   authorId: z.string().describe("The ID of the author."),
   timestamp: z.string().describe("A relative timestamp (e.g., '2h')."),
   content: z.string().describe("The text content of the post."),
-  image: z.string().nullable().describe("A URL for an image to accompany the post, or null."),
+  image: z.string().nullable().describe("Should always be null."),
   likes: z.number().describe("A realistic number of likes."),
   comments: z.number().describe("A realistic number of comments."),
   retweets: z.number().describe("A realistic number of retweets/reposts."),
@@ -54,15 +54,15 @@ const prompt = ai.definePrompt({
   output: { schema: PostGeneratorOutputSchema.omit({ id: true, authorId: true }) },
   prompt: `You are an AI assistant for a professional networking platform called Sentry.
 
-Your task is to generate a realistic social media post for a professional user.
-The post should be engaging and relevant to their industry.
+Your task is to generate a realistic, text-only social media post for a professional user.
+The post should be engaging and relevant to their industry. Do not include images.
 
 The user's persona is: {{{persona}}}.
 
 Generate the following:
 - **timestamp**: A short, relative timestamp (e.g., "5m", "3h", "1d").
 - **content**: The main text of the post. It should be insightful, ask a question, or share an update. Include 1-2 relevant hashtags.
-- **image**: A URL for a relevant placeholder image from picsum.photos (e.g., https://picsum.photos/seed/some-random-string/600/400), or null if no image is needed.
+- **image**: This must always be null.
 - **likes**: A random number of likes between 20 and 500.
 - **comments**: A random number of comments between 5 and 50.
 - **retweets**: A random number of retweets/reposts between 10 and 100.
@@ -84,6 +84,7 @@ const postGeneratorFlow = ai.defineFlow(
     
     return {
         ...output!,
+        image: null, // Ensure image is always null
         id: Date.now(), // Generate a unique ID
         authorId: author.id,
     };
