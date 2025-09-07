@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Zap, AlertCircle, Kanban, CircleDollarSign, Clock, SlidersHorizontal, Settings2, Building, UserPlus } from "lucide-react";
+import { User, Zap, AlertCircle, Kanban, CircleDollarSign, Clock, SlidersHorizontal, Settings2, Building, UserPlus, Barcode } from "lucide-react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { skillSyncNet, type SkillSyncNetInput, type SkillSyncNetOutput } from "@/ai/flows/skill-sync-net";
@@ -391,7 +391,7 @@ function ClientView() {
                 {!loading && !result && !error && (
                     <Card className="flex flex-col items-center justify-center border-dashed min-h-[500px]">
                          <CardHeader className="text-center">
-                            <Kanban className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
+                            <Barcode className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
                             <h2 className="text-2xl font-bold">Your AI-Vetted Match</h2>
                         </CardHeader>
                         <CardContent className="text-center text-muted-foreground p-8 pt-0">
@@ -457,7 +457,7 @@ function FreelancerView() {
                  {!loading && !result && !error && (
                     <Card className="flex flex-col items-center justify-center border-dashed min-h-[500px]">
                         <CardHeader className="text-center">
-                            <Kanban className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
+                            <Barcode className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent className="text-center text-muted-foreground p-8 pt-0">
                             <h2 className="text-2xl font-bold">Your AI-Matched Project</h2>
