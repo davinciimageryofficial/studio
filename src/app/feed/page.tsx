@@ -52,12 +52,14 @@ import { ClientOnly } from "@/components/layout/client-only";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Post = (typeof placeholderPosts)[0];
 
 export default function FeedPage() {
   const [posts, setPosts] = useState<Post[]>(placeholderPosts);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
 
   const addPost = (newPostData: PostGeneratorOutput) => {
     const author = placeholderUsers.find((u) => u.id === newPostData.authorId);
@@ -77,17 +79,43 @@ export default function FeedPage() {
   const handleDeletePost = (postId: number) => {
     setPosts(posts => posts.filter(p => p.id !== postId));
   }
+  
+  const filteredPosts = posts.filter(post => {
+    if (activeTab === "all") return true;
+    if (activeTab === "following") {
+        // Placeholder logic for following
+        const followingIds = ['1', '3', '5'];
+        return followingIds.includes(post.author.id);
+    }
+    return post.author.category === activeTab;
+  });
 
   return (
     <div className="flex h-full">
       <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-2xl">
+           <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="following">Following</TabsTrigger>
+              <TabsTrigger value="design">Design</TabsTrigger>
+              <TabsTrigger value="development">Development</TabsTrigger>
+              <TabsTrigger value="writing">Writing</TabsTrigger>
+            </TabsList>
+          </Tabs>
           <div className="space-y-6">
-            {posts.map((post) => (
+            {filteredPosts.map((post) => (
               <ClientOnly key={post.id}>
                 <PostCard post={post} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
               </ClientOnly>
             ))}
+             {filteredPosts.length === 0 && (
+                <Card>
+                    <CardContent className="p-8 text-center text-muted-foreground">
+                        No posts in this category yet.
+                    </CardContent>
+                </Card>
+             )}
           </div>
         </div>
       </main>
@@ -392,3 +420,4 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
     </Card>
   );
 }
+
