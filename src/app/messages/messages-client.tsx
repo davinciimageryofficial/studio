@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban, UserPlus, User, PlusCircle } from "lucide-react";
+import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban, UserPlus, User, PlusCircle, Users, Building } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -40,6 +40,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 type Message = (typeof placeholderMessages)[0]['messages'][0] & { fromName?: string };
 type Conversation = (typeof placeholderUsers[0]) & { lastMessage: Message, messages?: Message[], type?: 'dm' | 'group' | 'agency' };
@@ -403,6 +404,7 @@ export function MessagesClient() {
 function NewCommunityDialog() {
     const { toast } = useToast();
     const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+    const [creationType, setCreationType] = useState<'group' | 'agency'>('group');
     const connections = placeholderUsers.filter(u => u.id !== '2'); // Exclude current user
 
     const handleSelectUser = (userId: string) => {
@@ -412,29 +414,48 @@ function NewCommunityDialog() {
     }
 
     const handleCreateCommunity = () => {
-        // In a real app, this would trigger a backend call to create the community
+        // In a real app, this would trigger a backend call to create the entity
         toast({
-            title: "Community Created!",
-            description: "Your new group is ready to go.",
+            title: `${creationType === 'group' ? 'Group' : 'Agency'} Created!`,
+            description: `Your new ${creationType} is ready to go.`,
         });
     }
 
     return (
          <DialogContent className="sm:max-w-md">
             <DialogHeader>
-                <DialogTitle>Create a new community</DialogTitle>
+                <DialogTitle>Create a New Space</DialogTitle>
                 <DialogDescription>
-                    Start a new group chat with your connections.
+                    Start a new Group for casual chats or an Agency for professional collaboration.
                 </DialogDescription>
             </DialogHeader>
             <div className="py-4 space-y-4">
-                <div className="space-y-2">
-                    <Label htmlFor="group-name">Group Name</Label>
-                    <Input id="group-name" placeholder="e.g., Q3 Project Team" />
-                </div>
+                <Tabs value={creationType} onValueChange={(value) => setCreationType(value as any)} className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="group"><Users className="mr-2 h-4 w-4" />Group</TabsTrigger>
+                        <TabsTrigger value="agency"><Building className="mr-2 h-4 w-4" />Agency</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="group" className="mt-4 space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="group-name">Group Name</Label>
+                            <Input id="group-name" placeholder="e.g., Q3 Project Team" />
+                        </div>
+                    </TabsContent>
+                    <TabsContent value="agency" className="mt-4 space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="agency-name">Agency Name</Label>
+                            <Input id="agency-name" placeholder="e.g., Innovate Creatives" />
+                        </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="agency-description">Agency Description</Label>
+                            <Textarea id="agency-description" placeholder="A brief summary of your agency's focus." />
+                        </div>
+                    </TabsContent>
+                </Tabs>
+                
                 <div className="space-y-2">
                     <Label>Invite Members</Label>
-                    <ScrollArea className="h-48 rounded-md border">
+                    <ScrollArea className="h-40 rounded-md border">
                         <div className="p-4 space-y-3">
                             {connections.map(user => (
                                 <div key={user.id} className="flex items-center justify-between">
@@ -464,7 +485,7 @@ function NewCommunityDialog() {
                     <Button type="button" variant="secondary">Cancel</Button>
                 </DialogClose>
                 <DialogClose asChild>
-                    <Button type="button" onClick={handleCreateCommunity}>Create Community</Button>
+                    <Button type="button" onClick={handleCreateCommunity}>Create</Button>
                 </DialogClose>
             </DialogFooter>
         </DialogContent>
