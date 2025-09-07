@@ -16,6 +16,8 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogDescription,
+  DialogFooter,
+  DialogClose,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -37,6 +39,7 @@ import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
 
 type Message = (typeof placeholderMessages)[0]['messages'][0] & { fromName?: string };
 type Conversation = (typeof placeholderUsers[0]) & { lastMessage: Message, messages?: Message[], type?: 'dm' | 'group' | 'agency' };
@@ -223,14 +226,7 @@ export function MessagesClient() {
                             <PlusCircle className="h-5 w-5" />
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Create a new community</DialogTitle>
-                            <DialogDescription>
-                                Start a new group chat, agency, or community. This feature is coming soon!
-                            </DialogDescription>
-                        </DialogHeader>
-                    </DialogContent>
+                    <NewCommunityDialog />
                 </Dialog>
             </div>
             <div className="relative mt-4">
@@ -402,4 +398,75 @@ export function MessagesClient() {
       </div>
     </div>
   );
+}
+
+function NewCommunityDialog() {
+    const { toast } = useToast();
+    const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+    const connections = placeholderUsers.filter(u => u.id !== '2'); // Exclude current user
+
+    const handleSelectUser = (userId: string) => {
+        setSelectedUsers(prev => 
+            prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
+        );
+    }
+
+    const handleCreateCommunity = () => {
+        // In a real app, this would trigger a backend call to create the community
+        toast({
+            title: "Community Created!",
+            description: "Your new group is ready to go.",
+        });
+    }
+
+    return (
+         <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+                <DialogTitle>Create a new community</DialogTitle>
+                <DialogDescription>
+                    Start a new group chat with your connections.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+                <div className="space-y-2">
+                    <Label htmlFor="group-name">Group Name</Label>
+                    <Input id="group-name" placeholder="e.g., Q3 Project Team" />
+                </div>
+                <div className="space-y-2">
+                    <Label>Invite Members</Label>
+                    <ScrollArea className="h-48 rounded-md border">
+                        <div className="p-4 space-y-3">
+                            {connections.map(user => (
+                                <div key={user.id} className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <Avatar className="h-9 w-9">
+                                            <AvatarFallback>
+                                                <User className="h-5 w-5" />
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                            <p className="font-semibold">{user.name}</p>
+                                            <p className="text-xs text-muted-foreground">{user.headline}</p>
+                                        </div>
+                                    </div>
+                                    <Checkbox 
+                                        checked={selectedUsers.includes(user.id)}
+                                        onCheckedChange={() => handleSelectUser(user.id)}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </ScrollArea>
+                </div>
+            </div>
+            <DialogFooter>
+                <DialogClose asChild>
+                    <Button type="button" variant="secondary">Cancel</Button>
+                </DialogClose>
+                <DialogClose asChild>
+                    <Button type="button" onClick={handleCreateCommunity}>Create Community</Button>
+                </DialogClose>
+            </DialogFooter>
+        </DialogContent>
+    )
 }
