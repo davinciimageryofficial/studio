@@ -166,7 +166,7 @@ export default function ProfilePage() {
                             </Button>
                         )}
                     </div>
-                    <div className="flex w-full flex-shrink-0 gap-2 sm:w-auto">
+                    <div className="flex w-full flex-shrink-0 flex-col sm:flex-row gap-2 sm:w-auto">
                         {isMyProfile ? (
                             <EditProfileDialog
                                 initialProfile={{ name: user.name, headline: user.headline, bio: user.bio }}
