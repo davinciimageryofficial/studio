@@ -1,12 +1,18 @@
 
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, BarChart2, Users, CreditCard, Eye, DollarSign, Target, MousePointerClick } from "lucide-react";
+import { PlusCircle, Eye, DollarSign, Target, MousePointerClick, Lightbulb, Bot } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 const campaigns = [
   { name: "Summer Sale Promotion", status: "Active", type: "Banner Ad", spend: "$500", conversions: 25 },
@@ -25,10 +31,15 @@ export default function AdStudioPage() {
                 Manage your AI-powered ad campaigns to promote your profile or services.
             </p>
         </div>
-         <Button>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Create Campaign
-        </Button>
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Create Campaign
+                </Button>
+            </DialogTrigger>
+            <CreateCampaignDialog />
+        </Dialog>
       </header>
 
       <Tabs defaultValue="campaigns" className="w-full">
@@ -149,4 +160,68 @@ export default function AdStudioPage() {
       </Tabs>
     </div>
   );
+}
+
+function CreateCampaignDialog() {
+    return (
+        <DialogContent className="max-w-4xl">
+            <DialogHeader>
+                <DialogTitle>Create a New Ad Campaign</DialogTitle>
+                <DialogDescription>
+                    Set up your campaign details, ad creative, and targeting options.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-4">
+                {/* Main Form */}
+                <div className="md:col-span-2 space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="campaign-name">Campaign Name</Label>
+                        <Input id="campaign-name" placeholder="e.g., Summer Freelance Promotion" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="ad-type">Ad Type</Label>
+                        <Select>
+                            <SelectTrigger id="ad-type">
+                                <SelectValue placeholder="Select an ad format" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="banner">Banner Ad</SelectItem>
+                                <SelectItem value="profile-spotlight">Profile Spotlight Ad</SelectItem>
+                                <SelectItem value="product-listing">Product Listing Ad</SelectItem>
+                                <SelectItem value="sponsored-content">Sponsored Content</SelectItem>
+                                <SelectItem value="job-gig">Job or Gig Ad</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="ad-content">Ad Content</Label>
+                        <Textarea id="ad-content" placeholder="Write your ad copy here. What makes your service or profile unique?" className="min-h-32" />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="targeting-keywords">Targeting Keywords</Label>
+                        <Input id="targeting-keywords" placeholder="e.g., React developer, UI/UX design, copywriter" />
+                    </div>
+                </div>
+                {/* Pocket Guide */}
+                <div className="space-y-4 md:border-l md:pl-6">
+                     <h3 className="text-lg font-semibold flex items-center gap-2">
+                        <Lightbulb className="w-5 h-5 text-primary" />
+                        Pocket Guide
+                    </h3>
+                    <div className="p-4 rounded-lg bg-muted border border-dashed text-sm text-muted-foreground space-y-4">
+                         <div className="flex items-start gap-3">
+                            <Bot className="w-6 h-6 flex-shrink-0 mt-1" />
+                            <p>As you fill out the form, I'll provide live feedback and suggestions here to help you create a successful ad campaign.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <DialogFooter>
+                <DialogClose asChild>
+                    <Button type="button" variant="secondary">Cancel</Button>
+                </DialogClose>
+                <Button type="submit">Launch Campaign</Button>
+            </DialogFooter>
+        </DialogContent>
+    );
 }
