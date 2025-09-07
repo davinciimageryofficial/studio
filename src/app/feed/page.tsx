@@ -58,6 +58,26 @@ import { freelanceNiches } from "@/app/skill-sync-net/page";
 
 type Post = (typeof placeholderPosts)[0];
 
+function FeedContent({ posts, onUpdate, onDelete }: { posts: Post[], onUpdate: (post: Post) => void, onDelete: (postId: number) => void }) {
+    return (
+        <div className="space-y-6 mt-6">
+            {posts.length > 0 ? (
+                posts.map((post) => (
+                    <ClientOnly key={post.id}>
+                        <PostCard post={post} onUpdate={onUpdate} onDelete={onDelete} />
+                    </ClientOnly>
+                ))
+            ) : (
+                <Card>
+                    <CardContent className="p-8 text-center text-muted-foreground">
+                        No posts found for this filter.
+                    </CardContent>
+                </Card>
+            )}
+        </div>
+    );
+}
+
 export default function FeedPage() {
   const [posts, setPosts] = useState<Post[]>(placeholderPosts);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
@@ -84,56 +104,56 @@ export default function FeedPage() {
     setPosts(posts => posts.filter(p => p.id !== postId));
   }
   
-  const filteredPosts = posts.filter(post => {
-    if (activeTab === "you-centric") {
-        // Placeholder for personalized feed
-        const followingIds = ['1', '3', '5'];
-        return followingIds.includes(post.author.id);
-    }
-    if (activeTab === "clique") {
-        // Placeholder for community/group feed (designers)
-        return post.author.category === 'design';
-    }
-    if (activeTab === "niche" && selectedNiche) {
-        const nicheLower = selectedNiche.toLowerCase();
-        
-        // Find which main category the niche belongs to
-        const findMainCategory = (niche: string) => {
-            for (const [category, subNiches] of Object.entries(freelanceNiches)) {
-                if (subNiches.map(n => n.toLowerCase()).includes(niche.toLowerCase())) {
-                    return category;
-                }
+  const getFilteredPosts = () => {
+      if (activeTab === "you-centric") {
+          const followingIds = ['1', '3', '5'];
+          return posts.filter(post => followingIds.includes(post.author.id));
+      }
+      if (activeTab === "clique") {
+          return posts.filter(post => post.author.category === 'design');
+      }
+      if (activeTab === "niche") {
+          if (!selectedNiche) return [];
+          const nicheLower = selectedNiche.toLowerCase();
+          
+          const findMainCategory = (niche: string) => {
+              for (const [category, subNiches] of Object.entries(freelanceNiches)) {
+                  if (subNiches.map(n => n.toLowerCase()).includes(niche.toLowerCase())) {
+                      return category;
+                  }
+              }
+              return null;
+          };
+
+          const mainNicheCategory = findMainCategory(selectedNiche);
+          
+          return posts.filter(post => {
+            let authorMatchesCategory = false;
+            if (mainNicheCategory) {
+                if (post.author.category === 'development' && mainNicheCategory === "Development & IT") authorMatchesCategory = true;
+                if (post.author.category === 'design' && mainNicheCategory === "Design & Creative") authorMatchesCategory = true;
+                if (post.author.category === 'writing' && mainNicheCategory === "Writing & Content Creation") authorMatchesCategory = true;
             }
-            return null;
-        };
-
-        const mainNicheCategory = findMainCategory(selectedNiche);
-        let authorMatchesCategory = false;
-
-        if (mainNicheCategory) {
-             if (post.author.category === 'development' && mainNicheCategory === "Development & IT") authorMatchesCategory = true;
-             if (post.author.category === 'design' && mainNicheCategory === "Design & Creative") authorMatchesCategory = true;
-             if (post.author.category === 'writing' && mainNicheCategory === "Writing & Content Creation") authorMatchesCategory = true;
-        }
-
-        const authorSkills = post.author.skills.map(s => s.toLowerCase());
-
-        return authorMatchesCategory || authorSkills.includes(nicheLower);
-    }
-    // If no tab/niche is selected, or logic doesn't match, don't show any posts by default.
-    // The default tab is 'you-centric' so it won't be empty on load.
-    return false;
-  });
+            const authorSkills = post.author.skills.map(s => s.toLowerCase());
+            return authorMatchesCategory || authorSkills.includes(nicheLower);
+          });
+      }
+      return [];
+  };
 
   const handleTabChange = (value: string) => {
       setActiveTab(value);
-      setSelectedNiche(null); // Reset niche when changing main tabs
+      if (value !== 'niche') {
+        setSelectedNiche(null);
+      }
   }
 
   const handleNicheSelect = (niche: string) => {
     setActiveTab('niche');
     setSelectedNiche(niche);
   }
+
+  const filteredPosts = getFilteredPosts();
 
   return (
     <div className="flex h-full">
@@ -167,52 +187,13 @@ export default function FeedPage() {
               </DropdownMenu>
             </TabsList>
             <TabsContent value="you-centric">
-              <div className="space-y-6 mt-6">
-                  {filteredPosts.map((post) => (
-                    <ClientOnly key={post.id}>
-                      <PostCard post={post} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
-                    </ClientOnly>
-                  ))}
-                  {filteredPosts.length === 0 && (
-                      <Card>
-                          <CardContent className="p-8 text-center text-muted-foreground">
-                              No posts found for this filter.
-                          </CardContent>
-                      </Card>
-                  )}
-              </div>
+              <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
             </TabsContent>
             <TabsContent value="clique">
-               <div className="space-y-6 mt-6">
-                  {filteredPosts.map((post) => (
-                    <ClientOnly key={post.id}>
-                      <PostCard post={post} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
-                    </ClientOnly>
-                  ))}
-                  {filteredPosts.length === 0 && (
-                      <Card>
-                          <CardContent className="p-8 text-center text-muted-foreground">
-                              No posts found for this filter.
-                          </CardContent>
-                      </Card>
-                  )}
-              </div>
+               <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
             </TabsContent>
             <TabsContent value="niche">
-               <div className="space-y-6 mt-6">
-                  {filteredPosts.map((post) => (
-                    <ClientOnly key={post.id}>
-                      <PostCard post={post} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
-                    </ClientOnly>
-                  ))}
-                  {filteredPosts.length === 0 && (
-                      <Card>
-                          <CardContent className="p-8 text-center text-muted-foreground">
-                              No posts found for this filter. Try selecting a niche.
-                          </CardContent>
-                      </Card>
-                  )}
-              </div>
+               <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
             </TabsContent>
           </Tabs>
         </div>
@@ -518,5 +499,7 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
     </Card>
   );
 }
+
+    
 
     
