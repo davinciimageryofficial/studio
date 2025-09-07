@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 import { useSidebar } from "../ui/sidebar";
 import { useRouter } from "next/navigation";
 import { ScrollArea } from "../ui/scroll-area";
@@ -128,11 +128,11 @@ export function GlobalSearch() {
   return (
     <div className={cn(
         "sticky top-0 z-30 w-full border-b bg-background/60 py-2 backdrop-blur-xl transition-all duration-300", 
-        showResults ? "h-[calc(100vh-8rem)]" : ""
+        showResults && "h-[calc(100vh-8rem)]"
     )}>
         <div className={cn("container flex items-center justify-center gap-4 px-4", showResults && "flex-col h-full")}>
             <div className={cn(
-                "flex items-center justify-center gap-2", 
+                "flex w-full items-center justify-center gap-2", 
                 searchBarClass,
                 sidebarState === 'collapsed' ? 'max-w-5xl' : 'max-w-3xl',
                 showResults && "!max-w-full"
@@ -280,5 +280,3 @@ export function GlobalSearch() {
     </div>
   );
 }
-
-    

@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 import { useWorkspace } from "@/context/workspace-context";
 import { useFullscreen } from "@/hooks/use-fullscreen";
 import { placeholderUsers } from "@/lib/placeholder-data";
