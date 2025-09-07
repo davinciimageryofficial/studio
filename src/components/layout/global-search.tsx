@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Search, Bell, Lightbulb, User, X, Kanban } from "lucide-react";
+import { Search, Bell, Lightbulb, User, X, Kanban, Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { searchAI, type SearchAIOutput } from "@/ai/flows/search-ai";
@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useSidebar } from "../ui/sidebar";
 import { useRouter } from "next/navigation";
 import { ScrollArea } from "../ui/scroll-area";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Message = {
     sender: 'user' | 'ai';
@@ -27,9 +28,11 @@ export function GlobalSearch() {
   const [loading, setLoading] = useState(false);
   const [isSuggestionsActive, setIsSuggestionsActive] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const { state: sidebarState } = useSidebar();
+  const { state: sidebarState, toggleSidebar } = useSidebar();
   const router = useRouter();
   const followUpInputRef = useRef<HTMLInputElement>(null);
+  const isMobile = useIsMobile();
+
 
   // Load conversation from localStorage on mount
   useEffect(() => {
@@ -134,6 +137,12 @@ export function GlobalSearch() {
                 sidebarState === 'collapsed' ? 'max-w-5xl' : 'max-w-3xl',
                 showResults && "!max-w-full"
             )}>
+                 {isMobile && (
+                    <Button variant="ghost" size="icon" onClick={toggleSidebar}>
+                        <Menu className="h-5 w-5" />
+                        <span className="sr-only">Toggle Sidebar</span>
+                    </Button>
+                )}
                 <form 
                     onSubmit={(e) => { e.preventDefault(); handleSearch(query); }} 
                     className="relative w-full"
@@ -271,3 +280,5 @@ export function GlobalSearch() {
     </div>
   );
 }
+
+    
