@@ -66,7 +66,7 @@ const requirementCategories = {
 type ReqCategory = keyof typeof requirementCategories;
 type SelectedReqs = Record<ReqCategory, Record<string, string[]>>;
 
-const freelanceNiches = {
+export const freelanceNiches = {
     "Writing & Content Creation": ["Blog Writing", "Copywriting", "Technical Writing", "SEO Writing", "Content Strategy", "Ghostwriting", "Grant Writing", "Scriptwriting", "Editing & Proofreading", "Social Media Content Creation", "Press Release Writing", "UX Writing", "Creative Writing", "Resume & Cover Letter Writing", "Newsletter Writing", "Product Description Writing"],
     "Design & Creative": ["Graphic Design", "UI/UX Design", "Web Design", "Illustration", "Animation", "Video Editing", "Photography", "Photo Editing/Retouching", "3D Modeling & Rendering", "Game Art Design", "Presentation Design", "Packaging Design", "Infographic Design", "Book Cover Design", "Fashion Design", "Interior Design"],
     "Development & IT": ["Web Development (frontend, backend, full-stack)", "Mobile App Development", "Software Development", "Game Development", "WordPress Development", "Shopify Development", "E-commerce Platform Development", "Database Management", "API Integration", "DevOps & Cloud Computing", "Cybersecurity Consulting", "Blockchain Development", "AI/ML Model Development", "Chatbot Development", "IT Support & Network Administration", "SaaS Product Development"],
@@ -635,3 +635,5 @@ export default function SkillSyncNetPage() {
         </ClientOnly>
     );
 }
+
+    

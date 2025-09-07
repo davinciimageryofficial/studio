@@ -30,6 +30,7 @@ import {
   Share2,
   UserPlus,
   User,
+  ChevronDown,
 } from "lucide-react";
 import Image from "next/image";
 import { ConversationStarters } from "../conversation-starters";
@@ -50,16 +51,19 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { ClientOnly } from "@/components/layout/client-only";
 import { cn } from "@/lib/utils";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { freelanceNiches } from "@/app/skill-sync-net/page";
 
 type Post = (typeof placeholderPosts)[0];
 
 export default function FeedPage() {
   const [posts, setPosts] = useState<Post[]>(placeholderPosts);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("you-centric");
+  const [selectedNiche, setSelectedNiche] = useState<string | null>(null);
+
 
   const addPost = (newPostData: PostGeneratorOutput) => {
     const author = placeholderUsers.find((u) => u.id === newPostData.authorId);
@@ -81,26 +85,74 @@ export default function FeedPage() {
   }
   
   const filteredPosts = posts.filter(post => {
-    if (activeTab === "all") return true;
-    if (activeTab === "following") {
-        // Placeholder logic for following
+    if (activeTab === "you-centric") {
+        // Placeholder for personalized feed
         const followingIds = ['1', '3', '5'];
         return followingIds.includes(post.author.id);
     }
-    return post.author.category === activeTab;
+    if (activeTab === "clique") {
+        // Placeholder for community/group feed
+        return post.author.category === 'design'; // e.g. show only design posts
+    }
+    if (activeTab === "niche" && selectedNiche) {
+        // Check if the author's category or any of their skills match the niche
+        const nicheLower = selectedNiche.toLowerCase();
+        const authorCategory = post.author.category.toLowerCase();
+        const authorSkills = post.author.skills.map(s => s.toLowerCase());
+
+        const isCategoryInNiche = (category: keyof typeof freelanceNiches) => {
+            return freelanceNiches[category].map(n => n.toLowerCase()).includes(nicheLower);
+        }
+
+        if (authorCategory === 'development' && isCategoryInNiche("Development & IT")) return true;
+        if (authorCategory === 'design' && isCategoryInNiche("Design & Creative")) return true;
+        if (authorCategory === 'writing' && isCategoryInNiche("Writing & Content Creation")) return true;
+
+        return authorSkills.includes(nicheLower);
+    }
+    return false; // Default to no posts if no tab is matched
   });
+
+  const handleTabChange = (value: string) => {
+      setActiveTab(value);
+      setSelectedNiche(null); // Reset niche when changing main tabs
+  }
+
+  const handleNicheSelect = (niche: string) => {
+    setActiveTab('niche');
+    setSelectedNiche(niche);
+  }
 
   return (
     <div className="flex h-full">
       <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-2xl">
-           <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="following">Following</TabsTrigger>
-              <TabsTrigger value="design">Design</TabsTrigger>
-              <TabsTrigger value="development">Development</TabsTrigger>
-              <TabsTrigger value="writing">Writing</TabsTrigger>
+           <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="you-centric">You-Centric</TabsTrigger>
+              <TabsTrigger value="clique">Clique</TabsTrigger>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                   <TabsTrigger value="niche" className={cn(activeTab === 'niche' && "bg-background text-foreground shadow-sm")}>
+                        {selectedNiche || 'Niche'}
+                        <ChevronDown className="ml-2 h-4 w-4" />
+                    </TabsTrigger>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-64" align="center">
+                    {Object.entries(freelanceNiches).map(([category, subNiches]) => (
+                        <DropdownMenuSub key={category}>
+                            <DropdownMenuSubTrigger>{category}</DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent className="p-0">
+                                {subNiches.map(niche => (
+                                    <DropdownMenuItem key={niche} onSelect={() => handleNicheSelect(niche)}>
+                                        {niche}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuSubContent>
+                        </DropdownMenuSub>
+                    ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </TabsList>
           </Tabs>
           <div className="space-y-6">
@@ -112,7 +164,7 @@ export default function FeedPage() {
              {filteredPosts.length === 0 && (
                 <Card>
                     <CardContent className="p-8 text-center text-muted-foreground">
-                        No posts in this category yet.
+                        No posts found for this filter.
                     </CardContent>
                 </Card>
              )}
@@ -421,3 +473,4 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
   );
 }
 
+    
