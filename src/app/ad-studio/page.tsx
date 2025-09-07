@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, Eye, DollarSign, Target, MousePointerClick, Lightbulb, Bot } from "lucide-react";
+import { PlusCircle, Eye, DollarSign, Target, MousePointerClick, Lightbulb } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -208,11 +208,8 @@ function CreateCampaignDialog() {
                         <Lightbulb className="w-5 h-5 text-primary" />
                         Pocket Guide
                     </h3>
-                    <div className="p-4 rounded-lg bg-muted border border-dashed text-sm text-muted-foreground space-y-4">
-                         <div className="flex items-start gap-3">
-                            <Bot className="w-6 h-6 flex-shrink-0 mt-1" />
-                            <p>As you fill out the form, I'll provide live feedback and suggestions here to help you create a successful ad campaign.</p>
-                        </div>
+                    <div className="text-sm text-muted-foreground space-y-4">
+                         <p>As you fill out the form, I'll provide live feedback and suggestions here to help you create a successful ad campaign.</p>
                     </div>
                 </div>
             </div>
