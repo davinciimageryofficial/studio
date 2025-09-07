@@ -155,7 +155,7 @@ export function GlobalSearch() {
                     >
                     <div className="relative w-full transition-all duration-300 ease-in-out">
                       <Input
-                          placeholder="Ask AI anything or type a command..."
+                          placeholder="Ask AI / Control App"
                           className="pl-10"
                           value={query}
                           onChange={(e) => setQuery(e.target.value)}
