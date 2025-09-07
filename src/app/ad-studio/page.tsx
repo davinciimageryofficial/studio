@@ -1,18 +1,27 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, Eye, DollarSign, Target, MousePointerClick, Lightbulb } from "lucide-react";
+import { PlusCircle, Eye, DollarSign, Target, MousePointerClick, Lightbulb, CheckCircle, Sparkles, AlertCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { analyzeAdCampaign, AdCampaignAnalyzerOutput } from "@/ai/flows/ad-campaign-analyzer";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { MediaUploader } from "@/components/ui/media-uploader";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const campaigns = [
   { name: "Summer Sale Promotion", status: "Active", type: "Banner Ad", spend: "$500", conversions: 25 },
@@ -20,6 +29,20 @@ const campaigns = [
   { name: "New Product Launch", status: "Paused", type: "Product Listing", spend: "$1,200", conversions: 88 },
   { name: "Tech Blog Sponsored Post", status: "Finished", type: "Sponsored Content", spend: "$800", conversions: 450 },
 ];
+
+const campaignFormSchema = z.object({
+  campaignName: z.string().min(1, "Campaign name is required."),
+  adType: z.enum(['banner', 'profile-spotlight', 'product-listing', 'sponsored-content', 'job-gig'], {
+      errorMap: () => ({ message: "Please select an ad type." }),
+  }),
+  adContent: z.string().min(1, "Ad content is required."),
+  targetingKeywords: z.string().min(1, "At least one keyword is required."),
+  mediaUrl: z.string().optional(),
+  adLayout: z.enum(['media-top', 'media-left', 'text-only']).default('media-top'),
+});
+
+type CampaignFormValues = z.infer<typeof campaignFormSchema>;
+
 
 export default function AdStudioPage() {
   return (
@@ -163,6 +186,66 @@ export default function AdStudioPage() {
 }
 
 function CreateCampaignDialog() {
+    const [analysis, setAnalysis] = useState<AdCampaignAnalyzerOutput | null>(null);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+
+    const form = useForm<CampaignFormValues>({
+        resolver: zodResolver(campaignFormSchema),
+        defaultValues: {
+            campaignName: "",
+            adContent: "",
+            targetingKeywords: "",
+            adLayout: 'media-top',
+        }
+    });
+
+    const watchedFields = form.watch();
+
+    const triggerAnalysis = useCallback(async (data: CampaignFormValues) => {
+        if (!data.campaignName && !data.adContent && !data.targetingKeywords) {
+            setAnalysis(null);
+            return;
+        }
+        setIsAnalyzing(true);
+        setError(null);
+        try {
+            const result = await analyzeAdCampaign({
+                campaignName: data.campaignName,
+                adContent: data.adContent,
+                targetingKeywords: data.targetingKeywords,
+                adType: data.adType,
+            });
+            setAnalysis(result);
+        } catch (e) {
+            setError("AI analysis failed. Please try again.");
+            console.error(e);
+        } finally {
+            setIsAnalyzing(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (debounceTimeout.current) {
+            clearTimeout(debounceTimeout.current);
+        }
+        debounceTimeout.current = setTimeout(() => {
+            triggerAnalysis(watchedFields);
+        }, 1000); // 1-second debounce
+
+        return () => {
+            if (debounceTimeout.current) {
+                clearTimeout(debounceTimeout.current);
+            }
+        };
+    }, [watchedFields, triggerAnalysis]);
+    
+    const onSubmit = (data: CampaignFormValues) => {
+        console.log("Campaign Submitted:", data);
+        // Here you would typically send the data to your backend
+    };
+
     return (
         <DialogContent className="max-w-4xl">
             <DialogHeader>
@@ -171,54 +254,129 @@ function CreateCampaignDialog() {
                     Set up your campaign details, ad creative, and targeting options.
                 </DialogDescription>
             </DialogHeader>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-4">
-                {/* Main Form */}
-                <div className="md:col-span-2 space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="campaign-name">Campaign Name</Label>
-                        <Input id="campaign-name" placeholder="e.g., Summer Freelance Promotion" />
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-4">
+                    {/* Main Form */}
+                    <div className="md:col-span-2 space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="campaign-name">Campaign Name</Label>
+                            <Input id="campaign-name" placeholder="e.g., Summer Freelance Promotion" {...form.register("campaignName")} />
+                            {form.formState.errors.campaignName && <p className="text-sm text-destructive">{form.formState.errors.campaignName.message}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Ad Type</Label>
+                            <Controller
+                                name="adType"
+                                control={form.control}
+                                render={({ field }) => (
+                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <SelectTrigger><SelectValue placeholder="Select an ad format" /></SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="banner">Banner Ad</SelectItem>
+                                            <SelectItem value="profile-spotlight">Profile Spotlight Ad</SelectItem>
+                                            <SelectItem value="product-listing">Product Listing Ad</SelectItem>
+                                            <SelectItem value="sponsored-content">Sponsored Content</SelectItem>
+                                            <SelectItem value="job-gig">Job or Gig Ad</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
+                             {form.formState.errors.adType && <p className="text-sm text-destructive">{form.formState.errors.adType.message}</p>}
+                        </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="ad-content">Ad Content</Label>
+                            <Textarea id="ad-content" placeholder="Write your ad copy here..." className="min-h-32" {...form.register("adContent")} />
+                            {form.formState.errors.adContent && <p className="text-sm text-destructive">{form.formState.errors.adContent.message}</p>}
+                        </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="targeting-keywords">Targeting Keywords</Label>
+                            <Input id="targeting-keywords" placeholder="e.g., React developer, UI/UX design, copywriter" {...form.register("targetingKeywords")} />
+                             {form.formState.errors.targetingKeywords && <p className="text-sm text-destructive">{form.formState.errors.targetingKeywords.message}</p>}
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label>Media Upload</Label>
+                                <Controller name="mediaUrl" control={form.control} render={({ field }) => (
+                                    <MediaUploader onUpload={(url) => field.onChange(url)} />
+                                )} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Ad Layout</Label>
+                                <Controller name="adLayout" control={form.control} render={({ field }) => (
+                                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="space-y-1">
+                                        <div className="flex items-center space-x-2"><RadioGroupItem value="media-top" id="l1" /><Label htmlFor="l1">Media on Top</Label></div>
+                                        <div className="flex items-center space-x-2"><RadioGroupItem value="media-left" id="l2" /><Label htmlFor="l2">Media on Left</Label></div>
+                                        <div className="flex items-center space-x-2"><RadioGroupItem value="text-only" id="l3" /><Label htmlFor="l3">Text Only</Label></div>
+                                    </RadioGroup>
+                                )} />
+                            </div>
+                        </div>
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="ad-type">Ad Type</Label>
-                        <Select>
-                            <SelectTrigger id="ad-type">
-                                <SelectValue placeholder="Select an ad format" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="banner">Banner Ad</SelectItem>
-                                <SelectItem value="profile-spotlight">Profile Spotlight Ad</SelectItem>
-                                <SelectItem value="product-listing">Product Listing Ad</SelectItem>
-                                <SelectItem value="sponsored-content">Sponsored Content</SelectItem>
-                                <SelectItem value="job-gig">Job or Gig Ad</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="ad-content">Ad Content</Label>
-                        <Textarea id="ad-content" placeholder="Write your ad copy here. What makes your service or profile unique?" className="min-h-32" />
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="targeting-keywords">Targeting Keywords</Label>
-                        <Input id="targeting-keywords" placeholder="e.g., React developer, UI/UX design, copywriter" />
+                    {/* Pocket Guide */}
+                    <div className="space-y-4 md:border-l md:pl-6">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                           <Lightbulb className="w-5 h-5 text-primary" />
+                           Pocket Guide
+                        </h3>
+                        <div className="text-sm space-y-4">
+                             {isAnalyzing ? (
+                                <div className="space-y-4">
+                                    <Skeleton className="h-4 w-1/3" />
+                                    <Skeleton className="h-8 w-full" />
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-5/6" />
+                                </div>
+                            ) : error ? (
+                                 <Alert variant="destructive">
+                                    <AlertCircle className="h-4 w-4" />
+                                    <AlertTitle>Analysis Error</AlertTitle>
+                                    <AlertDescription>{error}</AlertDescription>
+                                </Alert>
+                            ) : analysis ? (
+                                <div className="space-y-4">
+                                    {analysis.campaignNameStrength && (
+                                        <div>
+                                            <h4 className="font-semibold">Campaign Name Strength</h4>
+                                            <Progress value={analysis.campaignNameStrength.score} className="my-2 h-2" />
+                                            <p className="text-muted-foreground">{analysis.campaignNameStrength.feedback}</p>
+                                        </div>
+                                    )}
+                                     {analysis.adContentSuggestions && analysis.adContentSuggestions.length > 0 && (
+                                        <div>
+                                            <h4 className="font-semibold">Content Suggestions</h4>
+                                            <ul className="list-disc list-inside text-muted-foreground mt-1 space-y-1">
+                                                {analysis.adContentSuggestions.map((s, i) => <li key={i}>{s}</li>)}
+                                            </ul>
+                                        </div>
+                                    )}
+                                     {analysis.keywordSuggestions && analysis.keywordSuggestions.length > 0 && (
+                                        <div>
+                                            <h4 className="font-semibold">Keyword Suggestions</h4>
+                                             <ul className="list-disc list-inside text-muted-foreground mt-1 space-y-1">
+                                                {analysis.keywordSuggestions.map((s, i) => <li key={i}>{s}</li>)}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="text-muted-foreground">
+                                    <p>As you fill out the form, I'll provide live feedback and suggestions here to help you create a successful ad campaign.</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
-                {/* Pocket Guide */}
-                <div className="space-y-4 md:border-l md:pl-6">
-                     <h3 className="text-lg font-semibold flex items-center gap-2">
-                        <Lightbulb className="w-5 h-5 text-primary" />
-                        Pocket Guide
-                    </h3>
-                    <div className="text-sm text-muted-foreground space-y-4">
-                         <p>As you fill out the form, I'll provide live feedback and suggestions here to help you create a successful ad campaign.</p>
-                    </div>
-                </div>
-            </div>
-            <DialogFooter>
-                <DialogClose asChild>
-                    <Button type="button" variant="secondary">Cancel</Button>
-                </DialogClose>
-                <Button type="submit">Launch Campaign</Button>
-            </DialogFooter>
+                 <DialogFooter>
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary">Cancel</Button>
+                    </DialogClose>
+                    <Button type="submit">
+                        <CheckCircle className="mr-2 h-4 w-4" />
+                        Launch Campaign
+                    </Button>
+                </DialogFooter>
+            </form>
         </DialogContent>
     );
 }
