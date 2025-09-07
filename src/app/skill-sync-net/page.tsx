@@ -511,7 +511,7 @@ function FreelancerMatchCard({ freelancer }: { freelancer: NonNullable<NonNullab
      return (
         <Card className="shadow-lg">
             <CardHeader>
-                <h2 className="text-2xl font-bold text-center mb-2">Your AI-Vetted Match</h2>
+                <h2 className="text-xl font-bold text-center mb-2">Your AI-Vetted Match</h2>
                 <div className="flex items-center gap-4 pt-4">
                     <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                         <User className="h-8 w-8 text-muted-foreground" />
@@ -554,7 +554,7 @@ function ProjectMatchCard({ project }: { project: NonNullable<NonNullable<SkillS
     return (
         <Card className="shadow-lg">
             <CardHeader>
-                <h2 className="text-2xl font-bold text-center mb-2">Your AI-Matched Project</h2>
+                <h2 className="text-xl font-bold text-center mb-2">Your AI-Matched Project</h2>
                 <div className="pt-4">
                     <CardTitle className="text-2xl">{project.title}</CardTitle>
                     <CardDescription>Posted by: {project.clientName}</CardDescription>
@@ -635,3 +635,4 @@ export default function SkillSyncNetPage() {
         </ClientOnly>
     );
 }
+
