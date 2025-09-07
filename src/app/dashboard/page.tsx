@@ -80,7 +80,7 @@ export default function DashboardPage() {
           Welcome back, {placeholderUsers[1].name}. Here's a summary of your activity.
         </p>
       </header>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Stat Cards */}
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -209,7 +209,7 @@ export default function DashboardPage() {
         </DropdownMenu>
       </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Engagement Chart */}
         <Card className="lg:col-span-2">
             <CardHeader>
@@ -262,7 +262,7 @@ export default function DashboardPage() {
         </Card>
       </div>
       
-      <div className="mt-8 grid grid-cols-1 gap-8">
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Zap className="text-primary" />AD-Sentry</CardTitle>
