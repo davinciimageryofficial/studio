@@ -7,7 +7,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { placeholderPosts, placeholderUsers } from "@/lib/placeholder-data";
 import {
@@ -31,6 +31,8 @@ import {
   UserPlus,
   User,
   ChevronDown,
+  DollarSign,
+  Info,
 } from "lucide-react";
 import Image from "next/image";
 import { ConversationStarters } from "../conversation-starters";
@@ -55,8 +57,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { freelanceNiches } from "@/app/skill-sync-net/page";
-
-type Post = (typeof placeholderPosts)[0];
+import { Post } from "@/lib/placeholder-data";
+import { Badge } from "@/components/ui/badge";
 
 function FeedContent({ posts, onUpdate, onDelete }: { posts: Post[], onUpdate: (post: Post) => void, onDelete: (postId: number) => void }) {
     return (
@@ -91,6 +93,7 @@ export default function FeedPage() {
       const newPost: Post = {
         ...newPostData,
         author,
+        type: 'post',
       };
       setPosts((prevPosts) => [newPost, ...prevPosts]);
     }
@@ -106,7 +109,7 @@ export default function FeedPage() {
   
   const getFilteredPosts = () => {
       if (activeTab === "you-centric") {
-          const followingIds = ['1', '3', '5'];
+          const followingIds = ['1', '3', '5', '7'];
           return posts.filter(post => followingIds.includes(post.author.id));
       }
       if (activeTab === "clique") {
@@ -356,13 +359,28 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
 
   return (
     <Card>
+       {post.type === 'job' && post.jobDetails && (
+        <CardHeader className="bg-muted/50 p-4">
+            <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                     <Briefcase className="h-6 w-6" />
+                </div>
+                <div>
+                     <h3 className="font-semibold">{post.jobDetails.title}</h3>
+                     <p className="text-sm text-muted-foreground">Opportunity from {author.name}</p>
+                </div>
+            </div>
+        </CardHeader>
+      )}
       <CardContent className="p-4">
         <div className="flex items-start gap-4">
-          <Avatar>
-            <AvatarFallback>
-                <User className="h-5 w-5" />
-            </AvatarFallback>
-          </Avatar>
+          {post.type === 'post' && (
+            <Avatar>
+                <AvatarFallback>
+                    <User className="h-5 w-5" />
+                </AvatarFallback>
+            </Avatar>
+          )}
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <div>
@@ -422,6 +440,30 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
               </DropdownMenu>
             </div>
             <p className="mt-2 whitespace-pre-wrap">{post.content}</p>
+
+            {post.type === 'job' && post.jobDetails && (
+                <div className="mt-4 space-y-3 rounded-lg border p-4">
+                    <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-2 font-medium">
+                            <DollarSign className="h-4 w-4 text-muted-foreground" />
+                            <span>Budget</span>
+                        </div>
+                        <span>{post.jobDetails.budget}</span>
+                    </div>
+                     <div className="flex items-start justify-between text-sm">
+                        <div className="flex items-center gap-2 font-medium">
+                            <Info className="h-4 w-4 text-muted-foreground" />
+                            <span>Keywords</span>
+                        </div>
+                         <div className="flex flex-wrap justify-end gap-2">
+                            {post.jobDetails.keywords.map(keyword => (
+                                <Badge key={keyword} variant="secondary">{keyword}</Badge>
+                            ))}
+                        </div>
+                    </div>
+                    <Button className="w-full mt-2">Apply Now</Button>
+                </div>
+            )}
             <div className="mt-4 flex items-center justify-between text-muted-foreground">
               <Button variant="ghost" size="sm" className="flex items-center gap-2">
                 <MessageCircle className="h-5 w-5" />
@@ -453,7 +495,3 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
     </Card>
   );
 }
-
-    
-
-    

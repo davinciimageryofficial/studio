@@ -108,19 +108,68 @@ export const placeholderUsers: User[] = [
     company: "Clearly Documented",
     verified: true,
   },
+  {
+    id: "7",
+    name: "Future Labs",
+    handle: "futurelabs",
+    headline: "Innovation & Tech Consulting",
+    bio: "We partner with startups and enterprises to build cutting-edge technology.",
+    avatar: "https://picsum.photos/seed/1020/200/200",
+    coverImage: "https://picsum.photos/seed/cover7/1200/400",
+    skills: ["AI/ML", "Web3", "Product Strategy"],
+    portfolio: [],
+    category: "development",
+  },
 ];
 
-export const placeholderPosts = [
+export type Post = {
+  id: number;
+  author: User;
+  timestamp: string;
+  content: string;
+  image: string | null;
+  likes: number;
+  comments: number;
+  retweets: number;
+  views: string;
+  type: 'post' | 'job';
+  jobDetails?: {
+    title: string;
+    budget: string;
+    keywords: string[];
+  }
+};
+
+
+export const placeholderPosts: Post[] = [
   {
     id: 1,
     author: placeholderUsers[0],
     timestamp: "2h",
     content: `Just wrapped up a major redesign for a client's e-commerce platform. Focused on streamlining the checkout process and improving mobile navigation. The early feedback has been amazing! #UIDesign #UX`,
-    image: "https://picsum.photos/seed/ui-ux-design/800/600",
+    image: null,
     likes: 102,
     comments: 15,
     retweets: 23,
     views: "10.2k",
+    type: 'post',
+  },
+  {
+    id: 17,
+    author: placeholderUsers[6],
+    timestamp: "8h",
+    content: `We're looking for a freelance Next.js developer for a 3-month contract to help us build a new marketing analytics dashboard. The ideal candidate has experience with data visualization libraries like D3.js or Recharts.`,
+    image: null,
+    likes: 45,
+    comments: 12,
+    retweets: 18,
+    views: "12.1k",
+    type: 'job',
+    jobDetails: {
+      title: "Freelance Next.js Developer",
+      budget: "$8,000 - $12,000",
+      keywords: ["Next.js", "Data Viz", "Contract"],
+    }
   },
   {
     id: 2,
@@ -132,17 +181,36 @@ export const placeholderPosts = [
     comments: 45,
     retweets: 88,
     views: "25.1k",
+    type: 'post',
   },
   {
     id: 3,
     author: placeholderUsers[2],
     timestamp: "1d",
     content: `Published a new blog post on "The Ultimate Guide to SEO in 2024". It covers everything from keyword research to link building strategies. Hope you find it useful! Link in bio. #SEO #ContentMarketing`,
-    image: "https://picsum.photos/seed/seo-guide/800/600",
+    image: null,
     likes: 89,
     comments: 22,
     retweets: 41,
     views: "15.7k",
+    type: 'post',
+  },
+   {
+    id: 18,
+    author: placeholderUsers[0],
+    timestamp: "1d",
+    content: `Hiring a UX writer to help us refine the copy for our new mobile application. This is a short-term project focused on onboarding flows and in-app notifications. Strong portfolio is a must!`,
+    image: null,
+    likes: 77,
+    comments: 19,
+    retweets: 25,
+    views: "9.8k",
+    type: 'job',
+    jobDetails: {
+      title: "Freelance UX Writer",
+      budget: "$3,000",
+      keywords: ["UX Writing", "Mobile", "Copywriting"],
+    }
   },
   {
     id: 4,
@@ -154,28 +222,31 @@ export const placeholderPosts = [
     comments: 31,
     retweets: 50,
     views: "18.3k",
+    type: 'post',
   },
   {
     id: 5,
     author: placeholderUsers[4],
     timestamp: "2d",
     content: `Experimenting with some new branding concepts for a client in the fintech space. Trying to balance a feeling of security with a modern, approachable vibe. It's a fun challenge! #branding #design #fintech`,
-    image: "https://picsum.photos/seed/fintech-brand/800/600",
+    image: null,
     likes: 95,
     comments: 12,
     retweets: 18,
     views: "8.9k",
+    type: 'post',
   },
   {
     id: 6,
     author: placeholderUsers[5],
     timestamp: "3d",
     content: `My latest article on 'The Importance of Clear API Documentation' is now live. Good docs are a feature, not a chore. Check it out and let me know your thoughts! #techwriting #documentation #api`,
-    image: "https://picsum.photos/seed/api-docs/800/600",
+    image: null,
     likes: 72,
     comments: 18,
     retweets: 33,
     views: "7.1k",
+    type: 'post',
   },
   {
     id: 7,
@@ -187,17 +258,19 @@ export const placeholderPosts = [
     comments: 68,
     retweets: 45,
     views: "22.5k",
+    type: 'post',
   },
   {
     id: 8,
     author: placeholderUsers[0],
     timestamp: "4d",
     content: `Thinking about accessibility from the start of a project is crucial. It's not an add-on, it's a core part of creating inclusive and effective products. What are your go-to a11y resources? #accessibility #a11y #uxdesign`,
-    image: "https://picsum.photos/seed/accessibility/800/600",
+    image: null,
     likes: 121,
     comments: 24,
     retweets: 30,
     views: "11.4k",
+    type: 'post',
   },
   {
     id: 9,
@@ -209,17 +282,19 @@ export const placeholderPosts = [
     comments: 9,
     retweets: 21,
     views: "6.8k",
+    type: 'post',
   },
   {
     id: 10,
     author: placeholderUsers[3],
     timestamp: "5d",
     content: `Refactoring a legacy codebase can be daunting, but so rewarding. Finding those small wins and performance improvements is the best feeling. #coding #softwaredevelopment #python`,
-    image: "https://picsum.photos/seed/refactoring/800/600",
+    image: null,
     likes: 133,
     comments: 29,
     retweets: 35,
     views: "14.9k",
+    type: 'post',
   },
   {
     id: 11,
@@ -231,6 +306,7 @@ export const placeholderPosts = [
     comments: 35,
     retweets: 60,
     views: "20.1k",
+    type: 'post',
   },
   {
     id: 12,
@@ -242,28 +318,31 @@ export const placeholderPosts = [
     comments: 11,
     retweets: 25,
     views: "5.2k",
+    type: 'post',
   },
   {
     id: 13,
     author: placeholderUsers[0],
     timestamp: "1w",
     content: `Just finished a user research sprint for a new mobile app. The insights we gathered are going to be a game-changer for the product roadmap. Never underestimate the power of talking to your users! #userresearch #ux`,
-    image: "https://picsum.photos/seed/user-research/800/600",
+    image: null,
     likes: 142,
     comments: 19,
     retweets: 41,
     views: "13.5k",
+    type: 'post',
   },
   {
     id: 14,
     author: placeholderUsers[1],
     timestamp: "1w",
     content: `The new features in Next.js 15 are looking incredible. The team is really pushing the boundaries of what's possible on the web. Can't wait to start building with it. #webdev #nextjs`,
-    image: "https://picsum.photos/seed/nextjs-15/800/600",
+    image: null,
     likes: 301,
     comments: 55,
     retweets: 110,
     views: "35.6k",
+    type: 'post',
   },
   {
     id: 15,
@@ -275,17 +354,19 @@ export const placeholderPosts = [
     comments: 14,
     retweets: 28,
     views: "9.1k",
+    type: 'post',
   },
   {
     id: 16,
     author: placeholderUsers[2],
     timestamp: "2w",
     content: `What are your best tips for beating writer's block? My go-to is to step away from the screen and go for a long walk. It works wonders! #writing #creativity`,
-    image: "https://picsum.photos/seed/writers-block/800/600",
+    image: null,
     likes: 78,
     comments: 34,
     retweets: 19,
     views: "7.7k",
+    type: 'post',
   },
 ];
 
