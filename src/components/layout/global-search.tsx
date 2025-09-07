@@ -33,19 +33,12 @@ export function GlobalSearch() {
   const followUpInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
 
-
-  // Load conversation from localStorage on mount
-  useEffect(() => {
-    const savedConversation = localStorage.getItem("geminiChatHistory");
-    if (savedConversation) {
-      setConversation(JSON.parse(savedConversation));
-    }
-  }, []);
-
   // Save conversation to localStorage whenever it changes
   useEffect(() => {
     if (conversation.length > 0) {
       localStorage.setItem("geminiChatHistory", JSON.stringify(conversation));
+    } else {
+      localStorage.removeItem("geminiChatHistory");
     }
   }, [conversation]);
 
@@ -112,7 +105,7 @@ export function GlobalSearch() {
 
   const closeSearch = () => {
     setShowResults(false);
-    // Do not clear conversation on close, so it persists when reopened
+    setConversation([]); // Clear conversation on close
   }
 
   // Effect to show results if there's a conversation history
@@ -280,3 +273,5 @@ export function GlobalSearch() {
     </div>
   );
 }
+
+    
