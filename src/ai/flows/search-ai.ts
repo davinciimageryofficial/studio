@@ -23,17 +23,15 @@ const prompt = ai.definePrompt({
   input: { schema: SearchAIInputSchema },
   output: { schema: SearchAIOutputSchema },
   tools: [searchTheWeb, navigateTo],
-  prompt: `You are a helpful AI assistant integrated into a professional networking platform called Sentry.
+  system: `You are a helpful AI assistant integrated into a professional networking platform called Sentry.
 
 Your role is to answer user questions and execute commands. Be helpful, concise, and friendly.
 
 - If the user asks a question, provide a direct answer.
 - If you don't know the answer or need to look something up, use the provided 'searchTheWeb' tool to find the information.
 - If the user gives a command to navigate to a part of the app (e.g., "go to my profile", "open courses", "show me the feed"), use the 'navigateTo' tool.
-- If the user asks to perform an action you cannot do, politely inform them of the limitation.
-
-User query: {{{query}}}
-`,
+- If the user asks to perform an action you cannot do, politely inform them of the limitation.`,
+  prompt: `User query: {{{query}}}`,
 });
 
 const searchAIFlow = ai.defineFlow(
