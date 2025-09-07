@@ -6,12 +6,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, X, Apple, AppWindow, User } from "lucide-react";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, X, Apple, AppWindow, User, Zap } from "lucide-react";
 import Link from "next/link";
 import { EngagementChart } from "./charts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 
 export default function DashboardPage() {
@@ -238,27 +239,31 @@ export default function DashboardPage() {
         </Card>
       </div>
       
-      {!isAppDownloaded && (
-        <div className="mt-8">
+      <div className="mt-8">
             <Card>
                 <CardHeader>
-                    <CardTitle>Get Sentry for Desktop</CardTitle>
-                    <CardDescription>Experience Sentry on your desktop for a more integrated and focused workflow.</CardDescription>
+                    <CardTitle className="flex items-center gap-2"><Zap className="text-primary" />AD-Sentry</CardTitle>
+                    <CardDescription>Launch and manage AI-powered ad programs to promote your profile or services.</CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col sm:flex-row gap-4">
-                    <Button size="lg" className="w-full sm:w-auto" onClick={() => setIsAppDownloaded(true)}>
-                        <Apple className="mr-2 h-5 w-5" />
-                        Download for Mac
-                    </Button>
-                    <Button size="lg" className="w-full sm:w-auto" onClick={() => setIsAppDownloaded(true)}>
-                        <AppWindow className="mr-2 h-5 w-5" />
-                        Download for Windows
-                    </Button>
+                <CardContent>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button size="lg" className="w-full sm:w-auto">Launch Ad Studio</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Ad Studio Coming Soon</DialogTitle>
+                                <DialogDescription>
+                                    The full AD-Sentry studio is under construction. Soon you'll be able to create, target, and analyze ad campaigns right from your dashboard.
+                                </DialogDescription>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
                 </CardContent>
             </Card>
         </div>
-      )}
 
     </div>
   );
 }
+
