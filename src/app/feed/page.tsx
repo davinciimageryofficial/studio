@@ -160,7 +160,7 @@ export default function FeedPage() {
       <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-2xl">
            <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-3 bg-black text-muted-foreground">
               <TabsTrigger value="you-centric">You-Centric</TabsTrigger>
               <TabsTrigger value="clique">Clique</TabsTrigger>
               <DropdownMenu>
