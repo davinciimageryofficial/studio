@@ -35,6 +35,15 @@ export function GlobalSearch() {
 
   // Save conversation to localStorage whenever it changes
   useEffect(() => {
+    // By removing this effect, we prevent loading chat history.
+    // If you want to re-enable it, uncomment the following lines:
+    // const savedHistory = localStorage.getItem("geminiChatHistory");
+    // if (savedHistory) {
+    //   setConversation(JSON.parse(savedHistory));
+    // }
+  }, []);
+
+  useEffect(() => {
     if (conversation.length > 0) {
       localStorage.setItem("geminiChatHistory", JSON.stringify(conversation));
     } else {
@@ -273,5 +282,3 @@ export function GlobalSearch() {
     </div>
   );
 }
-
-    
