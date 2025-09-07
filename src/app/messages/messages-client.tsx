@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban, UserPlus, User } from "lucide-react";
+import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban, UserPlus, User, PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -35,23 +36,26 @@ import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "next/navigation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Message = (typeof placeholderMessages)[0]['messages'][0] & { fromName?: string };
-type Conversation = (typeof placeholderUsers[0]) & { lastMessage: Message, messages?: Message[] };
+type Conversation = (typeof placeholderUsers[0]) & { lastMessage: Message, messages?: Message[], type?: 'dm' | 'group' | 'agency' };
 
 export function MessagesClient() {
   const [conversations, setConversations] = useState<Conversation[]>(() => 
-    placeholderMessages.map(msg => {
+    placeholderMessages.map((msg, index) => {
         const user = placeholderUsers.find(u => u.id === msg.userId);
         return { 
             ...user!, 
             lastMessage: msg.messages[msg.messages.length - 1],
-            messages: msg.messages
+            messages: msg.messages,
+            type: index % 3 === 0 ? 'group' : (index % 3 === 1 ? 'agency' : 'dm'),
         };
   }));
   const [activeConversationId, setActiveConversationId] = useState(conversations[0]?.id);
   const [fontSize, setFontSize] = useState("base");
   const [showAvatars, setShowAvatars] = useState(true);
+  const [activeTab, setActiveTab] = useState("all");
   
   const activeConversation = conversations.find(c => c.id === activeConversationId);
   const [newMessage, setNewMessage] = useState("");
@@ -197,6 +201,13 @@ export function MessagesClient() {
     handleTextFormat('insertHTML', snippet);
   }
 
+  const filteredConversations = conversations.filter(convo => {
+    if (activeTab === 'all') return true;
+    if (activeTab === 'groups') return convo.type === 'group';
+    if (activeTab === 'agencies') return convo.type === 'agency';
+    return true;
+  });
+
 
   return (
     <div className="h-[calc(100vh-4.5rem)]">
@@ -206,26 +217,38 @@ export function MessagesClient() {
           <div className="border-b p-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold">Messages</h2>
-                 <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" onClick={() => setShowAvatars(!showAvatars)}>
-                                {showAvatars ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>{showAvatars ? 'Hide profile pictures' : 'Show profile pictures'}</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
+                 <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <PlusCircle className="h-5 w-5" />
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Create a new community</DialogTitle>
+                            <DialogDescription>
+                                Start a new group chat, agency, or community. This feature is coming soon!
+                            </DialogDescription>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
             </div>
             <div className="relative mt-4">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input placeholder="Search messages..." className="pl-10" />
             </div>
           </div>
+
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="p-2">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="groups">Groups</TabsTrigger>
+              <TabsTrigger value="agencies">Agencies</TabsTrigger>
+            </TabsList>
+          </Tabs>
+
           <ScrollArea className="flex-1">
-            {conversations.map((convo) => convo.id && (
+            {filteredConversations.map((convo) => convo.id && (
               <button
                 key={convo.id}
                 onClick={() => setActiveConversationId(convo.id)}
