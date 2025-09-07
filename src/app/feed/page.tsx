@@ -91,26 +91,38 @@ export default function FeedPage() {
         return followingIds.includes(post.author.id);
     }
     if (activeTab === "clique") {
-        // Placeholder for community/group feed
-        return post.author.category === 'design'; // e.g. show only design posts
+        // Placeholder for community/group feed (designers)
+        return post.author.category === 'design';
     }
     if (activeTab === "niche" && selectedNiche) {
-        // Check if the author's category or any of their skills match the niche
         const nicheLower = selectedNiche.toLowerCase();
-        const authorCategory = post.author.category.toLowerCase();
-        const authorSkills = post.author.skills.map(s => s.toLowerCase());
+        
+        // Find which main category the niche belongs to
+        const findMainCategory = (niche: string) => {
+            for (const [category, subNiches] of Object.entries(freelanceNiches)) {
+                if (subNiches.map(n => n.toLowerCase()).includes(niche.toLowerCase())) {
+                    return category;
+                }
+            }
+            return null;
+        };
 
-        const isCategoryInNiche = (category: keyof typeof freelanceNiches) => {
-            return freelanceNiches[category].map(n => n.toLowerCase()).includes(nicheLower);
+        const mainNicheCategory = findMainCategory(selectedNiche);
+        let authorMatchesCategory = false;
+
+        if (mainNicheCategory) {
+             if (post.author.category === 'development' && mainNicheCategory === "Development & IT") authorMatchesCategory = true;
+             if (post.author.category === 'design' && mainNicheCategory === "Design & Creative") authorMatchesCategory = true;
+             if (post.author.category === 'writing' && mainNicheCategory === "Writing & Content Creation") authorMatchesCategory = true;
         }
 
-        if (authorCategory === 'development' && isCategoryInNiche("Development & IT")) return true;
-        if (authorCategory === 'design' && isCategoryInNiche("Design & Creative")) return true;
-        if (authorCategory === 'writing' && isCategoryInNiche("Writing & Content Creation")) return true;
+        const authorSkills = post.author.skills.map(s => s.toLowerCase());
 
-        return authorSkills.includes(nicheLower);
+        return authorMatchesCategory || authorSkills.includes(nicheLower);
     }
-    return false; // Default to no posts if no tab is matched
+    // If no tab/niche is selected, or logic doesn't match, don't show any posts by default.
+    // The default tab is 'you-centric' so it won't be empty on load.
+    return false;
   });
 
   const handleTabChange = (value: string) => {
@@ -154,21 +166,55 @@ export default function FeedPage() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </TabsList>
+            <TabsContent value="you-centric">
+              <div className="space-y-6 mt-6">
+                  {filteredPosts.map((post) => (
+                    <ClientOnly key={post.id}>
+                      <PostCard post={post} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
+                    </ClientOnly>
+                  ))}
+                  {filteredPosts.length === 0 && (
+                      <Card>
+                          <CardContent className="p-8 text-center text-muted-foreground">
+                              No posts found for this filter.
+                          </CardContent>
+                      </Card>
+                  )}
+              </div>
+            </TabsContent>
+            <TabsContent value="clique">
+               <div className="space-y-6 mt-6">
+                  {filteredPosts.map((post) => (
+                    <ClientOnly key={post.id}>
+                      <PostCard post={post} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
+                    </ClientOnly>
+                  ))}
+                  {filteredPosts.length === 0 && (
+                      <Card>
+                          <CardContent className="p-8 text-center text-muted-foreground">
+                              No posts found for this filter.
+                          </CardContent>
+                      </Card>
+                  )}
+              </div>
+            </TabsContent>
+            <TabsContent value="niche">
+               <div className="space-y-6 mt-6">
+                  {filteredPosts.map((post) => (
+                    <ClientOnly key={post.id}>
+                      <PostCard post={post} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
+                    </ClientOnly>
+                  ))}
+                  {filteredPosts.length === 0 && (
+                      <Card>
+                          <CardContent className="p-8 text-center text-muted-foreground">
+                              No posts found for this filter. Try selecting a niche.
+                          </CardContent>
+                      </Card>
+                  )}
+              </div>
+            </TabsContent>
           </Tabs>
-          <div className="space-y-6">
-            {filteredPosts.map((post) => (
-              <ClientOnly key={post.id}>
-                <PostCard post={post} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
-              </ClientOnly>
-            ))}
-             {filteredPosts.length === 0 && (
-                <Card>
-                    <CardContent className="p-8 text-center text-muted-foreground">
-                        No posts found for this filter.
-                    </CardContent>
-                </Card>
-             )}
-          </div>
         </div>
       </main>
       <aside className="hidden w-80 flex-col border-l p-6 lg:flex">
