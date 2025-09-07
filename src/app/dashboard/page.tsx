@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, X, Apple, AppWindow, User, Zap } from "lucide-react";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, X, Apple, AppWindow, User, Zap, Circle } from "lucide-react";
 import Link from "next/link";
 import { EngagementChart } from "./charts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -269,8 +269,8 @@ export default function DashboardPage() {
             <CardContent className="flex flex-col sm:flex-row gap-4">
                 <Dialog open={isAppDownloaded} onOpenChange={setIsAppDownloaded}>
                     <DialogTrigger asChild>
-                        <Button size="lg" className="w-full" onClick={() => setIsAppDownloaded(true)}>
-                            <Apple className="mr-2 h-5 w-5" />
+                        <Button size="lg" className="w-full" variant="outline" onClick={() => setIsAppDownloaded(true)}>
+                            <Circle className="mr-2 h-5 w-5" />
                             Download for Mac
                         </Button>
                     </DialogTrigger>
