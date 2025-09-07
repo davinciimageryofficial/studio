@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -49,7 +48,6 @@ const productivityItems = [
     { href: "/workspaces", label: "Workspaces", icon: Mic },
     { href: "/workmate-radar", label: "Workmate Radar", icon: Radar },
     { href: "/skill-sync-net", label: "Skill Sync Net", icon: Briefcase },
-    { href: "/ad-studio", label: "AD-Sentry", icon: Zap },
 ];
 
 const contentItems = [
