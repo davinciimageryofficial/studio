@@ -6,18 +6,25 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, X, Apple, AppWindow, User, Zap, Circle } from "lucide-react";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket } from "lucide-react";
 import Link from "next/link";
 import { EngagementChart } from "./charts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 
 export default function DashboardPage() {
     const [chartType, setChartType] = useState<"bar" | "line" | "area">("area");
     const [isAppDownloaded, setIsAppDownloaded] = useState(false);
+    const [accessCode, setAccessCode] = useState("");
+    const { toast } = useToast();
+    const router = useRouter();
 
 
     const recentActivities = [
@@ -49,6 +56,22 @@ export default function DashboardPage() {
     const pendingInvitations = placeholderUsers.slice(3, 6);
     const newConnections = placeholderUsers.slice(2, 5);
     
+    const handleAccessCodeSubmit = () => {
+        if (accessCode === '2004') {
+            toast({
+                title: "Access Granted!",
+                description: "Welcome to the AD-Sentry Studio.",
+            });
+            router.push('/ad-studio');
+        } else {
+            toast({
+                variant: "destructive",
+                title: "Invalid Code",
+                description: "The access code you entered is incorrect. Please try again.",
+            });
+        }
+    };
+
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <header className="mb-8">
@@ -252,11 +275,26 @@ export default function DashboardPage() {
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Ad Studio Coming Soon</DialogTitle>
+                            <DialogTitle>Ad Studio Early Access</DialogTitle>
                             <DialogDescription>
-                                The full AD-Sentry studio is under construction. Soon you'll be able to create, target, and analyze ad campaigns right from your dashboard.
+                                The full AD-Sentry studio is currently in a private beta. Enter an access code to get early access.
                             </DialogDescription>
                         </DialogHeader>
+                         <div className="space-y-2 py-4">
+                            <Label htmlFor="access-code">Beta Access Code</Label>
+                            <div className="flex gap-2">
+                                <Input 
+                                    id="access-code"
+                                    placeholder="Enter your code" 
+                                    value={accessCode}
+                                    onChange={(e) => setAccessCode(e.target.value)}
+                                />
+                                <Button onClick={handleAccessCodeSubmit}>
+                                    <Rocket className="mr-2 h-4 w-4" />
+                                    Submit
+                                </Button>
+                            </div>
+                        </div>
                     </DialogContent>
                 </Dialog>
             </CardContent>
@@ -306,7 +344,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
-
-    
