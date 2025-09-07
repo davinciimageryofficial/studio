@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, User, Mail, Kanban, Briefcase, Heart } from "lucide-react";
+import { CheckCircle, User, Mail, Kanban, Briefcase, Heart, Rocket } from "lucide-react";
 import { ClientOnly } from "@/components/layout/client-only";
 import { Fireworks } from "@/components/ui/fireworks";
 import {
@@ -18,6 +18,9 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 
 type WaitlistData = {
   fullName: string;
@@ -29,6 +32,8 @@ type WaitlistData = {
 export default function WaitlistConfirmationPage() {
   const router = useRouter();
   const [waitlistData, setWaitlistData] = useState<WaitlistData | null>(null);
+  const [accessCode, setAccessCode] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     const data = localStorage.getItem("waitlistData");
@@ -39,6 +44,26 @@ export default function WaitlistConfirmationPage() {
     }
   }, [router]);
 
+  const handleNavigation = (path: string) => {
+    router.push(path);
+  };
+  
+  const handleAccessCodeSubmit = () => {
+    if (accessCode.toUpperCase() === 'SENTRY2024') {
+        toast({
+            title: "Access Granted!",
+            description: "Welcome to Sentry! You've skipped the waitlist.",
+        });
+        router.push('/dashboard');
+    } else {
+        toast({
+            variant: "destructive",
+            title: "Invalid Code",
+            description: "The access code you entered is incorrect. Please try again.",
+        });
+    }
+  };
+
   if (!waitlistData) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -47,9 +72,6 @@ export default function WaitlistConfirmationPage() {
     );
   }
 
-  const handleNavigation = (path: string) => {
-    router.push(path);
-  };
 
   return (
     <ClientOnly>
@@ -65,7 +87,7 @@ export default function WaitlistConfirmationPage() {
               Thank you for joining the Sentry waitlist. We've received your information.
             </CardDescription>
           </CardHeader>
-          <CardContent className="px-6 pb-6">
+          <CardContent className="px-6 pb-6 space-y-4">
             <div className="space-y-3 rounded-lg border bg-background p-4 text-left">
               <h3 className="font-semibold text-md mb-2">Your Submitted Information:</h3>
               <div className="flex items-center gap-4">
@@ -99,11 +121,30 @@ export default function WaitlistConfirmationPage() {
                 </div>
               )}
             </div>
-            <p className="mt-4 text-xs text-muted-foreground">We'll send an email to <span className="font-medium">{waitlistData.email}</span> when it's your turn to join.</p>
+            
+            <Card className="text-left">
+                <CardHeader>
+                    <CardTitle className="text-lg">Have an Access Code?</CardTitle>
+                    <CardDescription>Enter your code below to skip the line and get immediate access.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex gap-2">
+                    <Input 
+                        placeholder="Enter your access code" 
+                        value={accessCode}
+                        onChange={(e) => setAccessCode(e.target.value)}
+                    />
+                    <Button onClick={handleAccessCodeSubmit}>
+                        <Rocket className="mr-2 h-4 w-4" />
+                        Skip Waitlist
+                    </Button>
+                </CardContent>
+            </Card>
+
+            <p className="text-xs text-muted-foreground">We'll send an email to <span className="font-medium">{waitlistData.email}</span> when it's your turn to join.</p>
             
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="mt-4 w-full" size="lg">Back to Homepage</Button>
+                <Button className="w-full" size="lg">Back to Homepage</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader className="text-center">
