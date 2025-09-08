@@ -75,11 +75,11 @@ export function ProductivityChart({ timeline }: ProductivityChartProps) {
                 iconType="circle"
                 iconSize={10}
             />
-            <Line yAxisId="left" type="monotone" dataKey="projects" name="Projects Completed" stroke="#18181b" strokeWidth={2} dot={{ r: 4 }} />
-            <Line yAxisId="left" type="monotone" dataKey="revenue" name="Revenue ($k)" stroke="#71717a" strokeWidth={2} dot={{ r: 4 }}/>
+            <Line yAxisId="left" type="monotone" dataKey="projects" name="Projects Completed" stroke="#000000" strokeWidth={2} dot={{ r: 4 }} />
+            <Line yAxisId="left" type="monotone" dataKey="revenue" name="Revenue ($k)" stroke="#808080" strokeWidth={2} dot={{ r: 4 }}/>
             <Line yAxisId="right" type="monotone" dataKey="rating" name="Client Rating" stroke="#a1a1aa" strokeWidth={2} dot={{ r: 4 }}/>
-            <Line yAxisId="left" type="monotone" dataKey="impressions" name="Impressions" stroke="#0ea5e9" strokeWidth={2} dot={{ r: 4 }} />
-            <Line yAxisId="left" type="monotone" dataKey="acquisition" name="Client Acquisition" stroke="#8b5cf6" strokeWidth={2} dot={{ r: 4 }} />
+            <Line yAxisId="left" type="monotone" dataKey="impressions" name="Impressions" stroke="#ff0000" strokeWidth={2} dot={{ r: 4 }} />
+            <Line yAxisId="left" type="monotone" dataKey="acquisition" name="Client Acquisition" stroke="#0000ff" strokeWidth={2} dot={{ r: 4 }} />
             <Line yAxisId="left" type="monotone" dataKey="revPerProject" name="Rev. Per Project ($k)" stroke="#ec4899" strokeWidth={2} dot={{ r: 4 }} />
         </LineChart>
     </ResponsiveContainer>
