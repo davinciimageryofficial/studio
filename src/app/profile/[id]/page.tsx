@@ -193,7 +193,7 @@ export default function ProfilePage() {
       {/* Content Tabs */}
        <div className="p-4 sm:p-6 md:p-8">
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 max-w-2xl mx-auto">
+              <TabsList className="grid w-full grid-cols-3 max-w-2xl mx-auto bg-black text-muted-foreground">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="experience">Experience</TabsTrigger>
                 <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
