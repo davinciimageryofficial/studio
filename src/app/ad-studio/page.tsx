@@ -66,7 +66,7 @@ export default function AdStudioPage() {
       </header>
 
       <Tabs defaultValue="campaigns" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-4 bg-black text-muted-foreground">
           <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="audiences">Audiences</TabsTrigger>
@@ -380,3 +380,5 @@ function CreateCampaignDialog() {
         </DialogContent>
     );
 }
+
+    
