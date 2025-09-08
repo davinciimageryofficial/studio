@@ -329,7 +329,7 @@ function ClientView() {
                                 <Label htmlFor="projectDescription">Project Description</Label>
                                 <Dialog>
                                     <DialogTrigger asChild>
-                                        <Button type="button" variant="outline" size="sm"><SlidersHorizontal className="mr-2 h-4 w-4" /> Add Requirements</Button>
+                                        <Button type="button" variant="outline"><SlidersHorizontal className="mr-2 h-4 w-4" /> Add Requirements</Button>
                                     </DialogTrigger>
                                     <AdvancedRequirementsDialog onSave={handleAdvancedSave} />
                                 </Dialog>
@@ -436,7 +436,7 @@ function FreelancerView() {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            <Card>
+            <Card className="border-white">
                 <CardHeader className="text-center">
                     <CardTitle>Instant Project Matching</CardTitle>
                     <CardDescription>Our AI analyzes your profile to find the perfect project for you, on demand.</CardDescription>
@@ -454,7 +454,7 @@ function FreelancerView() {
                 {error && <Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
                 {result && result.match && result.match.project && <ProjectMatchCard project={result.match.project} />}
                  {!loading && !result && !error && (
-                    <Card className="flex flex-col items-center justify-center border-dashed min-h-[500px]">
+                    <Card className="flex flex-col items-center justify-center border-dashed border-white min-h-[500px]">
                         <CardHeader className="text-center">
                             <Barcode className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
                         </CardHeader>
@@ -635,6 +635,7 @@ export default function SkillSyncNetPage() {
     
 
     
+
 
 
 
