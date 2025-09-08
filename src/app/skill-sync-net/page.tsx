@@ -304,7 +304,7 @@ function ClientView() {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            <Card>
+            <Card className="border-white">
                 <CardHeader>
                     <CardTitle>Post a Project</CardTitle>
                     <CardDescription>Describe your project, and our AI will find the perfect freelance expert for you.</CardDescription>
@@ -635,6 +635,7 @@ export default function SkillSyncNetPage() {
     
 
     
+
 
 
 
