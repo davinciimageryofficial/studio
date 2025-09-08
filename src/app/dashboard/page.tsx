@@ -316,10 +316,10 @@ export default function DashboardPage() {
                                     <TooltipTrigger asChild>
                                       <button className="flex items-center gap-2 text-muted-foreground">
                                         {priorityIcons[task.priority]}
-                                        <span className="text-xs font-medium">{task.priority}</span>
+                                        <span className="text-xs font-medium">{task.priority} urgency</span>
                                       </button>
                                     </TooltipTrigger>
-                                    <TooltipContent><p>{task.priority} Priority</p></TooltipContent>
+                                    <TooltipContent><p>{task.priority} Urgency</p></TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
                           </div>
