@@ -13,6 +13,7 @@ import { WorkspaceProvider } from "@/context/workspace-context";
 import { CallWidget } from "@/components/layout/call-widget";
 import { NavigationPrompt } from "@/components/layout/navigation-prompt";
 import { usePathname } from "next/navigation";
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const michroma = Michroma({
@@ -68,16 +69,18 @@ export default function RootLayout({
         <meta name="description" content="Your professional network and dream team builder." />
       </head>
       <body className={`${inter.variable} ${michroma.variable} font-body antialiased`}>
-        <WorkspaceProvider>
-          <AppLayout>
-            {children}
-          </AppLayout>
-          <Toaster />
-          <ClientOnly>
-              <CallWidget />
-              <NavigationPrompt />
-          </ClientOnly>
-        </WorkspaceProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" themes={['light', 'dark', 'grey']}>
+          <WorkspaceProvider>
+            <AppLayout>
+              {children}
+            </AppLayout>
+            <Toaster />
+            <ClientOnly>
+                <CallWidget />
+                <NavigationPrompt />
+            </ClientOnly>
+          </WorkspaceProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

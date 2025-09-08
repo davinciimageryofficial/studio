@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle, Briefcase, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -99,6 +100,14 @@ export default function SettingsPage() {
                           <span className="font-normal text-muted-foreground text-xs">Display your verified job title and company next to your name on your posts.</span>
                       </Label>
                       <Switch id="show-job-info" defaultChecked />
+                  </div>
+                  <Separator />
+                  <div className="flex items-center justify-between">
+                     <Label htmlFor="appearance" className="flex flex-col gap-1">
+                          <span>Appearance</span>
+                          <span className="font-normal text-muted-foreground text-xs">Customize the look and feel of the application.</span>
+                      </Label>
+                      <ThemeSwitcher />
                   </div>
               </div>
           </CardContent>
