@@ -79,9 +79,10 @@ export function ProductivityChart({ timeline }: ProductivityChartProps) {
             />
             <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={30} />
             <Line yAxisId="left" type="monotone" dataKey="projects" name="Projects" stroke="hsl(var(--muted-foreground))" strokeWidth={2} dot={{ r: 4 }} />
-            <Line yAxisId="right" type="monotone" dataKey="rating" name="Client Rating" stroke="hsl(var(--accent-foreground))" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 4 }}/>
+            <Line yAxisId="right" type="monotone" dataKey="rating" name="Client Rating" stroke="hsl(var(--chart-2))" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 4 }}/>
         </ComposedChart>
     </ResponsiveContainer>
   );
 }
+
 
