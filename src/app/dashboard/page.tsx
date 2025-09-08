@@ -1,12 +1,12 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus } from "lucide-react";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart } from "lucide-react";
 import Link from "next/link";
 import { EngagementChart } from "./charts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ProductivityChart } from "./productivity-chart";
 
 type Task = {
     id: string;
@@ -330,6 +331,21 @@ export default function DashboardPage() {
               ))}
             </div>
           </div>
+        
+        <Card className="mt-8">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <LineChart className="h-6 w-6" />
+                    Productivity
+                </CardTitle>
+                <CardDescription>
+                    A consolidated view of your key professional metrics over the past 6 months.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ProductivityChart />
+            </CardContent>
+        </Card>
 
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Engagement Chart */}
@@ -469,7 +485,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
-
-    

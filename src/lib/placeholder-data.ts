@@ -642,3 +642,12 @@ export const placeholderPodcasts = [
         imageUrl: "https://picsum.photos/seed/podcast5/600/400",
     },
 ];
+
+export const productivityData = [
+  { month: "Jan", projects: 2, revenue: 4.5, rating: 4.2, impressions: 5000 },
+  { month: "Feb", projects: 3, revenue: 6.0, rating: 4.5, impressions: 7500 },
+  { month: "Mar", projects: 4, revenue: 8.2, rating: 4.7, impressions: 9000 },
+  { month: "Apr", projects: 3, revenue: 7.0, rating: 4.6, impressions: 8500 },
+  { month: "May", projects: 5, revenue: 10.5, rating: 4.9, impressions: 12000 },
+  { month: "Jun", projects: 4, revenue: 9.0, rating: 4.8, impressions: 11000 },
+];
