@@ -6,11 +6,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy, Users, BarChart, MessageSquare, Star } from "lucide-react";
+import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy, Users, BarChart, MessageSquare, Star, ArrowUp, ArrowDown, GripVertical } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,12 +37,34 @@ type SocialLinks = {
     instagram?: string;
 }
 
+type ProfileSection = 'about' | 'skills' | 'achievements' | 'network' | 'impact' | 'recommendations';
+
+const sectionComponents: Record<ProfileSection, React.FC<any>> = {
+    about: AboutCard,
+    skills: SkillsCard,
+    achievements: AchievementsCard,
+    network: NetworkInsightsCard,
+    impact: ImpactMetricsCard,
+    recommendations: RecommendationsCard,
+};
+
+const sectionTitles: Record<ProfileSection, string> = {
+    about: 'About',
+    skills: 'Skills',
+    achievements: 'Achievements',
+    network: 'Network Insights',
+    impact: 'Impact Metrics',
+    recommendations: 'Recommendations',
+};
+
 export default function ProfilePage() {
   const params = useParams<{ id: string }>();
   const isMyProfile = params.id === 'me';
   const initialUser = isMyProfile ? placeholderUsers[1] : placeholderUsers.find((u) => u.id === params.id);
   
   const [user, setUser] = useState(initialUser);
+  const [sections, setSections] = useState<ProfileSection[]>(['about', 'skills', 'achievements', 'network', 'impact', 'recommendations']);
+
 
   const initialExperiences: Experience[] = [
     { title: "Senior Frontend Developer", company: "Innovate Inc.", duration: "Jan 2020 - Present · 4+ years" },
@@ -89,6 +111,13 @@ export default function ProfilePage() {
       setSocials(updatedSocials);
   };
 
+  const overviewCardProps = {
+    user,
+    skills,
+    isMyProfile,
+    handleSaveSkills,
+  };
+
 
   return (
     <div className="bg-muted/40">
@@ -119,6 +148,7 @@ export default function ProfilePage() {
             <div className="flex flex-col items-center text-center sm:flex-row sm:items-end sm:gap-6 -mt-32 sm:-mt-24">
                 <div className="relative group flex-shrink-0">
                     <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-card">
+                      <AvatarImage src={user.avatar} alt={user.name} />
                       <AvatarFallback className="text-5xl">
                         <UserIcon className="h-16 w-16" />
                       </AvatarFallback>
@@ -202,75 +232,16 @@ export default function ProfilePage() {
               
               <div className="max-w-4xl mx-auto mt-6">
                 <TabsContent value="overview">
-                    <div className="grid grid-cols-1 gap-8">
-                        <Card>
-                            <CardHeader><CardTitle>About</CardTitle></CardHeader>
-                            <CardContent><p className="text-muted-foreground whitespace-pre-line">{user.bio}</p></CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between">
-                                <CardTitle>Skills</CardTitle>
-                                {isMyProfile && <EditSkillsDialog initialSkills={skills} onSave={handleSaveSkills} />}
-                            </CardHeader>
-                            <CardContent className="flex flex-wrap gap-2">
-                                {skills.map(skill => <Badge key={skill} variant="secondary" className="text-sm">{skill}</Badge>)}
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between">
-                                <CardTitle>Achievements</CardTitle>
-                                {isMyProfile && <Button variant="ghost" size="icon"><Edit className="h-4 w-4" /></Button>}
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex items-start gap-4">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted"><Trophy className="h-6 w-6 text-muted-foreground" /></div>
-                                    <div>
-                                        <p className="font-semibold">Top Developer Award 2023</p>
-                                        <p className="text-sm text-muted-foreground">Awarded for contributions to the open-source community.</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-4">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted"><Award className="h-6 w-6 text-muted-foreground" /></div>
-                                    <div>
-                                        <p className="font-semibold">Certified TypeScript Expert</p>
-                                        <p className="text-sm text-muted-foreground">Completed an advanced certification for TypeScript.</p>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><Users className="h-5 w-5" /> Network Insights</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-sm text-muted-foreground">This section will show network maps and key collaborator endorsements. (Coming Soon)</p>
-                          </CardContent>
-                        </Card>
-                         <Card>
-                          <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><BarChart className="h-5 w-5" /> Impact Metrics</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-sm text-muted-foreground">This section will display quantifiable contributions and impact data. (Coming Soon)</p>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><MessageSquare className="h-5 w-5" /> Recommendations</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex items-start gap-4">
-                                    <Avatar className="h-10 w-10"><AvatarFallback>AJ</AvatarFallback></Avatar>
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <p className="font-semibold">Alice Johnson</p>
-                                            <div className="flex text-yellow-500"><Star className="h-4 w-4" /><Star className="h-4 w-4" /><Star className="h-4 w-4" /><Star className="h-4 w-4" /><Star className="h-4 w-4" /></div>
-                                        </div>
-                                        <p className="text-sm text-muted-foreground italic">"An exceptional developer with a keen eye for detail. A true asset to any team."</p>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
+                    <div className="space-y-8">
+                        {isMyProfile && (
+                            <div className="flex justify-end">
+                                <EditSectionsDialog sections={sections} onSave={setSections} />
+                            </div>
+                        )}
+                        {sections.map(sectionId => {
+                           const Component = sectionComponents[sectionId];
+                           return <Component key={sectionId} {...overviewCardProps} />
+                        })}
                     </div>
                 </TabsContent>
                 
@@ -314,6 +285,105 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+function AboutCard({ user }: { user: User }) {
+    return (
+        <Card>
+            <CardHeader><CardTitle>About</CardTitle></CardHeader>
+            <CardContent><p className="text-muted-foreground whitespace-pre-line">{user.bio}</p></CardContent>
+        </Card>
+    );
+}
+
+function SkillsCard({ skills, isMyProfile, handleSaveSkills }: { skills: string[], isMyProfile: boolean, handleSaveSkills: (skills: string[]) => void }) {
+    return (
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Skills</CardTitle>
+                {isMyProfile && <EditSkillsDialog initialSkills={skills} onSave={handleSaveSkills} />}
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-2">
+                {skills.map(skill => <Badge key={skill} variant="secondary" className="text-sm">{skill}</Badge>)}
+            </CardContent>
+        </Card>
+    );
+}
+
+function AchievementsCard({ isMyProfile }: { isMyProfile: boolean }) {
+    return (
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Achievements</CardTitle>
+                {isMyProfile && <Button variant="ghost" size="icon"><Edit className="h-4 w-4" /></Button>}
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="flex items-start gap-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted"><Trophy className="h-6 w-6 text-muted-foreground" /></div>
+                    <div>
+                        <p className="font-semibold">Top Developer Award 2023</p>
+                        <p className="text-sm text-muted-foreground">Awarded for contributions to the open-source community.</p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted"><Award className="h-6 w-6 text-muted-foreground" /></div>
+                    <div>
+                        <p className="font-semibold">Certified TypeScript Expert</p>
+                        <p className="text-sm text-muted-foreground">Completed an advanced certification for TypeScript.</p>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
+function NetworkInsightsCard() {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Users className="h-5 w-5" /> Network Insights</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-sm text-muted-foreground">This section will show network maps and key collaborator endorsements. (Coming Soon)</p>
+            </CardContent>
+        </Card>
+    );
+}
+
+function ImpactMetricsCard() {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2"><BarChart className="h-5 w-5" /> Impact Metrics</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-sm text-muted-foreground">This section will display quantifiable contributions and impact data. (Coming Soon)</p>
+            </CardContent>
+        </Card>
+    );
+}
+
+function RecommendationsCard() {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2"><MessageSquare className="h-5 w-5" /> Recommendations</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="flex items-start gap-4">
+                    <Avatar className="h-10 w-10"><AvatarFallback>AJ</AvatarFallback></Avatar>
+                    <div>
+                        <div className="flex items-center gap-2">
+                            <p className="font-semibold">Alice Johnson</p>
+                            <div className="flex text-yellow-500"><Star className="h-4 w-4" /><Star className="h-4 w-4" /><Star className="h-4 w-4" /><Star className="h-4 w-4" /><Star className="h-4 w-4" /></div>
+                        </div>
+                        <p className="text-sm text-muted-foreground italic">"An exceptional developer with a keen eye for detail. A true asset to any team."</p>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
 
 function EditSocialsDialog({ initialSocials, onSave, triggerButton }: { initialSocials: SocialLinks, onSave: (socials: SocialLinks) => void, triggerButton: React.ReactNode }) {
     const [socials, setSocials] = useState(initialSocials);
@@ -649,6 +719,74 @@ function EditImageDialog({ currentImage, onSave, triggerButton }: { currentImage
                     </DialogClose>
                     <DialogClose asChild>
                         <Button type="button" onClick={handleSave}>Save Changes</Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function EditSectionsDialog({ sections, onSave }: { sections: ProfileSection[], onSave: (sections: ProfileSection[]) => void }) {
+    const [orderedSections, setOrderedSections] = useState(sections);
+
+    const moveSection = (index: number, direction: 'up' | 'down') => {
+        const newSections = [...orderedSections];
+        const [removed] = newSections.splice(index, 1);
+        const newIndex = direction === 'up' ? index - 1 : index + 1;
+        newSections.splice(newIndex, 0, removed);
+        setOrderedSections(newSections);
+    };
+
+    const handleSave = () => {
+        onSave(orderedSections);
+    };
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="outline"><Edit className="mr-2 h-4 w-4" />Edit Sections</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Customize Profile Sections</DialogTitle>
+                    <DialogDescription>
+                        Drag and drop to reorder the sections on your profile overview.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="py-4 space-y-2">
+                    {orderedSections.map((sectionId, index) => (
+                        <div key={sectionId} className="flex items-center justify-between rounded-lg border bg-background p-3">
+                            <div className="flex items-center gap-3">
+                                <GripVertical className="h-5 w-5 text-muted-foreground" />
+                                <span className="font-medium">{sectionTitles[sectionId]}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => moveSection(index, 'up')}
+                                    disabled={index === 0}
+                                >
+                                    <ArrowUp className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => moveSection(index, 'down')}
+                                    disabled={index === orderedSections.length - 1}
+                                >
+                                    <ArrowDown className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary">Cancel</Button>
+                    </DialogClose>
+                    <DialogClose asChild>
+                        <Button type="button" onClick={handleSave}>Save Order</Button>
                     </DialogClose>
                 </DialogFooter>
             </DialogContent>
