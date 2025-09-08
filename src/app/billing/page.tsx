@@ -90,17 +90,17 @@ export default function BillingPage() {
             <div className="grid gap-8 lg:grid-cols-3">
                 <div className="space-y-8 lg:col-span-2">
                 {/* Current Plan */}
-                <Card>
+                <Card className="bg-black text-primary-foreground">
                     <CardHeader>
                     <CardTitle>Current Plan</CardTitle>
-                    <CardDescription>You are currently on the <strong>{currentPlan?.name}</strong> plan.</CardDescription>
+                    <CardDescription className="text-primary-foreground/80">You are currently on the <strong>{currentPlan?.name}</strong> plan.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="flex items-baseline gap-2">
                             <span className="text-4xl font-bold">{currentPlan?.price}</span>
-                            <span className="text-muted-foreground">/ month</span>
+                            <span className="text-primary-foreground/70">/ month</span>
                         </div>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
+                        <ul className="space-y-2 text-sm text-primary-foreground/80">
                             {currentPlan?.features.map(feature => (
                                 <li key={feature} className="flex items-center gap-2">
                                     <CheckCircle className="h-4 w-4 text-green-500" />
@@ -110,7 +110,7 @@ export default function BillingPage() {
                         </ul>
                     </CardContent>
                     <CardFooter>
-                    <Button variant="outline">Cancel Subscription</Button>
+                    <Button variant="secondary">Cancel Subscription</Button>
                     </CardFooter>
                 </Card>
 
