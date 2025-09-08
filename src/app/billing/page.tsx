@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 export default function BillingPage() {
   const searchParams = useSearchParams();
@@ -174,29 +175,24 @@ export default function BillingPage() {
                             <CardTitle>Billing History</CardTitle>
                             <CardDescription>View and download your past invoices.</CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Invoice</TableHead>
-                                        <TableHead>Date</TableHead>
-                                        <TableHead className="text-right">Amount</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {invoices.slice(0, 3).map((invoice) => (
-                                        <TableRow key={invoice.id}>
-                                            <TableCell className="font-medium">{invoice.id}</TableCell>
-                                            <TableCell>{invoice.date}</TableCell>
-                                            <TableCell className="text-right">{invoice.amount}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                        <CardContent className="space-y-4">
+                            {invoices.map((invoice, index) => (
+                                <div key={invoice.id}>
+                                    <div className="flex items-center justify-between">
+                                        <div className="grid gap-1">
+                                            <p className="font-semibold">{invoice.id}</p>
+                                            <p className="text-sm text-muted-foreground">{invoice.date} - {invoice.amount}</p>
+                                        </div>
+                                        <Button variant="outline" size="icon">
+                                            <Download className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                    {index < invoices.length - 1 && <Separator className="mt-4" />}
+                                </div>
+                            ))}
                         </CardContent>
                         <CardFooter>
                             <Button variant="outline" className="w-full">
-                                <Download className="mr-2 h-4 w-4" />
                                 View All Invoices
                             </Button>
                         </CardFooter>
