@@ -605,7 +605,7 @@ export default function SkillSyncNetPage() {
         <ClientOnly>
             <div className="p-4 sm:p-6 md:p-8">
                 <header className="mb-8 text-center">
-                    <h1 className="text-4xl font-bold tracking-tight font-headline-tech uppercase">Skill Sync Net</h1>
+                    <h1 className="text-3xl font-bold tracking-tight font-headline-tech uppercase">Skill Sync Net</h1>
                     <p className="mt-2 text-lg text-muted-foreground max-w-3xl mx-auto">
                         The intelligent marketplace for elite freelancers and innovative projects. Forget endless scrolling. Get the perfect match, instantly.
                     </p>
@@ -635,3 +635,4 @@ export default function SkillSyncNetPage() {
     
 
     
+
