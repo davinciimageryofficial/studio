@@ -82,7 +82,7 @@ export default function BillingPage() {
       </header>
 
       <Tabs defaultValue={initialTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-sm">
+        <TabsList className="grid w-full grid-cols-2 max-w-sm bg-black text-muted-foreground">
             <TabsTrigger value="subscription">Subscription</TabsTrigger>
             <TabsTrigger value="donate">Donate</TabsTrigger>
         </TabsList>
