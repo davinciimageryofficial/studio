@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket } from "lucide-react";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical } from "lucide-react";
 import Link from "next/link";
 import { EngagementChart } from "./charts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,6 +17,38 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+type Task = {
+    id: string;
+    title: string;
+    priority: 'High' | 'Medium' | 'Low';
+    assignee: typeof placeholderUsers[0];
+};
+
+const initialTasks: { todo: Task[], inProgress: Task[], done: Task[] } = {
+  todo: [
+    { id: 'task-1', title: 'Draft Q3 marketing brief for the new feature launch', priority: 'High', assignee: placeholderUsers[2] },
+    { id: 'task-2', title: 'Design new homepage mockups in Figma', priority: 'Medium', assignee: placeholderUsers[0] },
+    { id: 'task-3', title: 'Schedule user testing sessions for the checkout flow', priority: 'Medium', assignee: placeholderUsers[0] },
+  ],
+  inProgress: [
+    { id: 'task-4', title: 'Develop user authentication flow with NextAuth.js', priority: 'High', assignee: placeholderUsers[1] },
+    { id: 'task-5', title: 'Write blog post on "The Future of AI in Creative Work"', priority: 'Low', assignee: placeholderUsers[2] },
+  ],
+  done: [
+    { id: 'task-6', title: 'Deploy serverless API endpoint for the new analytics service', priority: 'High', assignee: placeholderUsers[3] },
+    { id: 'task-7', title: 'Onboard new design intern and set up their accounts', priority: 'Medium', assignee: placeholderUsers[0] },
+    { id: 'task-8', title: 'Finalize and send invoices for May projects', priority: 'High', assignee: placeholderUsers[1] },
+  ],
+};
+
+const priorityColors = {
+  High: "bg-red-500",
+  Medium: "bg-yellow-500",
+  Low: "bg-green-500",
+};
 
 
 export default function DashboardPage() {
@@ -102,6 +134,7 @@ export default function DashboardPage() {
                     <DropdownMenuItem key={activity.user.id} className="flex items-center justify-between gap-2 p-2">
                         <div className="flex items-center gap-3">
                             <Avatar className="h-9 w-9">
+                                <AvatarImage src={activity.user.avatar} alt={activity.user.name} />
                                 <AvatarFallback>
                                     <User className="h-5 w-5" />
                                 </AvatarFallback>
@@ -141,6 +174,7 @@ export default function DashboardPage() {
                     <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
                         <div className="flex items-center gap-3">
                             <Avatar className="h-9 w-9">
+                                 <AvatarImage src={user.avatar} alt={user.name} />
                                 <AvatarFallback>
                                     <User className="h-5 w-5" />
                                 </AvatarFallback>
@@ -180,6 +214,7 @@ export default function DashboardPage() {
                     <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
                         <div className="flex items-center gap-3">
                             <Avatar className="h-9 w-9">
+                                 <AvatarImage src={user.avatar} alt={user.name} />
                                 <AvatarFallback>
                                     <User className="h-5 w-5" />
                                 </AvatarFallback>
@@ -207,6 +242,57 @@ export default function DashboardPage() {
                  </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
+      </div>
+
+       <div className="mt-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Task Board</CardTitle>
+            <CardDescription>Track project progress with a drag-and-drop Kanban board.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {Object.entries(initialTasks).map(([status, tasks]) => (
+                <div key={status} className="rounded-lg bg-muted/50 p-4">
+                  <h3 className="font-semibold mb-4 text-center capitalize">{status.replace(/([A-Z])/g, ' $1')}</h3>
+                  <div className="space-y-4">
+                    {tasks.map(task => (
+                      <Card key={task.id} className="bg-card group cursor-grab">
+                        <CardContent className="p-3">
+                          <div className="flex justify-between items-start">
+                             <p className="text-sm font-medium pr-2">{task.title}</p>
+                             <GripVertical className="h-5 w-5 text-muted-foreground transition-opacity opacity-0 group-hover:opacity-100" />
+                          </div>
+                          <div className="flex items-center justify-between mt-2">
+                            <Badge variant="outline" className="flex items-center gap-1.5 py-1">
+                               <div className={cn("h-2 w-2 rounded-full", priorityColors[task.priority])} />
+                               {task.priority}
+                            </Badge>
+                             <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger>
+                                        <Avatar className="h-7 w-7">
+                                            <AvatarImage src={task.assignee.avatar} alt={task.assignee.name} />
+                                            <AvatarFallback>
+                                                <User className="h-4 w-4" />
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{task.assignee.name}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                             </TooltipProvider>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -242,6 +328,7 @@ export default function DashboardPage() {
                     {recentActivities.map((activity, index) => (
                         <div key={index} className="flex items-center gap-3">
                             <Avatar className="h-9 w-9">
+                                <AvatarImage src={activity.user.avatar} alt={activity.user.name} />
                                 <AvatarFallback>
                                     <User className="h-5 w-5" />
                                 </AvatarFallback>
@@ -344,3 +431,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
