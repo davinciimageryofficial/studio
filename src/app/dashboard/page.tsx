@@ -161,9 +161,11 @@ export default function DashboardPage() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
-                    <Eye className="h-4 w-4 text-muted-foreground" />
+                  <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="flex-1">
+                      <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
+                    </div>
+                    <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">1,204</div>
@@ -201,9 +203,11 @@ export default function DashboardPage() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">New Connections</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                 <div className="flex-1">
+                    <CardTitle className="text-sm font-medium">New Connections</CardTitle>
+                 </div>
+                <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">+32</div>
@@ -241,9 +245,11 @@ export default function DashboardPage() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                  <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Pending Invitations</CardTitle>
-                        <UserPlus className="h-4 w-4 text-muted-foreground" />
+                    <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                        <div className="flex-1">
+                            <CardTitle className="text-sm font-medium">Pending Invitations</CardTitle>
+                        </div>
+                        <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{pendingInvitations.length}</div>
