@@ -443,7 +443,7 @@ function FreelancerView() {
                 </CardHeader>
                 <CardContent className="text-center p-12">
                     <p className="mb-6 text-muted-foreground">Ready for your next gig? Let our AI find a project that perfectly matches your skills and experience.</p>
-                    <Button size="lg" className="h-16 text-lg bg-black text-white hover:bg-gray-800" onClick={handleFindProject} disabled={loading}>
+                    <Button size="lg" className="text-lg bg-black text-white hover:bg-gray-800" onClick={handleFindProject} disabled={loading}>
                         <Zap className="mr-3 h-6 w-6" />
                         {loading ? "Scanning for Projects..." : "Find Instant Match"}
                     </Button>
@@ -635,6 +635,7 @@ export default function SkillSyncNetPage() {
     
 
     
+
 
 
 
