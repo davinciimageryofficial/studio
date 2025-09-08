@@ -253,7 +253,7 @@ export default function DashboardPage() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {Object.entries(initialTasks).map(([status, tasks]) => (
-                <div key={status} className="rounded-lg bg-card border p-4">
+                <div key={status} className="rounded-lg bg-card border-2 p-4">
                   <h3 className="font-semibold mb-4 text-center capitalize">{status.replace(/([A-Z])/g, ' $1')}</h3>
                   <div className="space-y-4">
                     {tasks.map(task => (
@@ -431,6 +431,8 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
 
     
 
