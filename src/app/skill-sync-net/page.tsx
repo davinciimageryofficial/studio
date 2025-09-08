@@ -392,10 +392,10 @@ function ClientView() {
                     <Card className="flex flex-col items-center justify-center border-dashed min-h-[500px]">
                          <CardHeader className="text-center">
                             <Barcode className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
-                            <h2 className="text-2xl font-bold">Your AI-Vetted Match</h2>
+                            <h2 className="text-xl font-bold">Your AI-Vetted Match</h2>
                         </CardHeader>
                         <CardContent className="text-center text-muted-foreground p-8 pt-0">
-                            <h3 className="text-lg font-semibold">Your matched freelancer will appear here.</h3>
+                            <h3 className="text-lg font-normal">Your matched freelancer will appear here.</h3>
                             <p>Fill out the project details to get started.</p>
                         </CardContent>
                     </Card>
@@ -461,7 +461,7 @@ function FreelancerView() {
                         </CardHeader>
                         <CardContent className="text-center text-muted-foreground p-8 pt-0">
                             <h2 className="text-2xl font-bold">Your AI-Matched Project</h2>
-                            <h3 className="text-lg font-semibold mt-4">Your matched project will appear here.</h3>
+                            <h3 className="text-lg font-normal">Your matched project will appear here.</h3>
                             <p>Click the "Find Instant Match" button to start.</p>
                         </CardContent>
                     </Card>
@@ -635,4 +635,3 @@ export default function SkillSyncNetPage() {
         </ClientOnly>
     );
 }
-
