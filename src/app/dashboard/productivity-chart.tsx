@@ -1,4 +1,3 @@
-
 "use client"
 
 import { ComposedChart, Bar, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, TooltipProps } from "recharts";
@@ -65,7 +64,6 @@ export function ProductivityChart({ timeline }: ProductivityChartProps) {
                 axisLine={false}
                 tickMargin={10}
                 tickFormatter={(value) => `$${value}k`}
-                label={{ value: "Revenue & Projects", angle: -90, position: 'insideLeft', offset: -10 }}
             />
              <YAxis 
                 yAxisId="right"
@@ -74,7 +72,6 @@ export function ProductivityChart({ timeline }: ProductivityChartProps) {
                 axisLine={false}
                 tickMargin={10}
                 domain={[0, 'dataMax + 1000']}
-                label={{ value: "Impressions & Clients", angle: 90, position: 'insideRight', offset: -10 }}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend 
