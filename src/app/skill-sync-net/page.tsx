@@ -522,7 +522,7 @@ function FreelancerMatchCard({ freelancer }: { freelancer: NonNullable<NonNullab
             <CardContent className="space-y-6">
                 <div>
                     <h4 className="font-semibold mb-2">AI Match Assessment</h4>
-                    <Progress value={freelancer.matchConfidence} className="h-3 mb-2" />
+                    <Progress value={freelancer.matchConfidence} className="h-2 mb-2" />
                     <p className="text-sm text-muted-foreground">{freelancer.matchReasoning}</p>
                 </div>
                 <div>
@@ -559,7 +559,7 @@ function ProjectMatchCard({ project }: { project: NonNullable<NonNullable<SkillS
             <CardContent className="space-y-6">
                 <div>
                     <h4 className="font-semibold mb-2">AI Match Assessment</h4>
-                    <Progress value={project.matchConfidence} className="h-3 mb-2" />
+                    <Progress value={project.matchConfidence} className="h-2 mb-2" />
                     <p className="text-sm text-muted-foreground">{project.matchReasoning}</p>
                 </div>
                 <div>
