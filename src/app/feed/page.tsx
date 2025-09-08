@@ -205,31 +205,27 @@ export default function FeedPage() {
         <div className="sticky top-[84px] space-y-6">
           <ClientOnly>
             <ConversationStarters />
-             <Dialog open={isComposerOpen} onOpenChange={setIsComposerOpen}>
-                <DialogTrigger asChild>
-                     <Card className="cursor-pointer transition-all hover:shadow-md">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-4">
-                                <Avatar>
-                                    <AvatarFallback>
-                                        <User className="h-5 w-5" />
-                                    </AvatarFallback>
-                                </Avatar>
-                                <p className="text-muted-foreground">Write a post...</p>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </DialogTrigger>
-                <CreatePostDialog 
-                    onPostGenerated={(post) => {
-                        addPost(post);
-                        setIsComposerOpen(false);
-                    }}
-                />
-            </Dialog>
           </ClientOnly>
         </div>
       </aside>
+       {/* Floating Action Button */}
+      <Dialog open={isComposerOpen} onOpenChange={setIsComposerOpen}>
+        <DialogTrigger asChild>
+          <Button
+            className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg lg:bottom-8 lg:right-8"
+            size="icon"
+          >
+            <Edit className="h-6 w-6" />
+            <span className="sr-only">Create Post</span>
+          </Button>
+        </DialogTrigger>
+        <CreatePostDialog
+          onPostGenerated={(post) => {
+            addPost(post);
+            setIsComposerOpen(false);
+          }}
+        />
+      </Dialog>
     </div>
   );
 }
