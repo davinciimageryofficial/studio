@@ -2,8 +2,7 @@
 "use client"
 
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, TooltipProps } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { productivityData } from "@/lib/placeholder-data";
+import { dailyProductivityData, weeklyProductivityData, monthlyProductivityData } from "@/lib/placeholder-data";
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
@@ -16,6 +15,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
             <span>
               {pld.name === 'Client Rating' ? `${pld.value?.toFixed(1)}/5.0` : pld.value}
               {pld.name === 'Revenue' && 'k'}
+              {pld.name === 'Rev. Per Project' && 'k'}
             </span>
           </div>
         ))}
@@ -26,13 +26,31 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
   return null;
 };
 
-export function ProductivityChart() {
+type ProductivityChartProps = {
+    timeline: 'daily' | 'weekly' | 'monthly';
+}
+
+export function ProductivityChart({ timeline }: ProductivityChartProps) {
+
+  const dataMap = {
+    daily: dailyProductivityData,
+    weekly: weeklyProductivityData,
+    monthly: monthlyProductivityData,
+  };
+
+  const chartData = dataMap[timeline];
+  const dataKey = {
+      daily: 'day',
+      weekly: 'week',
+      monthly: 'month',
+  }[timeline];
+
   return (
      <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={productivityData}>
+        <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis 
-                dataKey="month" 
+                dataKey={dataKey}
                 tickLine={false}
                 axisLine={false}
                 tickMargin={10}
@@ -61,8 +79,9 @@ export function ProductivityChart() {
             <Line yAxisId="left" type="monotone" dataKey="revenue" name="Revenue ($k)" stroke="#71717a" strokeWidth={2} dot={{ r: 4 }}/>
             <Line yAxisId="right" type="monotone" dataKey="rating" name="Client Rating" stroke="#a1a1aa" strokeWidth={2} dot={{ r: 4 }}/>
             <Line yAxisId="left" type="monotone" dataKey="impressions" name="Impressions" stroke="#0ea5e9" strokeWidth={2} dot={{ r: 4 }} />
+            <Line yAxisId="left" type="monotone" dataKey="acquisition" name="Client Acquisition" stroke="#8b5cf6" strokeWidth={2} dot={{ r: 4 }} />
+            <Line yAxisId="left" type="monotone" dataKey="revPerProject" name="Rev. Per Project ($k)" stroke="#ec4899" strokeWidth={2} dot={{ r: 4 }} />
         </LineChart>
     </ResponsiveContainer>
   );
 }
-

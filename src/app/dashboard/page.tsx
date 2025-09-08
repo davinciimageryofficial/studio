@@ -25,25 +25,24 @@ type Task = {
     id: string;
     title: string;
     priority: 'High' | 'Medium' | 'Low';
-    assignee: typeof placeholderUsers[0];
 };
 
 type TaskStatus = 'todo' | 'inProgress' | 'done';
 
 const initialTasks: { [key in TaskStatus]: Task[] } = {
   todo: [
-    { id: 'task-1', title: 'Draft Q3 marketing brief for the new feature launch', priority: 'High', assignee: placeholderUsers[2] },
-    { id: 'task-2', title: 'Design new homepage mockups in Figma', priority: 'Medium', assignee: placeholderUsers[0] },
-    { id: 'task-3', title: 'Schedule user testing sessions for the checkout flow', priority: 'Medium', assignee: placeholderUsers[0] },
+    { id: 'task-1', title: 'Draft Q3 marketing brief for the new feature launch', priority: 'High' },
+    { id: 'task-2', title: 'Design new homepage mockups in Figma', priority: 'Medium' },
+    { id: 'task-3', title: 'Schedule user testing sessions for the checkout flow', priority: 'Medium' },
   ],
   inProgress: [
-    { id: 'task-4', title: 'Develop user authentication flow with NextAuth.js', priority: 'High', assignee: placeholderUsers[1] },
-    { id: 'task-5', title: 'Write blog post on "The Future of AI in Creative Work"', priority: 'Low', assignee: placeholderUsers[2] },
+    { id: 'task-4', title: 'Develop user authentication flow with NextAuth.js', priority: 'High' },
+    { id: 'task-5', title: 'Write blog post on "The Future of AI in Creative Work"', priority: 'Low' },
   ],
   done: [
-    { id: 'task-6', title: 'Deploy serverless API endpoint for the new analytics service', priority: 'High', assignee: placeholderUsers[3] },
-    { id: 'task-7', title: 'Onboard new design intern and set up their accounts', priority: 'Medium', assignee: placeholderUsers[0] },
-    { id: 'task-8', title: 'Finalize and send invoices for May projects', priority: 'High', assignee: placeholderUsers[1] },
+    { id: 'task-6', title: 'Deploy serverless API endpoint for the new analytics service', priority: 'High' },
+    { id: 'task-7', title: 'Onboard new design intern and set up their accounts', priority: 'Medium' },
+    { id: 'task-8', title: 'Finalize and send invoices for May projects', priority: 'High' },
   ],
 };
 
@@ -61,6 +60,7 @@ export default function DashboardPage() {
     const [tasks, setTasks] = useState(initialTasks);
     const { toast } = useToast();
     const router = useRouter();
+    const [productivityTimeline, setProductivityTimeline] = useState<"daily" | "weekly" | "monthly">("monthly");
 
 
     const recentActivities = [
@@ -92,8 +92,8 @@ export default function DashboardPage() {
     const pendingInvitations = placeholderUsers.slice(3, 6);
     const newConnections = placeholderUsers.slice(2, 5);
     
-    const handleAccessCodeSubmit = (e?: React.FormEvent) => {
-        e?.preventDefault();
+    const handleAccessCodeSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
         if (accessCode === '2004') {
             toast({
                 title: "Access Granted!",
@@ -291,7 +291,7 @@ export default function DashboardPage() {
        <div className="mt-12">
             <header className="mb-6">
               <h2 className="text-2xl font-semibold tracking-tight">Task Board</h2>
-              <p className="text-muted-foreground">structure project workflow</p>
+              <p className="text-muted-foreground">A minimalist, grid-aligned view of your project progress.</p>
             </header>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {(Object.keys(tasks) as TaskStatus[]).map((status) => (
@@ -317,7 +317,7 @@ export default function DashboardPage() {
                                     <TooltipTrigger asChild>
                                       <button className="flex items-center gap-2 text-muted-foreground">
                                         {priorityIcons[task.priority]}
-                                        <span className="text-xs font-medium">{task.priority} urgency</span>
+                                        <span className="text-xs font-medium">{task.priority}</span>
                                       </button>
                                     </TooltipTrigger>
                                     <TooltipContent><p>{task.priority} Urgency</p></TooltipContent>
@@ -333,17 +333,26 @@ export default function DashboardPage() {
           </div>
         
         <Card className="mt-8">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <LineChart className="h-6 w-6" />
-                    Productivity
-                </CardTitle>
-                <CardDescription>
-                    A consolidated view of your key professional metrics over the past 6 months.
-                </CardDescription>
+            <CardHeader className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <CardTitle className="flex items-center gap-2">
+                        <LineChart className="h-6 w-6" />
+                        Productivity
+                    </CardTitle>
+                    <CardDescription>
+                        A consolidated view of your key professional metrics.
+                    </CardDescription>
+                </div>
+                 <Tabs defaultValue="monthly" onValueChange={(value) => setProductivityTimeline(value as any)} className="w-full sm:w-auto">
+                    <TabsList className="grid w-full grid-cols-3 sm:w-auto">
+                        <TabsTrigger value="daily">Daily</TabsTrigger>
+                        <TabsTrigger value="weekly">Weekly</TabsTrigger>
+                        <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                    </TabsList>
+                </Tabs>
             </CardHeader>
             <CardContent>
-                <ProductivityChart />
+                <ProductivityChart timeline={productivityTimeline} />
             </CardContent>
         </Card>
 

@@ -643,11 +643,30 @@ export const placeholderPodcasts = [
     },
 ];
 
-export const productivityData = [
-  { month: "Jan", projects: 2, revenue: 4.5, rating: 4.2, impressions: 5000 },
-  { month: "Feb", projects: 3, revenue: 6.0, rating: 4.5, impressions: 7500 },
-  { month: "Mar", projects: 4, revenue: 8.2, rating: 4.7, impressions: 9000 },
-  { month: "Apr", projects: 3, revenue: 7.0, rating: 4.6, impressions: 8500 },
-  { month: "May", projects: 5, revenue: 10.5, rating: 4.9, impressions: 12000 },
-  { month: "Jun", projects: 4, revenue: 9.0, rating: 4.8, impressions: 11000 },
+export const monthlyProductivityData = [
+  { month: "Jan", projects: 2, revenue: 4.5, rating: 4.2, impressions: 5000, acquisition: 1, revPerProject: 2.25 },
+  { month: "Feb", projects: 3, revenue: 6.0, rating: 4.5, impressions: 7500, acquisition: 2, revPerProject: 2.0 },
+  { month: "Mar", projects: 4, revenue: 8.2, rating: 4.7, impressions: 9000, acquisition: 2, revPerProject: 2.05 },
+  { month: "Apr", projects: 3, revenue: 7.0, rating: 4.6, impressions: 8500, acquisition: 1, revPerProject: 2.33 },
+  { month: "May", projects: 5, revenue: 10.5, rating: 4.9, impressions: 12000, acquisition: 3, revPerProject: 2.1 },
+  { month: "Jun", projects: 4, revenue: 9.0, rating: 4.8, impressions: 11000, acquisition: 2, revPerProject: 2.25 },
+];
+
+export const weeklyProductivityData = [
+  { week: "W1", projects: 0, revenue: 1.1, rating: 4.3, impressions: 1200, acquisition: 0, revPerProject: 0 },
+  { week: "W2", projects: 1, revenue: 1.5, rating: 4.5, impressions: 1800, acquisition: 1, revPerProject: 1.5 },
+  { week: "W3", projects: 1, revenue: 2.0, rating: 4.4, impressions: 2200, acquisition: 0, revPerProject: 2.0 },
+  { week: "W4", projects: 1, revenue: 2.5, rating: 4.6, impressions: 2800, acquisition: 1, revPerProject: 2.5 },
+  { week: "W5", projects: 0, revenue: 1.0, rating: 4.7, impressions: 1500, acquisition: 0, revPerProject: 0 },
+  { week: "W6", projects: 2, revenue: 3.5, rating: 4.8, impressions: 4000, acquisition: 1, revPerProject: 1.75 },
+];
+
+export const dailyProductivityData = [
+  { day: "Mon", projects: 0, revenue: 0.2, rating: 4.5, impressions: 300, acquisition: 0, revPerProject: 0 },
+  { day: "Tue", projects: 1, revenue: 0.5, rating: 4.6, impressions: 500, acquisition: 1, revPerProject: 0.5 },
+  { day: "Wed", projects: 0, revenue: 0.3, rating: 4.5, impressions: 400, acquisition: 0, revPerProject: 0 },
+  { day: "Thu", projects: 0, revenue: 0.8, rating: 4.7, impressions: 700, acquisition: 0, revPerProject: 0 },
+  { day: "Fri", projects: 1, revenue: 1.2, rating: 4.8, impressions: 1000, acquisition: 0, revPerProject: 1.2 },
+  { day: "Sat", projects: 0, revenue: 0.1, rating: 4.9, impressions: 200, acquisition: 0, revPerProject: 0 },
+  { day: "Sun", projects: 0, revenue: 0, rating: 5.0, impressions: 150, acquisition: 0, revPerProject: 0 },
 ];
