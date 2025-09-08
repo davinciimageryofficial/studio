@@ -175,8 +175,8 @@ export default function FeedPage() {
   const filteredPosts = getFilteredPosts();
 
   return (
-    <div className="flex h-full">
-      <main className="flex-1 bg-background p-4 sm:p-6 md:p-8">
+    <div>
+      <main className="bg-background p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-2xl">
            <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6">
             <TabsList className="grid w-full grid-cols-3 bg-black text-muted-foreground">
@@ -217,9 +217,7 @@ export default function FeedPage() {
           </Tabs>
         </div>
       </main>
-      <aside className="hidden w-80 flex-col border-l p-6 lg:flex">
-      </aside>
-
+      
        {/* Floating Action Button */}
       <div className="fixed bottom-6 right-6 z-50 flex h-28 w-14 flex-col items-center justify-center overflow-hidden rounded-full shadow-lg lg:bottom-8 lg:right-8">
           <div className="flex h-full w-full flex-col">
