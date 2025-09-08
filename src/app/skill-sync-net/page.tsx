@@ -511,7 +511,7 @@ function FreelancerMatchCard({ freelancer }: { freelancer: NonNullable<NonNullab
      return (
         <Card className="shadow-lg">
             <CardHeader>
-                <h2 className="text-xl font-bold text-center mb-2">Your AI-Vetted Match</h2>
+                <h2 className="text-lg font-semibold text-center mb-2">Your AI-Vetted Match</h2>
                 <div className="flex items-center gap-4 pt-4">
                     <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                         <User className="h-8 w-8 text-muted-foreground" />
@@ -635,3 +635,4 @@ export default function SkillSyncNetPage() {
         </ClientOnly>
     );
 }
+
