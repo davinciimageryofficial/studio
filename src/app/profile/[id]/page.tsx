@@ -1,3 +1,4 @@
+
 'use client';
 
 import { placeholderUsers, User, PortfolioItem } from "@/lib/placeholder-data";
@@ -5,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon } from "lucide-react";
+import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
@@ -201,29 +202,53 @@ export default function ProfilePage() {
               
               <div className="max-w-4xl mx-auto mt-6">
                 <TabsContent value="overview">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div className="lg:col-span-2 space-y-8">
-                            <Card>
-                                <CardHeader><CardTitle>About</CardTitle></CardHeader>
-                                <CardContent><p className="text-muted-foreground whitespace-pre-line">{user.bio}</p></CardContent>
-                            </Card>
-                        </div>
-                        <div className="space-y-8">
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between">
-                                    <CardTitle>Skills</CardTitle>
-                                    {isMyProfile && (
-                                        <EditSkillsDialog initialSkills={skills} onSave={handleSaveSkills} />
-                                    )}
-                                </CardHeader>
-                                <CardContent className="flex flex-wrap gap-2">
-                                    {skills.map(skill => (
-                                        <Badge key={skill} variant="secondary" className="text-sm">{skill}</Badge>
-                                    ))}
-                                </CardContent>
-                            </Card>
-                        </div>
-                    </div>
+                  <div className="space-y-8">
+                      <Card>
+                          <CardHeader><CardTitle>About</CardTitle></CardHeader>
+                          <CardContent><p className="text-muted-foreground whitespace-pre-line">{user.bio}</p></CardContent>
+                      </Card>
+                      <Card>
+                          <CardHeader className="flex flex-row items-center justify-between">
+                              <CardTitle>Skills</CardTitle>
+                              {isMyProfile && (
+                                  <EditSkillsDialog initialSkills={skills} onSave={handleSaveSkills} />
+                              )}
+                          </CardHeader>
+                          <CardContent className="flex flex-wrap gap-2">
+                              {skills.map(skill => (
+                                  <Badge key={skill} variant="secondary" className="text-sm">{skill}</Badge>
+                              ))}
+                          </CardContent>
+                      </Card>
+                       <Card>
+                          <CardHeader className="flex flex-row items-center justify-between">
+                            <CardTitle>Achievements</CardTitle>
+                             {isMyProfile && (
+                                <Button variant="ghost" size="icon"><Edit className="h-4 w-4" /></Button>
+                            )}
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            <div className="flex items-start gap-4">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                                    <Trophy className="h-6 w-6 text-muted-foreground" />
+                                </div>
+                                <div>
+                                    <p className="font-semibold">Top Developer Award 2023</p>
+                                    <p className="text-sm text-muted-foreground">Awarded for contributions to the open-source community.</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-4">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                                    <Award className="h-6 w-6 text-muted-foreground" />
+                                </div>
+                                <div>
+                                    <p className="font-semibold">Certified TypeScript Expert</p>
+                                    <p className="text-sm text-muted-foreground">Completed an advanced certification for TypeScript.</p>
+                                </div>
+                            </div>
+                          </CardContent>
+                      </Card>
+                  </div>
                 </TabsContent>
                 
                 <TabsContent value="experience">
