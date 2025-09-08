@@ -223,7 +223,7 @@ export default function FeedPage() {
           <div className="flex h-full w-full flex-col">
             <Dialog>
                  <DialogTrigger asChild>
-                    <button className="flex flex-1 items-center justify-center bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                    <button className="flex flex-1 items-center justify-center bg-black text-white hover:bg-gray-800">
                         <Lightbulb className="h-5 w-5" />
                         <span className="sr-only">Pocket Guide</span>
                     </button>
