@@ -61,6 +61,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { freelanceNiches } from "@/app/skill-sync-net/page";
 import { Post } from "@/lib/placeholder-data";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 function FeedContent({ posts, onUpdate, onDelete }: { posts: Post[], onUpdate: (post: Post) => void, onDelete: (postId: number) => void }) {
     return (
@@ -323,12 +325,34 @@ function CreatePostDialog({
         </div>
       </div>
       <DialogFooter className="justify-between">
-        <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" onClick={() => handleTextFormat('bold')}><Bold /></Button>
-            <Button variant="ghost" size="icon" onClick={() => handleTextFormat('italic')}><Italic /></Button>
-            <Button variant="ghost" size="icon" onClick={() => handleTextFormat('codeblock')}><Code /></Button>
-            <Button variant="ghost" size="icon"><Link2 /></Button>
-        </div>
+        <TooltipProvider>
+            <div className="flex items-center gap-1">
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button variant="ghost" size="icon" onClick={() => handleTextFormat('bold')}><Bold /></Button>
+                    </TooltipTrigger>
+                    <TooltipContent><p>Bold</p></TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button variant="ghost" size="icon" onClick={() => handleTextFormat('italic')}><Italic /></Button>
+                    </TooltipTrigger>
+                    <TooltipContent><p>Italic</p></TooltipContent>
+                </Tooltip>
+                 <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button variant="ghost" size="icon" onClick={() => handleTextFormat('codeblock')}><Code /></Button>
+                    </TooltipTrigger>
+                    <TooltipContent><p>Code Block</p></TooltipContent>
+                </Tooltip>
+                 <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button variant="ghost" size="icon"><Link2 /></Button>
+                    </TooltipTrigger>
+                    <TooltipContent><p>Insert Link</p></TooltipContent>
+                </Tooltip>
+            </div>
+        </TooltipProvider>
         <div className="flex items-center gap-2">
            <Dialog>
                 <DialogTrigger asChild>
