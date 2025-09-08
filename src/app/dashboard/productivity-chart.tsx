@@ -4,12 +4,20 @@
 import { ComposedChart, Bar, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, TooltipProps } from "recharts";
 import { dailyProductivityData, weeklyProductivityData, monthlyProductivityData } from "@/lib/placeholder-data";
 
-const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+type VisibleMetrics = {
+    revenue: boolean;
+    projects: boolean;
+    impressions: boolean;
+    acquisition: boolean;
+    revPerProject: boolean;
+}
+
+const CustomTooltip = ({ active, payload, label, visibleMetrics }: TooltipProps<number, string> & { visibleMetrics: VisibleMetrics }) => {
   if (active && payload && payload.length) {
     return (
       <div className="p-4 bg-background border border-border rounded-lg shadow-lg">
         <p className="font-bold text-lg mb-2">{label}</p>
-        {payload.map((pld, index) => (
+        {payload.filter(pld => visibleMetrics[pld.dataKey as keyof VisibleMetrics]).map((pld, index) => (
           <div key={index} style={{ color: pld.stroke || pld.fill }} className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: pld.stroke || pld.fill }}></div>
             <span className="font-semibold">{pld.name}: </span>
@@ -32,6 +40,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
 
 type ProductivityChartProps = {
     timeline: 'daily' | 'weekly' | 'monthly';
+    visibleMetrics: VisibleMetrics;
 }
 
 const renderLegendText = (value: string) => {
@@ -39,7 +48,7 @@ const renderLegendText = (value: string) => {
 };
 
 
-export function ProductivityChart({ timeline }: ProductivityChartProps) {
+export function ProductivityChart({ timeline, visibleMetrics }: ProductivityChartProps) {
 
   const dataMap = {
     daily: dailyProductivityData,
@@ -79,18 +88,18 @@ export function ProductivityChart({ timeline }: ProductivityChartProps) {
                 tickMargin={10}
                 domain={[0, 'dataMax + 1000']}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<CustomTooltip visibleMetrics={visibleMetrics} />} />
             <Legend 
                 wrapperStyle={{ paddingTop: '20px' }}
                 iconType="circle"
                 iconSize={10}
                 formatter={renderLegendText}
             />
-            <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={30} />
-            <Line yAxisId="left" type="monotone" dataKey="projects" name="Projects" stroke="hsl(var(--muted-foreground))" strokeWidth={2} dot={{ r: 4 }} />
-            <Line yAxisId="right" type="monotone" dataKey="impressions" name="Impressions" stroke="hsl(var(--chart-4))" strokeWidth={2} dot={{ r: 4 }} />
-            <Line yAxisId="right" type="monotone" dataKey="acquisition" name="New Clients" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={{ r: 4 }} />
-            <Line yAxisId="left" type="monotone" dataKey="revPerProject" name="Rev. Per Project" stroke="hsl(var(--destructive))" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 4 }}/>
+            {visibleMetrics.revenue && <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={30} />}
+            {visibleMetrics.projects && <Line yAxisId="left" type="monotone" dataKey="projects" name="Projects" stroke="hsl(var(--muted-foreground))" strokeWidth={2} dot={{ r: 4 }} />}
+            {visibleMetrics.impressions && <Line yAxisId="right" type="monotone" dataKey="impressions" name="Impressions" stroke="hsl(var(--chart-4))" strokeWidth={2} dot={{ r: 4 }} />}
+            {visibleMetrics.acquisition && <Line yAxisId="right" type="monotone" dataKey="acquisition" name="New Clients" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={{ r: 4 }} />}
+            {visibleMetrics.revPerProject && <Line yAxisId="left" type="monotone" dataKey="revPerProject" name="Rev. Per Project" stroke="hsl(var(--destructive))" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 4 }}/>}
         </ComposedChart>
     </ResponsiveContainer>
   );

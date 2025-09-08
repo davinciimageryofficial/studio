@@ -6,12 +6,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart } from "lucide-react";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings } from "lucide-react";
 import Link from "next/link";
 import { EngagementChart } from "./charts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
@@ -52,6 +52,13 @@ const priorityIcons = {
   Low: <ArrowDown className="h-4 w-4 text-green-600" />,
 };
 
+type VisibleMetrics = {
+    revenue: boolean;
+    projects: boolean;
+    impressions: boolean;
+    acquisition: boolean;
+    revPerProject: boolean;
+}
 
 export default function DashboardPage() {
     const [chartType, setChartType] = useState<"bar" | "line" | "area">("area");
@@ -61,6 +68,13 @@ export default function DashboardPage() {
     const { toast } = useToast();
     const router = useRouter();
     const [productivityTimeline, setProductivityTimeline] = useState<"daily" | "weekly" | "monthly">("monthly");
+    const [visibleMetrics, setVisibleMetrics] = useState<VisibleMetrics>({
+        revenue: true,
+        projects: true,
+        impressions: true,
+        acquisition: true,
+        revPerProject: true,
+    });
 
 
     const recentActivities = [
@@ -146,6 +160,10 @@ export default function DashboardPage() {
                 [destinationColumn]: newDestinationTasks,
             }));
         }
+    };
+    
+    const handleMetricVisibilityChange = (metric: keyof VisibleMetrics, checked: boolean) => {
+        setVisibleMetrics(prev => ({ ...prev, [metric]: checked }));
     };
 
   return (
@@ -341,16 +359,38 @@ export default function DashboardPage() {
                         A consolidated view of your key professional metrics.
                     </CardDescription>
                 </div>
-                 <Tabs defaultValue="monthly" onValueChange={(value) => setProductivityTimeline(value as any)} className="w-full sm:w-auto">
-                    <TabsList className="grid w-full grid-cols-3 sm:w-auto">
-                        <TabsTrigger value="daily">Daily</TabsTrigger>
-                        <TabsTrigger value="weekly">Weekly</TabsTrigger>
-                        <TabsTrigger value="monthly">Monthly</TabsTrigger>
-                    </TabsList>
-                </Tabs>
+                 <div className="flex items-center gap-2">
+                    <Tabs defaultValue="monthly" onValueChange={(value) => setProductivityTimeline(value as any)} className="w-full sm:w-auto">
+                        <TabsList className="grid w-full grid-cols-3 sm:w-auto">
+                            <TabsTrigger value="daily">Daily</TabsTrigger>
+                            <TabsTrigger value="weekly">Weekly</TabsTrigger>
+                            <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="icon">
+                                <Settings className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Toggle Metrics</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            {Object.keys(visibleMetrics).map((key) => (
+                                <DropdownMenuCheckboxItem
+                                    key={key}
+                                    checked={visibleMetrics[key as keyof VisibleMetrics]}
+                                    onCheckedChange={(checked) => handleMetricVisibilityChange(key as keyof VisibleMetrics, !!checked)}
+                                >
+                                    {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                                </DropdownMenuCheckboxItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                 </div>
             </CardHeader>
             <CardContent>
-                <ProductivityChart timeline={productivityTimeline} />
+                <ProductivityChart timeline={productivityTimeline} visibleMetrics={visibleMetrics} />
             </CardContent>
         </Card>
 
