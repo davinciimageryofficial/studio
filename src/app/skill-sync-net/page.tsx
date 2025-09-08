@@ -443,7 +443,7 @@ function FreelancerView() {
                 </CardHeader>
                 <CardContent className="text-center p-12">
                     <p className="mb-6 text-muted-foreground">Ready for your next gig? Let our AI find a project that perfectly matches your skills and experience.</p>
-                    <Button size="lg" className="text-lg bg-black text-white hover:bg-gray-800" onClick={handleFindProject} disabled={loading}>
+                    <Button size="lg" className="w-full text-lg bg-black text-white hover:bg-gray-800" onClick={handleFindProject} disabled={loading}>
                         <Zap className="mr-3 h-6 w-6" />
                         {loading ? "Scanning for Projects..." : "Find Instant Match"}
                     </Button>
@@ -454,7 +454,7 @@ function FreelancerView() {
                 {error && <Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
                 {result && result.match && result.match.project && <ProjectMatchCard project={result.match.project} />}
                  {!loading && !result && !error && (
-                    <Card className="flex flex-col items-center justify-center border-dashed border-white min-h-[500px]">
+                    <Card className="flex flex-col items-center justify-start pt-12 border-dashed border-white min-h-[500px]">
                         <CardHeader className="text-center">
                             <Barcode className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
                         </CardHeader>
@@ -635,6 +635,7 @@ export default function SkillSyncNetPage() {
     
 
     
+
 
 
 
