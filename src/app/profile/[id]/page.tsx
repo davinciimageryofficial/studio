@@ -1,7 +1,7 @@
 
 'use client';
 
-import { placeholderUsers, User } from "@/lib/placeholder-data";
+import { placeholderUsers, User, PortfolioItem } from "@/lib/placeholder-data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -255,25 +255,44 @@ export default function ProfilePage() {
                 </TabsContent>
 
                 <TabsContent value="portfolio">
-                     <Card>
-                        <CardHeader><CardTitle>Portfolio</CardTitle></CardHeader>
-                        <CardContent>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                {user.portfolio.map((item, index) => (
-                                    <Link href="#" key={index} className="group relative block w-full aspect-video overflow-hidden rounded-lg">
-                                        <Image src={item} alt={`Portfolio item ${index+1}`} fill className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint="design abstract" />
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100" />
-                                    </Link>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {user.portfolio.map((item, index) => (
+                            <PortfolioCard key={index} item={item} />
+                        ))}
+                    </div>
                 </TabsContent>
               </div>
             </Tabs>
         </div>
     </div>
   );
+}
+
+function PortfolioCard({ item }: { item: PortfolioItem }) {
+    return (
+        <Card className="overflow-hidden group">
+            <Link href="#" className="block">
+                <div className="relative aspect-video overflow-hidden">
+                    <Image
+                        src={item.imageUrl}
+                        alt={item.title}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        data-ai-hint="design abstract"
+                    />
+                </div>
+            </Link>
+            <CardContent className="p-4">
+                <h3 className="font-semibold text-lg">{item.title}</h3>
+                <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                    {item.tags.map(tag => (
+                        <Badge key={tag} variant="secondary">{tag}</Badge>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
+    );
 }
 
 function EditSocialsDialog({ initialSocials, onSave, triggerButton }: { initialSocials: SocialLinks, onSave: (socials: SocialLinks) => void, triggerButton: React.ReactNode }) {
@@ -616,3 +635,5 @@ function EditImageDialog({ currentImage, onSave, triggerButton }: { currentImage
         </Dialog>
     );
 }
+
+    

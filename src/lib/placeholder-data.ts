@@ -1,4 +1,12 @@
 
+export type PortfolioItem = {
+  title: string;
+  description: string;
+  imageUrl: string;
+  tags: string[];
+};
+
+
 export type User = {
   id: string;
   name: string;
@@ -8,7 +16,7 @@ export type User = {
   avatar: string;
   coverImage: string;
   skills: string[];
-  portfolio: string[];
+  portfolio: PortfolioItem[];
   category: "design" | "writing" | "development";
   jobTitle?: string;
   company?: string;
@@ -18,6 +26,27 @@ export type User = {
     with: string[]; // Array of user IDs
   };
 };
+
+const designPortfolio: PortfolioItem[] = [
+    { title: "E-commerce Platform Redesign", description: "A complete overhaul of a client's online store, focusing on a seamless user experience and modern UI.", imageUrl: "https://picsum.photos/seed/p1-0/800/600", tags: ["UI/UX", "Figma", "Webflow"] },
+    { title: "Mobile Banking App Concept", description: "A concept for a neo-banking application with a focus on simplicity and intuitive financial management.", imageUrl: "https://picsum.photos/seed/p1-1/800/600", tags: ["Mobile App", "Prototyping"] },
+    { title: "Brand Identity for 'Innovate'", description: "Developed a comprehensive brand guide, including logo, color palette, and typography for a tech startup.", imageUrl: "https://picsum.photos/seed/p1-2/800/600", tags: ["Branding", "Illustration"] },
+    { title: "Interactive Data Visualization", description: "Designed an interactive dashboard for a data analytics company to visualize complex datasets.", imageUrl: "https://picsum.photos/seed/p1-3/800/600", tags: ["Data Viz", "UI Design"] },
+];
+
+const devPortfolio: PortfolioItem[] = [
+    { title: "Real-time Collaborative Editor", description: "Built a web-based text editor allowing multiple users to collaborate simultaneously, using WebSockets and CRDTs.", imageUrl: "https://picsum.photos/seed/p2-0/800/600", tags: ["React", "Node.js", "WebSockets"] },
+    { title: "Serverless E-commerce Backend", description: "Architected and deployed a scalable, serverless backend on AWS for an e-commerce platform.", imageUrl: "https://picsum.photos/seed/p2-1/800/600", tags: ["AWS", "Serverless", "TypeScript"] },
+    { title: "Next.js Static Site Generator", description: "A custom static site generator built with Next.js for a documentation website, improving performance by over 200%.", imageUrl: "https://picsum.photos/seed/p2-2/800/600", tags: ["Next.js", "Performance"] },
+    { title: "GraphQL API for Mobile App", description: "Developed a flexible and efficient GraphQL API to serve data to both iOS and Android applications.", imageUrl: "https://picsum.photos/seed/p2-3/800/600", tags: ["GraphQL", "API", "PostgreSQL"] },
+];
+
+const writingPortfolio: PortfolioItem[] = [
+    { title: "The Ultimate Guide to B2B SaaS Content", description: "A 5,000-word cornerstone article that became the top-ranking piece for a major client in the SaaS industry.", imageUrl: "https://picsum.photos/seed/p3-0/800/600", tags: ["SEO", "Long-form", "B2B"] },
+    { title: "Website Copy for 'Fintech Innovations'", description: "Wrote all website and landing page copy for a new fintech startup, resulting in a 25% increase in conversions.", imageUrl: "https://picsum.photos/seed/p3-1/800/600", tags: ["Copywriting", "Conversion"] },
+    { title: "API Documentation for DevTools Co.", description: "Created comprehensive and easy-to-understand API documentation for a suite of developer tools.", imageUrl: "https://picsum.photos/seed/p3-2/800/600", tags: ["Technical Writing", "API Docs"] },
+    { title: "Monthly Newsletter Campaign", description: "Managed and wrote a monthly newsletter for a design agency, achieving a 45% open rate.", imageUrl: "https://picsum.photos/seed/p3-3/800/600", tags: ["Email Marketing", "Content Strategy"] },
+];
 
 export const placeholderUsers: User[] = [
   {
@@ -29,7 +58,7 @@ export const placeholderUsers: User[] = [
     avatar: "https://picsum.photos/seed/1027/200/200",
     coverImage: "https://picsum.photos/seed/cover1/1200/400",
     skills: ["UI/UX Design", "Figma", "Prototyping", "User Research", "Webflow"],
-    portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p1-${i}/400/300`),
+    portfolio: designPortfolio,
     category: "design",
     jobTitle: "Principal Designer",
     company: "Creative Co.",
@@ -44,7 +73,7 @@ export const placeholderUsers: User[] = [
     avatar: "https://picsum.photos/seed/1005/200/200",
     coverImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxidXNpbmVzc3xlbnwwfHx8fDE3NTcxMTMxMDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
     skills: ["React", "Next.js", "TypeScript", "GraphQL", "Tailwind CSS"],
-    portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p2-${i}/400/300`),
+    portfolio: devPortfolio,
     category: "development",
     jobTitle: "Senior Frontend Developer",
     company: "Innovate Inc.",
@@ -59,7 +88,7 @@ export const placeholderUsers: User[] = [
     avatar: "https://picsum.photos/seed/1011/200/200",
     coverImage: "https://picsum.photos/seed/cover3/1200/400",
     skills: ["Content Strategy", "SEO", "Copywriting", "Blogging", "Ahrefs"],
-    portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p3-${i}/400/300`),
+    portfolio: writingPortfolio,
     category: "writing",
     jobTitle: "Head of Content",
     company: "StoryWeavers",
@@ -74,7 +103,7 @@ export const placeholderUsers: User[] = [
     avatar: "https://picsum.photos/seed/1012/200/200",
     coverImage: "https://picsum.photos/seed/cover4/1200/400",
     skills: ["Node.js", "Python", "AWS", "Serverless", "PostgreSQL"],
-    portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p4-${i}/400/300`),
+    portfolio: devPortfolio.slice(0,2),
     category: "development",
     currentSession: {
         workspaceName: "Project Phoenix",
@@ -90,7 +119,7 @@ export const placeholderUsers: User[] = [
     avatar: "https://picsum.photos/seed/1013/200/200",
     coverImage: "https://picsum.photos/seed/cover5/1200/400",
     skills: ["Branding", "Illustration", "Adobe Creative Suite", "Typography"],
-    portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p5-${i}/400/300`),
+    portfolio: designPortfolio.slice(1,3),
     category: "design",
   },
   {
@@ -102,7 +131,7 @@ export const placeholderUsers: User[] = [
     avatar: "https://picsum.photos/seed/1014/200/200",
     coverImage: "https://picsum.photos/seed/cover6/1200/400",
     skills: ["Technical Writing", "Docs-as-Code", "API Documentation", "Markdown"],
-    portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/p6-${i}/400/300`),
+    portfolio: writingPortfolio.slice(0,2),
     category: "writing",
     jobTitle: "Senior Technical Writer",
     company: "Clearly Documented",
@@ -670,3 +699,5 @@ export const dailyProductivityData = [
   { day: "Sat", projects: 0, revenue: 0.1, rating: 4.9, impressions: 200, acquisition: 0, revPerProject: 0 },
   { day: "Sun", projects: 0, revenue: 0, rating: 5.0, impressions: 150, acquisition: 0, revPerProject: 0 },
 ];
+
+    
