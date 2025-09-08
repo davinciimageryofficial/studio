@@ -1,3 +1,4 @@
+
 "use client"
 
 import { ComposedChart, Bar, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, TooltipProps } from "recharts";
@@ -32,6 +33,11 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
 type ProductivityChartProps = {
     timeline: 'daily' | 'weekly' | 'monthly';
 }
+
+const renderLegendText = (value: string) => {
+  return <span className="text-foreground">{value}</span>;
+};
+
 
 export function ProductivityChart({ timeline }: ProductivityChartProps) {
 
@@ -78,6 +84,7 @@ export function ProductivityChart({ timeline }: ProductivityChartProps) {
                 wrapperStyle={{ paddingTop: '20px' }}
                 iconType="circle"
                 iconSize={10}
+                formatter={renderLegendText}
             />
             <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={30} />
             <Line yAxisId="left" type="monotone" dataKey="projects" name="Projects" stroke="hsl(var(--muted-foreground))" strokeWidth={2} dot={{ r: 4 }} />
