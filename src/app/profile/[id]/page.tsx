@@ -227,31 +227,34 @@ export default function ProfilePage() {
                 </TabsContent>
                 
                 <TabsContent value="experience">
-                   <Card>
-                        <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle>Work Experience</CardTitle>
-                            {isMyProfile && (
-                                <EditExperienceDialog initialExperiences={experiences} onSave={handleSaveExperience} />
-                            )}
-                        </CardHeader>
-                        <CardContent>
-                            <div className="relative pl-6">
-                                <div className="absolute left-6 top-0 bottom-0 w-px bg-border"></div>
-                                {experiences.map((exp, index) => (
-                                    <div key={index} className="relative flex gap-6 pb-8 last:pb-0">
-                                        <div className="absolute -left-1.5 top-1.5 h-3 w-3 rounded-full bg-primary"></div>
-                                        <div>
-                                            <h3 className="font-semibold">{exp.title}</h3>
-                                            <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                                                <div className="flex items-center gap-1.5"><Building className="h-4 w-4" /> <span>{exp.company}</span></div>
-                                                <div className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> <span>{exp.duration}</span></div>
-                                            </div>
-                                        </div>
+                   <div className="relative">
+                        <div className="absolute left-9 top-0 w-px h-full bg-border -translate-x-1/2"></div>
+                         <div className="space-y-12">
+                            {experiences.map((exp, index) => (
+                                <div key={index} className="relative flex items-start gap-8">
+                                    <div className="absolute left-9 top-2 h-4 w-4 bg-background border-2 border-primary rounded-full -translate-x-1/2"></div>
+                                    <div className="pt-1.5 hidden md:block">
+                                        <Briefcase className="h-6 w-6 text-muted-foreground" />
                                     </div>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
+                                    <Card className="flex-1">
+                                        <CardHeader>
+                                            <CardTitle className="text-xl">{exp.title}</CardTitle>
+                                             {isMyProfile && index === 0 && (
+                                                <EditExperienceDialog initialExperiences={experiences} onSave={handleSaveExperience} />
+                                            )}
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div className="flex flex-col sm:flex-row sm:items-center gap-x-4 gap-y-1 text-sm text-muted-foreground mb-4">
+                                                <div className="flex items-center gap-2"><Building className="h-4 w-4" /><span>{exp.company}</span></div>
+                                                <div className="flex items-center gap-2"><Calendar className="h-4 w-4" /><span>{exp.duration}</span></div>
+                                            </div>
+                                            <p>This is a placeholder description for the role. In the future, users will be able to add detailed descriptions, achievements, and link relevant portfolio projects here.</p>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            ))}
+                         </div>
+                   </div>
                 </TabsContent>
 
                 <TabsContent value="portfolio" className="max-w-none -m-6">
@@ -486,7 +489,7 @@ function EditExperienceDialog({ initialExperiences, onSave }: { initialExperienc
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="absolute top-4 right-4">
                     <Edit className="h-4 w-4" />
                 </Button>
             </DialogTrigger>
