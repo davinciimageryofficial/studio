@@ -233,7 +233,7 @@ export default function FeedPage() {
             <div className="h-px bg-border" />
             <Dialog open={isComposerOpen} onOpenChange={setIsComposerOpen}>
                 <DialogTrigger asChild>
-                    <button className="flex flex-1 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90">
+                    <button className="flex flex-1 items-center justify-center bg-black text-white hover:bg-gray-800">
                         <Edit className="h-5 w-5" />
                         <span className="sr-only">Create Post</span>
                     </button>
