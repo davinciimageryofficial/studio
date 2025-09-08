@@ -36,11 +36,7 @@ export function ConversationStarters() {
 
   return (
     <div>
-      <h3 className="text-lg font-semibold flex items-center gap-2">
-        <Lightbulb className="w-5 h-5" />
-        Pocket Guide
-      </h3>
-      <div className="mt-4 space-y-4">
+      <div className="space-y-4">
         <div>
           <Label className="text-sm font-medium">Choose a mood:</Label>
           <RadioGroup 

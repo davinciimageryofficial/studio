@@ -33,6 +33,7 @@ import {
   ChevronDown,
   DollarSign,
   Info,
+  Lightbulb,
 } from "lucide-react";
 import Image from "next/image";
 import { ConversationStarters } from "../conversation-starters";
@@ -45,6 +46,7 @@ import {
   DialogTrigger,
   DialogFooter,
   DialogClose,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { analyzePost, AnalyzePostOutput } from "@/ai/flows/post-analyzer";
 import { generatePost, PostGeneratorOutput } from "@/ai/flows/post-generator";
@@ -78,6 +80,20 @@ function FeedContent({ posts, onUpdate, onDelete }: { posts: Post[], onUpdate: (
             )}
         </div>
     );
+}
+
+function PocketGuideDialog() {
+    return (
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Pocket Guide</DialogTitle>
+                <DialogDescription>AI-powered suggestions to spark your next conversation.</DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+                <ConversationStarters />
+            </div>
+        </DialogContent>
+    )
 }
 
 export default function FeedPage() {
@@ -202,30 +218,37 @@ export default function FeedPage() {
         </div>
       </main>
       <aside className="hidden w-80 flex-col border-l p-6 lg:flex">
-        <div className="sticky top-[84px] space-y-6">
-          <ClientOnly>
-            <ConversationStarters />
-          </ClientOnly>
-        </div>
       </aside>
+
        {/* Floating Action Button */}
-      <Dialog open={isComposerOpen} onOpenChange={setIsComposerOpen}>
-        <DialogTrigger asChild>
-          <Button
-            className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg lg:bottom-8 lg:right-8"
-            size="icon"
-          >
-            <Edit className="h-6 w-6" />
-            <span className="sr-only">Create Post</span>
-          </Button>
-        </DialogTrigger>
-        <CreatePostDialog
-          onPostGenerated={(post) => {
-            addPost(post);
-            setIsComposerOpen(false);
-          }}
-        />
-      </Dialog>
+      <div className="fixed bottom-6 right-6 z-50 flex h-14 w-28 flex-col items-center justify-center overflow-hidden rounded-full shadow-lg lg:bottom-8 lg:right-8">
+          <div className="flex w-full h-full">
+            <Dialog>
+                 <DialogTrigger asChild>
+                    <button className="flex-1 bg-secondary text-secondary-foreground hover:bg-secondary/80 flex items-center justify-center">
+                        <Lightbulb className="h-5 w-5" />
+                        <span className="sr-only">Pocket Guide</span>
+                    </button>
+                 </DialogTrigger>
+                <PocketGuideDialog />
+            </Dialog>
+            <div className="w-px bg-border"></div>
+            <Dialog open={isComposerOpen} onOpenChange={setIsComposerOpen}>
+                <DialogTrigger asChild>
+                    <button className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center">
+                        <Edit className="h-5 w-5" />
+                        <span className="sr-only">Create Post</span>
+                    </button>
+                </DialogTrigger>
+                 <CreatePostDialog
+                    onPostGenerated={(post) => {
+                        addPost(post);
+                        setIsComposerOpen(false);
+                    }}
+                />
+            </Dialog>
+          </div>
+      </div>
     </div>
   );
 }
