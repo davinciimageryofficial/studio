@@ -88,7 +88,8 @@ export default function DashboardPage() {
     const pendingInvitations = placeholderUsers.slice(3, 6);
     const newConnections = placeholderUsers.slice(2, 5);
     
-    const handleAccessCodeSubmit = () => {
+    const handleAccessCodeSubmit = (e?: React.FormEvent) => {
+        e?.preventDefault();
         if (accessCode === '2004') {
             toast({
                 title: "Access Granted!",
@@ -367,21 +368,23 @@ export default function DashboardPage() {
                                 The full AD-Sentry studio is currently in a private beta. Enter an access code to get early access.
                             </DialogDescription>
                         </DialogHeader>
-                         <div className="space-y-2 py-4">
-                            <Label htmlFor="access-code">Beta Access Code</Label>
-                            <div className="flex gap-2">
-                                <Input 
-                                    id="access-code"
-                                    placeholder="Enter your code" 
-                                    value={accessCode}
-                                    onChange={(e) => setAccessCode(e.target.value)}
-                                />
-                                <Button onClick={handleAccessCodeSubmit}>
-                                    <Rocket className="mr-2 h-4 w-4" />
-                                    Submit
-                                </Button>
+                        <form onSubmit={handleAccessCodeSubmit}>
+                             <div className="space-y-2 py-4">
+                                <Label htmlFor="access-code">Beta Access Code</Label>
+                                <div className="flex gap-2">
+                                    <Input 
+                                        id="access-code"
+                                        placeholder="Enter your code" 
+                                        value={accessCode}
+                                        onChange={(e) => setAccessCode(e.target.value)}
+                                    />
+                                    <Button type="submit">
+                                        <Rocket className="mr-2 h-4 w-4" />
+                                        Submit
+                                    </Button>
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </DialogContent>
                 </Dialog>
             </CardContent>
@@ -431,6 +434,8 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
 
     
 
