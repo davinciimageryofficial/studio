@@ -17,11 +17,9 @@ import { analyzeAdCampaign, AdCampaignAnalyzerOutput } from "@/ai/flows/ad-campa
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { MediaUploader } from "@/components/ui/media-uploader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const campaigns = [
   { name: "Summer Sale Promotion", status: "Active", type: "Banner Ad", spend: "$500", conversions: 25 },
@@ -37,8 +35,6 @@ const campaignFormSchema = z.object({
   }),
   adContent: z.string().min(1, "Ad content is required."),
   targetingKeywords: z.string().min(1, "At least one keyword is required."),
-  mediaUrl: z.string().optional(),
-  adLayout: z.enum(['media-top', 'media-left', 'text-only']).default('media-top'),
 });
 
 type CampaignFormValues = z.infer<typeof campaignFormSchema>;
@@ -197,7 +193,6 @@ function CreateCampaignDialog() {
             campaignName: "",
             adContent: "",
             targetingKeywords: "",
-            adLayout: 'media-top',
         }
     });
 
@@ -294,24 +289,6 @@ function CreateCampaignDialog() {
                              {form.formState.errors.targetingKeywords && <p className="text-sm text-destructive">{form.formState.errors.targetingKeywords.message}</p>}
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label>Media Upload</Label>
-                                <Controller name="mediaUrl" control={form.control} render={({ field }) => (
-                                    <MediaUploader onUpload={(url) => field.onChange(url)} />
-                                )} />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Ad Layout</Label>
-                                <Controller name="adLayout" control={form.control} render={({ field }) => (
-                                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="space-y-1">
-                                        <div className="flex items-center space-x-2"><RadioGroupItem value="media-top" id="l1" /><Label htmlFor="l1">Media on Top</Label></div>
-                                        <div className="flex items-center space-x-2"><RadioGroupItem value="media-left" id="l2" /><Label htmlFor="l2">Media on Left</Label></div>
-                                        <div className="flex items-center space-x-2"><RadioGroupItem value="text-only" id="l3" /><Label htmlFor="l3">Text Only</Label></div>
-                                    </RadioGroup>
-                                )} />
-                            </div>
-                        </div>
                     </div>
                     {/* Pocket Guide */}
                     <div className="space-y-4 md:border-l md:pl-6">
@@ -381,4 +358,3 @@ function CreateCampaignDialog() {
     );
 }
 
-    
