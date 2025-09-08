@@ -1,4 +1,3 @@
-
 'use client';
 
 import { placeholderUsers, User, PortfolioItem } from "@/lib/placeholder-data";
@@ -17,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { PortfolioView } from "./portfolio-view";
 
 type Experience = {
     title: string;
@@ -254,45 +254,14 @@ export default function ProfilePage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="portfolio">
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {user.portfolio.map((item, index) => (
-                            <PortfolioCard key={index} item={item} />
-                        ))}
-                    </div>
+                <TabsContent value="portfolio" className="max-w-none -m-6">
+                     <PortfolioView user={user} isMyProfile={isMyProfile} />
                 </TabsContent>
               </div>
             </Tabs>
         </div>
     </div>
   );
-}
-
-function PortfolioCard({ item }: { item: PortfolioItem }) {
-    return (
-        <Card className="overflow-hidden group">
-            <Link href="#" className="block">
-                <div className="relative aspect-video overflow-hidden">
-                    <Image
-                        src={item.imageUrl}
-                        alt={item.title}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        data-ai-hint="design abstract"
-                    />
-                </div>
-            </Link>
-            <CardContent className="p-4">
-                <h3 className="font-semibold text-lg">{item.title}</h3>
-                <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                    {item.tags.map(tag => (
-                        <Badge key={tag} variant="secondary">{tag}</Badge>
-                    ))}
-                </div>
-            </CardContent>
-        </Card>
-    );
 }
 
 function EditSocialsDialog({ initialSocials, onSave, triggerButton }: { initialSocials: SocialLinks, onSave: (socials: SocialLinks) => void, triggerButton: React.ReactNode }) {
@@ -635,5 +604,3 @@ function EditImageDialog({ currentImage, onSave, triggerButton }: { currentImage
         </Dialog>
     );
 }
-
-    
