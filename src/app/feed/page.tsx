@@ -221,21 +221,21 @@ export default function FeedPage() {
       </aside>
 
        {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6 z-50 flex h-14 w-28 flex-col items-center justify-center overflow-hidden rounded-full shadow-lg lg:bottom-8 lg:right-8">
-          <div className="flex w-full h-full">
+      <div className="fixed bottom-6 right-6 z-50 flex h-28 w-14 flex-col items-center justify-center overflow-hidden rounded-full shadow-lg lg:bottom-8 lg:right-8">
+          <div className="flex h-full w-full flex-col">
             <Dialog>
                  <DialogTrigger asChild>
-                    <button className="flex-1 bg-secondary text-secondary-foreground hover:bg-secondary/80 flex items-center justify-center">
+                    <button className="flex flex-1 items-center justify-center bg-secondary text-secondary-foreground hover:bg-secondary/80">
                         <Lightbulb className="h-5 w-5" />
                         <span className="sr-only">Pocket Guide</span>
                     </button>
                  </DialogTrigger>
                 <PocketGuideDialog />
             </Dialog>
-            <div className="w-px bg-border"></div>
+            <div className="h-px bg-border" />
             <Dialog open={isComposerOpen} onOpenChange={setIsComposerOpen}>
                 <DialogTrigger asChild>
-                    <button className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center">
+                    <button className="flex flex-1 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90">
                         <Edit className="h-5 w-5" />
                         <span className="sr-only">Create Post</span>
                     </button>
