@@ -87,7 +87,7 @@ export const freelanceNiches = {
     "Miscellaneous": ["Voice Acting for AI/Apps", "Astrology/Tarot Services", "Personal Styling", "Travel Planning", "Genealogy Research", "Virtual Tour Creation", "NFT Creation & Consulting", "Podcast Guest Booking"],
 };
 type FreelanceNiche = keyof typeof freelanceNiches;
-type SelectedNiches = Record<string, string[]>;
+type SelectedNiches = Record<string, string[]>>;
 
 
 function NichePickerDialog({ onSave, initialNiches }: { onSave: (niches: string[]) => void, initialNiches: string[] }) {
@@ -392,7 +392,6 @@ function ClientView() {
                     <Card className="flex flex-col items-center justify-center border-dashed min-h-[500px]">
                          <CardHeader className="text-center">
                             <Barcode className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
-                            <h2 className="text-xl font-bold">Your AI-Vetted Match</h2>
                         </CardHeader>
                         <CardContent className="text-center text-muted-foreground p-8 pt-0">
                             <h3 className="text-lg font-normal">Your matched freelancer will appear here.</h3>
@@ -460,7 +459,6 @@ function FreelancerView() {
                             <Barcode className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent className="text-center text-muted-foreground p-8 pt-0">
-                            <h2 className="text-xl font-bold">Your AI-Matched Project</h2>
                             <h3 className="text-lg font-normal">Your matched project will appear here.</h3>
                             <p>Click the "Find Instant Match" button to start.</p>
                         </CardContent>
@@ -554,7 +552,7 @@ function ProjectMatchCard({ project }: { project: NonNullable<NonNullable<SkillS
         <Card className="shadow-lg">
             <CardHeader>
                 <div className="pt-4">
-                    <CardTitle className="text-2xl">{project.title}</CardTitle>
+                    <CardTitle className="text-xl font-semibold">{project.title}</CardTitle>
                     <CardDescription>Posted by: {project.clientName}</CardDescription>
                 </div>
             </CardHeader>
