@@ -268,14 +268,6 @@ export default function DashboardPage() {
                                 <p className="text-xs text-muted-foreground">{user.headline}</p>
                             </div>
                         </div>
-                         <div className="flex gap-1">
-                            <Button variant="secondary" size="icon" className="h-8 w-8">
-                                <Check className="h-4 w-4" />
-                            </Button>
-                            <Button variant="secondary" size="icon" className="h-8 w-8">
-                                <X className="h-4 w-4" />
-                            </Button>
-                        </div>
                     </DropdownMenuItem>
                 ))}
                  <DropdownMenuSeparator />
@@ -494,5 +486,7 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
 
     
