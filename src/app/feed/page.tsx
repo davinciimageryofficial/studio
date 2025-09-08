@@ -219,7 +219,7 @@ export default function FeedPage() {
       </main>
       
        {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6 z-50 flex h-40 w-7 flex-col items-center justify-center overflow-hidden rounded-full shadow-lg lg:bottom-8 lg:right-8">
+      <div className="fixed bottom-6 right-6 z-50 flex h-40 w-8 flex-col items-center justify-center overflow-hidden rounded-full shadow-lg lg:bottom-8 lg:right-8">
           <div className="flex h-full w-full flex-col">
             <Dialog>
                  <DialogTrigger asChild>
