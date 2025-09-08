@@ -27,7 +27,9 @@ type Task = {
     assignee: typeof placeholderUsers[0];
 };
 
-const initialTasks: { todo: Task[], inProgress: Task[], done: Task[] } = {
+type TaskStatus = 'todo' | 'inProgress' | 'done';
+
+const initialTasks: { [key in TaskStatus]: Task[] } = {
   todo: [
     { id: 'task-1', title: 'Draft Q3 marketing brief for the new feature launch', priority: 'High', assignee: placeholderUsers[2] },
     { id: 'task-2', title: 'Design new homepage mockups in Figma', priority: 'Medium', assignee: placeholderUsers[0] },
@@ -55,6 +57,7 @@ export default function DashboardPage() {
     const [chartType, setChartType] = useState<"bar" | "line" | "area">("area");
     const [isAppDownloaded, setIsAppDownloaded] = useState(false);
     const [accessCode, setAccessCode] = useState("");
+    const [tasks, setTasks] = useState(initialTasks);
     const { toast } = useToast();
     const router = useRouter();
 
@@ -102,6 +105,45 @@ export default function DashboardPage() {
                 title: "Invalid Code",
                 description: "The access code you entered is incorrect. Please try again.",
             });
+        }
+    };
+    
+    const handleDragStart = (e: React.DragEvent<HTMLDivElement>, taskId: string, sourceColumn: TaskStatus) => {
+        e.dataTransfer.setData("taskId", taskId);
+        e.dataTransfer.setData("sourceColumn", sourceColumn);
+    };
+
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>, destinationColumn: TaskStatus) => {
+        e.preventDefault();
+        const taskId = e.dataTransfer.getData("taskId");
+        const sourceColumn = e.dataTransfer.getData("sourceColumn") as TaskStatus;
+
+        if (sourceColumn === destinationColumn) return;
+
+        let taskToMove: Task | undefined;
+        
+        // Find and remove task from source column
+        const newSourceTasks = tasks[sourceColumn].filter(task => {
+            if (task.id === taskId) {
+                taskToMove = task;
+                return false;
+            }
+            return true;
+        });
+
+        if (taskToMove) {
+            // Add task to destination column
+            const newDestinationTasks = [...tasks[destinationColumn], taskToMove];
+            
+            setTasks(prevTasks => ({
+                ...prevTasks,
+                [sourceColumn]: newSourceTasks,
+                [destinationColumn]: newDestinationTasks,
+            }));
         }
     };
 
@@ -251,12 +293,22 @@ export default function DashboardPage() {
               <p className="text-muted-foreground">A minimalist, grid-aligned view of your project progress.</p>
             </header>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {Object.entries(initialTasks).map(([status, tasks]) => (
-                <div key={status}>
+              {(Object.keys(tasks) as TaskStatus[]).map((status) => (
+                <div 
+                    key={status}
+                    onDrop={(e) => handleDrop(e, status)}
+                    onDragOver={handleDragOver}
+                    className="space-y-3"
+                >
                   <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4 px-2">{status.replace(/([A-Z])/g, ' $1')}</h3>
                   <div className="space-y-3">
-                    {tasks.map(task => (
-                      <div key={task.id} className="group cursor-grab border-b bg-card p-4 transition-shadow hover:shadow-md">
+                    {tasks[status].map(task => (
+                      <div 
+                          key={task.id}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, task.id, status)}
+                          className="group cursor-grab border-b bg-card p-4 transition-shadow hover:shadow-md"
+                      >
                           <p className="text-sm font-medium pr-2 mb-4">{task.title}</p>
                           <div className="flex items-center justify-between">
                             <TooltipProvider>
@@ -417,5 +469,7 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
 
     
