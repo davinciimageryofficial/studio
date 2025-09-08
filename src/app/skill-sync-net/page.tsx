@@ -87,7 +87,7 @@ export const freelanceNiches = {
     "Miscellaneous": ["Voice Acting for AI/Apps", "Astrology/Tarot Services", "Personal Styling", "Travel Planning", "Genealogy Research", "Virtual Tour Creation", "NFT Creation & Consulting", "Podcast Guest Booking"],
 };
 type FreelanceNiche = keyof typeof freelanceNiches;
-type SelectedNiches = Record<string, string[]>>;
+type SelectedNiches = Record<string, string[]>;
 
 
 function NichePickerDialog({ onSave, initialNiches }: { onSave: (niches: string[]) => void, initialNiches: string[] }) {
@@ -631,5 +631,7 @@ export default function SkillSyncNetPage() {
         </ClientOnly>
     );
 }
+
+    
 
     
