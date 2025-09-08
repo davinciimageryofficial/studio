@@ -369,7 +369,7 @@ export default function DashboardPage() {
                     </Tabs>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="icon">
+                            <Button variant="default" size="icon" className="bg-black text-white">
                                 <Settings className="h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -538,3 +538,6 @@ export default function DashboardPage() {
     
 
 
+
+
+    
