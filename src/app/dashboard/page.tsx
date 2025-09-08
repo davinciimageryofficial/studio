@@ -497,7 +497,7 @@ export default function DashboardPage() {
                     <DialogTrigger asChild>
                         <Button size="lg" className="w-full" variant="outline" onClick={() => setIsAppDownloaded(true)}>
                             <Circle className="mr-2 h-5 w-5" />
-                            Download for Mac
+                            for Macintosh
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
