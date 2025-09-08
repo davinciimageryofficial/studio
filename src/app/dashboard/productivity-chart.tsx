@@ -16,6 +16,9 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
             <span>
               {pld.name === 'Client Rating' ? `${pld.value?.toFixed(1)}/5.0` : ''}
               {pld.name === 'Revenue' && `$${(pld.value as number * 1000).toLocaleString()}`}
+              {pld.name === 'Rev. Per Project' && `$${((pld.value || 0) as number * 1000).toLocaleString()}`}
+              {pld.name === 'Impressions' && `${(pld.value as number).toLocaleString()}`}
+              {pld.name === 'New Clients' && pld.value}
               {pld.name === 'Projects' && pld.value}
             </span>
           </div>
@@ -62,6 +65,7 @@ export function ProductivityChart({ timeline }: ProductivityChartProps) {
                 axisLine={false}
                 tickMargin={10}
                 tickFormatter={(value) => `$${value}k`}
+                label={{ value: "Revenue & Projects", angle: -90, position: 'insideLeft', offset: 10 }}
             />
              <YAxis 
                 yAxisId="right"
@@ -69,7 +73,8 @@ export function ProductivityChart({ timeline }: ProductivityChartProps) {
                 tickLine={false}
                 axisLine={false}
                 tickMargin={10}
-                domain={[0, 5]}
+                domain={[0, 'dataMax + 1000']}
+                label={{ value: "Impressions & Clients", angle: 90, position: 'insideRight', offset: 10 }}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend 
@@ -79,10 +84,10 @@ export function ProductivityChart({ timeline }: ProductivityChartProps) {
             />
             <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={30} />
             <Line yAxisId="left" type="monotone" dataKey="projects" name="Projects" stroke="hsl(var(--muted-foreground))" strokeWidth={2} dot={{ r: 4 }} />
-            <Line yAxisId="right" type="monotone" dataKey="rating" name="Client Rating" stroke="hsl(var(--chart-2))" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 4 }}/>
+            <Line yAxisId="right" type="monotone" dataKey="impressions" name="Impressions" stroke="hsl(var(--chart-4))" strokeWidth={2} dot={{ r: 4 }} />
+            <Line yAxisId="right" type="monotone" dataKey="acquisition" name="New Clients" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={{ r: 4 }} />
+            <Line yAxisId="left" type="monotone" dataKey="revPerProject" name="Rev. Per Project" stroke="hsl(var(--destructive))" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 4 }}/>
         </ComposedChart>
     </ResponsiveContainer>
   );
 }
-
-
