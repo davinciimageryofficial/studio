@@ -307,7 +307,7 @@ export default function DashboardPage() {
        <div className="mt-12">
             <header className="mb-6">
               <h2 className="text-2xl font-semibold tracking-tight">Task Board</h2>
-              <p className="text-muted-foreground">A minimalist, grid-aligned view of your project progress.</p>
+              <p className="text-muted-foreground">Interact with project blocks, organize progress</p>
             </header>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {(Object.keys(tasks) as TaskStatus[]).map((status) => (
@@ -536,3 +536,4 @@ export default function DashboardPage() {
     
 
     
+
