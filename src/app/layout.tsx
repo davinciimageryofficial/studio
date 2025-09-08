@@ -69,7 +69,7 @@ export default function RootLayout({
         <meta name="description" content="Your professional network and dream team builder." />
       </head>
       <body className={`${inter.variable} ${michroma.variable} font-body antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="dark" themes={['light', 'dark', 'grey']}>
+        <ThemeProvider attribute="class" defaultTheme="dark" themes={['light', 'dark', 'midnight']}>
           <WorkspaceProvider>
             <AppLayout>
               {children}
