@@ -14,8 +14,8 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
             <span className="font-semibold">{pld.name}: </span>
             <span>
               {pld.name === 'Client Rating' ? `${pld.value?.toFixed(1)}/5.0` : pld.value}
-              {pld.name === 'Revenue' && 'k'}
-              {pld.name === 'Rev. Per Project' && 'k'}
+              {pld.name === 'Revenue ($k)' && 'x'}
+              {pld.name === 'Rev. Per Project ($k)' && 'x'}
             </span>
           </div>
         ))}
@@ -80,7 +80,7 @@ export function ProductivityChart({ timeline }: ProductivityChartProps) {
             <Line yAxisId="right" type="monotone" dataKey="rating" name="Client Rating" stroke="#a1a1aa" strokeWidth={2} dot={{ r: 4 }}/>
             <Line yAxisId="left" type="monotone" dataKey="impressions" name="Impressions" stroke="#ff0000" strokeWidth={2} dot={{ r: 4 }} />
             <Line yAxisId="left" type="monotone" dataKey="acquisition" name="Client Acquisition" stroke="#0000ff" strokeWidth={2} dot={{ r: 4 }} />
-            <Line yAxisId="left" type="monotone" dataKey="revPerProject" name="Rev. Per Project ($k)" stroke="#ec4899" strokeWidth={2} dot={{ r: 4 }} />
+            <Line yAxisId="left" type="monotone" dataKey="revPerProject" name="Rev. Per Project ($k)" stroke="#008080" strokeWidth={2} dot={{ r: 4 }} />
         </LineChart>
     </ResponsiveContainer>
   );
