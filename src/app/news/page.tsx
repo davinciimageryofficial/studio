@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatisticsView } from "./statistics";
 import { BizRankView } from "./biz-rank";
+import { ClientOnly } from "@/components/layout/client-only";
 
 
 type Category = 
@@ -110,7 +111,9 @@ export default function NewsPage() {
             {category === 'Statistics' ? (
               <StatisticsView />
             ) : category === 'Biz-Rank' ? (
-                <BizRankView />
+                <ClientOnly>
+                    <BizRankView />
+                </ClientOnly>
             ) : (
               <NewsGrid articles={getArticlesForCategory(category)} />
             )}
