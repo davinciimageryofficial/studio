@@ -11,6 +11,7 @@ import { Search, Share2, PlusCircle, Settings, LayoutGrid, List } from "lucide-r
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface PortfolioViewProps {
     user: User;
@@ -103,27 +104,61 @@ export function PortfolioView({ user, isMyProfile }: PortfolioViewProps) {
 
 function PortfolioCard({ item, layout }: { item: PortfolioItem, layout: 'grid' | 'list' }) {
     return (
-        <Card className={cn("overflow-hidden group transition-all hover:shadow-xl", layout === 'list' && "md:grid md:grid-cols-3 md:gap-6")}>
-            <Link href="#" className="block">
-                <div className={cn("relative overflow-hidden", layout === 'grid' ? "aspect-video" : "md:aspect-video aspect-video")}>
-                    <Image
-                        src={item.imageUrl}
-                        alt={item.title}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        data-ai-hint="design abstract"
-                    />
+        <Dialog>
+            <DialogTrigger asChild>
+                 <Card className={cn("overflow-hidden group transition-all hover:shadow-xl cursor-pointer", layout === 'list' && "md:grid md:grid-cols-3 md:gap-0")}>
+                    <div className={cn("relative overflow-hidden", layout === 'grid' ? "aspect-video" : "md:aspect-video aspect-video")}>
+                        <Image
+                            src={item.imageUrl}
+                            alt={item.title}
+                            fill
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                            data-ai-hint="design abstract"
+                        />
+                    </div>
+                    <div className={cn("p-4 md:p-6 flex flex-col", layout === 'list' && "md:col-span-2")}>
+                        <h3 className="text-lg font-semibold">{item.title}</h3>
+                        <p className="mt-1 text-sm text-muted-foreground line-clamp-2 flex-grow">{item.description}</p>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                            {item.tags.map(tag => (
+                                <Badge key={tag} variant="secondary">{tag}</Badge>
+                            ))}
+                        </div>
+                    </div>
+                </Card>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl p-0">
+                <div className="grid grid-cols-1 md:grid-cols-2">
+                    <div className="relative aspect-video">
+                         <Image
+                            src={item.imageUrl}
+                            alt={item.title}
+                            fill
+                            className="object-cover rounded-l-lg"
+                        />
+                    </div>
+                    <div className="flex flex-col p-6">
+                        <DialogHeader>
+                            <DialogTitle className="text-2xl">{item.title}</DialogTitle>
+                        </DialogHeader>
+                        <p className="mt-4 text-muted-foreground flex-grow">{item.description}</p>
+                        <div className="mt-6">
+                             <h4 className="font-semibold mb-2">Technologies & Skills</h4>
+                             <div className="flex flex-wrap gap-2">
+                                {item.tags.map(tag => (
+                                    <Badge key={tag} variant="secondary">{tag}</Badge>
+                                ))}
+                            </div>
+                        </div>
+                         <div className="mt-6 flex gap-2">
+                            <Button className="w-full">
+                                <Share2 className="mr-2 h-4 w-4" />
+                                Share Project
+                            </Button>
+                        </div>
+                    </div>
                 </div>
-            </Link>
-            <div className={cn("p-4 md:p-6", layout === 'list' && "md:col-span-2")}>
-                <h3 className="text-lg font-semibold">{item.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                    {item.tags.map(tag => (
-                        <Badge key={tag} variant="secondary">{tag}</Badge>
-                    ))}
-                </div>
-            </div>
-        </Card>
+            </DialogContent>
+        </Dialog>
     );
 }
