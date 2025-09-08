@@ -15,6 +15,7 @@ import { useSidebar } from "../ui/sidebar";
 import { useRouter } from "next/navigation";
 import { ScrollArea } from "../ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ThemeSwitcher } from "./theme-switcher";
 
 type Message = {
     sender: 'user' | 'ai';
@@ -189,33 +190,36 @@ export function GlobalSearch() {
                     )}
                 </form>
                 {!showResults && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                          <Bell className="h-5 w-5" />
-                          <span className="sr-only">Notifications</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-80 bg-background/90 backdrop-blur-lg">
-                      <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      {notifications.map((item, index) => (
-                        <DropdownMenuItem key={index} className="flex items-start gap-3 p-3">
-                          <Avatar className="h-9 w-9">
-                              <AvatarFallback>
-                                <User className="h-5 w-5" />
-                              </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                              <p className="text-sm whitespace-normal">
-                                  <span className="font-semibold">{item.user.name}</span> {item.action}
-                              </p>
-                              <p className="text-xs text-muted-foreground">{item.time}</p>
-                          </div>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <Bell className="h-5 w-5" />
+                            <span className="sr-only">Notifications</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-80 bg-background/90 backdrop-blur-lg">
+                        <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {notifications.map((item, index) => (
+                          <DropdownMenuItem key={index} className="flex items-start gap-3 p-3">
+                            <Avatar className="h-9 w-9">
+                                <AvatarFallback>
+                                  <User className="h-5 w-5" />
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                                <p className="text-sm whitespace-normal">
+                                    <span className="font-semibold">{item.user.name}</span> {item.action}
+                                </p>
+                                <p className="text-xs text-muted-foreground">{item.time}</p>
+                            </div>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <ThemeSwitcher />
+                  </>
                 )}
                  {showResults && (
                     <Button variant="ghost" size="icon" onClick={closeSearch}>
@@ -282,3 +286,5 @@ export function GlobalSearch() {
     </div>
   );
 }
+
+    
