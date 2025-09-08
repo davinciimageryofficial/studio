@@ -460,7 +460,7 @@ function FreelancerView() {
                             <Barcode className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent className="text-center text-muted-foreground p-8 pt-0">
-                            <h2 className="text-xl font-semibold">Your AI-Matched Project</h2>
+                            <h2 className="text-xl font-bold">Your AI-Matched Project</h2>
                             <h3 className="text-lg font-normal">Your matched project will appear here.</h3>
                             <p>Click the "Find Instant Match" button to start.</p>
                         </CardContent>
@@ -554,7 +554,6 @@ function ProjectMatchCard({ project }: { project: NonNullable<NonNullable<SkillS
     return (
         <Card className="shadow-lg">
             <CardHeader>
-                <h2 className="text-xl font-semibold text-center mb-2">Your AI-Matched Project</h2>
                 <div className="pt-4">
                     <CardTitle className="text-2xl">{project.title}</CardTitle>
                     <CardDescription>Posted by: {project.clientName}</CardDescription>
@@ -635,3 +634,5 @@ export default function SkillSyncNetPage() {
         </ClientOnly>
     );
 }
+
+    
