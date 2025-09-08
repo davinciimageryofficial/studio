@@ -256,7 +256,7 @@ export default function DashboardPage() {
                   <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4 px-2">{status.replace(/([A-Z])/g, ' $1')}</h3>
                   <div className="space-y-3">
                     {tasks.map(task => (
-                      <div key={task.id} className="group cursor-grab rounded-lg border bg-card p-4 transition-shadow hover:shadow-md">
+                      <div key={task.id} className="group cursor-grab border-b bg-card p-4 transition-shadow hover:shadow-md">
                           <p className="text-sm font-medium pr-2 mb-4">{task.title}</p>
                           <div className="flex items-center justify-between">
                             <TooltipProvider>
@@ -270,19 +270,6 @@ export default function DashboardPage() {
                                     <TooltipContent><p>{task.priority} Priority</p></TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
-                             <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger>
-                                        <Avatar className="h-7 w-7">
-                                            <AvatarImage src={task.assignee.avatar} alt={task.assignee.name} />
-                                            <AvatarFallback>
-                                                <User className="h-4 w-4" />
-                                            </AvatarFallback>
-                                        </Avatar>
-                                    </TooltipTrigger>
-                                    <TooltipContent><p>Assigned to {task.assignee.name}</p></TooltipContent>
-                                </Tooltip>
-                             </TooltipProvider>
                           </div>
                       </div>
                     ))}
@@ -430,13 +417,5 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
-
-    
-
-    
-
-    
 
     
