@@ -607,7 +607,7 @@ export default function SkillSyncNetPage() {
                 <header className="mb-8 text-center">
                     <h1 className="hidden text-4xl font-bold tracking-tight font-headline-tech uppercase">Skill Sync Net</h1>
                     <p className="mt-2 text-lg text-muted-foreground max-w-3xl mx-auto">
-                        The intelligent marketplace for elite freelancers and innovative projects. Forget endless scrolling. Get the perfect match, instantly.
+                        Forget endless scrolling. Get the perfect match, instantly.
                     </p>
                 </header>
 
@@ -635,6 +635,7 @@ export default function SkillSyncNetPage() {
     
 
     
+
 
 
 
