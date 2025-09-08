@@ -316,7 +316,7 @@ function ClientView() {
                                 <Label htmlFor="projectTitle">Project Title</Label>
                                 <Dialog>
                                     <DialogTrigger asChild>
-                                        <Button type="button" variant="outline" size="sm"><Settings2 className="mr-2 h-4 w-4" /> Choose Category</Button>
+                                        <Button type="button" variant="outline"><Settings2 className="mr-2 h-4 w-4" /> Choose Category</Button>
                                     </DialogTrigger>
                                     <NichePickerDialog onSave={handleNicheSave} initialNiches={selectedNiches} />
                                 </Dialog>
@@ -635,6 +635,7 @@ export default function SkillSyncNetPage() {
     
 
     
+
 
 
 
