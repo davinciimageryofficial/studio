@@ -10,8 +10,8 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
       <div className="p-4 bg-background border border-border rounded-lg shadow-lg">
         <p className="font-bold text-lg mb-2">{label}</p>
         {payload.map((pld, index) => (
-          <div key={index} style={{ color: pld.color }} className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: pld.color }}></div>
+          <div key={index} style={{ color: pld.stroke || pld.fill }} className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: pld.stroke || pld.fill }}></div>
             <span className="font-semibold">{pld.name}: </span>
             <span>
               {pld.name === 'Client Rating' ? `${pld.value?.toFixed(1)}/5.0` : ''}
@@ -51,7 +51,7 @@ export function ProductivityChart({ timeline }: ProductivityChartProps) {
 
   return (
      <ResponsiveContainer width="100%" height={400}>
-        <ComposedChart data={chartData}>
+        <ComposedChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis 
                 dataKey={dataKey}
@@ -65,7 +65,7 @@ export function ProductivityChart({ timeline }: ProductivityChartProps) {
                 axisLine={false}
                 tickMargin={10}
                 tickFormatter={(value) => `$${value}k`}
-                label={{ value: "Revenue & Projects", angle: -90, position: 'insideLeft', offset: 10 }}
+                label={{ value: "Revenue & Projects", angle: -90, position: 'insideLeft', offset: -10 }}
             />
              <YAxis 
                 yAxisId="right"
@@ -74,7 +74,7 @@ export function ProductivityChart({ timeline }: ProductivityChartProps) {
                 axisLine={false}
                 tickMargin={10}
                 domain={[0, 'dataMax + 1000']}
-                label={{ value: "Impressions & Clients", angle: 90, position: 'insideRight', offset: 10 }}
+                label={{ value: "Impressions & Clients", angle: 90, position: 'insideRight', offset: -10 }}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend 
