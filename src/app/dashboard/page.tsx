@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical } from "lucide-react";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus } from "lucide-react";
 import Link from "next/link";
 import { EngagementChart } from "./charts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -44,10 +44,10 @@ const initialTasks: { todo: Task[], inProgress: Task[], done: Task[] } = {
   ],
 };
 
-const priorityColors = {
-  High: "bg-red-500",
-  Medium: "bg-yellow-500",
-  Low: "bg-green-500",
+const priorityIcons = {
+  High: <ArrowUp className="h-4 w-4 text-red-600" />,
+  Medium: <Minus className="h-4 w-4 text-yellow-600" />,
+  Low: <ArrowDown className="h-4 w-4 text-green-600" />,
 };
 
 
@@ -245,30 +245,31 @@ export default function DashboardPage() {
         </DropdownMenu>
       </div>
 
-       <div className="mt-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Task Board</CardTitle>
-            <CardDescription>Track project progress with a drag-and-drop Kanban board.</CardDescription>
-          </CardHeader>
-          <CardContent>
+       <div className="mt-12">
+            <header className="mb-6">
+              <h2 className="text-2xl font-semibold tracking-tight">Task Board</h2>
+              <p className="text-muted-foreground">A minimalist, grid-aligned view of your project progress.</p>
+            </header>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {Object.entries(initialTasks).map(([status, tasks]) => (
-                <div key={status} className="rounded-lg bg-card border-2 p-4">
-                  <h3 className="font-semibold mb-4 text-center capitalize">{status.replace(/([A-Z])/g, ' $1')}</h3>
-                  <div className="space-y-4">
+                <div key={status}>
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4 px-2">{status.replace(/([A-Z])/g, ' $1')}</h3>
+                  <div className="space-y-3">
                     {tasks.map(task => (
-                      <Card key={task.id} className="bg-card group cursor-grab">
-                        <CardContent className="p-3">
-                          <div className="flex justify-between items-start">
-                             <p className="text-sm font-medium pr-2">{task.title}</p>
-                             <GripVertical className="h-5 w-5 text-muted-foreground transition-opacity opacity-0 group-hover:opacity-100" />
-                          </div>
-                          <div className="flex items-center justify-between mt-2">
-                            <Badge variant="outline" className="flex items-center gap-1.5 py-1">
-                               <div className={cn("h-2 w-2 rounded-full", priorityColors[task.priority])} />
-                               {task.priority}
-                            </Badge>
+                      <div key={task.id} className="group cursor-grab rounded-lg border bg-card p-4 transition-shadow hover:shadow-md">
+                          <p className="text-sm font-medium pr-2 mb-4">{task.title}</p>
+                          <div className="flex items-center justify-between">
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <button className="flex items-center gap-2 text-muted-foreground">
+                                        {priorityIcons[task.priority]}
+                                        <span className="text-xs font-medium">{task.priority}</span>
+                                      </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent><p>{task.priority} Priority</p></TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                              <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger>
@@ -279,22 +280,17 @@ export default function DashboardPage() {
                                             </AvatarFallback>
                                         </Avatar>
                                     </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>{task.assignee.name}</p>
-                                    </TooltipContent>
+                                    <TooltipContent><p>Assigned to {task.assignee.name}</p></TooltipContent>
                                 </Tooltip>
                              </TooltipProvider>
                           </div>
-                        </CardContent>
-                      </Card>
+                      </div>
                     ))}
                   </div>
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
 
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Engagement Chart */}
@@ -434,6 +430,8 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
 
     
 
