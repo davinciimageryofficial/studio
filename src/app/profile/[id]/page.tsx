@@ -338,7 +338,7 @@ function EditProfileDialog({
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className="flex-1">
+                <Button className="flex-1 bg-black hover:bg-gray-800">
                     <Edit className="mr-2 h-4 w-4" />
                     Edit Profile
                 </Button>
