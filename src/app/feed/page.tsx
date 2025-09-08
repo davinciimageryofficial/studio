@@ -272,13 +272,13 @@ function CreatePostDialog({
      // This functionality is preserved but now used inside the dialog
   };
 
-  const handleTextFormat = (format: 'bold' | 'italic' | 'code') => {
+  const handleTextFormat = (format: 'bold' | 'italic' | 'code' | 'codeblock') => {
     const textarea = textareaRef.current;
     if (!textarea) return;
 
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
-    const selectedText = postContent.substring(start, end);
+    const selectedText = postContent.substring(start, end) || "your code here";
     let formattedText = "";
 
     switch(format) {
@@ -290,6 +290,9 @@ function CreatePostDialog({
             break;
         case 'code':
             formattedText = `\`${selectedText}\``;
+            break;
+        case 'codeblock':
+            formattedText = `\n\`\`\`\n${selectedText}\n\`\`\`\n`;
             break;
     }
 
@@ -323,7 +326,7 @@ function CreatePostDialog({
         <div className="flex items-center gap-1">
             <Button variant="ghost" size="icon" onClick={() => handleTextFormat('bold')}><Bold /></Button>
             <Button variant="ghost" size="icon" onClick={() => handleTextFormat('italic')}><Italic /></Button>
-            <Button variant="ghost" size="icon" onClick={() => handleTextFormat('code')}><Code /></Button>
+            <Button variant="ghost" size="icon" onClick={() => handleTextFormat('codeblock')}><Code /></Button>
             <Button variant="ghost" size="icon"><Link2 /></Button>
         </div>
         <div className="flex items-center gap-2">
@@ -512,3 +515,6 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
     </Card>
   );
 }
+
+
+    
