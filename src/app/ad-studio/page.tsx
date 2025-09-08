@@ -22,7 +22,7 @@ import { Progress } from "@/components/ui/progress";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const campaigns = [
-  { name: "Summer Sale Promotion", status: "Active", type: "Banner Ad", spend: "$500", conversions: 25 },
+  { name: "Summer Sale Promotion", status: "Active", type: "Sponsored Content", spend: "$500", conversions: 25 },
   { name: "Freelancer Profile Boost", status: "Active", type: "Profile Spotlight", spend: "$150", conversions: 120 },
   { name: "New Product Launch", status: "Paused", type: "Product Listing", spend: "$1,200", conversions: 88 },
   { name: "Tech Blog Sponsored Post", status: "Finished", type: "Sponsored Content", spend: "$800", conversions: 450 },
@@ -30,7 +30,7 @@ const campaigns = [
 
 const campaignFormSchema = z.object({
   campaignName: z.string().min(1, "Campaign name is required."),
-  adType: z.enum(['banner', 'profile-spotlight', 'product-listing', 'sponsored-content', 'job-gig'], {
+  adType: z.enum(['profile-spotlight', 'product-listing', 'sponsored-content', 'job-gig'], {
       errorMap: () => ({ message: "Please select an ad type." }),
   }),
   adContent: z.string().min(1, "Ad content is required."),
@@ -267,7 +267,6 @@ function CreateCampaignDialog() {
                                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <SelectTrigger><SelectValue placeholder="Select an ad format" /></SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="banner">Banner Ad</SelectItem>
                                             <SelectItem value="profile-spotlight">Profile Spotlight Ad</SelectItem>
                                             <SelectItem value="product-listing">Product Listing Ad</SelectItem>
                                             <SelectItem value="sponsored-content">Sponsored Content</SelectItem>

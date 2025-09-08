@@ -14,7 +14,7 @@ export const AdCampaignAnalyzerInputSchema = z.object({
   campaignName: z.string().optional().describe("The name of the ad campaign."),
   adContent: z.string().optional().describe("The copy or text content of the ad."),
   targetingKeywords: z.string().optional().describe("A comma-separated list of keywords for targeting."),
-  adType: z.enum(['banner', 'profile-spotlight', 'product-listing', 'sponsored-content', 'job-gig']).describe("The type of ad being created."),
+  adType: z.enum(['profile-spotlight', 'product-listing', 'sponsored-content', 'job-gig']).describe("The type of ad being created."),
 });
 export type AdCampaignAnalyzerInput = z.infer<typeof AdCampaignAnalyzerInputSchema>;
 
