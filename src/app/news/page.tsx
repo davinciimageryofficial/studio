@@ -20,6 +20,8 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatisticsView } from "./statistics";
+import { BizRankView } from "./biz-rank";
+
 
 type Category = 
   | "All" 
@@ -38,7 +40,8 @@ type Category =
   | "Events"
   | "Platforms"
   | "Spotlight"
-  | "Statistics";
+  | "Statistics"
+  | "Biz-Rank";
 
 export default function NewsPage() {
   const [selectedCategory, setSelectedCategory] = useState<Category>("All");
@@ -52,7 +55,8 @@ export default function NewsPage() {
       case "Trending":
         return placeholderNews.slice(0, 4); // Placeholder for trending
       case "Statistics":
-        return []; // Statistics tab has its own component
+      case "Biz-Rank":
+        return []; // These tabs have their own components
       default:
         return placeholderNews.filter(
           (article) => article.category.toLowerCase() === category.toLowerCase()
@@ -60,7 +64,7 @@ export default function NewsPage() {
     }
   };
   
-  const mainCategories: Category[] = ["Personalized", "Trending", "Statistics", "Events", "Platforms", "Spotlight"];
+  const mainCategories: Category[] = ["Personalized", "Trending", "Statistics", "Biz-Rank", "Events", "Platforms"];
   const dropdownCategories: Category[] = ["Tech", "Design", "Writing", "Development", "Freelance", "AI & Machine Learning", "Cybersecurity", "Data Science", "Cloud Computing", "UI/UX"];
   const allCategories: Category[] = ["All", ...mainCategories, ...dropdownCategories];
   const isDropdownCategorySelected = dropdownCategories.includes(selectedCategory);
@@ -102,9 +106,11 @@ export default function NewsPage() {
         </div>
         
         {allCategories.map(category => (
-          <TabsContent key={category} value={category} forceMount={category === 'Statistics'}>
+          <TabsContent key={category} value={category} forceMount={['Statistics', 'Biz-Rank'].includes(category)}>
             {category === 'Statistics' ? (
               <StatisticsView />
+            ) : category === 'Biz-Rank' ? (
+                <BizRankView />
             ) : (
               <NewsGrid articles={getArticlesForCategory(category)} />
             )}
