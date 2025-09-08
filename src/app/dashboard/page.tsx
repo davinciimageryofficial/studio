@@ -361,7 +361,7 @@ export default function DashboardPage() {
                 </div>
                  <div className="flex items-center gap-2">
                     <Tabs defaultValue="monthly" onValueChange={(value) => setProductivityTimeline(value as any)} className="w-full sm:w-auto">
-                        <TabsList className="grid w-full grid-cols-3 sm:w-auto">
+                        <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
                             <TabsTrigger value="daily">Daily</TabsTrigger>
                             <TabsTrigger value="weekly">Weekly</TabsTrigger>
                             <TabsTrigger value="monthly">Monthly</TabsTrigger>
@@ -536,4 +536,5 @@ export default function DashboardPage() {
     
 
     
+
 
