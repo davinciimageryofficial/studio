@@ -123,48 +123,8 @@ export default function ProfilePage() {
     <div className="bg-muted/40">
       {/* Profile Header */}
       <Card className="rounded-none relative">
-        <div className="relative h-40 w-full md:h-48 group">
-            <Image
-              src={user.coverImage}
-              alt={`${user.name}'s cover image`}
-              fill
-              className="object-cover"
-              data-ai-hint="killer whale"
-            />
-            {isMyProfile && (
-                 <EditImageDialog
-                    currentImage={user.coverImage}
-                    onSave={handleSaveCoverImage}
-                    triggerButton={
-                        <Button variant="outline" size="sm" className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit Cover
-                        </Button>
-                    }
-                />
-            )}
-        </div>
-        <CardContent className="p-4 pb-6 pt-20 sm:p-6 sm:pb-6 sm:pt-24">
-            <div className="flex flex-col items-center text-center sm:flex-row sm:items-end sm:gap-6 -mt-32 sm:-mt-24">
-                <div className="relative group flex-shrink-0">
-                    <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-card">
-                      <AvatarImage src={user.avatar} alt={user.name} />
-                      <AvatarFallback className="text-5xl">
-                        <UserIcon className="h-16 w-16" />
-                      </AvatarFallback>
-                    </Avatar>
-                     {isMyProfile && (
-                        <EditImageDialog
-                            currentImage={user.avatar}
-                            onSave={handleSaveAvatar}
-                            triggerButton={
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                                    <Edit className="h-6 w-6 text-white" />
-                                </div>
-                            }
-                        />
-                    )}
-                </div>
+        <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:gap-6">
                 <div className="flex-1 mt-4 sm:mt-0 text-center sm:text-left">
                   <h1 className="text-2xl font-bold md:text-3xl">{user.name}</h1>
                   <p className="text-muted-foreground">{user.headline}</p>
@@ -199,7 +159,7 @@ export default function ProfilePage() {
                     </div>
                     <div className="flex w-full flex-shrink-0 flex-col sm:flex-row gap-2 sm:w-auto">
                         {isMyProfile ? (
-                            <EditProfileDialog
+                             <EditProfileDialog
                                 initialProfile={{ name: user.name, headline: user.headline, bio: user.bio }}
                                 onSave={handleSaveProfile}
                                 initialSocials={socials}
