@@ -20,7 +20,6 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatisticsView } from "./statistics";
-import { BizRankView } from "./biz-rank";
 import { ClientOnly } from "@/components/layout/client-only";
 
 
@@ -41,8 +40,7 @@ type Category =
   | "Events"
   | "Platforms"
   | "Spotlight"
-  | "Statistics"
-  | "Biz-Rank";
+  | "Statistics";
 
 export default function NewsPage() {
   const [selectedCategory, setSelectedCategory] = useState<Category>("All");
@@ -56,8 +54,7 @@ export default function NewsPage() {
       case "Trending":
         return placeholderNews.slice(0, 4); // Placeholder for trending
       case "Statistics":
-      case "Biz-Rank":
-        return []; // These tabs have their own components
+        return []; // This tab has its own component
       default:
         return placeholderNews.filter(
           (article) => article.category.toLowerCase() === category.toLowerCase()
@@ -65,7 +62,7 @@ export default function NewsPage() {
     }
   };
   
-  const mainCategories: Category[] = ["Personalized", "Trending", "Statistics", "Biz-Rank", "Events", "Platforms"];
+  const mainCategories: Category[] = ["Personalized", "Trending", "Statistics", "Events", "Platforms"];
   const dropdownCategories: Category[] = ["Tech", "Design", "Writing", "Development", "Freelance", "AI & Machine Learning", "Cybersecurity", "Data Science", "Cloud Computing", "UI/UX"];
   const allCategories: Category[] = ["All", ...mainCategories, ...dropdownCategories];
   const isDropdownCategorySelected = dropdownCategories.includes(selectedCategory);
@@ -82,7 +79,7 @@ export default function NewsPage() {
 
       <Tabs value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as Category)} className="w-full">
         <div className="mb-8">
-            <TabsList className="grid w-full grid-cols-7 bg-black text-muted-foreground/80">
+            <TabsList className="grid w-full grid-cols-6 bg-black text-muted-foreground/80">
                 {mainCategories.map(category => (
                     <TabsTrigger key={category} value={category}>{category}</TabsTrigger>
                 ))}
@@ -107,13 +104,9 @@ export default function NewsPage() {
         </div>
         
         {allCategories.map(category => (
-          <TabsContent key={category} value={category} forceMount={['Statistics', 'Biz-Rank'].includes(category)}>
+          <TabsContent key={category} value={category} forceMount={['Statistics'].includes(category)}>
             {category === 'Statistics' ? (
               <StatisticsView />
-            ) : category === 'Biz-Rank' ? (
-                <ClientOnly>
-                    <BizRankView />
-                </ClientOnly>
             ) : (
               <NewsGrid articles={getArticlesForCategory(category)} />
             )}
