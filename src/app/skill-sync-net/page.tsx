@@ -389,7 +389,7 @@ function ClientView() {
                 {error && <Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
                 {result && result.match && result.match.freelancer && <FreelancerMatchCard freelancer={result.match.freelancer} />}
                 {!loading && !result && !error && (
-                    <Card className="flex flex-col items-center justify-center border-dashed min-h-[500px]">
+                    <Card className="flex flex-col items-center justify-center border-dashed border-white min-h-[500px]">
                          <CardHeader className="text-center">
                             <Barcode className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
                         </CardHeader>
@@ -635,6 +635,7 @@ export default function SkillSyncNetPage() {
     
 
     
+
 
 
 
