@@ -75,9 +75,9 @@ export default function WaitlistConfirmationPage() {
 
   return (
     <ClientOnly>
-       <div className="w-full">
+       <div className="flex min-h-screen w-full items-center justify-center bg-background p-4">
         <Fireworks />
-        <div className="grid min-h-screen lg:grid-cols-2">
+        <div className="grid lg:grid-cols-2 w-full max-w-6xl">
             <div className="flex items-center justify-center p-8 sm:p-12 relative z-10">
                 <div className="w-full max-w-md">
                      <Card className="w-full text-center shadow-2xl">
@@ -176,7 +176,7 @@ export default function WaitlistConfirmationPage() {
                     </Card>
                 </div>
             </div>
-            <div className="relative hidden lg:flex items-center justify-center bg-muted/20 p-8">
+            <div className="relative hidden lg:flex items-center justify-center bg-muted/20 p-8 rounded-r-2xl">
               <CheckCircle className="size-48 text-muted-foreground/20" />
             </div>
         </div>
