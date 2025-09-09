@@ -522,5 +522,3 @@ export function WorkspaceTeam() {
         </div>
     )
 }
-
-    
