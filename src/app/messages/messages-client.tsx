@@ -468,7 +468,7 @@ function NewCommunityDialog() {
             </DialogHeader>
             <div className="py-4 space-y-4">
                 <Tabs value={creationType} onValueChange={(value) => setCreationType(value as any)} className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
+                    <TabsList className="grid w-full grid-cols-2 bg-black text-muted-foreground">
                         <TabsTrigger value="group"><Users className="mr-2 h-4 w-4" />Group</TabsTrigger>
                         <TabsTrigger value="agency"><Building className="mr-2 h-4 w-4" />Agency</TabsTrigger>
                     </TabsList>
