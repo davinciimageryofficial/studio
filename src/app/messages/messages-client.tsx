@@ -528,5 +528,3 @@ function NewCommunityDialog() {
         </DialogContent>
     )
 }
-
-    
