@@ -20,12 +20,23 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
-import { generateCourse, type CourseGeneratorOutput } from "@/ai/flows/course-generator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { placeholderCourses, PortfolioItem } from "@/lib/placeholder-data";
+
+type Course = {
+    id: string;
+    title: string;
+    author: string;
+    price: number;
+    category: string;
+    description: string;
+    imageUrl: string;
+    level: string;
+}
 
 function CoursesPageInternal() {
-  const [courses, setCourses] = useState<CourseGeneratorOutput[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [courses, setCourses] = useState<Course[]>(placeholderCourses);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [priceRange, setPriceRange] = useState([0, 300]);
@@ -33,26 +44,6 @@ function CoursesPageInternal() {
   const [skillLevel, setSkillLevel] = useState("all");
 
   const courseCategories = ['Development', 'Design', 'Writing', 'AI & Machine Learning', 'Data Science', 'Freelance'];
-
-  useEffect(() => {
-    async function fetchCourses() {
-      setIsLoading(true);
-      try {
-        const coursePromises = courseCategories.flatMap(cat => 
-            Array.from({ length: 2 }).map(() => generateCourse({ category: cat as any }))
-        );
-        const generatedCourses = await Promise.all(coursePromises);
-        setCourses(generatedCourses);
-      } catch (error) {
-        console.error("Failed to generate courses:", error);
-        // Optionally, set an error state to show in the UI
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchCourses();
-  }, []);
-
 
   const filteredAndSortedCourses = courses
     .filter(course => {
@@ -69,8 +60,8 @@ function CoursesPageInternal() {
         case 'price-desc':
           return b.price - a.price;
         case 'newest':
-          // Assuming higher ID is newer, will need a real date field for production
-          return (parseInt(b.id.split('-')[1]) || 0) - (parseInt(a.id.split('-')[1]) || 0);
+          // This is a placeholder, a real app would use a date field
+          return parseInt(b.id.replace('course', '')) - parseInt(a.id.replace('course', ''));
         default:
           return 0; // 'relevance' - no specific sorting for now
       }
@@ -187,7 +178,7 @@ export default function CoursesPage() {
     )
 }
 
-function ContentCard({ content }: { content: CourseGeneratorOutput }) {
+function ContentCard({ content }: { content: Course }) {
   return (
     <Card className="overflow-hidden transition-all hover:shadow-lg">
         <div className="relative aspect-video">
