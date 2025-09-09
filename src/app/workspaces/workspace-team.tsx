@@ -408,19 +408,19 @@ export function WorkspaceTeam() {
                            </div>
 
                             <div className="flex items-center gap-2">
-                                <ControlButton tooltip={isMuted ? 'Unmute' : 'Mute'} onClick={() => setIsMuted(prev => !prev)} variant="secondary" size="lg" className="rounded-full h-12 w-12 bg-muted hover:bg-muted-foreground/20" data-active={!isMuted}>
+                                <ControlButton tooltip={isMuted ? 'Unmute' : 'Mute'} onClick={() => setIsMuted(prev => !prev)} variant="secondary" size="icon" className="rounded-full h-10 w-10 bg-muted hover:bg-muted-foreground/20" data-active={!isMuted}>
                                     {isMuted ? <MicOff /> : <Mic />}
                                 </ControlButton>
-                                <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant={isCameraOn ? "default" : "secondary"} size="lg" className="rounded-full h-12 w-12 bg-muted hover:bg-muted-foreground/20" data-active={isCameraOn}>
+                                <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant={isCameraOn ? "default" : "secondary"} size="icon" className="rounded-full h-10 w-10 bg-muted hover:bg-muted-foreground/20" data-active={isCameraOn}>
                                     {isCameraOn ? <Video /> : <VideoOff />}
                                 </ControlButton>
-                                <ControlButton tooltip={isScreenSharing ? 'Stop Sharing' : 'Share Screen'} onClick={handleToggleScreenShare} variant={isScreenSharing ? "default" : "secondary"} size="lg" className="rounded-full h-12 w-12 bg-muted hover:bg-muted-foreground/20" data-active={isScreenSharing}>
+                                <ControlButton tooltip={isScreenSharing ? 'Stop Sharing' : 'Share Screen'} onClick={handleToggleScreenShare} variant={isScreenSharing ? "default" : "secondary"} size="icon" className="rounded-full h-10 w-10 bg-muted hover:bg-muted-foreground/20" data-active={isScreenSharing}>
                                     {isScreenSharing ? <ScreenShare /> : <ScreenShareOff />}
                                 </ControlButton>
-                                 <ControlButton tooltip={isRecording ? 'Stop Recording' : 'Start Recording'} onClick={handleToggleRecording} variant={isRecording ? "destructive" : "secondary"} size="lg" className="rounded-full h-12 w-12 bg-muted hover:bg-destructive/80" data-active={isRecording}>
+                                 <ControlButton tooltip={isRecording ? 'Stop Recording' : 'Start Recording'} onClick={handleToggleRecording} variant={isRecording ? "destructive" : "secondary"} size="icon" className="rounded-full h-10 w-10 bg-muted hover:bg-destructive/80" data-active={isRecording}>
                                     <CircleDot />
                                 </ControlButton>
-                                <ControlButton tooltip="Leave Session" variant="destructive" size="lg" onClick={endSession} className="rounded-full h-12 w-12">
+                                <ControlButton tooltip="Leave Session" variant="destructive" size="icon" onClick={endSession} className="rounded-full h-10 w-10">
                                     <LogOut />
                                 </ControlButton>
                             </div>
@@ -510,4 +510,5 @@ export function WorkspaceTeam() {
         </div>
     )
 }
+
 
