@@ -460,7 +460,7 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
     const isMyPost = post.author.id === '2'; // Assuming user '2' is the current user
 
   return (
-    <Card>
+    <Card className="border-0">
        {post.type === 'job' && post.jobDetails && (
         <CardHeader className="bg-muted/50 p-4">
             <div className="flex items-center gap-3">
