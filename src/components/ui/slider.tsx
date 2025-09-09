@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils"
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>
->(({ className, ...props }, ref) => {
+>(({ className, onValueChange, onValueCommit, ...props }, ref) => {
     const value = props.value || [];
     const thumbs = Array.isArray(value) ? value.length : 1;
 
@@ -20,6 +20,8 @@ const Slider = React.forwardRef<
             "relative flex w-full touch-none select-none items-center",
             className
             )}
+            onValueChange={onValueChange}
+            onValueCommit={onValueCommit}
             {...props}
         >
             <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary">

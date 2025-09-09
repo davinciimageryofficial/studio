@@ -78,7 +78,9 @@ export default function DashboardPage() {
         revPerProject: true,
     });
     const [chartScale, setChartScale] = useState(1);
+    const [tempChartScale, setTempChartScale] = useState(1);
     const [productivityChartScale, setProductivityChartScale] = useState(1);
+    const [tempProductivityChartScale, setTempProductivityChartScale] = useState(1);
 
 
     const recentActivities = [
@@ -371,14 +373,15 @@ export default function DashboardPage() {
                 </div>
                  <div className="flex items-center gap-2">
                     <div className="w-32 space-y-1">
-                        <Label htmlFor="productivity-scale" className="text-xs">Scale ({productivityChartScale.toFixed(1)}x)</Label>
+                        <Label htmlFor="productivity-scale" className="text-xs">Scale ({tempProductivityChartScale.toFixed(1)}x)</Label>
                         <Slider 
                             id="productivity-scale"
                             min={0.1}
                             max={5}
                             step={0.1}
-                            value={[productivityChartScale]}
-                            onValueChange={(value) => setProductivityChartScale(value[0])}
+                            value={[tempProductivityChartScale]}
+                            onValueChange={(value) => setTempProductivityChartScale(value[0])}
+                            onValueCommit={(value) => setProductivityChartScale(value[0])}
                         />
                     </div>
                     <Tabs defaultValue="monthly" onValueChange={(value) => setProductivityTimeline(value as any)} className="w-full sm:w-auto">
@@ -426,14 +429,15 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="w-32 space-y-1">
-                            <Label htmlFor="scale" className="text-xs">Scale ({chartScale.toFixed(1)}x)</Label>
+                            <Label htmlFor="scale" className="text-xs">Scale ({tempChartScale.toFixed(1)}x)</Label>
                              <Slider 
                                 id="scale"
                                 min={0.1}
                                 max={5}
                                 step={0.1}
-                                value={[chartScale]}
-                                onValueChange={(value) => setChartScale(value[0])}
+                                value={[tempChartScale]}
+                                onValueChange={(value) => setTempChartScale(value[0])}
+                                onValueCommit={(value) => setChartScale(value[0])}
                             />
                         </div>
                         <Tabs defaultValue="area" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
