@@ -26,7 +26,7 @@ function ParticipantCard({ participant, isMuted, isCameraOff, isSpeaking }: { pa
       "relative aspect-video rounded-lg overflow-hidden bg-muted flex items-center justify-center transition-all duration-300",
       isSpeaking ? "ring-4 ring-primary ring-offset-2 ring-offset-background" : ""
     )}>
-      {isCameraOff ? (
+       {isCameraOff ? (
           <VideoOff className="h-12 w-12 text-muted-foreground" />
       ) : (
           <Video className="h-12 w-12 text-muted-foreground" />
@@ -133,7 +133,7 @@ export function WorkspaceTeam() {
               <ParticipantCard participant={pinnedParticipant} isMuted={false} isCameraOff={false} isSpeaking={true} />
             </div>
             <ScrollArea className="w-full md:w-48 h-32 md:h-full">
-                <div>
+                <div className="flex md:flex-col gap-2">
                     {otherParticipants.map(p => (
                         <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer">
                             <ParticipantCard participant={p} isMuted={true} isCameraOff={false} isSpeaking={false} />
@@ -154,7 +154,7 @@ export function WorkspaceTeam() {
           </ScrollArea>
         )}
 
-        <CardFooter className="px-2 py-1 border-t bg-black text-white">
+        <CardFooter className="px-2 py-1 border-t bg-black text-white rounded-b-lg">
           <div className="flex justify-between items-center w-full">
             <div className="flex items-center gap-1">
                 <ControlButton icon={Hand} label="Raise Hand" variant="ghost" className="text-white hover:bg-gray-700 hover:text-white" size="sm"/>
