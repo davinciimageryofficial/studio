@@ -169,6 +169,13 @@ export default function DashboardPage() {
     const handleMetricVisibilityChange = (metric: keyof VisibleMetrics, checked: boolean) => {
         setVisibleMetrics(prev => ({ ...prev, [metric]: checked }));
     };
+    
+    const getActivityIcon = (action: string) => {
+        if (action.includes('viewed')) return <Eye className="h-4 w-4" />;
+        if (action.includes('sent')) return <UserPlus className="h-4 w-4 text-blue-500" />;
+        if (action.includes('accepted')) return <Check className="h-4 w-4 text-green-500" />;
+        return <User className="h-4 w-4" />;
+    };
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
@@ -455,13 +462,10 @@ export default function DashboardPage() {
             <CardContent>
                 <div className="space-y-4">
                     {recentActivities.map((activity, index) => (
-                        <div key={index} className="flex items-center gap-3">
-                            <Avatar className="h-9 w-9">
-                                <AvatarImage src={activity.user.avatar} alt={activity.user.name} />
-                                <AvatarFallback>
-                                    <User className="h-5 w-5" />
-                                </AvatarFallback>
-                            </Avatar>
+                        <div key={index} className="flex items-start gap-4">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
+                                {getActivityIcon(activity.action)}
+                            </div>
                             <div className="flex-1">
                                 <p className="text-sm">
                                     <span className="font-semibold">{activity.user.name}</span> {activity.action}
@@ -562,3 +566,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+
