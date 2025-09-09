@@ -5,15 +5,13 @@ import { placeholderUsers } from "@/lib/placeholder-data";
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 
 type User = typeof placeholderUsers[0];
-type SessionType = "solo" | "team" | null;
+type SessionType = "solo" | null;
 
 interface WorkspaceContextType {
     sessionType: SessionType;
     isActive: boolean;
     time: number;
-    participants: User[];
-    setParticipants: React.Dispatch<React.SetStateAction<User[]>>;
-    startSession: (type: SessionType, initialParticipants?: User[]) => void;
+    startSession: (type: SessionType) => void;
     endSession: () => void;
     toggleTimer: () => void;
     formatTime: (seconds: number) => string;
@@ -38,7 +36,6 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const [sessionType, setSessionType] = useState<SessionType>(null);
     const [isActive, setIsActive] = useState(false);
     const [time, setTime] = useState(0);
-    const [participants, setParticipants] = useState<User[]>([]);
     
     const [nextPath, setNextPath] = useState<string | null>(null);
     const isPromptOpen = !!nextPath;
@@ -78,9 +75,8 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         return clearTimer;
     }, [isActive, startTimer, clearTimer]);
     
-    const startSession = (type: SessionType, initialParticipants: User[] = [placeholderUsers[1]]) => {
+    const startSession = (type: SessionType) => {
         setSessionType(type);
-        setParticipants(initialParticipants);
         setIsActive(true);
         setTime(0);
     };
@@ -89,7 +85,6 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setSessionType(null);
         setIsActive(false);
         setTime(0);
-        setParticipants([]);
         clearTimer();
     };
 
@@ -113,8 +108,6 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         sessionType,
         isActive,
         time,
-        participants,
-        setParticipants,
         startSession,
         endSession,
         toggleTimer,

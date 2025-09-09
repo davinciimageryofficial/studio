@@ -8,7 +8,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
 import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, CheckCircle, Award, ArrowUp, Zap, Hand, User } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { WorkspaceTeam } from "./workspace-team";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -26,10 +25,8 @@ export default function WorkspacesPage() {
         endSession, 
         toggleTimer, 
         formatTime,
-        participants
     } = useWorkspace();
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isStartingFlow, setIsStartingFlow] = useState(false);
   const [monthlyFlowHours, setMonthlyFlowHours] = useState(25.5); // Example starting hours
   const monthlyGoal = 50;
@@ -37,11 +34,6 @@ export default function WorkspacesPage() {
   
   const rewardTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
-
-  // Let's assume the current user (Bob) is connected with Alice and Charlie
-  const myConnections = ["1", "3"]; 
-  const onlineUsers = placeholderUsers.slice(0, 5).filter(u => u.id !== '2'); // Exclude self
-  
 
   useEffect(() => {
     if (sessionType === 'solo' && !isStartingFlow) {
@@ -59,17 +51,12 @@ export default function WorkspacesPage() {
   }, [sessionType, isStartingFlow]);
 
 
-  const handleStart = (type: "solo" | "team", initialParticipant: UserType | null = null) => {
-    if (type === 'solo') {
-        setIsStartingFlow(true);
-        setTimeout(() => {
-            setIsStartingFlow(false);
-            startSession(type);
-        }, 2000);
-    } else {
-        startSession(type, initialParticipant ? [placeholderUsers[1], initialParticipant] : undefined);
-    }
-    setIsDialogOpen(false);
+  const handleStart = () => {
+    setIsStartingFlow(true);
+    setTimeout(() => {
+        setIsStartingFlow(false);
+        startSession('solo');
+    }, 2000);
   };
   
   const handleEndSessionWrapper = () => {
@@ -79,17 +66,9 @@ export default function WorkspacesPage() {
   }
 
   const handleReset = () => {
-    // This local reset is fine as it's for the non-session state
     endSession();
   };
   
-  const handleNudge = (userName: string, mutualFriendName: string) => {
-    toast({
-        title: "Nudge Sent!",
-        description: `A request to join has been sent to ${mutualFriendName} in ${userName}'s session.`
-    })
-  }
-
   const hourlyProgressValue = (time / 3600) * 100; // Calculate progress towards one hour
   const monthlyProgressValue = (monthlyFlowHours / monthlyGoal) * 100;
   const hasReachedGoal = monthlyFlowHours >= monthlyGoal;
@@ -97,9 +76,9 @@ export default function WorkspacesPage() {
 
   return (
     <div className="relative">
-      <div className="p-4 sm:p-6 md:p-8">
-        {sessionType === 'solo' && (
-           <Card>
+      <div className="p-4 sm:p-6 md:p-8 flex items-center justify-center min-h-[calc(100vh-8rem)]">
+        {sessionType === 'solo' ? (
+           <Card className="w-full max-w-2xl">
               <CardHeader className="text-center">
                 <CardTitle>Solo Focus Session</CardTitle>
                 <CardDescription>You are in a solo session. Keep up the great work!</CardDescription>
@@ -185,62 +164,34 @@ export default function WorkspacesPage() {
                  </TooltipProvider>
                )}
             </Card>
-        )}
-        {sessionType === 'team' && (
-          <WorkspaceTeam />
-        )}
-        {!sessionType && (
+        ) : (
             <div className="flex h-full items-center justify-center">
-                <div className="w-full max-w-4xl">
+                <div className="w-full max-w-lg">
                     <header className="mb-8 text-center">
                         <h1 className="text-3xl font-bold tracking-tight font-headline-tech">WORKSPACES</h1>
                         <p className="mt-1 text-muted-foreground">
-                            Your focused environment for deep work and collaboration.
+                            Your focused environment for deep work.
                         </p>
                     </header>
-
-                    <div className="grid gap-8 lg:grid-cols-3">
-                    <div className="lg:col-span-2">
-                        <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2 font-headline-tech">
-                            <TimerIcon className="h-6 w-6" />
-                            <span>SESSION</span>
-                            </CardTitle>
-                            <CardDescription>
-                            Start a focused work session, solo or with your team.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="flex flex-col items-center justify-center gap-8 p-12">
-                            <div className="font-mono text-8xl font-bold tracking-tighter">
-                            {formatTime(time)}
-                            </div>
-                            <div className="flex gap-4">
-                            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                                <DialogTrigger asChild>
-                                    <Button size="lg" className="w-40">
-                                        <Play className="mr-2" />
-                                        Start Session
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent className="sm:max-w-md">
-                                    <DialogHeader>
-                                        <DialogTitle>Choose your workspace</DialogTitle>
-                                    </DialogHeader>
-                                    <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2">
-                                        <Button variant="outline" className="h-auto flex flex-col items-start justify-start text-left gap-2 p-6" onClick={() => handleStart('solo')}>
-                                            <Users className="h-8 w-8" />
-                                            <span className="font-semibold">Start Solo Session</span>
-                                            <span className="text-xs text-muted-foreground font-normal normal-case text-balance">Work by yourself in a focused environment.</span>
-                                        </Button>
-                                        <Button variant="outline" className="h-auto flex flex-col items-start justify-start text-left gap-2 p-6" onClick={() => handleStart('team')}>
-                                            <Users className="h-8 w-8" />
-                                            <span className="font-semibold">Create Team Workspace</span>
-                                            <span className="text-xs text-muted-foreground font-normal normal-case text-balance">Invite colleagues to collaborate in real-time.</span>
-                                        </Button>
-                                    </div>
-                                </DialogContent>
-                            </Dialog>
+                    <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 font-headline-tech">
+                        <TimerIcon className="h-6 w-6" />
+                        <span>SOLO SESSION</span>
+                        </CardTitle>
+                        <CardDescription>
+                        Start a focused work session to track your productivity.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-center justify-center gap-8 p-12">
+                        <div className="font-mono text-8xl font-bold tracking-tighter">
+                        {formatTime(time)}
+                        </div>
+                        <div className="flex gap-4">
+                            <Button size="lg" className="w-40" onClick={handleStart}>
+                                <Play className="mr-2" />
+                                Start Session
+                            </Button>
                             <Button
                                 size="lg"
                                 variant="outline"
@@ -250,89 +201,9 @@ export default function WorkspacesPage() {
                                 <RotateCcw className="mr-2" />
                                 Reset
                             </Button>
-                            </div>
-                        </CardContent>
-                        </Card>
-                    </div>
-
-                    <aside className="space-y-8">
-                        <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Users className="h-6 w-6" />
-                                <span>Online Users</span>
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                {onlineUsers.map(user => {
-                                    const mutualConnectionId = user.currentSession?.with.find(participantId => myConnections.includes(participantId));
-                                    const mutualFriend = mutualConnectionId ? placeholderUsers.find(u => u.id === mutualConnectionId) : null;
-
-                                    return (
-                                        <div key={user.id} className="flex items-center justify-between">
-                                            <div className="flex items-center gap-3">
-                                                <Avatar>
-                                                    <AvatarFallback>
-                                                        <User className="h-5 w-5" />
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <div>
-                                                    <p className="font-semibold">{user.name}</p>
-                                                    {user.currentSession ? (
-                                                        <TooltipProvider>
-                                                            <Tooltip>
-                                                                <TooltipTrigger asChild>
-                                                                    <div className="flex items-center gap-1.5 cursor-default">
-                                                                        <span className="h-2 w-2 rounded-full bg-primary" />
-                                                                        <p className="text-xs text-muted-foreground">
-                                                                            In a session
-                                                                            {mutualFriend && (
-                                                                                <> with <span className="font-semibold text-foreground">{mutualFriend.name}</span></>
-                                                                            )}
-                                                                        </p>
-                                                                    </div>
-                                                                </TooltipTrigger>
-                                                                <TooltipContent>
-                                                                    <p>In: {user.currentSession.workspaceName}</p>
-                                                                </TooltipContent>
-                                                            </Tooltip>
-                                                        </TooltipProvider>
-                                                    ) : (
-                                                        <div className="flex items-center gap-1.5">
-                                                            <span className="h-2 w-2 rounded-full bg-green-500" />
-                                                            <p className="text-xs text-muted-foreground">Online</p>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            {user.currentSession && mutualFriend ? (
-                                                <TooltipProvider>
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <Button variant="ghost" size="icon" onClick={() => handleNudge(user.name, mutualFriend.name)}>
-                                                                <Hand className="h-5 w-5 text-primary" />
-                                                            </Button>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent>
-                                                            <p>Nudge {mutualFriend.name} for an invite to {user.name}'s session</p>
-                                                        </TooltipContent>
-                                                    </Tooltip>
-                                                </TooltipProvider>
-                                            ) : !user.currentSession && (
-                                                <Button variant="ghost" size="icon" onClick={() => handleStart('team', user)}>
-                                                    <Plus className="h-5 w-5" />
-                                                    <span className="sr-only">Invite {user.name}</span>
-                                                </Button>
-                                            )}
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </CardContent>
-                        </Card>
-                    </aside>
-                    </div>
+                        </div>
+                    </CardContent>
+                    </Card>
                 </div>
             </div>
         )}

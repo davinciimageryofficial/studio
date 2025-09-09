@@ -44,25 +44,22 @@ export function NavigationPrompt() {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            {isSoloSession ? "You are in a focus session" : "You are in an active call"}
+            You are in a focus session
           </AlertDialogTitle>
           <AlertDialogDescription>
-            {isSoloSession 
-              ? "You can continue the session in the background or end it now."
-              : "You can stay in the call and browse other pages, or end the call and leave."
-            }
+            You can continue the session in the background or end it now.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={cancelNavigation}>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={handleStay}>
-            {isSoloSession ? "Continue in Background" : "Stay in Call"}
+            Continue in Background
           </AlertDialogAction>
           <AlertDialogAction
             onClick={handleConfirm}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isSoloSession ? "End Focus Session" : "End Call & Leave"}
+            End Focus Session
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

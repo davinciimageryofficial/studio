@@ -14,7 +14,7 @@ export function CallWidget() {
 
     const isWorkspacePage = pathname.startsWith('/workspaces');
     
-    if (!isActive || isWorkspacePage) {
+    if (!isActive || isWorkspacePage || sessionType !== 'solo') {
         return null;
     }
 
@@ -24,12 +24,12 @@ export function CallWidget() {
                 <div className="flex items-center gap-2">
                     <Mic className="h-5 w-5 text-primary animate-pulse" />
                     <div>
-                        <p className="font-semibold">{sessionType === 'solo' ? "Solo Session" : "Team Call"}</p>
+                        <p className="font-semibold">Solo Session</p>
                         <p className="font-mono text-sm text-muted-foreground">{formatTime(time)}</p>
                     </div>
                 </div>
                  <Button asChild variant="outline" size="sm">
-                    <Link href="/workspaces">{sessionType === 'solo' ? 'Return to Session' : 'Return to Call'}</Link>
+                    <Link href="/workspaces">Return to Session</Link>
                 </Button>
                 <Button variant="destructive" size="icon" className="h-9 w-9" onClick={endSession}>
                     <PhoneOff className="h-4 w-4" />

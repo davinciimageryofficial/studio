@@ -6,7 +6,6 @@ import { AppSidebar } from "@/components/layout/sidebar";
 import { GlobalSearch } from "@/components/layout/global-search";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { ClientOnly } from "@/components/layout/client-only";
-import { CallWidget } from "@/components/layout/call-widget";
 import { NavigationPrompt } from "@/components/layout/navigation-prompt";
 
 export function AppLayout({
@@ -34,7 +33,6 @@ export function AppLayout({
           </div>
         </SidebarInset>
         <ClientOnly>
-            <CallWidget />
             <NavigationPrompt />
         </ClientOnly>
       </>
