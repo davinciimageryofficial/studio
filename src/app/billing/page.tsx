@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CheckCircle, CreditCard, Download, Gift, Heart, Star, PlusCircle } from "lucide-react";
+import { CheckCircle, CreditCard, Download, Gift, Heart, Star, PlusCircle, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
@@ -47,6 +47,13 @@ function AddPaymentMethodDialog() {
       description: "Your new payment method has been saved successfully.",
     });
   };
+
+  const handleRequestPlatform = () => {
+    toast({
+      title: "Request Sent",
+      description: "Thank you for your suggestion! We'll review it for future inclusion.",
+    });
+  }
 
   return (
     <DialogContent className="sm:max-w-[425px]">
@@ -105,6 +112,16 @@ function AddPaymentMethodDialog() {
             </DialogFooter>
         </TabsContent>
       </Tabs>
+      <Separator className="my-4" />
+        <div className="text-center">
+            <p className="text-sm text-muted-foreground mb-2">
+                Don't see your preferred payment method?
+            </p>
+            <Button variant="link" onClick={handleRequestPlatform}>
+                <Send className="mr-2 h-4 w-4" />
+                Request a new payment platform
+            </Button>
+        </div>
     </DialogContent>
   );
 }
@@ -349,5 +366,7 @@ export default function BillingPage() {
     </div>
   );
 }
+
+    
 
     
