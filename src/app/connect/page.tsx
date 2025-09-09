@@ -1,9 +1,8 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { placeholderCourses } from "@/lib/placeholder-data";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,19 +20,41 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { generateCourse, type CourseGeneratorOutput } from "@/ai/flows/course-generator";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function CoursesPageInternal() {
+  const [courses, setCourses] = useState<CourseGeneratorOutput[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [priceRange, setPriceRange] = useState([0, 300]);
   const [sortBy, setSortBy] = useState("relevance");
   const [skillLevel, setSkillLevel] = useState("all");
 
-  const allCategories = [
-    ...new Set(placeholderCourses.map(c => c.category))
-  ];
+  const courseCategories = ['Development', 'Design', 'Writing', 'AI & Machine Learning', 'Data Science', 'Freelance'];
 
-  const filteredAndSortedCourses = placeholderCourses
+  useEffect(() => {
+    async function fetchCourses() {
+      setIsLoading(true);
+      try {
+        const coursePromises = courseCategories.flatMap(cat => 
+            Array.from({ length: 2 }).map(() => generateCourse({ category: cat as any }))
+        );
+        const generatedCourses = await Promise.all(coursePromises);
+        setCourses(generatedCourses);
+      } catch (error) {
+        console.error("Failed to generate courses:", error);
+        // Optionally, set an error state to show in the UI
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchCourses();
+  }, []);
+
+
+  const filteredAndSortedCourses = courses
     .filter(course => {
       const matchesCategory = category === 'all' || course.category.toLowerCase() === category.toLowerCase();
       const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) || course.author.toLowerCase().includes(searchQuery.toLowerCase());
@@ -49,7 +70,7 @@ function CoursesPageInternal() {
           return b.price - a.price;
         case 'newest':
           // Assuming higher ID is newer, will need a real date field for production
-          return parseInt(b.id.replace('course', '')) - parseInt(a.id.replace('course', ''));
+          return (parseInt(b.id.split('-')[1]) || 0) - (parseInt(a.id.split('-')[1]) || 0);
         default:
           return 0; // 'relevance' - no specific sorting for now
       }
@@ -81,7 +102,7 @@ function CoursesPageInternal() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              {allCategories.map(cat => (
+              {courseCategories.map(cat => (
                 <SelectItem key={cat} value={cat.toLowerCase()}>{cat}</SelectItem>
               ))}
             </SelectContent>
@@ -144,7 +165,9 @@ function CoursesPageInternal() {
 
 
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {filteredAndSortedCourses.length > 0 ? (
+        {isLoading ? (
+            Array.from({ length: 6 }).map((_, index) => <CourseCardSkeleton key={index} />)
+        ) : filteredAndSortedCourses.length > 0 ? (
             filteredAndSortedCourses.map((course) => (
                 <ContentCard key={course.id} content={course} />
             ))
@@ -164,7 +187,7 @@ export default function CoursesPage() {
     )
 }
 
-function ContentCard({ content }: { content: any }) {
+function ContentCard({ content }: { content: CourseGeneratorOutput }) {
   return (
     <Card className="overflow-hidden transition-all hover:shadow-lg">
         <div className="relative aspect-video">
@@ -195,4 +218,22 @@ function ContentCard({ content }: { content: any }) {
       </CardContent>
     </Card>
   );
+}
+
+function CourseCardSkeleton() {
+    return (
+        <Card className="overflow-hidden">
+            <Skeleton className="aspect-video w-full" />
+            <CardContent className="p-4 space-y-3">
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-5/6" />
+                <div className="flex items-center justify-between pt-2">
+                    <Skeleton className="h-8 w-1/3" />
+                    <Skeleton className="h-8 w-1/4" />
+                </div>
+            </CardContent>
+        </Card>
+    )
 }
