@@ -23,16 +23,13 @@ import { User } from '@/lib/placeholder-data';
 function ParticipantCard({ participant, isMuted, isCameraOff, isSpeaking }: { participant: User, isMuted: boolean, isCameraOff: boolean, isSpeaking: boolean }) {
   return (
     <div className={cn(
-      "relative aspect-video rounded-lg overflow-hidden bg-black flex items-center justify-center transition-all duration-300",
+      "relative aspect-video rounded-lg overflow-hidden bg-muted flex items-center justify-center transition-all duration-300",
       isSpeaking ? "ring-4 ring-primary ring-offset-2 ring-offset-background" : ""
     )}>
       {isCameraOff ? (
-        <Avatar className="h-24 w-24">
-          <AvatarImage src={participant.avatar} />
-          <AvatarFallback>{participant.name.charAt(0)}</AvatarFallback>
-        </Avatar>
+          <VideoOff className="h-12 w-12 text-muted-foreground" />
       ) : (
-        <img src={participant.avatar} alt={participant.name} className="h-full w-full object-cover" />
+          <Video className="h-12 w-12 text-muted-foreground" />
       )}
       <div className="absolute bottom-2 left-2 flex items-center gap-2 rounded-full bg-black/50 px-3 py-1 text-xs text-white">
         {isMuted ? <MicOff className="h-4 w-4 text-red-500" /> : <Mic className="h-4 w-4" />}
