@@ -56,7 +56,7 @@ export default function SignupPage() {
   return (
     <ClientOnly>
       <div className="flex min-h-[calc(100vh-4.5rem)] items-center justify-center p-4">
-        <Card className="w-full max-w-lg shadow-2xl">
+        <Card className="w-full max-w-lg shadow-2xl mx-auto">
           <CardHeader className="text-center p-6">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
               <Kanban className="size-7 text-primary" />
