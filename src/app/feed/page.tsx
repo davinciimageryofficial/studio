@@ -478,7 +478,6 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
         <div className="flex items-start gap-4">
           {post.type === 'post' && (
             <Avatar>
-                <AvatarImage src={author.avatar} alt={author.name} />
                 <AvatarFallback>
                     <User className="h-5 w-5" />
                 </AvatarFallback>

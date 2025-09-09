@@ -296,7 +296,6 @@ export function MessagesClient() {
                 <div className="flex items-start gap-3">
                   {showAvatars && (
                     <Avatar>
-                        <AvatarImage src={convo.avatar} alt={convo.name} />
                         <AvatarFallback>
                             <User className="h-5 w-5" />
                         </AvatarFallback>
@@ -322,7 +321,6 @@ export function MessagesClient() {
           <div className="flex items-center gap-3 border-b p-4">
             {showAvatars && (
                 <Avatar>
-                    <AvatarImage src={activeConversation.avatar} alt={activeConversation.name} />
                     <AvatarFallback>
                         <User className="h-5 w-5" />
                     </AvatarFallback>
@@ -374,7 +372,6 @@ export function MessagesClient() {
                 <div key={index} className={cn("flex items-end gap-2", message.from === 'me' ? 'justify-end' : 'justify-start')}>
                   {message.from !== 'me' && showAvatars && (
                     <Avatar className="h-8 w-8">
-                        <AvatarImage src={activeConversation.avatar} alt={activeConversation.name} />
                         <AvatarFallback>
                             <User className="h-4 w-4" />
                         </AvatarFallback>
@@ -503,7 +500,6 @@ function NewCommunityDialog() {
                                 <div key={user.id} className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <Avatar className="h-9 w-9">
-                                            <AvatarImage src={user.avatar} alt={user.name} />
                                             <AvatarFallback>
                                                 <User className="h-5 w-5" />
                                             </AvatarFallback>

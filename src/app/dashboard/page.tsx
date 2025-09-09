@@ -209,7 +209,6 @@ export default function DashboardPage() {
                     <DropdownMenuItem key={activity.user.id} className="flex items-center justify-between gap-2 p-2">
                         <div className="flex items-center gap-3">
                             <Avatar className="h-9 w-9">
-                                <AvatarImage src={activity.user.avatar} alt={activity.user.name} />
                                 <AvatarFallback>
                                     <User className="h-5 w-5" />
                                 </AvatarFallback>
@@ -251,7 +250,6 @@ export default function DashboardPage() {
                     <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
                         <div className="flex items-center gap-3">
                             <Avatar className="h-9 w-9">
-                                 <AvatarImage src={user.avatar} alt={user.name} />
                                 <AvatarFallback>
                                     <User className="h-5 w-5" />
                                 </AvatarFallback>
@@ -293,7 +291,6 @@ export default function DashboardPage() {
                     <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
                         <div className="flex items-center gap-3">
                             <Avatar className="h-9 w-9">
-                                 <AvatarImage src={user.avatar} alt={user.name} />
                                 <AvatarFallback>
                                     <User className="h-5 w-5" />
                                 </AvatarFallback>
@@ -566,4 +563,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
