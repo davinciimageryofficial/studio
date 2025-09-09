@@ -6,13 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, CheckCircle, Award, ArrowUp, Zap, Hand, User } from "lucide-react";
+import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, CheckCircle, Award, ArrowUp, Zap, Hand, User, Video, Mic } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useWorkspace } from "@/context/workspace-context";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { WorkspaceTeam } from "./workspace-team";
 
 type UserType = typeof placeholderUsers[0];
 
@@ -51,7 +54,7 @@ export default function WorkspacesPage() {
   }, [sessionType, isStartingFlow]);
 
 
-  const handleStart = () => {
+  const handleStartSolo = () => {
     setIsStartingFlow(true);
     setTimeout(() => {
         setIsStartingFlow(false);
@@ -59,11 +62,15 @@ export default function WorkspacesPage() {
     }, 2000);
   };
   
+   const handleStartTeam = () => {
+    startSession('team');
+  };
+
   const handleEndSessionWrapper = () => {
     const sessionHours = time / 3600;
     setMonthlyFlowHours(prev => prev + sessionHours);
     endSession();
-  }
+  };
 
   const handleReset = () => {
     endSession();
@@ -164,46 +171,87 @@ export default function WorkspacesPage() {
                  </TooltipProvider>
                )}
             </Card>
+        ) : sessionType === 'team' ? (
+          <WorkspaceTeam />
         ) : (
             <div className="flex h-full items-center justify-center">
                 <div className="w-full max-w-lg">
                     <header className="mb-8 text-center">
                         <h1 className="text-3xl font-bold tracking-tight font-headline-tech">WORKSPACES</h1>
                         <p className="mt-1 text-muted-foreground">
-                            Your focused environment for deep work.
+                            Your environment for focused work and seamless collaboration.
                         </p>
                     </header>
-                    <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 font-headline-tech">
-                        <TimerIcon className="h-6 w-6" />
-                        <span>SOLO SESSION</span>
-                        </CardTitle>
-                        <CardDescription>
-                        Start a focused work session to track your productivity.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col items-center justify-center gap-8 p-12">
-                        <div className="font-mono text-8xl font-bold tracking-tighter">
-                        {formatTime(time)}
-                        </div>
-                        <div className="flex gap-4">
-                            <Button size="lg" className="w-40" onClick={handleStart}>
-                                <Play className="mr-2" />
-                                Start Session
-                            </Button>
-                            <Button
-                                size="lg"
-                                variant="outline"
-                                onClick={handleReset}
-                                disabled={time === 0 && !isActive}
-                            >
-                                <RotateCcw className="mr-2" />
-                                Reset
-                            </Button>
-                        </div>
-                    </CardContent>
-                    </Card>
+                    <Tabs defaultValue="solo" className="w-full">
+                        <TabsList className="grid w-full grid-cols-2 bg-black text-muted-foreground">
+                            <TabsTrigger value="solo">Solo Session</TabsTrigger>
+                            <TabsTrigger value="team">Team Session</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="solo">
+                            <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 font-headline-tech">
+                                <TimerIcon className="h-6 w-6" />
+                                <span>SOLO SESSION</span>
+                                </CardTitle>
+                                <CardDescription>
+                                Start a focused work session to track your productivity.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="flex flex-col items-center justify-center gap-8 p-12">
+                                <div className="font-mono text-8xl font-bold tracking-tighter">
+                                {formatTime(time)}
+                                </div>
+                                <div className="flex gap-4">
+                                    <Button size="lg" className="w-40" onClick={handleStartSolo}>
+                                        <Play className="mr-2" />
+                                        Start Session
+                                    </Button>
+                                    <Button
+                                        size="lg"
+                                        variant="outline"
+                                        onClick={handleReset}
+                                        disabled={time === 0 && !isActive}
+                                    >
+                                        <RotateCcw className="mr-2" />
+                                        Reset
+                                    </Button>
+                                </div>
+                            </CardContent>
+                            </Card>
+                        </TabsContent>
+                        <TabsContent value="team">
+                            <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 font-headline-tech">
+                                <Users className="h-6 w-6" />
+                                <span>TEAM SESSION</span>
+                                </CardTitle>
+                                <CardDescription>
+                                Collaborate with your team in real-time.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6 p-8">
+                                <Button size="lg" className="w-full" onClick={handleStartTeam}>
+                                    <Plus className="mr-2" />
+                                    New Workspace
+                                </Button>
+                                <div className="relative">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <span className="w-full border-t" />
+                                    </div>
+                                    <div className="relative flex justify-center text-xs uppercase">
+                                        <span className="bg-card px-2 text-muted-foreground">OR</span>
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Input placeholder="Enter workspace code..." />
+                                    <Button variant="secondary">Join</Button>
+                                </div>
+                            </CardContent>
+                            </Card>
+                        </TabsContent>
+                    </Tabs>
                 </div>
             </div>
         )}
