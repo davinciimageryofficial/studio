@@ -21,9 +21,10 @@ const signupSchema = z.object({
   userType: z.enum(["business", "freelancer"], {
     errorMap: () => ({ message: "Please select an option." }),
   }),
-  profession: z.enum(["designer", "developer", "writer", "other"], {
-    errorMap: () => ({ message: "Please select your profession." }),
+  profession: z.enum(["design", "development", "writing", "marketing", "business", "other"], {
+    errorMap: () => ({ message: "Please select your primary work category." }),
   }),
+  niche: z.string().min(2, "Please specify your niche or role."),
   earlyAccess: z.boolean().default(false),
 });
 
@@ -37,6 +38,7 @@ export default function SignupPage() {
     defaultValues: {
       fullName: "",
       email: "",
+      niche: "",
       earlyAccess: false,
     },
   });
@@ -82,7 +84,7 @@ export default function SignupPage() {
                         <FormItem>
                           <FormLabel>Full Name</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input {...field} placeholder="e.g., Jane Doe" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -95,7 +97,7 @@ export default function SignupPage() {
                         <FormItem>
                           <FormLabel>Email Address</FormLabel>
                           <FormControl>
-                            <Input type="email" {...field} />
+                            <Input type="email" {...field} placeholder="e.g., you@company.com" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -127,20 +129,35 @@ export default function SignupPage() {
                       name="profession"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Primary Profession</FormLabel>
+                          <FormLabel>Primary Work Category</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select your profession" />
+                                <SelectValue placeholder="Select your main field of work" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="designer">Designer</SelectItem>
-                              <SelectItem value="developer">Developer</SelectItem>
-                              <SelectItem value="writer">Writer</SelectItem>
+                              <SelectItem value="design">Design & Creative</SelectItem>
+                              <SelectItem value="development">Development & IT</SelectItem>
+                              <SelectItem value="writing">Writing & Content Creation</SelectItem>
+                              <SelectItem value="marketing">Marketing & Sales</SelectItem>
+                              <SelectItem value="business">Business & Consulting</SelectItem>
                               <SelectItem value="other">Other</SelectItem>
                             </SelectContent>
                           </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                     <FormField
+                      control={control}
+                      name="niche"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Your Niche / Role</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="e.g., UI/UX Designer, React Developer, SEO Specialist" />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
