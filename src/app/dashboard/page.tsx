@@ -78,6 +78,7 @@ export default function DashboardPage() {
         revPerProject: true,
     });
     const [chartScale, setChartScale] = useState(1);
+    const [productivityChartScale, setProductivityChartScale] = useState(1);
 
 
     const recentActivities = [
@@ -372,6 +373,17 @@ export default function DashboardPage() {
                             <TabsTrigger value="monthly">Monthly</TabsTrigger>
                         </TabsList>
                     </Tabs>
+                    <div className="w-32 space-y-1">
+                        <Label htmlFor="productivity-scale" className="text-xs">Scale ({productivityChartScale.toFixed(1)}x)</Label>
+                        <Slider 
+                            id="productivity-scale"
+                            min={0.1}
+                            max={5}
+                            step={0.1}
+                            value={[productivityChartScale]}
+                            onValueChange={(value) => setProductivityChartScale(value[0])}
+                        />
+                    </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="default" size="icon" className="bg-black text-white">
@@ -395,7 +407,7 @@ export default function DashboardPage() {
                  </div>
             </CardHeader>
             <CardContent>
-                <ProductivityChart timeline={productivityTimeline} visibleMetrics={visibleMetrics} />
+                <ProductivityChart timeline={productivityTimeline} visibleMetrics={visibleMetrics} scale={productivityChartScale} />
             </CardContent>
         </Card>
 

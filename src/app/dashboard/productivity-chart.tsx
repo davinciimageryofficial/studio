@@ -1,6 +1,7 @@
 
 "use client"
 
+import { useMemo } from "react";
 import { ComposedChart, Bar, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, TooltipProps } from "recharts";
 import { dailyProductivityData, weeklyProductivityData, monthlyProductivityData } from "@/lib/placeholder-data";
 
@@ -41,6 +42,7 @@ const CustomTooltip = ({ active, payload, label, visibleMetrics }: TooltipProps<
 type ProductivityChartProps = {
     timeline: 'daily' | 'weekly' | 'monthly';
     visibleMetrics: VisibleMetrics;
+    scale: number;
 }
 
 const renderLegendText = (value: string) => {
@@ -48,7 +50,7 @@ const renderLegendText = (value: string) => {
 };
 
 
-export function ProductivityChart({ timeline, visibleMetrics }: ProductivityChartProps) {
+export function ProductivityChart({ timeline, visibleMetrics, scale }: ProductivityChartProps) {
 
   const dataMap = {
     daily: dailyProductivityData,
@@ -56,7 +58,18 @@ export function ProductivityChart({ timeline, visibleMetrics }: ProductivityChar
     monthly: monthlyProductivityData,
   };
 
-  const chartData = dataMap[timeline];
+  const chartData = useMemo(() => {
+    const rawData = dataMap[timeline];
+    return rawData.map(item => ({
+        ...item,
+        revenue: Math.round(item.revenue * scale),
+        projects: Math.round(item.projects * scale),
+        impressions: Math.round(item.impressions * scale),
+        acquisition: Math.round(item.acquisition * scale),
+        revPerProject: Math.round(item.revPerProject * scale * 100) / 100, // Keep some precision
+    }));
+  }, [timeline, scale, dataMap]);
+
   const dataKey = {
       daily: 'day',
       weekly: 'week',
