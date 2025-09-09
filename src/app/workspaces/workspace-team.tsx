@@ -110,7 +110,7 @@ export function WorkspaceTeam() {
   const [isRecording, setIsRecording] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(true);
   const [pinnedParticipantId, setPinnedParticipantId] = useState<string | null>(participants[0]?.id || null);
-  const [layout, setLayout] = useState<'grid' | 'sidebar' | 'gallery'>('grid');
+  const [layout, setLayout] = useState<'sidebar' | 'grid' | 'gallery'>('sidebar');
 
   const getGridLayout = (count: number) => {
     if (count <= 1) return "grid-cols-1";
@@ -126,28 +126,52 @@ export function WorkspaceTeam() {
 
   const toggleLayout = () => {
     setLayout(current => {
-        if (current === 'grid') return 'sidebar';
-        if (current === 'sidebar') return 'gallery';
-        return 'grid';
+        if (current === 'sidebar') return 'grid';
+        if (current === 'grid') return 'gallery';
+        return 'sidebar';
     });
   }
 
   const getLayoutIcon = () => {
-    if (layout === 'grid') return LayoutGrid;
     if (layout === 'sidebar') return List;
+    if (layout === 'grid') return LayoutGrid;
     return GalleryVertical;
   }
   
   const getLayoutLabel = () => {
-    if (layout === 'grid') return 'Grid View';
     if (layout === 'sidebar') return 'Sidebar View';
+    if (layout === 'grid') return 'Grid View';
     return 'Gallery View';
   }
 
   const renderLayout = () => {
     switch (layout) {
-        case 'sidebar':
+        case 'grid':
             return (
+                <ScrollArea className="flex-1">
+                    <div className={cn("grid gap-2 p-2", getGridLayout(participants.length))}>
+                    {participants.map((p, index) => (
+                        <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer">
+                            <ParticipantCard participant={p} isMuted={index > 0} isCameraOff={index > 1} isSpeaking={index === 0} />
+                        </div>
+                    ))}
+                    </div>
+                </ScrollArea>
+            )
+        case 'gallery':
+             return (
+                 <ScrollArea className="flex-1">
+                    <div className="flex gap-2 p-2">
+                         {participants.map((p, index) => (
+                            <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer w-48 flex-shrink-0">
+                                <ParticipantCard participant={p} isMuted={index > 0} isCameraOff={index > 1} isSpeaking={index === 0} />
+                            </div>
+                        ))}
+                    </div>
+                 </ScrollArea>
+            )
+        default: // sidebar
+             return (
                  <div className="flex-1 flex flex-col md:flex-row gap-2 p-2">
                     <div className="flex-1 h-full">
                         {pinnedParticipant && <ParticipantCard participant={pinnedParticipant} isMuted={false} isCameraOff={false} isSpeaking={true} />}
@@ -162,30 +186,6 @@ export function WorkspaceTeam() {
                         </div>
                     </ScrollArea>
                 </div>
-            )
-        case 'gallery':
-             return (
-                 <ScrollArea className="flex-1">
-                    <div className="flex gap-2 p-2">
-                         {participants.map((p, index) => (
-                            <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer w-48 flex-shrink-0">
-                                <ParticipantCard participant={p} isMuted={index > 0} isCameraOff={index > 1} isSpeaking={index === 0} />
-                            </div>
-                        ))}
-                    </div>
-                 </ScrollArea>
-            )
-        default: // grid
-             return (
-                <ScrollArea className="flex-1">
-                    <div className={cn("grid gap-2 p-2", getGridLayout(participants.length))}>
-                    {participants.map((p, index) => (
-                        <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer">
-                            <ParticipantCard participant={p} isMuted={index > 0} isCameraOff={index > 1} isSpeaking={index === 0} />
-                        </div>
-                    ))}
-                    </div>
-                </ScrollArea>
             )
     }
   }
