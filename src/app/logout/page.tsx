@@ -23,8 +23,8 @@ export default function LogoutPage() {
   ];
 
   return (
-    <div className="flex min-h-screen items-center justify-end bg-background p-4">
-       <div className="flex flex-col items-end justify-center p-8 sm:p-12 text-right max-w-lg">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+       <div className="flex flex-col items-center justify-center p-8 sm:p-12 text-center max-w-lg">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
                  <Kanban className="size-7 text-primary" />
             </div>
@@ -43,7 +43,7 @@ export default function LogoutPage() {
             <Separator className="my-8 max-w-sm" />
              <div className="space-y-4">
                 <p className="text-sm font-medium text-muted-foreground">Don't miss out on:</p>
-                <div className="flex justify-end gap-6 sm:gap-8">
+                <div className="flex justify-center gap-6 sm:gap-8">
                     {features.map((feature) => (
                         <div key={feature.title} className="flex items-center gap-2 text-sm">
                             {feature.icon}
