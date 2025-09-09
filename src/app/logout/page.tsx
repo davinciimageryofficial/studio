@@ -23,7 +23,7 @@ export default function LogoutPage() {
   ];
 
   return (
-    <div className="flex min-h-[calc(100vh-4.5rem)] items-center justify-center bg-muted/40 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-lg text-center shadow-2xl">
         <CardHeader className="p-8 sm:p-12">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
