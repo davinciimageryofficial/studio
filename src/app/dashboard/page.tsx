@@ -62,7 +62,7 @@ type VisibleMetrics = {
     revPerProject: boolean;
 }
 
-export default function DashboardPage() {
+function DashboardPageInternal() {
     const [chartType, setChartType] = useState<"bar" | "line" | "area">("area");
     const [isAppDownloaded, setIsAppDownloaded] = useState(false);
     const [accessCode, setAccessCode] = useState("");
@@ -567,3 +567,13 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+export default function DashboardPage() {
+    return (
+        <ClientOnly>
+            <DashboardPageInternal />
+        </ClientOnly>
+    )
+}
+
+    
