@@ -350,20 +350,10 @@ export function WorkspaceTeam() {
                     </CardHeader>
                     <CardContent className="flex-1 p-2 flex flex-col bg-muted/30">
                         {layout === 'speaker' && pinnedParticipant && (
-                            <div className="flex-1 flex flex-col gap-4">
-                                <div className="flex-1">
-                                    <ParticipantCard
-                                        user={pinnedParticipant}
-                                        onRemove={handleRemove}
-                                        isCameraOn={isCameraOn && pinnedParticipant.id === placeholderUsers[1].id}
-                                        isScreenSharing={isScreenSharing && pinnedParticipant.id === placeholderUsers[1].id}
-                                        isSpeaking={pinnedParticipant.id === activeSpeakerId}
-                                        showAvatars={showAvatars}
-                                    />
-                                </div>
+                            <div className="flex-1 flex flex-row gap-4">
                                 {thumbnailParticipants.length > 0 && (
-                                    <ScrollArea className="w-full whitespace-nowrap">
-                                        <div className="flex w-max space-x-4">
+                                    <ScrollArea className="h-full">
+                                        <div className="flex flex-col h-full space-y-4 pr-2">
                                             {thumbnailParticipants.map(user => (
                                                 <div key={user.id} className="w-40 flex-shrink-0">
                                                     <ParticipantCard
@@ -378,9 +368,18 @@ export function WorkspaceTeam() {
                                                 </div>
                                             ))}
                                         </div>
-                                        <ScrollBar orientation="horizontal" />
                                     </ScrollArea>
                                 )}
+                                <div className="flex-1">
+                                    <ParticipantCard
+                                        user={pinnedParticipant}
+                                        onRemove={handleRemove}
+                                        isCameraOn={isCameraOn && pinnedParticipant.id === placeholderUsers[1].id}
+                                        isScreenSharing={isScreenSharing && pinnedParticipant.id === placeholderUsers[1].id}
+                                        isSpeaking={pinnedParticipant.id === activeSpeakerId}
+                                        showAvatars={showAvatars}
+                                    />
+                                </div>
                             </div>
                         )}
 
