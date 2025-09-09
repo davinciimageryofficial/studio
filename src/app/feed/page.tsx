@@ -59,9 +59,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { freelanceNiches } from "@/app/skill-sync-net/page";
-import { Post } from "@/lib/placeholder-data";
+import { Post, User as UserType } from "@/lib/placeholder-data";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 
 function FeedContent({ posts, onUpdate, onDelete }: { posts: Post[], onUpdate: (post: Post) => void, onDelete: (postId: number) => void }) {
@@ -376,6 +378,62 @@ function CreatePostDialog({
 }
 
 
+function ApplyForJobDialog({ post }: { post: Post }) {
+    const [coverLetter, setCoverLetter] = useState("");
+    const applicant = placeholderUsers.find(u => u.id === '2'); // Assuming current user is Bob Williams
+
+    if (!post.jobDetails || !applicant) return null;
+    
+    const applicationDetails = {
+        applicantName: applicant.name,
+        applicantHeadline: applicant.headline,
+        applicantId: applicant.id,
+        jobTitle: post.jobDetails.title,
+        coverLetter: coverLetter,
+        recruiterId: post.author.id,
+    };
+
+    const query = new URLSearchParams({ application: JSON.stringify(applicationDetails) }).toString();
+
+    return (
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Apply for: {post.jobDetails.title}</DialogTitle>
+                <DialogDescription>Your application will be sent to {post.author.name}.</DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+                <div className="flex items-start gap-4 rounded-md border bg-muted p-4">
+                    <Avatar>
+                        <AvatarFallback><User /></AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <p className="font-semibold">{applicant.name}</p>
+                        <p className="text-sm text-muted-foreground">{applicant.headline}</p>
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="cover-letter">Cover Letter (Optional)</Label>
+                    <Textarea 
+                        id="cover-letter"
+                        placeholder="Briefly explain why you're a great fit for this role..."
+                        className="min-h-32"
+                        value={coverLetter}
+                        onChange={(e) => setCoverLetter(e.target.value)}
+                    />
+                </div>
+            </div>
+            <DialogFooter>
+                <DialogClose asChild><Button variant="secondary">Cancel</Button></DialogClose>
+                <DialogClose asChild>
+                    <Button asChild>
+                        <Link href={`/messages?${query}`}>Message Recruiter</Link>
+                    </Button>
+                </DialogClose>
+            </DialogFooter>
+        </DialogContent>
+    )
+}
+
 function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: Post) => void, onDelete: (postId: number) => void }) {
     const author = post.author;
     const [isLiked, setIsLiked] = useState(false);
@@ -420,6 +478,7 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
         <div className="flex items-start gap-4">
           {post.type === 'post' && (
             <Avatar>
+                <AvatarImage src={author.avatar} alt={author.name} />
                 <AvatarFallback>
                     <User className="h-5 w-5" />
                 </AvatarFallback>
@@ -505,7 +564,12 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
                             ))}
                         </div>
                     </div>
-                    <Button className="w-full mt-2">Apply Now</Button>
+                     <Dialog>
+                        <DialogTrigger asChild>
+                            <Button className="w-full mt-2">Apply Now</Button>
+                        </DialogTrigger>
+                        <ApplyForJobDialog post={post} />
+                    </Dialog>
                 </div>
             )}
             <div className="mt-4 flex items-center justify-between text-muted-foreground">
@@ -539,6 +603,3 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
     </Card>
   );
 }
-
-
-    

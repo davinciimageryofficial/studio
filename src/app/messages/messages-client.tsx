@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban, UserPlus, User, PlusCircle, Users, Building } from "lucide-react";
+import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban, UserPlus, User, PlusCircle, Users, Building, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "next/navigation";
@@ -72,49 +72,60 @@ export function MessagesClient() {
 
   useEffect(() => {
     const projectParam = searchParams.get('project');
+    const applicationParam = searchParams.get('application');
+
+    const handleNewConversation = (
+        partnerId: string,
+        partnerName: string,
+        partnerHeadline: string,
+        initialMessageText: string
+    ) => {
+        let partnerConversation = conversations.find(c => c.id === partnerId);
+        const newMessageObj: Message = {
+            from: 'me',
+            text: initialMessageText,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        };
+
+        if (partnerConversation) {
+            partnerConversation.messages?.push(newMessageObj);
+            partnerConversation.lastMessage = newMessageObj;
+            setConversations([...conversations]);
+            setActiveConversationId(partnerConversation.id);
+        } else {
+            const newConversation: Conversation = {
+                id: partnerId,
+                name: partnerName,
+                handle: partnerName.toLowerCase().replace(/\s/g, ''),
+                avatar: `https://picsum.photos/seed/${partnerId}/200/200`,
+                headline: partnerHeadline,
+                bio: "",
+                coverImage: "",
+                skills: [],
+                portfolio: [],
+                category: 'development',
+                lastMessage: newMessageObj,
+                messages: [newMessageObj],
+            };
+            setConversations(prev => [newConversation, ...prev]);
+            setActiveConversationId(partnerId);
+        }
+    };
+
+
     if (projectParam) {
         try {
             const project = JSON.parse(projectParam);
             const clientName = project.clientName || 'New Client';
             const projectTitle = project.projectTitle || 'New Project';
+            const recruiterId = `recruiter-${clientName.replace(/\s/g, '')}`;
 
-            // Check if a conversation with this client already exists
-            let clientConversation = conversations.find(c => c.name === clientName);
-
-            const initialMessageText = `Hi, I'm interested in the "${projectTitle}" project. Let's discuss the details.`;
-            const newMessageObj: Message = {
-                from: 'me',
-                text: initialMessageText,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            };
-            
-            if (clientConversation) {
-                // Add message to existing conversation
-                clientConversation.messages?.push(newMessageObj);
-                clientConversation.lastMessage = newMessageObj;
-                setConversations([...conversations]);
-                setActiveConversationId(clientConversation.id);
-            } else {
-                // Create a new conversation
-                const newClientId = `client-${Date.now()}`;
-                const newConversation: Conversation = {
-                    id: newClientId,
-                    name: clientName,
-                    handle: clientName.toLowerCase().replace(' ', ''),
-                    avatar: `https://picsum.photos/seed/${newClientId}/200/200`,
-                    headline: "Project Client",
-                    bio: "",
-                    coverImage: "",
-                    skills: [],
-                    portfolio: [],
-                    category: 'development', // Placeholder
-                    lastMessage: newMessageObj,
-                    messages: [newMessageObj],
-                };
-                setConversations(prev => [newConversation, ...prev]);
-                setActiveConversationId(newClientId);
-            }
-
+            handleNewConversation(
+                recruiterId,
+                clientName,
+                "Project Client",
+                `Hi, I'm interested in the "${projectTitle}" project. Let's discuss the details.`
+            );
         } catch (error) {
             console.error("Failed to parse project data from URL", error);
             toast({
@@ -123,7 +134,35 @@ export function MessagesClient() {
                 description: "Could not start conversation from project link."
             });
         }
+    } else if (applicationParam) {
+        try {
+            const app = JSON.parse(applicationParam);
+            const recruiter = placeholderUsers.find(u => u.id === app.recruiterId);
+
+            if (recruiter) {
+                const applicationMessage = `
+                    <div class="p-4 rounded-lg border bg-card shadow-sm">
+                        <div class="flex items-center gap-3 pb-3 border-b mb-3">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                                <${'Briefcase'} class="h-6 w-6" />
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">New Application: ${app.jobTitle}</h4>
+                                <p class="text-xs text-muted-foreground">Submitted by ${app.applicantName}</p>
+                            </div>
+                        </div>
+                        <p class="text-sm font-semibold">Cover Letter:</p>
+                        <p class="text-sm text-muted-foreground italic">"${app.coverLetter || 'No cover letter provided.'}"</p>
+                        <a href="/profile/${app.applicantId}" class="mt-4 inline-block w-full text-center px-4 py-2 bg-secondary text-secondary-foreground rounded-md text-sm font-medium hover:bg-secondary/80">View Applicant's Profile</a>
+                    </div>
+                `;
+                handleNewConversation(recruiter.id, recruiter.name, recruiter.headline, applicationMessage);
+            }
+        } catch (error) {
+            console.error("Failed to parse application data from URL", error);
+        }
     }
+
   }, [searchParams, toast]);
 
   useEffect(() => {
@@ -257,6 +296,7 @@ export function MessagesClient() {
                 <div className="flex items-start gap-3">
                   {showAvatars && (
                     <Avatar>
+                        <AvatarImage src={convo.avatar} alt={convo.name} />
                         <AvatarFallback>
                             <User className="h-5 w-5" />
                         </AvatarFallback>
@@ -282,6 +322,7 @@ export function MessagesClient() {
           <div className="flex items-center gap-3 border-b p-4">
             {showAvatars && (
                 <Avatar>
+                    <AvatarImage src={activeConversation.avatar} alt={activeConversation.name} />
                     <AvatarFallback>
                         <User className="h-5 w-5" />
                     </AvatarFallback>
@@ -333,6 +374,7 @@ export function MessagesClient() {
                 <div key={index} className={cn("flex items-end gap-2", message.from === 'me' ? 'justify-end' : 'justify-start')}>
                   {message.from !== 'me' && showAvatars && (
                     <Avatar className="h-8 w-8">
+                        <AvatarImage src={activeConversation.avatar} alt={activeConversation.name} />
                         <AvatarFallback>
                             <User className="h-4 w-4" />
                         </AvatarFallback>
@@ -461,6 +503,7 @@ function NewCommunityDialog() {
                                 <div key={user.id} className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <Avatar className="h-9 w-9">
+                                            <AvatarImage src={user.avatar} alt={user.name} />
                                             <AvatarFallback>
                                                 <User className="h-5 w-5" />
                                             </AvatarFallback>
