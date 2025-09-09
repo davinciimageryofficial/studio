@@ -425,13 +425,6 @@ export default function DashboardPage() {
                         <CardDescription>A look at your profile views over the last 7 days.</CardDescription>
                     </div>
                     <div className="flex items-center gap-4">
-                        <Tabs defaultValue="area" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
-                            <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
-                                <TabsTrigger value="bar">Bar</TabsTrigger>
-                                <TabsTrigger value="line">Line</TabsTrigger>
-                                <TabsTrigger value="area">Area</TabsTrigger>
-                            </TabsList>
-                        </Tabs>
                         <div className="w-32 space-y-1">
                             <Label htmlFor="scale" className="text-xs">Scale ({chartScale.toFixed(1)}x)</Label>
                              <Slider 
@@ -443,6 +436,13 @@ export default function DashboardPage() {
                                 onValueChange={(value) => setChartScale(value[0])}
                             />
                         </div>
+                        <Tabs defaultValue="area" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
+                            <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
+                                <TabsTrigger value="bar">Bar</TabsTrigger>
+                                <TabsTrigger value="line">Line</TabsTrigger>
+                                <TabsTrigger value="area">Area</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
                     </div>
                 </div>
             </CardHeader>
