@@ -1,6 +1,7 @@
 
 "use client"
 
+import { useMemo } from "react";
 import { Bar, BarChart, Line, LineChart, Area, AreaChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, ComposedChart } from "recharts"
 
 import {
@@ -12,7 +13,7 @@ import {
   ChartLegendContent,
 } from "@/components/ui/chart"
 
-const chartData = [
+const initialChartData = [
   { day: "Monday", views: 186, connections: 5, searchAppearances: 400 },
   { day: "Tuesday", views: 305, connections: 7, searchAppearances: 550 },
   { day: "Wednesday", views: 237, connections: 4, searchAppearances: 480 },
@@ -39,14 +40,18 @@ const chartConfig = {
 
 type EngagementChartProps = {
     type: "bar" | "line" | "area";
+    scale?: number;
 }
 
-export function EngagementChart({ type }: EngagementChartProps) {
-  const ChartComponent = {
-    bar: BarChart,
-    line: LineChart,
-    area: ComposedChart, // Use ComposedChart for area to combine with line/bar
-  }[type];
+export function EngagementChart({ type, scale = 1 }: EngagementChartProps) {
+  const chartData = useMemo(() => {
+    return initialChartData.map(item => ({
+      ...item,
+      views: Math.round(item.views * scale),
+      connections: Math.round(item.connections * scale),
+      searchAppearances: Math.round(item.searchAppearances * scale),
+    }));
+  }, [scale]);
 
   return (
     <ChartContainer config={chartConfig} className="min-h-[200px] w-full">

@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ProductivityChart } from "./productivity-chart";
+import { Slider } from "@/components/ui/slider";
 
 type Task = {
     id: string;
@@ -75,6 +76,7 @@ export default function DashboardPage() {
         acquisition: true,
         revPerProject: true,
     });
+    const [chartScale, setChartScale] = useState(1);
 
 
     const recentActivities = [
@@ -403,17 +405,30 @@ export default function DashboardPage() {
                         <CardTitle>Profile Engagement</CardTitle>
                         <CardDescription>A look at your profile views over the last 7 days.</CardDescription>
                     </div>
-                    <Tabs defaultValue="area" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
-                        <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
-                            <TabsTrigger value="bar">Bar</TabsTrigger>
-                            <TabsTrigger value="line">Line</TabsTrigger>
-                            <TabsTrigger value="area">Area</TabsTrigger>
-                        </TabsList>
-                    </Tabs>
+                    <div className="flex items-center gap-4">
+                        <Tabs defaultValue="area" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
+                            <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
+                                <TabsTrigger value="bar">Bar</TabsTrigger>
+                                <TabsTrigger value="line">Line</TabsTrigger>
+                                <TabsTrigger value="area">Area</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                        <div className="w-32 space-y-1">
+                            <Label htmlFor="scale" className="text-xs">Scale ({chartScale.toFixed(1)}x)</Label>
+                             <Slider 
+                                id="scale"
+                                min={0.1}
+                                max={5}
+                                step={0.1}
+                                value={[chartScale]}
+                                onValueChange={(value) => setChartScale(value[0])}
+                            />
+                        </div>
+                    </div>
                 </div>
             </CardHeader>
             <CardContent className="pl-2">
-                <EngagementChart type={chartType} />
+                <EngagementChart type={chartType} scale={chartScale} />
             </CardContent>
         </Card>
 
@@ -532,20 +547,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
-
-    
-
-
-
-
-    
-
-    
-
-    
-
-    
-
-    
