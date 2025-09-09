@@ -132,7 +132,7 @@ export default function SignupPage() {
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select your profession" />
-                              </Trigger>
+                              </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="designer">Designer</SelectItem>
