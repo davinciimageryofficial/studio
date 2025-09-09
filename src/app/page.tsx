@@ -10,7 +10,7 @@ export default function LandingPage() {
 
   return (
     <ClientOnly>
-        <div className="flex min-h-screen items-center justify-center bg-background p-4">
+        <div className="flex min-h-screen items-center justify-start bg-background p-4">
             <div className="relative mx-auto w-full max-w-6xl overflow-hidden rounded-2xl border bg-card shadow-2xl">
                 <div className="grid lg:grid-cols-2">
                     <div className="flex flex-col justify-center p-8 sm:p-12">
