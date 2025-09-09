@@ -128,12 +128,12 @@ export function WorkspaceTeam() {
     <div className="flex h-[calc(100vh-4.5rem)] w-full bg-background">
       <div className="flex flex-1 flex-col">
         {layout === 'speaker' && pinnedParticipant ? (
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-2 p-2">
-            <div className="md:col-span-3 h-full">
+          <div className="flex-1 flex flex-col md:flex-row gap-2 p-2">
+            <div className="flex-1 h-full">
               <ParticipantCard participant={pinnedParticipant} isMuted={false} isCameraOff={false} isSpeaking={true} />
             </div>
-            <ScrollArea className="md:col-span-1 h-full">
-                <div className="space-y-2">
+            <ScrollArea className="w-full md:w-48 h-32 md:h-full">
+                <div>
                     {otherParticipants.map(p => (
                         <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer">
                             <ParticipantCard participant={p} isMuted={true} isCameraOff={false} isSpeaking={false} />
