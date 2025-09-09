@@ -91,7 +91,7 @@ export default function BillingPage() {
             <div className="grid gap-8 lg:grid-cols-3">
                 <div className="space-y-8 lg:col-span-2">
                 {/* Current Plan */}
-                <Card className="bg-black text-primary-foreground">
+                <Card className="bg-primary text-primary-foreground">
                     <CardHeader>
                     <CardTitle>Current Plan</CardTitle>
                     <CardDescription className="text-primary-foreground/80">You are currently on the <strong>{currentPlan?.name}</strong> plan.</CardDescription>
