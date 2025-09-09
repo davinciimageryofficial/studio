@@ -83,6 +83,50 @@ function RequestPlatformDialog() {
   );
 }
 
+function ContactSalesDialog() {
+  const { toast } = useToast();
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = () => {
+    if (message.trim()) {
+      console.log("Contact Sales message:", message);
+      toast({
+        title: "Message Sent",
+        description: "Our sales team has received your message and will be in touch shortly.",
+      });
+    }
+  };
+
+  return (
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Contact Sales</DialogTitle>
+        <DialogDescription>
+          Tell us about your team's needs, and we'll get back to you with a custom plan.
+        </DialogDescription>
+      </DialogHeader>
+      <div className="py-4 space-y-2">
+        <Label htmlFor="sales-message">Your Requirements</Label>
+        <Textarea
+          id="sales-message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Describe your team size, required features, and any other specific needs..."
+          className="min-h-[120px]"
+        />
+      </div>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button type="button" variant="secondary">Cancel</Button>
+        </DialogClose>
+        <DialogClose asChild>
+          <Button type="button" onClick={handleSubmit} disabled={!message.trim()}>Send Message</Button>
+        </DialogClose>
+      </DialogFooter>
+    </DialogContent>
+  );
+}
+
 function AddPaymentMethodDialog() {
   const { toast } = useToast();
 
@@ -303,9 +347,16 @@ export default function BillingPage() {
                                         ))}
                                     </CardContent>
                                     <CardFooter>
-                                        <Button className="w-full" variant={plan.price === 'Custom' ? 'outline' : 'default'}>
-                                        {plan.price === 'Custom' ? 'Contact Sales' : 'Upgrade'}
-                                        </Button>
+                                        {plan.price === 'Custom' ? (
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button className="w-full" variant="outline">Contact Sales</Button>
+                                                </DialogTrigger>
+                                                <ContactSalesDialog />
+                                            </Dialog>
+                                        ) : (
+                                            <Button className="w-full">Upgrade</Button>
+                                        )}
                                     </CardFooter>
                                 </Card>
                             ))}
