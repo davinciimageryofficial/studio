@@ -400,7 +400,7 @@ export function WorkspaceTeam() {
                             </div>
                         )}
                     </CardContent>
-                    <CardFooter className="p-2 border-t bg-card">
+                    <CardFooter className="px-2 py-1 border-t bg-card">
                          <div className="flex justify-between items-center w-full">
                            <div className="flex items-center bg-muted p-1 rounded-full">
                                 <ControlButton tooltip="Speaker View" onClick={() => setLayout('speaker')} variant={layout === 'speaker' ? 'secondary' : 'ghost'} size="sm" className="rounded-full" data-active={layout === 'speaker'}>
