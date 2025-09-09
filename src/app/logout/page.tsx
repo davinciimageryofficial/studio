@@ -23,8 +23,8 @@ export default function LogoutPage() {
   ];
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-       <div className="flex flex-col items-center justify-center p-8 sm:p-12 text-center max-w-lg">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+       <div className="flex flex-col items-center justify-center p-8 text-center max-w-lg">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
                  <Kanban className="size-7 text-primary" />
             </div>
