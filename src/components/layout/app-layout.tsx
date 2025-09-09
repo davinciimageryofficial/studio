@@ -19,7 +19,7 @@ export function AppLayout({
   const isPublicPage = publicPages.includes(pathname);
 
   if (isPublicPage) {
-    return <div className="flex min-h-screen items-center justify-center">{children}</div>;
+    return <>{children}</>;
   }
 
   return (
