@@ -25,6 +25,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { Textarea } from "@/components/ui/textarea";
 
 
 const VisaIcon = () => (
@@ -37,6 +38,51 @@ const PayPalIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="38" height="24" viewBox="0 0 38 24" role="img" aria-labelledby="pi-paypal"><title id="pi-paypal">PayPal</title><path opacity=".07" d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z"></path><path fill="#fff" d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32"></path><path fill="#003087" d="M23.9 8.6c.2-1.4-1.1-2.6-2.5-2.6H12c-.7 0-1.2.4-1.4 1l-2.4 11.2c-.2.7.3 1.4 1 1.4h3.1c.7 0 1.2-.4 1.4-1l.7-3.4c.2-.7.8-1.2 1.5-1.2h1.6c1.5 0 2.7-1 2.9-2.5l.2-1.1z"></path><path fill="#3086C8" d="M23.9 8.6c.2-1.4-1.1-2.6-2.5-2.6H12c-.7 0-1.2.4-1.4 1l-2.4 11.2c-.2.7.3 1.4 1 1.4h3.1c.7 0 1.2-.4 1.4-1l.7-3.4c.2-.7.8-1.2 1.5-1.2h1.6c1.5 0 2.7-1 2.9-2.5l.2-1.1z"></path><path fill="#009CDE" d="M23.3 8.1c.2-1.1-.5-2.1-1.6-2.1h-8.9c-.6 0-1.1.3-1.2.8l-2.2 10.3c-.2.6.3 1.2.9 1.2H14c.6 0 1.1-.3 1.2-.8l.7-3.4c.2-.6.7-1 1.3-1h1.5c1.2 0 2.2-.8 2.4-2l.2-1z"></path></svg>
 );
 
+function RequestPlatformDialog() {
+  const { toast } = useToast();
+  const [request, setRequest] = useState("");
+
+  const handleSubmit = () => {
+    if (request.trim()) {
+      // In a real app, this would trigger an email or API call
+      console.log("Payment platform request:", request);
+      toast({
+        title: "Request Sent",
+        description: "Thank you for your feedback! We'll review your suggestion.",
+      });
+    }
+  };
+
+  return (
+     <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Request a Payment Platform</DialogTitle>
+        <DialogDescription>
+          Let us know which payment platform you'd like to see on Sentry.
+        </DialogDescription>
+      </DialogHeader>
+      <div className="py-4 space-y-2">
+        <Label htmlFor="request-details">Platform Name & Details</Label>
+        <Textarea
+          id="request-details"
+          value={request}
+          onChange={(e) => setRequest(e.target.value)}
+          placeholder="Please provide the name of the payment platform and any helpful details (e.g., website, country of use)."
+          className="min-h-[100px]"
+        />
+      </div>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button type="button" variant="secondary">Cancel</Button>
+        </DialogClose>
+        <DialogClose asChild>
+          <Button type="button" onClick={handleSubmit} disabled={!request.trim()}>Submit Request</Button>
+        </DialogClose>
+      </DialogFooter>
+    </DialogContent>
+  );
+}
+
 function AddPaymentMethodDialog() {
   const { toast } = useToast();
 
@@ -47,13 +93,6 @@ function AddPaymentMethodDialog() {
       description: "Your new payment method has been saved successfully.",
     });
   };
-
-  const handleRequestPlatform = () => {
-    toast({
-      title: "Request Sent",
-      description: "Thank you for your suggestion! We'll review it for future inclusion.",
-    });
-  }
 
   return (
     <DialogContent className="sm:max-w-[425px]">
@@ -117,10 +156,15 @@ function AddPaymentMethodDialog() {
             <p className="text-sm text-muted-foreground mb-2">
                 Don't see your preferred payment method?
             </p>
-            <Button variant="link" onClick={handleRequestPlatform}>
-                <Send className="mr-2 h-4 w-4" />
-                Request a new payment platform
-            </Button>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button variant="link">
+                        <Send className="mr-2 h-4 w-4" />
+                        Request a new payment platform
+                    </Button>
+                </DialogTrigger>
+                <RequestPlatformDialog />
+            </Dialog>
         </div>
     </DialogContent>
   );
@@ -366,7 +410,5 @@ export default function BillingPage() {
     </div>
   );
 }
-
     
-
     
