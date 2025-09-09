@@ -276,7 +276,7 @@ export function MessagesClient() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="p-2">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-3 bg-black text-muted-foreground">
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="groups">Groups</TabsTrigger>
               <TabsTrigger value="agencies">Agencies</TabsTrigger>
@@ -528,3 +528,5 @@ function NewCommunityDialog() {
         </DialogContent>
     )
 }
+
+    
