@@ -334,11 +334,8 @@ export function WorkspaceTeam() {
     );
 
     const getGridLayout = (count: number) => {
-        if (count <= 2) return 'grid-cols-1 grid-rows-2 sm:grid-cols-2 sm:grid-rows-1';
-        if (count <= 4) return 'grid-cols-2 grid-rows-2';
-        if (count <= 6) return 'grid-cols-3 grid-rows-2';
-        if (count <= 9) return 'grid-cols-3 grid-rows-3';
-        return 'grid-cols-4 grid-rows-4';
+      // Responsive grid that adjusts based on screen size
+      return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
     };
 
     return (
