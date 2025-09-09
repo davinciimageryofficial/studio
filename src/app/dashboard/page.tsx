@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -431,7 +431,7 @@ export default function DashboardPage() {
                 </div>
             </CardHeader>
             <CardContent className="pl-2">
-                <EngagementChart type={chartType} onScaleChange={setChartScale} />
+                <EngagementChart type={chartType} scale={chartScale} />
             </CardContent>
         </Card>
 

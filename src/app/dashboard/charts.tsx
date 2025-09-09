@@ -42,11 +42,10 @@ const chartConfig = {
 
 type EngagementChartProps = {
     type: "bar" | "line" | "area";
-    onScaleChange: (scale: number) => void;
+    scale: number;
 }
 
-export function EngagementChart({ type, onScaleChange }: EngagementChartProps) {
-  const [scale, setScale] = useState(1);
+export function EngagementChart({ type, scale }: EngagementChartProps) {
 
   const { chartData, maxMetricValue } = useMemo(() => {
     const dataWithScaledValues = initialChartData.map(item => ({
@@ -63,24 +62,9 @@ export function EngagementChart({ type, onScaleChange }: EngagementChartProps) {
     return { chartData: dataWithScaledValues, maxMetricValue: dynamicMax };
   }, [scale]);
 
-  const handleSliderChange = (value: number[]) => {
-      setScale(value[0]);
-      onScaleChange(value[0]);
-  }
 
   return (
     <div>
-        <div className="w-32 space-y-1 mb-4 absolute right-6 top-20">
-            <Label htmlFor="scale" className="text-xs">Scale ({scale.toFixed(1)}x)</Label>
-            <Slider
-                id="scale"
-                min={0.1}
-                max={maxMetricValue > 5 ? maxMetricValue / 100 : 5} // Adjust max dynamically
-                step={0.1}
-                value={[scale]}
-                onValueChange={handleSliderChange}
-            />
-        </div>
         <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
         <ComposedChart
             accessibilityLayer 
