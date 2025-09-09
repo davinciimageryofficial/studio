@@ -448,7 +448,7 @@ export default function DashboardPage() {
         </Card>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+      <div className="space-y-8 mt-8">
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Zap className="text-primary" />AD-Sentry</CardTitle>
@@ -539,6 +539,8 @@ export default function DashboardPage() {
 
 
 
+
+    
 
     
 
