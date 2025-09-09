@@ -93,7 +93,7 @@ function DonatePageInternal() {
 export default function DonatePage() {
     return (
         <ClientOnly>
-            <div className="flex min-h-[calc(100vh-4.5rem)] items-center justify-center bg-muted/40 p-4">
+            <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
                 <DonatePageInternal />
             </div>
         </ClientOnly>

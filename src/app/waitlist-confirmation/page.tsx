@@ -75,7 +75,7 @@ export default function WaitlistConfirmationPage() {
 
   return (
     <ClientOnly>
-      <div className="relative flex min-h-[calc(100vh-4.5rem)] items-center justify-center bg-muted/40 p-4 overflow-hidden">
+      <div className="relative flex min-h-screen items-center justify-center bg-muted/40 p-4 overflow-hidden">
         <Fireworks />
         <Card className="w-full max-w-lg text-center shadow-2xl z-10">
           <CardHeader className="p-6">

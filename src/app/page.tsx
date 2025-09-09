@@ -56,6 +56,3 @@ export default function LandingPage() {
     </ClientOnly>
   );
 }
-
-
-
