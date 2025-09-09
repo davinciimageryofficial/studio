@@ -370,13 +370,6 @@ export default function DashboardPage() {
                     </CardDescription>
                 </div>
                  <div className="flex items-center gap-2">
-                    <Tabs defaultValue="monthly" onValueChange={(value) => setProductivityTimeline(value as any)} className="w-full sm:w-auto">
-                        <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
-                            <TabsTrigger value="daily">Daily</TabsTrigger>
-                            <TabsTrigger value="weekly">Weekly</TabsTrigger>
-                            <TabsTrigger value="monthly">Monthly</TabsTrigger>
-                        </TabsList>
-                    </Tabs>
                     <div className="w-32 space-y-1">
                         <Label htmlFor="productivity-scale" className="text-xs">Scale ({productivityChartScale.toFixed(1)}x)</Label>
                         <Slider 
@@ -388,6 +381,13 @@ export default function DashboardPage() {
                             onValueChange={(value) => setProductivityChartScale(value[0])}
                         />
                     </div>
+                    <Tabs defaultValue="monthly" onValueChange={(value) => setProductivityTimeline(value as any)} className="w-full sm:w-auto">
+                        <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
+                            <TabsTrigger value="daily">Daily</TabsTrigger>
+                            <TabsTrigger value="weekly">Weekly</TabsTrigger>
+                            <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                        </TabsList>
+                    </Tabs>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="default" size="icon" className="bg-black text-white">
