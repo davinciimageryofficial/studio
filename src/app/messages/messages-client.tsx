@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban, UserPlus, User, PlusCircle, Users, Building, Briefcase, PhoneOutgoing, PhoneOff, Mic, MicOff } from "lucide-react";
+import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban, UserPlus, User, PlusCircle, Users, Building, Briefcase, PhoneOutgoing, PhoneOff, Mic, MicOff, VideoOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -336,9 +336,14 @@ export function MessagesClient() {
                     <DialogTrigger asChild>
                         <Button variant="ghost" size="icon"><Phone /></Button>
                     </DialogTrigger>
-                    <CallDialog user={activeConversation} />
+                    <CallDialog user={activeConversation} isVideo={false} />
                 </Dialog>
-                <Button variant="ghost" size="icon"><Video /></Button>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost" size="icon"><Video /></Button>
+                    </DialogTrigger>
+                    <CallDialog user={activeConversation} isVideo={true} />
+                </Dialog>
                 <Button variant="ghost" size="icon"><UserPlus /></Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -534,9 +539,10 @@ function NewCommunityDialog() {
     )
 }
 
-function CallDialog({ user }: { user: Conversation }) {
+function CallDialog({ user, isVideo }: { user: Conversation, isVideo: boolean }) {
   const [callStatus, setCallStatus] = useState<"calling" | "active" | "ended">("calling");
   const [isMuted, setIsMuted] = useState(false);
+  const [isCameraOn, setIsCameraOn] = useState(isVideo);
   const [timer, setTimer] = useState(0);
 
   useEffect(() => {
@@ -558,11 +564,27 @@ function CallDialog({ user }: { user: Conversation }) {
   return (
     <DialogContent>
       <DialogHeader className="text-center items-center">
-        <Avatar className="h-24 w-24 mb-4">
-            <AvatarFallback>
-                <User className="h-12 w-12" />
-            </AvatarFallback>
-        </Avatar>
+        {isVideo && (
+             <div className="relative w-full aspect-video bg-muted rounded-lg mb-4">
+                {isCameraOn ? (
+                    <div className="w-full h-full bg-black flex items-center justify-center text-white">
+                        {/* In a real app, this would be a <video> element */}
+                        <p>Your video feed</p>
+                    </div>
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                         <Avatar className="h-24 w-24">
+                            <AvatarFallback><User className="h-12 w-12" /></AvatarFallback>
+                        </Avatar>
+                    </div>
+                )}
+             </div>
+        )}
+        {!isVideo && (
+            <Avatar className="h-24 w-24 mb-4">
+                <AvatarFallback><User className="h-12 w-12" /></AvatarFallback>
+            </Avatar>
+        )}
         <DialogTitle className="text-2xl">{user.name}</DialogTitle>
         <DialogDescription>
           {callStatus === "calling" && "Calling..."}
@@ -575,6 +597,11 @@ function CallDialog({ user }: { user: Conversation }) {
           <Button variant={isMuted ? "default" : "secondary"} size="icon" className="h-14 w-14 rounded-full" onClick={() => setIsMuted(!isMuted)}>
             {isMuted ? <MicOff /> : <Mic />}
           </Button>
+           {isVideo && (
+              <Button variant={isCameraOn ? "default" : "secondary"} size="icon" className="h-14 w-14 rounded-full" onClick={() => setIsCameraOn(!isCameraOn)}>
+                {isCameraOn ? <Video /> : <VideoOff />}
+              </Button>
+            )}
           <DialogClose asChild>
             <Button variant="destructive" size="icon" className="h-14 w-14 rounded-full" onClick={() => setCallStatus('ended')}>
               <PhoneOff />
