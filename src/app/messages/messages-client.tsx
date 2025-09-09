@@ -3,11 +3,11 @@
 
 import { useState, useEffect, useRef } from "react";
 import { placeholderUsers, placeholderMessages } from "@/lib/placeholder-data";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban, UserPlus, User, PlusCircle, Users, Building, Briefcase } from "lucide-react";
+import { Search, Send, Smile, Phone, Video, Settings, Bold, Italic, Code, Paperclip, Link2, Eye, EyeOff, Kanban, UserPlus, User, PlusCircle, Users, Building, Briefcase, PhoneOutgoing, PhoneOff, Mic, MicOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -332,7 +332,12 @@ export function MessagesClient() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-                <Button variant="ghost" size="icon"><Phone /></Button>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost" size="icon"><Phone /></Button>
+                    </DialogTrigger>
+                    <CallDialog user={activeConversation} />
+                </Dialog>
                 <Button variant="ghost" size="icon"><Video /></Button>
                 <Button variant="ghost" size="icon"><UserPlus /></Button>
                 <DropdownMenu>
@@ -527,4 +532,56 @@ function NewCommunityDialog() {
             </DialogFooter>
         </DialogContent>
     )
+}
+
+function CallDialog({ user }: { user: Conversation }) {
+  const [callStatus, setCallStatus] = useState<"calling" | "active" | "ended">("calling");
+  const [isMuted, setIsMuted] = useState(false);
+  const [timer, setTimer] = useState(0);
+
+  useEffect(() => {
+    let callTimer: NodeJS.Timeout;
+    if (callStatus === "calling") {
+      callTimer = setTimeout(() => setCallStatus("active"), 3000); // Simulate call connect
+    } else if (callStatus === "active") {
+      callTimer = setInterval(() => setTimer(t => t + 1), 1000);
+    }
+    return () => clearInterval(callTimer);
+  }, [callStatus]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
+
+  return (
+    <DialogContent>
+      <DialogHeader className="text-center items-center">
+        <Avatar className="h-24 w-24 mb-4">
+            <AvatarFallback>
+                <User className="h-12 w-12" />
+            </AvatarFallback>
+        </Avatar>
+        <DialogTitle className="text-2xl">{user.name}</DialogTitle>
+        <DialogDescription>
+          {callStatus === "calling" && "Calling..."}
+          {callStatus === "active" && formatTime(timer)}
+          {callStatus === "ended" && "Call Ended"}
+        </DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <div className="flex w-full justify-center gap-4">
+          <Button variant={isMuted ? "default" : "secondary"} size="icon" className="h-14 w-14 rounded-full" onClick={() => setIsMuted(!isMuted)}>
+            {isMuted ? <MicOff /> : <Mic />}
+          </Button>
+          <DialogClose asChild>
+            <Button variant="destructive" size="icon" className="h-14 w-14 rounded-full" onClick={() => setCallStatus('ended')}>
+              <PhoneOff />
+            </Button>
+          </DialogClose>
+        </div>
+      </DialogFooter>
+    </DialogContent>
+  );
 }
