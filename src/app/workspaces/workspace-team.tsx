@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import {
-  Mic, MicOff, Video, VideoOff, ScreenShare, ScreenShareOff, UserPlus, MessageSquare, Settings, LogOut, Record, Pause, Play, Hand, List, LayoutGrid
+  Mic, MicOff, Video, VideoOff, ScreenShare, ScreenShareOff, UserPlus, MessageSquare, Settings, LogOut, Circle, Pause, Play, Hand, List, LayoutGrid
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Chat } from './chat';
@@ -167,7 +167,7 @@ export function WorkspaceTeam() {
               <ControlButton icon={isMuted ? MicOff : Mic} label={isMuted ? "Unmute" : "Mute"} onClick={() => setIsMuted(!isMuted)} variant="ghost" size="icon" className={cn("h-10 w-10 rounded-full", isMuted ? "bg-red-500 hover:bg-red-600" : "bg-gray-700 hover:bg-gray-600")} />
               <ControlButton icon={isCameraOff ? VideoOff : Video} label={isCameraOff ? "Start Camera" : "Stop Camera"} onClick={() => setIsCameraOff(!isCameraOff)} variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-gray-700 hover:bg-gray-600" />
               <ControlButton icon={isSharingScreen ? ScreenShareOff : ScreenShare} label={isSharingScreen ? "Stop Sharing" : "Share Screen"} onClick={() => setIsSharingScreen(!isSharingScreen)} variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-gray-700 hover:bg-gray-600" />
-              <ControlButton icon={isRecording ? Pause : Record} label={isRecording ? "Pause Recording" : "Record"} onClick={() => setIsRecording(!isRecording)} variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-gray-700 hover:bg-gray-600" />
+              <ControlButton icon={isRecording ? Pause : Circle} label={isRecording ? "Pause Recording" : "Record"} onClick={() => setIsRecording(!isRecording)} variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-gray-700 hover:bg-gray-600" />
               <ControlButton icon={LogOut} label="Leave Session" onClick={endSession} variant="destructive" size="icon" className="h-10 w-10 rounded-full" />
             </div>
             <div className="flex items-center gap-1">
