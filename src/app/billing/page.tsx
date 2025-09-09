@@ -14,6 +14,18 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+
 
 const VisaIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="38" height="24" viewBox="0 0 38 24" role="img" aria-labelledby="pi-visa"><title id="pi-visa">Visa</title><path opacity=".07" d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z"></path><path fill="#fff" d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32"></path><path d="M28.8 10.1c-.1-.3-.3-.5-.4-.7-.1-.2-.3-.4-.5-.5-.1-.1-.2-.3-.4-.4-.1-.1-.2-.2-.3-.2-.1-.1-.2-.1-.3-.1H18c-.3 0-.5.1-.7.2-.2.1-.3.3-.4.5-.1.2-.2.4-.2.6l.2 1.9c.1.2.2.4.3.5.1.1.3.2.4.2.1.1.2.1.3.1h1.4c-.1 1.5-.8 2.3-2 2.3-.6 0-1.1-.2-1.5-.5-.4-.3-.7-.7-.9-1.2l-.2-1.1c-.1-.3-.2-.5-.4-.7-.1-.2-.3-.3-.5-.4-.3-.1-.6-.2-.9-.2-.5 0-1 .1-1.4.3-.4.2-.7.5-1 .8-.3.3-.5.7-.7 1.1-.2.4-.3.8-.3 1.3l-.1 1.2c0 .4.1.8.3 1.2.2.4.5.7.8.9.3.2.7.3 1.1.3.4 0 .8-.1 1.1-.2.3-.1.6-.3.8-.5.2-.2.4-.5.5-.8.1-.3.2-.6.3-1l-.2-1.1c-.1-.2-.1-.4-.1-.5s0-.2.1-.3h1.2c.1.2.1.4.1.7l-.1 1.1c-.1.8-.4 1.4-1 1.9-.6.5-1.3.7-2.1.7-1.1 0-2.1-.4-2.8-1.1-.8-.8-1.2-1.8-1.2-3.1 0-1 .3-1.9.8-2.6.5-.7 1.2-1.2 2-1.5.8-.3 1.6-.4 2.5-.4.7 0 1.4.1 2 .3.6.2 1.1.5 1.5.9.4.4.7.9.9 1.4.2.5.3 1.1.3 1.7L30 10l-.1-1.8zM25.4 14.4l.2-1.7c-.1-.3-.2-.5-.3-.7-.1-.2-.2-.3-.4-.4-.1-.1-.2-.2-.3-.2-.1-.1-.2-.1-.3-.1h-1.4c.1 1.5.7 2.2 1.9 2.2.5 0 1-.2 1.3-.5.3-.3.5-.7.6-1.1l-.1-.9z" fill="#142688"></path></svg>
@@ -24,6 +36,78 @@ const MastercardIcon = () => (
 const PayPalIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="38" height="24" viewBox="0 0 38 24" role="img" aria-labelledby="pi-paypal"><title id="pi-paypal">PayPal</title><path opacity=".07" d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z"></path><path fill="#fff" d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32"></path><path fill="#003087" d="M23.9 8.6c.2-1.4-1.1-2.6-2.5-2.6H12c-.7 0-1.2.4-1.4 1l-2.4 11.2c-.2.7.3 1.4 1 1.4h3.1c.7 0 1.2-.4 1.4-1l.7-3.4c.2-.7.8-1.2 1.5-1.2h1.6c1.5 0 2.7-1 2.9-2.5l.2-1.1z"></path><path fill="#3086C8" d="M23.9 8.6c.2-1.4-1.1-2.6-2.5-2.6H12c-.7 0-1.2.4-1.4 1l-2.4 11.2c-.2.7.3 1.4 1 1.4h3.1c.7 0 1.2-.4 1.4-1l.7-3.4c.2-.7.8-1.2 1.5-1.2h1.6c1.5 0 2.7-1 2.9-2.5l.2-1.1z"></path><path fill="#009CDE" d="M23.3 8.1c.2-1.1-.5-2.1-1.6-2.1h-8.9c-.6 0-1.1.3-1.2.8l-2.2 10.3c-.2.6.3 1.2.9 1.2H14c.6 0 1.1-.3 1.2-.8l.7-3.4c.2-.6.7-1 1.3-1h1.5c1.2 0 2.2-.8 2.4-2l.2-1z"></path></svg>
 );
+
+function AddPaymentMethodDialog() {
+  const { toast } = useToast();
+
+  const handleAddPayment = () => {
+    // In a real app, you would handle the form submission here.
+    toast({
+      title: "Payment Method Added",
+      description: "Your new payment method has been saved successfully.",
+    });
+  };
+
+  return (
+    <DialogContent className="sm:max-w-[425px]">
+      <DialogHeader>
+        <DialogTitle>Add a new payment method</DialogTitle>
+        <DialogDescription>
+          Securely add a new way to pay for your Sentry services.
+        </DialogDescription>
+      </DialogHeader>
+      <Tabs defaultValue="card" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="card">Card</TabsTrigger>
+          <TabsTrigger value="paypal">PayPal</TabsTrigger>
+        </TabsList>
+        <TabsContent value="card">
+            <div className="grid gap-4 py-4">
+                <div className="space-y-2">
+                    <Label htmlFor="card-number">Card number</Label>
+                    <Input id="card-number" placeholder="•••• •••• •••• ••••" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                    <Label htmlFor="expiry">Expires</Label>
+                    <Input id="expiry" placeholder="MM/YY" />
+                    </div>
+                    <div className="space-y-2">
+                    <Label htmlFor="cvc">CVC</Label>
+                    <Input id="cvc" placeholder="123" />
+                    </div>
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="name">Name on card</Label>
+                    <Input id="name" placeholder="John Doe" />
+                </div>
+            </div>
+            <DialogFooter>
+                <DialogClose asChild>
+                    <Button variant="secondary">Cancel</Button>
+                </DialogClose>
+                <DialogClose asChild>
+                    <Button onClick={handleAddPayment}>Add Card</Button>
+                </DialogClose>
+            </DialogFooter>
+        </TabsContent>
+        <TabsContent value="paypal">
+            <div className="py-8 text-center">
+                <p className="text-muted-foreground">You will be redirected to PayPal to complete the authorization.</p>
+            </div>
+             <DialogFooter>
+                <DialogClose asChild>
+                    <Button variant="secondary">Cancel</Button>
+                </DialogClose>
+                <DialogClose asChild>
+                    <Button>Continue with PayPal</Button>
+                </DialogClose>
+            </DialogFooter>
+        </TabsContent>
+      </Tabs>
+    </DialogContent>
+  );
+}
 
 
 export default function BillingPage() {
@@ -191,10 +275,15 @@ export default function BillingPage() {
                         ))}
                     </CardContent>
                     <CardFooter>
-                         <Button variant="outline">
-                            <PlusCircle className="mr-2 h-4 w-4" />
-                            Add Payment Method
-                        </Button>
+                         <Dialog>
+                            <DialogTrigger asChild>
+                                <Button variant="outline">
+                                    <PlusCircle className="mr-2 h-4 w-4" />
+                                    Add Payment Method
+                                </Button>
+                            </DialogTrigger>
+                            <AddPaymentMethodDialog />
+                        </Dialog>
                     </CardFooter>
                 </Card>
                 </div>
@@ -260,3 +349,5 @@ export default function BillingPage() {
     </div>
   );
 }
+
+    
