@@ -404,7 +404,7 @@ export default function DashboardPage() {
                         <CardDescription>A look at your profile views over the last 7 days.</CardDescription>
                     </div>
                     <Tabs defaultValue="area" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
-                        <TabsList className="grid w-full grid-cols-3 sm:w-auto">
+                        <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
                             <TabsTrigger value="bar">Bar</TabsTrigger>
                             <TabsTrigger value="line">Line</TabsTrigger>
                             <TabsTrigger value="area">Area</TabsTrigger>
