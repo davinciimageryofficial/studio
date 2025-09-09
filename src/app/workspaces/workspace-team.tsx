@@ -347,24 +347,36 @@ export function WorkspaceTeam() {
                     </CardHeader>
                     <CardContent className="flex-1 p-2 flex flex-col bg-muted/30">
                         {layout === 'speaker' && pinnedParticipant && (
-                            <div className="flex-1 flex flex-row gap-4">
+                             <div className="flex flex-col flex-1 gap-4">
                                 {thumbnailParticipants.length > 0 && (
-                                    <ScrollArea className="h-full">
-                                        <div className="flex flex-col h-full space-y-4 pr-2">
+                                    <ScrollArea className="w-full">
+                                        <div className="flex w-full space-x-4 pb-2">
                                             {thumbnailParticipants.map(user => (
-                                                <div key={user.id} className="w-40 flex-shrink-0">
-                                                    <ParticipantCard
-                                                        user={user}
-                                                        isCameraOn={false}
-                                                        isScreenSharing={false}
-                                                        isSpeaking={user.id === activeSpeakerId}
-                                                        showAvatars={showAvatars}
-                                                        onClick={() => setPinnedUserId(user.id)}
-                                                        isThumbnail={true}
-                                                    />
-                                                </div>
+                                                 <TooltipProvider key={user.id}>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <div
+                                                                className={cn(
+                                                                    "h-12 w-12 rounded-full relative flex-shrink-0 cursor-pointer transition-all",
+                                                                    user.id === activeSpeakerId ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' : ''
+                                                                )}
+                                                                onClick={() => setPinnedUserId(user.id)}
+                                                            >
+                                                                <Avatar className="h-full w-full">
+                                                                     <AvatarFallback>
+                                                                        <User className="h-6 w-6" />
+                                                                    </AvatarFallback>
+                                                                </Avatar>
+                                                            </div>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            <p>{user.name}</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                 </TooltipProvider>
                                             ))}
                                         </div>
+                                         <ScrollBar orientation="horizontal" />
                                     </ScrollArea>
                                 )}
                                 <div className="flex-1">
@@ -411,10 +423,10 @@ export function WorkspaceTeam() {
                                 <ControlButton tooltip={isMuted ? 'Unmute' : 'Mute'} onClick={() => setIsMuted(prev => !prev)} variant="secondary" size="icon" className="rounded-full h-9 w-9 bg-muted hover:bg-muted-foreground/20" data-active={!isMuted}>
                                     {isMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
                                 </ControlButton>
-                                <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant={isCameraOn ? "default" : "secondary"} size="icon" className="rounded-full h-9 w-9 bg-muted hover:bg-muted-foreground/20" data-active={isCameraOn}>
+                                <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant="secondary" size="icon" className="rounded-full h-9 w-9 bg-muted hover:bg-muted-foreground/20" data-active={isCameraOn}>
                                     {isCameraOn ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
                                 </ControlButton>
-                                <ControlButton tooltip={isScreenSharing ? 'Stop Sharing' : 'Share Screen'} onClick={handleToggleScreenShare} variant={isScreenSharing ? "default" : "secondary"} size="icon" className="rounded-full h-9 w-9 bg-muted hover:bg-muted-foreground/20" data-active={isScreenSharing}>
+                                <ControlButton tooltip={isScreenSharing ? 'Stop Sharing' : 'Share Screen'} onClick={handleToggleScreenShare} variant="secondary" size="icon" className="rounded-full h-9 w-9 bg-muted hover:bg-muted-foreground/20" data-active={isScreenSharing}>
                                     {isScreenSharing ? <ScreenShare className="h-5 w-5" /> : <ScreenShareOff className="h-5 w-5" />}
                                 </ControlButton>
                                  <ControlButton tooltip={isRecording ? 'Stop Recording' : 'Start Recording'} onClick={handleToggleRecording} variant={isRecording ? "destructive" : "secondary"} size="icon" className="rounded-full h-9 w-9 bg-muted hover:bg-destructive/80" data-active={isRecording}>
@@ -511,5 +523,4 @@ export function WorkspaceTeam() {
     )
 }
 
-
-
+    
