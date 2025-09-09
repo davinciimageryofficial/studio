@@ -106,7 +106,7 @@ export default function SignupPage() {
                       name="userType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>I am a...</FormLabel>
+                          <FormLabel>User Category</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger>
@@ -132,7 +132,7 @@ export default function SignupPage() {
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select your profession" />
-                              </SelectTrigger>
+                              </Trigger>
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="designer">Designer</SelectItem>
