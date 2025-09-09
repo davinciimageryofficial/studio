@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CheckCircle, CreditCard, Download, Gift, Heart, Star } from "lucide-react";
+import { CheckCircle, CreditCard, Download, Gift, Heart, Star, PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
@@ -13,6 +13,18 @@ import { Label } from "@/components/ui/label";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+
+const VisaIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="38" height="24" viewBox="0 0 38 24" role="img" aria-labelledby="pi-visa"><title id="pi-visa">Visa</title><path opacity=".07" d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z"></path><path fill="#fff" d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32"></path><path d="M28.8 10.1c-.1-.3-.3-.5-.4-.7-.1-.2-.3-.4-.5-.5-.1-.1-.2-.3-.4-.4-.1-.1-.2-.2-.3-.2-.1-.1-.2-.1-.3-.1H18c-.3 0-.5.1-.7.2-.2.1-.3.3-.4.5-.1.2-.2.4-.2.6l.2 1.9c.1.2.2.4.3.5.1.1.3.2.4.2.1.1.2.1.3.1h1.4c-.1 1.5-.8 2.3-2 2.3-.6 0-1.1-.2-1.5-.5-.4-.3-.7-.7-.9-1.2l-.2-1.1c-.1-.3-.2-.5-.4-.7-.1-.2-.3-.3-.5-.4-.3-.1-.6-.2-.9-.2-.5 0-1 .1-1.4.3-.4.2-.7.5-1 .8-.3.3-.5.7-.7 1.1-.2.4-.3.8-.3 1.3l-.1 1.2c0 .4.1.8.3 1.2.2.4.5.7.8.9.3.2.7.3 1.1.3.4 0 .8-.1 1.1-.2.3-.1.6-.3.8-.5.2-.2.4-.5.5-.8.1-.3.2-.6.3-1l-.2-1.1c-.1-.2-.1-.4-.1-.5s0-.2.1-.3h1.2c.1.2.1.4.1.7l-.1 1.1c-.1.8-.4 1.4-1 1.9-.6.5-1.3.7-2.1.7-1.1 0-2.1-.4-2.8-1.1-.8-.8-1.2-1.8-1.2-3.1 0-1 .3-1.9.8-2.6.5-.7 1.2-1.2 2-1.5.8-.3 1.6-.4 2.5-.4.7 0 1.4.1 2 .3.6.2 1.1.5 1.5.9.4.4.7.9.9 1.4.2.5.3 1.1.3 1.7L30 10l-.1-1.8zM25.4 14.4l.2-1.7c-.1-.3-.2-.5-.3-.7-.1-.2-.2-.3-.4-.4-.1-.1-.2-.2-.3-.2-.1-.1-.2-.1-.3-.1h-1.4c.1 1.5.7 2.2 1.9 2.2.5 0 1-.2 1.3-.5.3-.3.5-.7.6-1.1l-.1-.9z" fill="#142688"></path></svg>
+);
+const MastercardIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="38" height="24" viewBox="0 0 38 24" role="img" aria-labelledby="pi-mastercard"><title id="pi-mastercard">Mastercard</title><path opacity=".07" d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z"></path><path fill="#fff" d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32"></path><circle fill="#EB001B" cx="15" cy="12" r="7"></circle><circle fill="#F79E1B" cx="23" cy="12" r="7"></circle><path fill="#FF5F00" d="M22 12c0-3.9-3.1-7-7-7s-7 3.1-7 7 3.1 7 7 7 7-3.1 7-7z"></path></svg>
+);
+const PayPalIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="38" height="24" viewBox="0 0 38 24" role="img" aria-labelledby="pi-paypal"><title id="pi-paypal">PayPal</title><path opacity=".07" d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z"></path><path fill="#fff" d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32"></path><path fill="#003087" d="M23.9 8.6c.2-1.4-1.1-2.6-2.5-2.6H12c-.7 0-1.2.4-1.4 1l-2.4 11.2c-.2.7.3 1.4 1 1.4h3.1c.7 0 1.2-.4 1.4-1l.7-3.4c.2-.7.8-1.2 1.5-1.2h1.6c1.5 0 2.7-1 2.9-2.5l.2-1.1z"></path><path fill="#3086C8" d="M23.9 8.6c.2-1.4-1.1-2.6-2.5-2.6H12c-.7 0-1.2.4-1.4 1l-2.4 11.2c-.2.7.3 1.4 1 1.4h3.1c.7 0 1.2-.4 1.4-1l.7-3.4c.2-.7.8-1.2 1.5-1.2h1.6c1.5 0 2.7-1 2.9-2.5l.2-1.1z"></path><path fill="#009CDE" d="M23.3 8.1c.2-1.1-.5-2.1-1.6-2.1h-8.9c-.6 0-1.1.3-1.2.8l-2.2 10.3c-.2.6.3 1.2.9 1.2H14c.6 0 1.1-.3 1.2-.8l.7-3.4c.2-.6.7-1 1.3-1h1.5c1.2 0 2.2-.8 2.4-2l.2-1z"></path></svg>
+);
+
 
 export default function BillingPage() {
   const searchParams = useSearchParams();
@@ -23,6 +35,12 @@ export default function BillingPage() {
     { id: "INV-2024-002", date: "June 1, 2024", amount: "$99.00", status: "Paid" },
     { id: "INV-2024-003", date: "May 1, 2024", amount: "$99.00", status: "Paid" },
     { id: "INV-2024-004", date: "April 1, 2024", amount: "$99.00", status: "Paid" },
+  ];
+
+  const paymentMethods = [
+    { type: 'visa', details: 'Visa ending in 1234', expiry: '08/2026', isDefault: true },
+    { type: 'mastercard', details: 'Mastercard ending in 5678', expiry: '11/2025', isDefault: false },
+    { type: 'paypal', details: 'chris.peta@example.com', isDefault: false },
   ];
 
   const plans = [
@@ -152,19 +170,32 @@ export default function BillingPage() {
                 {/* Payment Method */}
                 <Card>
                     <CardHeader>
-                    <CardTitle>Payment Method</CardTitle>
-                    <CardDescription>Update your payment details.</CardDescription>
+                        <CardTitle>Payment Methods</CardTitle>
+                        <CardDescription>Manage your saved payment options.</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <div className="flex items-center gap-4 rounded-md border p-4">
-                            <CreditCard className="h-6 w-6" />
-                            <div className="flex-1">
-                                <p className="font-semibold">Visa ending in 1234</p>
-                                <p className="text-sm text-muted-foreground">Expires 08/2026</p>
+                    <CardContent className="space-y-4">
+                        {paymentMethods.map((method, index) => (
+                            <div key={index} className="flex items-center gap-4 rounded-md border p-4">
+                                {method.type === 'visa' && <VisaIcon />}
+                                {method.type === 'mastercard' && <MastercardIcon />}
+                                {method.type === 'paypal' && <PayPalIcon />}
+                                <div className="flex-1">
+                                    <p className="font-semibold">{method.details}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        {method.type !== 'paypal' ? `Expires ${method.expiry}` : "Primary PayPal Account"}
+                                    </p>
+                                </div>
+                                {method.isDefault && <Badge variant="secondary">Default</Badge>}
+                                <Button variant="outline">Update</Button>
                             </div>
-                            <Button variant="outline">Update</Button>
-                        </div>
+                        ))}
                     </CardContent>
+                    <CardFooter>
+                         <Button variant="outline">
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Add Payment Method
+                        </Button>
+                    </CardFooter>
                 </Card>
                 </div>
 
