@@ -166,7 +166,8 @@ export type Post = {
     title: string;
     budget: string;
     keywords: string[];
-  }
+  };
+  replies?: Post[];
 };
 
 
@@ -182,6 +183,46 @@ export const placeholderPosts: Post[] = [
     retweets: 23,
     views: "10.2k",
     type: 'post',
+    replies: [
+        {
+            id: 101,
+            author: placeholderUsers[1],
+            timestamp: "1h",
+            content: "Looks fantastic, Alice! The new checkout flow is so smooth. Great work.",
+            image: null,
+            likes: 15,
+            comments: 0,
+            retweets: 2,
+            views: "1.1k",
+            type: 'post',
+        },
+        {
+            id: 102,
+            author: placeholderUsers[4],
+            timestamp: "45m",
+            content: "Love the clean aesthetic. Did you use a specific design system for this?",
+            image: null,
+            likes: 8,
+            comments: 0,
+            retweets: 1,
+            views: "980",
+            type: 'post',
+            replies: [
+                 {
+                    id: 103,
+                    author: placeholderUsers[0],
+                    timestamp: "30m",
+                    content: "Thanks, Ethan! We built a custom system for this client, but it was heavily inspired by Material Design.",
+                    image: null,
+                    likes: 10,
+                    comments: 0,
+                    retweets: 0,
+                    views: "500",
+                    type: 'post',
+                },
+            ]
+        }
+    ]
   },
   {
     id: 17,
@@ -699,5 +740,3 @@ export const dailyProductivityData = [
   { day: "Sat", projects: 0, revenue: 0.1, rating: 4.9, impressions: 200, acquisition: 0, revPerProject: 0 },
   { day: "Sun", projects: 0, revenue: 0, rating: 5.0, impressions: 150, acquisition: 0, revPerProject: 0 },
 ];
-
-    

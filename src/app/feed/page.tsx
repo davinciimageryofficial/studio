@@ -66,13 +66,13 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
 
-function FeedContent({ posts, onUpdate, onDelete }: { posts: Post[], onUpdate: (post: Post) => void, onDelete: (postId: number) => void }) {
+function FeedContent({ posts, onUpdate, onDelete, onReply }: { posts: Post[], onUpdate: (post: Post) => void, onDelete: (postId: number) => void, onReply: (parentPostId: number, reply: Post) => void }) {
     return (
         <div className="space-y-6 mt-6">
             {posts.length > 0 ? (
                 posts.map((post) => (
                     <ClientOnly key={post.id}>
-                        <PostCard post={post} onUpdate={onUpdate} onDelete={onDelete} />
+                        <PostCard post={post} onUpdate={onUpdate} onDelete={onDelete} onReply={onReply} />
                     </ClientOnly>
                 ))
             ) : (
@@ -114,10 +114,33 @@ export default function FeedPage() {
         ...newPostData,
         author,
         type: 'post',
+        replies: [],
       };
       setPosts((prevPosts) => [newPost, ...prevPosts]);
     }
   };
+
+  const handleReply = (parentPostId: number, reply: Post) => {
+    const addReplyRecursively = (posts: Post[]): Post[] => {
+        return posts.map(post => {
+            if (post.id === parentPostId) {
+                return {
+                    ...post,
+                    replies: [...(post.replies || []), reply]
+                };
+            }
+            if (post.replies && post.replies.length > 0) {
+                return {
+                    ...post,
+                    replies: addReplyRecursively(post.replies)
+                };
+            }
+            return post;
+        });
+    };
+    setPosts(prevPosts => addReplyRecursively(prevPosts));
+  };
+
 
   const handlePostUpdate = (updatedPost: Post) => {
     setPosts(posts => posts.map(p => p.id === updatedPost.id ? updatedPost : p));
@@ -210,13 +233,13 @@ export default function FeedPage() {
               </DropdownMenu>
             </TabsList>
             <TabsContent value="you-centric">
-              <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
+              <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} />
             </TabsContent>
             <TabsContent value="clique">
-               <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
+               <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} />
             </TabsContent>
             <TabsContent value="niche">
-               <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} />
+               <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} />
             </TabsContent>
           </Tabs>
         </div>
@@ -434,7 +457,58 @@ function ApplyForJobDialog({ post }: { post: Post }) {
     )
 }
 
-function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: Post) => void, onDelete: (postId: number) => void }) {
+function ReplyDialog({ post, onReply }: { post: Post, onReply: (reply: Post) => void }) {
+    const [replyContent, setReplyContent] = useState("");
+    const currentUser = placeholderUsers.find(u => u.id === '2')!; // Bob Williams
+
+    const handleReplySubmit = () => {
+        if (!replyContent.trim()) return;
+        const newReply: Post = {
+            id: Date.now(),
+            author: currentUser,
+            content: replyContent,
+            timestamp: "Just now",
+            likes: 0,
+            comments: 0,
+            retweets: 0,
+            views: "0",
+            type: 'post',
+            image: null,
+            replies: [],
+        };
+        onReply(newReply);
+    };
+
+    return (
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Reply to {post.author.name}</DialogTitle>
+                <DialogDescription>
+                     <div className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                        Replying to: "{post.content}"
+                    </div>
+                </DialogDescription>
+            </DialogHeader>
+            <div className="pt-4">
+                <Textarea 
+                    placeholder="Write your reply..."
+                    className="min-h-24"
+                    value={replyContent}
+                    onChange={(e) => setReplyContent(e.target.value)}
+                />
+            </div>
+             <DialogFooter>
+                <DialogClose asChild><Button variant="secondary">Cancel</Button></DialogClose>
+                <DialogClose asChild>
+                    <Button onClick={handleReplySubmit} disabled={!replyContent.trim()}>Reply</Button>
+                </DialogClose>
+            </DialogFooter>
+        </DialogContent>
+    )
+}
+
+
+function PostCard({ post, onUpdate, onDelete, onReply, isReply = false }: { post: Post, onUpdate: (post: Post) => void, onDelete: (postId: number) => void, onReply: (parentPostId: number, reply: Post) => void, isReply?: boolean }) {
     const author = post.author;
     const [isLiked, setIsLiked] = useState(false);
     const [retweetCount, setRetweetCount] = useState(post.retweets);
@@ -572,10 +646,15 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
                 </div>
             )}
             <div className="mt-4 flex items-center justify-between text-muted-foreground">
-              <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                <MessageCircle className="h-5 w-5" />
-                <span>{post.comments}</span>
-              </Button>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                            <MessageCircle className="h-5 w-5" />
+                            <span>{post.replies?.length || post.comments}</span>
+                        </Button>
+                    </DialogTrigger>
+                    <ReplyDialog post={post} onReply={(reply) => onReply(post.id, reply)} />
+                </Dialog>
               <Button variant="ghost" size="sm" className="flex items-center gap-2" onClick={handleRetweet}>
                 <Repeat2 className="h-5 w-5" />
                 <span>{retweetCount}</span>
@@ -596,6 +675,13 @@ function PostCard({ post, onUpdate, onDelete }: { post: Post, onUpdate: (post: P
                 <span>{post.views}</span>
               </Button>
             </div>
+             {post.replies && post.replies.length > 0 && (
+                <div className="mt-4 space-y-4 border-l-2 pl-4">
+                    {post.replies.map(reply => (
+                        <PostCard key={reply.id} post={reply} onUpdate={onUpdate} onDelete={onDelete} onReply={onReply} isReply={true} />
+                    ))}
+                </div>
+            )}
           </div>
         </div>
       </CardContent>
