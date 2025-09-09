@@ -23,19 +23,16 @@ export default function LogoutPage() {
   ];
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
-      <Card className="w-full max-w-lg text-center shadow-2xl">
-        <CardHeader className="p-8 sm:p-12">
+    <div className="grid min-h-screen lg:grid-cols-2">
+       <div className="flex flex-col items-center justify-center p-8 sm:p-12 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
                  <Kanban className="size-7 text-primary" />
             </div>
-            <CardTitle className="text-3xl font-bold tracking-tighter">You're Logged Out</CardTitle>
-            <CardDescription className="mt-2 text-lg text-muted-foreground">
+            <h1 className="text-3xl font-bold tracking-tighter">You're Logged Out</h1>
+            <p className="mt-2 text-lg text-muted-foreground">
                 Your next opportunity is just a click away.
-            </CardDescription>
-        </CardHeader>
-        <CardContent className="p-8 pt-0">
-             <div className="flex flex-col sm:flex-row gap-4">
+            </p>
+             <div className="mt-8 flex w-full max-w-sm flex-col sm:flex-row gap-4">
                 <Button asChild className="w-full" size="lg">
                     <Link href="/dashboard">Log Back In <ArrowRight className="ml-2 h-5 w-5" /></Link>
                 </Button>
@@ -43,7 +40,7 @@ export default function LogoutPage() {
                     <Link href="/">Create an Account</Link>
                 </Button>
             </div>
-            <Separator className="my-8" />
+            <Separator className="my-8 max-w-sm" />
              <div className="space-y-4">
                 <p className="text-sm font-medium text-muted-foreground">Don't miss out on:</p>
                 <div className="flex justify-center gap-6 sm:gap-8">
@@ -55,8 +52,10 @@ export default function LogoutPage() {
                     ))}
                 </div>
             </div>
-        </CardContent>
-      </Card>
+       </div>
+        <div className="hidden lg:flex items-center justify-center bg-muted/40">
+            <Kanban className="size-48 text-muted-foreground/20" />
+        </div>
     </div>
   );
 }
