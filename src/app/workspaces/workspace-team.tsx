@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -11,7 +10,6 @@ import {
   Mic, MicOff, Video, VideoOff, ScreenShare, ScreenShareOff, UserPlus, MessageSquare, Settings, LogOut, Circle, Pause, Play, Hand, List, LayoutGrid, GalleryVertical
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Chat } from './chat';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -108,7 +106,6 @@ export function WorkspaceTeam() {
   const [isCameraOff, setIsCameraOff] = useState(false);
   const [isSharingScreen, setIsSharingScreen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(true);
   const [pinnedParticipantId, setPinnedParticipantId] = useState<string | null>(participants[0]?.id || null);
   const [layout, setLayout] = useState<'sidebar' | 'grid' | 'gallery'>('sidebar');
 
@@ -213,13 +210,11 @@ export function WorkspaceTeam() {
                     <DialogTrigger asChild><ControlButton icon={UserPlus} label="Invite" variant="ghost" className="text-white hover:bg-gray-700 hover:text-white" size="sm" /></DialogTrigger>
                     <InviteDialog />
                 </Dialog>
-                <ControlButton icon={MessageSquare} label={isChatOpen ? "Close Chat" : "Open Chat"} onClick={() => setIsChatOpen(!isChatOpen)} variant="ghost" className="text-white hover:bg-gray-700 hover:text-white" size="sm" />
                 <ControlButton icon={Settings} label="Settings" variant="ghost" className="text-white hover:bg-gray-700 hover:text-white" size="sm" />
             </div>
           </div>
         </CardFooter>
       </div>
-      {isChatOpen && <Chat />}
     </div>
   );
 }
