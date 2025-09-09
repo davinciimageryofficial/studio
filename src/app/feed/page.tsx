@@ -86,7 +86,7 @@ function FeedContent({ posts, onUpdate, onDelete, onReply }: { posts: Post[], on
     );
 }
 
-function PocketGuideDialog() {
+function PocketGuideDialog({ onStartPost }: { onStartPost: () => void }) {
     return (
         <DialogContent>
             <DialogHeader>
@@ -96,6 +96,17 @@ function PocketGuideDialog() {
             <div className="py-4">
                 <ConversationStarters />
             </div>
+            <DialogFooter>
+                <DialogClose asChild>
+                    <Button type="button" variant="secondary">Close</Button>
+                </DialogClose>
+                <DialogClose asChild>
+                    <Button type="button" onClick={onStartPost}>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Create Post
+                    </Button>
+                </DialogClose>
+            </DialogFooter>
         </DialogContent>
     )
 }
@@ -255,7 +266,7 @@ export default function FeedPage() {
                         <span className="sr-only">Pocket Guide</span>
                     </button>
                  </DialogTrigger>
-                <PocketGuideDialog />
+                <PocketGuideDialog onStartPost={() => setIsComposerOpen(true)} />
             </Dialog>
             <div className="h-px bg-border" />
             <Dialog open={isComposerOpen} onOpenChange={setIsComposerOpen}>
