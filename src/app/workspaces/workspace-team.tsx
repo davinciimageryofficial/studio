@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import {
-  Mic, MicOff, Video, VideoOff, ScreenShare, ScreenShareOff, UserPlus, MessageSquare, Settings, LogOut, Circle, Pause, Play, Hand, List, LayoutGrid
+  Mic, MicOff, Video, VideoOff, ScreenShare, ScreenShareOff, UserPlus, MessageSquare, Settings, LogOut, Circle, Pause, Play, Hand, List, LayoutGrid, GalleryVertical
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Chat } from './chat';
@@ -26,7 +26,7 @@ function ParticipantCard({ participant, isMuted, isCameraOff, isSpeaking }: { pa
       "relative aspect-video rounded-lg overflow-hidden bg-muted flex items-center justify-center transition-all duration-300",
       isSpeaking ? "ring-4 ring-primary ring-offset-2 ring-offset-background" : ""
     )}>
-       {isCameraOff ? (
+      {isCameraOff ? (
           <VideoOff className="h-12 w-12 text-muted-foreground" />
       ) : (
           <Video className="h-12 w-12 text-muted-foreground" />
@@ -39,7 +39,7 @@ function ParticipantCard({ participant, isMuted, isCameraOff, isSpeaking }: { pa
   );
 }
 
-function ControlButton({ icon: Icon, label, isActive, onClick, variant = 'secondary', size = "default", className = "" }: { icon: React.ElementType, label: string, isActive?: boolean, onClick?: () => void, variant?: "default" | "secondary" | "destructive" | "ghost", size?: "default" | "icon" | "sm" | "lg", className?: string }) {
+function ControlButton({ icon: Icon, label, isActive, onClick, variant = 'secondary', size = "sm", className = "" }: { icon: React.ElementType, label: string, isActive?: boolean, onClick?: () => void, variant?: "default" | "secondary" | "destructive" | "ghost", size?: "default" | "icon" | "sm" | "lg", className?: string }) {
     return (
         <TooltipProvider>
             <Tooltip>
@@ -109,8 +109,8 @@ export function WorkspaceTeam() {
   const [isSharingScreen, setIsSharingScreen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(true);
-  const [pinnedParticipantId, setPinnedParticipantId] = useState<string | null>(null);
-  const [layout, setLayout] = useState<'grid' | 'speaker'>('grid');
+  const [pinnedParticipantId, setPinnedParticipantId] = useState<string | null>(participants[0]?.id || null);
+  const [layout, setLayout] = useState<'grid' | 'sidebar' | 'gallery'>('grid');
 
   const getGridLayout = (count: number) => {
     if (count <= 1) return "grid-cols-1";
@@ -124,41 +124,82 @@ export function WorkspaceTeam() {
   const pinnedParticipant = participants.find(p => p.id === pinnedParticipantId);
   const otherParticipants = participants.filter(p => p.id !== pinnedParticipantId);
 
+  const toggleLayout = () => {
+    setLayout(current => {
+        if (current === 'grid') return 'sidebar';
+        if (current === 'sidebar') return 'gallery';
+        return 'grid';
+    });
+  }
+
+  const getLayoutIcon = () => {
+    if (layout === 'grid') return LayoutGrid;
+    if (layout === 'sidebar') return List;
+    return GalleryVertical;
+  }
+  
+  const getLayoutLabel = () => {
+    if (layout === 'grid') return 'Grid View';
+    if (layout === 'sidebar') return 'Sidebar View';
+    return 'Gallery View';
+  }
+
+  const renderLayout = () => {
+    switch (layout) {
+        case 'sidebar':
+            return (
+                 <div className="flex-1 flex flex-col md:flex-row gap-2 p-2">
+                    <div className="flex-1 h-full">
+                        {pinnedParticipant && <ParticipantCard participant={pinnedParticipant} isMuted={false} isCameraOff={false} isSpeaking={true} />}
+                    </div>
+                    <ScrollArea className="w-full md:w-48 h-24 md:h-full">
+                        <div className="flex md:flex-col gap-2">
+                            {otherParticipants.map(p => (
+                                <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer">
+                                    <ParticipantCard participant={p} isMuted={true} isCameraOff={false} isSpeaking={false} />
+                                </div>
+                            ))}
+                        </div>
+                    </ScrollArea>
+                </div>
+            )
+        case 'gallery':
+             return (
+                 <ScrollArea className="flex-1">
+                    <div className="flex gap-2 p-2">
+                         {participants.map((p, index) => (
+                            <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer w-48 flex-shrink-0">
+                                <ParticipantCard participant={p} isMuted={index > 0} isCameraOff={index > 1} isSpeaking={index === 0} />
+                            </div>
+                        ))}
+                    </div>
+                 </ScrollArea>
+            )
+        default: // grid
+             return (
+                <ScrollArea className="flex-1">
+                    <div className={cn("grid gap-2 p-2", getGridLayout(participants.length))}>
+                    {participants.map((p, index) => (
+                        <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer">
+                            <ParticipantCard participant={p} isMuted={index > 0} isCameraOff={index > 1} isSpeaking={index === 0} />
+                        </div>
+                    ))}
+                    </div>
+                </ScrollArea>
+            )
+    }
+  }
+
+
   return (
     <div className="flex h-[calc(100vh-4.5rem)] w-full bg-background">
       <div className="flex flex-1 flex-col">
-        {layout === 'speaker' && pinnedParticipant ? (
-          <div className="flex-1 flex flex-col md:flex-row gap-2 p-2">
-            <div className="flex-1 h-full">
-              <ParticipantCard participant={pinnedParticipant} isMuted={false} isCameraOff={false} isSpeaking={true} />
-            </div>
-            <ScrollArea className="w-full md:w-48 h-24 md:h-full">
-                <div className="flex md:flex-col gap-2">
-                    {otherParticipants.map(p => (
-                        <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer">
-                            <ParticipantCard participant={p} isMuted={true} isCameraOff={false} isSpeaking={false} />
-                        </div>
-                    ))}
-                </div>
-            </ScrollArea>
-          </div>
-        ) : (
-          <ScrollArea className="flex-1">
-            <div className={cn("grid gap-2 p-2", getGridLayout(participants.length))}>
-              {participants.map((p, index) => (
-                <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer">
-                    <ParticipantCard participant={p} isMuted={index > 0} isCameraOff={index > 1} isSpeaking={index === 0} />
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-        )}
-
+        {renderLayout()}
         <CardFooter className="px-2 py-1 border-t bg-black text-white rounded-b-lg">
           <div className="flex justify-between items-center w-full">
             <div className="flex items-center gap-1">
                 <ControlButton icon={Hand} label="Raise Hand" variant="ghost" className="text-white hover:bg-gray-700 hover:text-white" size="sm"/>
-                <ControlButton icon={layout === 'grid' ? LayoutGrid : List} label="Change Layout" variant="ghost" className="text-white hover:bg-gray-700 hover:text-white" size="sm" onClick={() => setLayout(l => l === 'grid' ? 'speaker' : 'grid')} />
+                <ControlButton icon={getLayoutIcon()} label={getLayoutLabel()} variant="ghost" className="text-white hover:bg-gray-700 hover:text-white" size="sm" onClick={toggleLayout} />
             </div>
             <div className="flex items-center gap-2">
               <ControlButton icon={isMuted ? MicOff : Mic} label={isMuted ? "Unmute" : "Mute"} onClick={() => setIsMuted(!isMuted)} variant="ghost" size="icon" className={cn("h-10 w-10 rounded-full", isMuted ? "bg-red-500 hover:bg-red-600" : "bg-gray-700 hover:bg-gray-600")} />
