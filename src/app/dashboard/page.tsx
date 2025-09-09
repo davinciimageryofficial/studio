@@ -428,7 +428,7 @@ export default function DashboardPage() {
                 </div>
             </CardHeader>
             <CardContent className="pl-2">
-                <EngagementChart type={chartType} scale={chartScale} />
+                <EngagementChart type={chartType} onScaleChange={setChartScale} />
             </CardContent>
         </Card>
 
