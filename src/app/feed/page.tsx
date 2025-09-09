@@ -483,10 +483,10 @@ function ReplyDialog({ post, onReply }: { post: Post, onReply: (reply: Post) => 
         <DialogContent>
             <DialogHeader>
                 <DialogTitle>Reply to {post.author.name}</DialogTitle>
-                <DialogDescription>
-                     <div className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                <DialogDescription asChild>
+                     <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
                         Replying to: "{post.content}"
-                    </div>
+                    </p>
                 </DialogDescription>
             </DialogHeader>
             <div className="pt-4">
