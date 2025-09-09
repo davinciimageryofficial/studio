@@ -18,6 +18,9 @@ import { Kanban } from "lucide-react";
 const signupSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
+  userType: z.enum(["business", "freelancer"], {
+    errorMap: () => ({ message: "Please select an option." }),
+  }),
   profession: z.enum(["designer", "developer", "writer", "other"], {
     errorMap: () => ({ message: "Please select your profession." }),
   }),
@@ -94,6 +97,27 @@ export default function SignupPage() {
                           <FormControl>
                             <Input type="email" {...field} />
                           </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={control}
+                      name="userType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>I am a...</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select an option" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="business">Business (hiring for projects)</SelectItem>
+                              <SelectItem value="freelancer">Freelancer (looking for work)</SelectItem>
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
