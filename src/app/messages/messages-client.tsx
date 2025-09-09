@@ -256,7 +256,7 @@ export function MessagesClient() {
     <div className="h-[calc(100vh-4.5rem)]">
       <div className="grid h-full grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
         {/* Conversation List */}
-        <div className="hidden flex-col border-r md:flex">
+        <div className="hidden flex-col border-r md:flex h-full">
           <div className="border-b p-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold">Messages</h2>
@@ -284,33 +284,33 @@ export function MessagesClient() {
           </Tabs>
 
           <ScrollArea className="flex-1">
-            {filteredConversations.map((convo) => convo.id && (
-              <button
-                key={convo.id}
-                onClick={() => setActiveConversationId(convo.id)}
-                className={cn(
-                  "w-full p-4 text-left transition-colors hover:bg-accent",
-                  activeConversationId === convo.id ? "bg-accent" : ""
-                )}
-              >
-                <div className="flex items-start gap-3">
-                  {showAvatars && (
+            <div className="flex-1 overflow-y-auto">
+              {filteredConversations.map((convo) => convo.id && (
+                <button
+                  key={convo.id}
+                  onClick={() => setActiveConversationId(convo.id)}
+                  className={cn(
+                    "w-full p-4 text-left transition-colors hover:bg-accent",
+                    activeConversationId === convo.id ? "bg-accent" : ""
+                  )}
+                >
+                  <div className="flex items-start gap-3">
                     <Avatar>
                         <AvatarFallback>
                             <User className="h-5 w-5" />
                         </AvatarFallback>
                     </Avatar>
-                  )}
-                  <div className="flex-1 overflow-hidden">
-                    <div className="flex justify-between">
-                      <span className="font-semibold truncate">{convo.name}</span>
-                      <span className="text-xs text-muted-foreground flex-shrink-0">{convo.lastMessage.time}</span>
+                    <div className="flex-1 overflow-hidden">
+                      <div className="flex justify-between">
+                        <span className="font-semibold truncate">{convo.name}</span>
+                        <span className="text-xs text-muted-foreground flex-shrink-0">{convo.lastMessage.time}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-1" dangerouslySetInnerHTML={{ __html: convo.lastMessage.text }} />
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-1" dangerouslySetInnerHTML={{ __html: convo.lastMessage.text }} />
                   </div>
-                </div>
-              </button>
-            ))}
+                </button>
+              ))}
+            </div>
           </ScrollArea>
         </div>
 
@@ -319,13 +319,11 @@ export function MessagesClient() {
         <div className="flex flex-col md:col-span-2 lg:col-span-3">
           {/* Chat Header */}
           <div className="flex items-center gap-3 border-b p-4">
-            {showAvatars && (
-                <Avatar>
-                    <AvatarFallback>
-                        <User className="h-5 w-5" />
-                    </AvatarFallback>
-                </Avatar>
-            )}
+            <Avatar>
+                <AvatarFallback>
+                    <User className="h-5 w-5" />
+                </AvatarFallback>
+            </Avatar>
             <div className="flex-1">
               <h3 className="font-semibold">{activeConversation.name}</h3>
               <div className="flex items-center gap-2">
@@ -370,7 +368,7 @@ export function MessagesClient() {
             <div className={`space-y-6 text-${fontSize}`}>
               {activeConversation.messages?.map((message, index) => (
                 <div key={index} className={cn("flex items-end gap-2", message.from === 'me' ? 'justify-end' : 'justify-start')}>
-                  {message.from !== 'me' && showAvatars && (
+                  {message.from !== 'me' && (
                     <Avatar className="h-8 w-8">
                         <AvatarFallback>
                             <User className="h-4 w-4" />
