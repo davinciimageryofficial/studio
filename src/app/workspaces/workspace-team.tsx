@@ -132,7 +132,7 @@ export function WorkspaceTeam() {
             <div className="flex-1 h-full">
               <ParticipantCard participant={pinnedParticipant} isMuted={false} isCameraOff={false} isSpeaking={true} />
             </div>
-            <ScrollArea className="w-full md:w-48 h-32 md:h-full">
+            <ScrollArea className="w-full md:w-48 h-24 md:h-full">
                 <div className="flex md:flex-col gap-2">
                     {otherParticipants.map(p => (
                         <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer">
