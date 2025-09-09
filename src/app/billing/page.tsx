@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 
 const VisaIcon = () => (
@@ -214,10 +215,55 @@ function AddPaymentMethodDialog() {
   );
 }
 
+function UpgradeDialog({ plan, paymentMethods, onUpgrade }: { plan: any, paymentMethods: any[], onUpgrade: () => void }) {
+  const [selectedMethod, setSelectedMethod] = useState<string | undefined>(paymentMethods.find(p => p.isDefault)?.details);
+
+  return (
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Upgrade to {plan.name}</DialogTitle>
+        <DialogDescription>
+          Confirm your payment details to upgrade to the {plan.name} plan for {plan.price}/month.
+        </DialogDescription>
+      </DialogHeader>
+      <div className="py-4 space-y-4">
+        <Label>Select Payment Method</Label>
+        <RadioGroup value={selectedMethod} onValueChange={setSelectedMethod} className="space-y-2">
+          {paymentMethods.map((method, index) => (
+            <div key={index} className="flex items-center space-x-2 rounded-md border p-4 has-[:checked]:border-primary">
+              <RadioGroupItem value={method.details} id={`r-${index}`} />
+              <Label htmlFor={`r-${index}`} className="flex items-center gap-4 w-full cursor-pointer">
+                {method.type === 'visa' && <VisaIcon />}
+                {method.type === 'mastercard' && <MastercardIcon />}
+                {method.type === 'paypal' && <PayPalIcon />}
+                <div className="flex-1">
+                    <p className="font-semibold">{method.details}</p>
+                    <p className="text-sm text-muted-foreground">
+                        {method.type !== 'paypal' ? `Expires ${method.expiry}` : "Primary PayPal Account"}
+                    </p>
+                </div>
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </div>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button type="button" variant="secondary">Cancel</Button>
+        </DialogClose>
+        <DialogClose asChild>
+          <Button type="button" onClick={onUpgrade} disabled={!selectedMethod}>Confirm Upgrade</Button>
+        </DialogClose>
+      </DialogFooter>
+    </DialogContent>
+  );
+}
+
 
 export default function BillingPage() {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') || "subscription";
+  const { toast } = useToast();
 
   const invoices = [
     { id: "INV-2024-001", date: "July 1, 2024", amount: "$99.00", status: "Paid" },
@@ -279,6 +325,14 @@ export default function BillingPage() {
   ];
   const currentPlan = plans.find(p => p.current);
   const otherPlans = plans.filter(p => !p.current);
+
+  const handleUpgrade = (planName: string) => {
+    toast({
+      title: "Upgrade Successful!",
+      description: `You have successfully upgraded to the ${planName} plan.`,
+    });
+    // Here you would typically update the user's subscription state
+  };
 
   return (
     <div className="p-4 sm:p-6 md:p-8 h-full">
@@ -355,7 +409,16 @@ export default function BillingPage() {
                                                 <ContactSalesDialog />
                                             </Dialog>
                                         ) : (
-                                            <Button className="w-full">Upgrade</Button>
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button className="w-full">Upgrade</Button>
+                                                </DialogTrigger>
+                                                <UpgradeDialog 
+                                                    plan={plan} 
+                                                    paymentMethods={paymentMethods} 
+                                                    onUpgrade={() => handleUpgrade(plan.name)} 
+                                                />
+                                            </Dialog>
                                         )}
                                     </CardFooter>
                                 </Card>
