@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ProductivityChart } from "./productivity-chart";
 import { Slider } from "@/components/ui/slider";
+import { ClientOnly } from "@/components/layout/client-only";
 
 type Task = {
     id: string;
@@ -330,17 +331,19 @@ export default function DashboardPage() {
                       >
                           <p className="text-sm font-medium pr-2 mb-4">{task.title}</p>
                           <div className="flex items-center justify-between">
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <button className="flex items-center gap-2 text-muted-foreground">
-                                        {priorityIcons[task.priority]}
-                                        <span className="text-xs font-medium">{task.priority} Urgency</span>
-                                      </button>
-                                    </TooltipTrigger>
-                                    <TooltipContent><p>{task.priority} Urgency</p></TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                            <ClientOnly>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <button className="flex items-center gap-2 text-muted-foreground">
+                                            {priorityIcons[task.priority]}
+                                            <span className="text-xs font-medium">{task.priority} Urgency</span>
+                                          </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent><p>{task.priority} Urgency</p></TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </ClientOnly>
                           </div>
                       </div>
                     ))}
