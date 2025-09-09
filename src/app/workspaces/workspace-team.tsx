@@ -408,20 +408,20 @@ export function WorkspaceTeam() {
                            </div>
 
                             <div className="flex items-center gap-2">
-                                <ControlButton tooltip={isMuted ? 'Unmute' : 'Mute'} onClick={() => setIsMuted(prev => !prev)} variant="secondary" size="icon" className="rounded-full h-10 w-10 bg-muted hover:bg-muted-foreground/20" data-active={!isMuted}>
-                                    {isMuted ? <MicOff /> : <Mic />}
+                                <ControlButton tooltip={isMuted ? 'Unmute' : 'Mute'} onClick={() => setIsMuted(prev => !prev)} variant="secondary" size="icon" className="rounded-full h-9 w-9 bg-muted hover:bg-muted-foreground/20" data-active={!isMuted}>
+                                    {isMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
                                 </ControlButton>
-                                <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant={isCameraOn ? "default" : "secondary"} size="icon" className="rounded-full h-10 w-10 bg-muted hover:bg-muted-foreground/20" data-active={isCameraOn}>
-                                    {isCameraOn ? <Video /> : <VideoOff />}
+                                <ControlButton tooltip={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'} onClick={handleToggleCamera} variant={isCameraOn ? "default" : "secondary"} size="icon" className="rounded-full h-9 w-9 bg-muted hover:bg-muted-foreground/20" data-active={isCameraOn}>
+                                    {isCameraOn ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
                                 </ControlButton>
-                                <ControlButton tooltip={isScreenSharing ? 'Stop Sharing' : 'Share Screen'} onClick={handleToggleScreenShare} variant={isScreenSharing ? "default" : "secondary"} size="icon" className="rounded-full h-10 w-10 bg-muted hover:bg-muted-foreground/20" data-active={isScreenSharing}>
-                                    {isScreenSharing ? <ScreenShare /> : <ScreenShareOff />}
+                                <ControlButton tooltip={isScreenSharing ? 'Stop Sharing' : 'Share Screen'} onClick={handleToggleScreenShare} variant={isScreenSharing ? "default" : "secondary"} size="icon" className="rounded-full h-9 w-9 bg-muted hover:bg-muted-foreground/20" data-active={isScreenSharing}>
+                                    {isScreenSharing ? <ScreenShare className="h-5 w-5" /> : <ScreenShareOff className="h-5 w-5" />}
                                 </ControlButton>
-                                 <ControlButton tooltip={isRecording ? 'Stop Recording' : 'Start Recording'} onClick={handleToggleRecording} variant={isRecording ? "destructive" : "secondary"} size="icon" className="rounded-full h-10 w-10 bg-muted hover:bg-destructive/80" data-active={isRecording}>
-                                    <CircleDot />
+                                 <ControlButton tooltip={isRecording ? 'Stop Recording' : 'Start Recording'} onClick={handleToggleRecording} variant={isRecording ? "destructive" : "secondary"} size="icon" className="rounded-full h-9 w-9 bg-muted hover:bg-destructive/80" data-active={isRecording}>
+                                    <CircleDot className="h-5 w-5" />
                                 </ControlButton>
-                                <ControlButton tooltip="Leave Session" variant="destructive" size="icon" onClick={endSession} className="rounded-full h-10 w-10">
-                                    <LogOut />
+                                <ControlButton tooltip="Leave Session" variant="destructive" size="icon" onClick={endSession} className="rounded-full h-9 w-9">
+                                    <LogOut className="h-5 w-5" />
                                 </ControlButton>
                             </div>
 
@@ -510,5 +510,6 @@ export function WorkspaceTeam() {
         </div>
     )
 }
+
 
 
