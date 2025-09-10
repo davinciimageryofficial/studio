@@ -61,10 +61,10 @@ export default function SignupPage() {
 
   return (
     <ClientOnly>
-      <div className="w-full">
+      <div className="w-full bg-background">
         <div className="grid min-h-screen lg:grid-cols-2">
           <div className="flex items-center justify-center p-8 sm:p-12">
-            <Card className="w-full max-w-md border-0 shadow-none">
+            <Card className="w-full max-w-md border-0 shadow-none bg-transparent">
               <CardHeader className="text-center p-0 mb-6">
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
                   <Kanban className="size-7 text-primary" />
