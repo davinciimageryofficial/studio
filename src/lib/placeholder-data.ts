@@ -21,6 +21,12 @@ export type User = {
   jobTitle?: string;
   company?: string;
   verified?: boolean;
+  reliabilityScore: number;
+  communityStanding: string;
+  communityFlags?: {
+      reason: string;
+      severity: 'low' | 'medium' | 'high';
+  }[];
   currentSession?: {
     workspaceName: string;
     with: string[]; // Array of user IDs
@@ -63,6 +69,8 @@ export const placeholderUsers: User[] = [
     jobTitle: "Principal Designer",
     company: "Creative Co.",
     verified: true,
+    reliabilityScore: 95,
+    communityStanding: "Highly-rated member with a history of successful collaborations.",
   },
   {
     id: "2",
@@ -78,6 +86,8 @@ export const placeholderUsers: User[] = [
     jobTitle: "Senior Frontend Developer",
     company: "Innovate Inc.",
     verified: true,
+    reliabilityScore: 98,
+    communityStanding: "Established member with a strong record of positive feedback.",
   },
   {
     id: "3",
@@ -93,6 +103,12 @@ export const placeholderUsers: User[] = [
     jobTitle: "Head of Content",
     company: "StoryWeavers",
     verified: true,
+    reliabilityScore: 45,
+    communityStanding: "This member has multiple unresolved payment disputes.",
+    communityFlags: [
+        { reason: "Fraudulent activity detected", severity: "high" },
+        { reason: "Unresolved payment dispute", severity: "medium" },
+    ]
   },
   {
     id: "4",
@@ -105,6 +121,8 @@ export const placeholderUsers: User[] = [
     skills: ["Node.js", "Python", "AWS", "Serverless", "PostgreSQL"],
     portfolio: devPortfolio.slice(0,2),
     category: "development",
+    reliabilityScore: 88,
+    communityStanding: "Reliable member with positive transaction history.",
     currentSession: {
         workspaceName: "Project Phoenix",
         with: ["1"], // With Alice Johnson
@@ -121,6 +139,11 @@ export const placeholderUsers: User[] = [
     skills: ["Branding", "Illustration", "Adobe Creative Suite", "Typography"],
     portfolio: designPortfolio.slice(1,3),
     category: "design",
+    reliabilityScore: 75,
+    communityStanding: "Newer member, proceed with standard caution.",
+    communityFlags: [
+        { reason: "Unresponsive to applicants", severity: "low" },
+    ]
   },
   {
     id: "6",
@@ -136,6 +159,8 @@ export const placeholderUsers: User[] = [
     jobTitle: "Senior Technical Writer",
     company: "Clearly Documented",
     verified: true,
+    reliabilityScore: 92,
+    communityStanding: "Consistent and professional member.",
   },
   {
     id: "7",
@@ -148,6 +173,8 @@ export const placeholderUsers: User[] = [
     skills: ["AI/ML", "Web3", "Product Strategy"],
     portfolio: [],
     category: "development",
+    reliabilityScore: 85,
+    communityStanding: "Agency profile with a positive project history.",
   },
 ];
 

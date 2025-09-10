@@ -5,8 +5,8 @@ import { placeholderUsers, User, PortfolioItem } from "@/lib/placeholder-data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy, Users, BarChart, MessageSquare, Star, ArrowUp, ArrowDown, GripVertical, ChevronDown } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy, Users, BarChart, MessageSquare, Star, ArrowUp, ArrowDown, GripVertical, ChevronDown, ShieldCheck, AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
@@ -19,6 +19,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { PortfolioView } from "./portfolio-view";
+import { Progress } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 type Experience = {
     title: string;
@@ -38,11 +41,12 @@ type SocialLinks = {
     instagram?: string;
 }
 
-type ProfileSection = 'about' | 'skills' | 'achievements' | 'network' | 'impact' | 'recommendations';
+type ProfileSection = 'about' | 'skills' | 'community' | 'achievements' | 'network' | 'impact' | 'recommendations';
 
 const sectionComponents: Record<ProfileSection, React.FC<any>> = {
     about: AboutCard,
     skills: SkillsCard,
+    community: CommunityStandingCard,
     achievements: AchievementsCard,
     network: NetworkInsightsCard,
     impact: ImpactMetricsCard,
@@ -52,6 +56,7 @@ const sectionComponents: Record<ProfileSection, React.FC<any>> = {
 const sectionTitles: Record<ProfileSection, string> = {
     about: 'About',
     skills: 'Skills',
+    community: 'Community Standing',
     achievements: 'Achievements',
     network: 'Network Insights',
     impact: 'Impact Metrics',
@@ -64,7 +69,7 @@ export default function ProfilePage() {
   const initialUser = isMyProfile ? placeholderUsers[1] : placeholderUsers.find((u) => u.id === params.id);
   
   const [user, setUser] = useState(initialUser);
-  const [sections, setSections] = useState<ProfileSection[]>(['about', 'skills', 'achievements', 'network', 'impact', 'recommendations']);
+  const [sections, setSections] = useState<ProfileSection[]>(['about', 'community', 'skills', 'achievements', 'network', 'impact', 'recommendations']);
 
 
   const initialExperiences: Experience[] = [
@@ -279,7 +284,7 @@ function AboutCard({ user }: { user: User }) {
                 <CardTitle>About</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center text-center">
-                <Avatar className="h-32 w-32 mb-4">
+                <Avatar className="h-32 w-32 mb-4 rounded-md">
                    <AvatarImage src={user.avatar} alt={user.name} />
                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
@@ -321,6 +326,64 @@ function SkillsCard({ skills, isMyProfile, handleSaveSkills }: { skills: string[
             </CardContent>
         </Card>
     );
+}
+
+function CommunityStandingCard({ user }: { user: User }) {
+    const scoreColor = user.reliabilityScore > 80 ? "text-green-600" : user.reliabilityScore > 60 ? "text-yellow-600" : "text-red-600";
+    const getFlagIcon = (severity: 'low' | 'medium' | 'high') => {
+        switch (severity) {
+            case 'high': return <AlertTriangle className="h-4 w-4 text-red-500" />;
+            default: return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+        }
+    }
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Community Score</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                 <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-sm font-medium">
+                                    <span>Reliability Score</span>
+                                    <span className={scoreColor}>{user.reliabilityScore}%</span>
+                                </div>
+                                <Progress value={user.reliabilityScore} />
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>{user.communityStanding}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+
+                {user.communityFlags && user.communityFlags.length > 0 && (
+                    <div>
+                        <h4 className="font-semibold text-sm mb-2">Active Flags</h4>
+                        <div className="space-y-2">
+                        {user.communityFlags.map((flag, index) => (
+                             <div key={index} className="flex items-center gap-2 text-sm p-2 rounded-md bg-muted">
+                                {getFlagIcon(flag.severity)}
+                                <span>{flag.reason}</span>
+                            </div>
+                        ))}
+                        </div>
+                    </div>
+                )}
+                 <div className="flex items-center gap-2 text-sm text-green-600">
+                    <ShieldCheck className="h-4 w-4" />
+                    <span>Identity Verified</span>
+                 </div>
+                 <div className="flex items-center gap-2 text-sm text-green-600">
+                    <CheckCircle className="h-4 w-4" />
+                    <span>Payment Method Verified</span>
+                 </div>
+            </CardContent>
+        </Card>
+    )
 }
 
 function AchievementsCard({ isMyProfile }: { isMyProfile: boolean }) {
