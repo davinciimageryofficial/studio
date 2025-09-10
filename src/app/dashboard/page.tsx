@@ -483,7 +483,7 @@ function DashboardPageInternal() {
         </Card>
       </div>
       
-      <div className="space-y-8 mt-8">
+      <div className="grid md:grid-cols-2 gap-8 mt-8">
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Gift className="text-primary" /> Refer a Friend, Get Rewarded</CardTitle>
@@ -491,7 +491,7 @@ function DashboardPageInternal() {
             </CardHeader>
             <CardContent>
                 <Link href="/billing?tab=referrals">
-                    <Button size="lg" className="w-full sm:w-auto">Get Your Referral Link</Button>
+                    <Button size="lg">Get Your Referral Link</Button>
                 </Link>
             </CardContent>
         </Card>
@@ -503,7 +503,7 @@ function DashboardPageInternal() {
             <CardContent>
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button size="lg" className="w-full sm:w-auto">Launch Ad Studio</Button>
+                        <Button size="lg">Launch Ad Studio</Button>
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
@@ -533,47 +533,48 @@ function DashboardPageInternal() {
                 </Dialog>
             </CardContent>
         </Card>
-        <Card>
-            <CardHeader>
-                <CardTitle>Download Sentry</CardTitle>
-                <CardDescription>Get the full desktop experience for maximum productivity.</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col sm:flex-row gap-4">
-                <Dialog open={isAppDownloaded} onOpenChange={setIsAppDownloaded}>
-                    <DialogTrigger asChild>
-                        <Button size="lg" className="w-full" variant="outline" onClick={() => setIsAppDownloaded(true)}>
-                            <Circle className="mr-2 h-5 w-5" />
-                            for Macintosh
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                        <DialogTitle>Download Started</DialogTitle>
-                        <DialogDescription>
-                            Your download for the Sentry Mac app has started. Check your downloads folder.
-                        </DialogDescription>
-                        </DialogHeader>
-                    </DialogContent>
-                </Dialog>
-                 <Dialog open={isAppDownloaded} onOpenChange={setIsAppDownloaded}>
-                     <DialogTrigger asChild>
-                        <Button size="lg" className="w-full" variant="outline" onClick={() => setIsAppDownloaded(true)}>
-                            <AppWindow className="mr-2 h-5 w-5" />
-                            for Windows
-                        </Button>
-                    </DialogTrigger>
-                     <DialogContent>
-                        <DialogHeader>
-                        <DialogTitle>Download Started</DialogTitle>
-                        <DialogDescription>
-                            Your download for the Sentry Windows app has started. Check your downloads folder.
-                        </DialogDescription>
-                        </DialogHeader>
-                    </DialogContent>
-                </Dialog>
-            </CardContent>
-        </Card>
       </div>
+      
+      <Card className="mt-8">
+        <CardHeader>
+            <CardTitle>Download Sentry</CardTitle>
+            <CardDescription>Get the full desktop experience for maximum productivity.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col sm:flex-row gap-4">
+            <Dialog open={isAppDownloaded} onOpenChange={setIsAppDownloaded}>
+                <DialogTrigger asChild>
+                    <Button size="lg" className="w-full" variant="outline" onClick={() => setIsAppDownloaded(true)}>
+                        <Circle className="mr-2 h-5 w-5" />
+                        for Macintosh
+                    </Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                    <DialogTitle>Download Started</DialogTitle>
+                    <DialogDescription>
+                        Your download for the Sentry Mac app has started. Check your downloads folder.
+                    </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+             <Dialog open={isAppDownloaded} onOpenChange={setIsAppDownloaded}>
+                 <DialogTrigger asChild>
+                    <Button size="lg" className="w-full" variant="outline" onClick={() => setIsAppDownloaded(true)}>
+                        <AppWindow className="mr-2 h-5 w-5" />
+                        for Windows
+                    </Button>
+                </DialogTrigger>
+                 <DialogContent>
+                    <DialogHeader>
+                    <DialogTitle>Download Started</DialogTitle>
+                    <DialogDescription>
+                        Your download for the Sentry Windows app has started. Check your downloads folder.
+                    </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+        </CardContent>
+      </Card>
 
     </div>
   );
@@ -586,5 +587,3 @@ export default function DashboardPage() {
         </ClientOnly>
     )
 }
-
-    
