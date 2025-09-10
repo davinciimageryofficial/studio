@@ -80,11 +80,9 @@ export function ProductivityChart({ timeline, visibleMetrics, scale }: Productiv
      <ResponsiveContainer width="100%" height={400}>
         <ComposedChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
             <defs>
-                <pattern id="checker" width="10" height="10" patternUnits="userSpaceOnUse">
-                    <rect width="5" height="5" x="0" y="0" fill="hsl(var(--muted))" />
-                    <rect width="5" height="5" x="5" y="5" fill="hsl(var(--muted))" />
-                    <rect width="5" height="5" x="5" y="0" fill="hsl(var(--muted-foreground)/.2)" />
-                    <rect width="5" height="5" x="0" y="5" fill="hsl(var(--muted-foreground)/.2)" />
+                <pattern id="lines" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                    <rect width="8" height="8" fill="hsl(var(--card))" />
+                    <path d="M 0 0 L 0 8" stroke="hsl(var(--muted-foreground))" strokeWidth="1" />
                 </pattern>
             </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -116,7 +114,7 @@ export function ProductivityChart({ timeline, visibleMetrics, scale }: Productiv
                 iconSize={10}
                 formatter={renderLegendText}
             />
-            {visibleMetrics.revenue && <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="url(#checker)" radius={[4, 4, 0, 0]} barSize={30} />}
+            {visibleMetrics.revenue && <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="url(#lines)" radius={[4, 4, 0, 0]} barSize={30} />}
             {visibleMetrics.projects && <Line yAxisId="left" type="monotone" dataKey="projects" name="Projects" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4 }} />}
             {visibleMetrics.impressions && <Line yAxisId="right" type="monotone" dataKey="impressions" name="Impressions" stroke="hsl(var(--chart-4))" strokeWidth={2} dot={{ r: 4 }} />}
             {visibleMetrics.acquisition && <Line yAxisId="right" type="monotone" dataKey="acquisition" name="New Clients" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={{ r: 4 }} />}
