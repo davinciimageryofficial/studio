@@ -6,12 +6,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy, Users, BarChart, MessageSquare, Star, ArrowUp, ArrowDown, GripVertical } from "lucide-react";
+import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy, Users, BarChart, MessageSquare, Star, ArrowUp, ArrowDown, GripVertical, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { useState, useRef, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose, DialogDescription } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -126,7 +127,32 @@ export default function ProfilePage() {
         <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-start sm:gap-6">
                 <div className="flex-1 mt-4 sm:mt-0 text-center sm:text-left">
-                  <h1 className="text-2xl font-bold md:text-3xl">{user.name}</h1>
+                  <div className="flex items-center justify-center sm:justify-start gap-2">
+                    <h1 className="text-2xl font-bold md:text-3xl">{user.name}</h1>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="w-80">
+                        <DropdownMenuLabel>About {user.name}</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="focus:bg-transparent cursor-default">
+                          <div className="flex items-start gap-4">
+                            <Avatar className="h-12 w-12">
+                              <AvatarImage src={user.avatar} />
+                              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div className="text-sm">
+                              <p className="font-semibold">{user.headline}</p>
+                              <p className="text-muted-foreground line-clamp-3">{user.bio}</p>
+                            </div>
+                          </div>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                   <p className="text-muted-foreground">{user.headline}</p>
                   <div className="mt-2 flex items-center justify-center sm:justify-start gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
@@ -250,7 +276,37 @@ function AboutCard({ user }: { user: User }) {
     return (
         <Card>
             <CardHeader><CardTitle>About</CardTitle></CardHeader>
-            <CardContent><p className="text-muted-foreground whitespace-pre-line">{user.bio}</p></CardContent>
+            <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div className="md:col-span-1 flex justify-center">
+                        <Avatar className="h-32 w-32">
+                           <AvatarImage src={user.avatar} alt={user.name} />
+                           <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                    </div>
+                    <div className="md:col-span-3 space-y-4">
+                        <div>
+                            <h3 className="text-lg font-semibold">{user.name}</h3>
+                            <p className="text-sm text-muted-foreground">{user.headline}</p>
+                        </div>
+                        <p className="text-muted-foreground whitespace-pre-line">{user.bio}</p>
+                         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" />
+                                <span>San Francisco, CA</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <LinkIcon className="h-4 w-4" />
+                                <a href="#" className="hover:underline">website.com</a>
+                            </div>
+                             <div className="flex items-center gap-2">
+                                <Briefcase className="h-4 w-4" />
+                                <span>{user.jobTitle} at {user.company}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </CardContent>
         </Card>
     );
 }
