@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { CheckCircle, User, Mail, Kanban, Briefcase, Heart, Rocket } from "lucide-react";
 import { ClientOnly } from "@/components/layout/client-only";
-import { Fireworks } from "@/components/ui/fireworks";
 import {
   Dialog,
   DialogContent,
@@ -76,7 +75,7 @@ export default function WaitlistConfirmationPage() {
   return (
     <ClientOnly>
        <div className="flex min-h-screen w-full items-center justify-center bg-background p-4">
-        <Fireworks />
+        
         <div className="grid lg:grid-cols-2 w-full max-w-6xl">
             <div className="flex items-center justify-center p-8 sm:p-12 relative z-10">
                 <div className="w-full max-w-md">
