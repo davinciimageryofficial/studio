@@ -5,8 +5,8 @@ import { ClientOnly } from "@/components/layout/client-only";
 
 export default function WorkmateRadarPage() {
   return (
-    <div>
-      <header className="relative flex min-h-screen flex-col items-center justify-center gap-12 overflow-hidden bg-background p-4">
+    <div className="min-h-[calc(100vh-8rem)]">
+      <header className="relative flex flex-col items-center justify-center gap-12 overflow-hidden bg-background p-4 pt-12">
         {/* New Quantum Grid Animation */}
         <div className="relative flex h-96 w-96 items-center justify-center">
           <div className="absolute inset-0 animate-grid-pulse rounded-full bg-primary/5 [mask-image:radial-gradient(ellipse_at_center,transparent_30%,white)]"></div>
@@ -38,7 +38,7 @@ export default function WorkmateRadarPage() {
               </rect>
             </g>
              <g className="animate-[spin_30s_linear_infinite_reverse]">
-              <path id="path2" d="M 50,50 m -30,0 a 30,30 0 1,1 60,0 a 30,30 0 1,1 -60,0"></path>
+              <path id="path2" d="M 50,50 m -30,0 a 30,30 0 1_1 60,0 a 30,30 0 1_1 -60,0"></path>
               <rect width="1" height="1" className="fill-primary/80 animate-[packet-stream_8s_linear_infinite]">
                  <animateMotion dur="8s" repeatCount="indefinite" rotate="auto">
                   <mpath href="#path2" />
