@@ -108,8 +108,8 @@ export function ProductivityChart({ timeline, visibleMetrics, scale }: Productiv
                 iconSize={10}
                 formatter={renderLegendText}
             />
-            {visibleMetrics.revenue && <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="#000000" radius={[4, 4, 0, 0]} barSize={30} />}
-            {visibleMetrics.projects && <Line yAxisId="left" type="monotone" dataKey="projects" name="Projects" stroke="hsl(var(--muted-foreground))" strokeWidth={2} dot={{ r: 4 }} />}
+            {visibleMetrics.revenue && <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} barSize={30} />}
+            {visibleMetrics.projects && <Line yAxisId="left" type="monotone" dataKey="projects" name="Projects" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4 }} />}
             {visibleMetrics.impressions && <Line yAxisId="right" type="monotone" dataKey="impressions" name="Impressions" stroke="hsl(var(--chart-4))" strokeWidth={2} dot={{ r: 4 }} />}
             {visibleMetrics.acquisition && <Line yAxisId="right" type="monotone" dataKey="acquisition" name="New Clients" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={{ r: 4 }} />}
             {visibleMetrics.revPerProject && <Line yAxisId="left" type="monotone" dataKey="revPerProject" name="Rev. Per Project" stroke="hsl(var(--destructive))" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 4 }}/>}
