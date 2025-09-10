@@ -809,3 +809,65 @@ export const agencyMetricsData = {
     { name: "Automation Rate", value: "35%", change: "+10%", trend: "positive" as const },
   ],
 };
+
+export const timeManagementData = {
+  billableHours: [
+    { name: 'Week 1', billable: 32, nonBillable: 8 },
+    { name: 'Week 2', billable: 35, nonBillable: 5 },
+    { name: 'Week 3', billable: 28, nonBillable: 12 },
+    { name: 'Week 4', billable: 38, nonBillable: 7 },
+  ],
+  taskCompletion: [
+    { name: 'Q1', onTime: 95, late: 5 },
+    { name: 'Q2', onTime: 92, late: 8 },
+    { name: 'Q3', onTime: 97, late: 3 },
+    { name: 'Q4', onTime: 94, late: 6 },
+  ],
+  timePerDeliverable: [
+    { name: 'Blog Post', hours: 4.5 },
+    { name: 'Logo Design', hours: 12 },
+    { name: 'Web Page Dev', hours: 25 },
+    { name: 'Marketing Campaign', hours: 40 },
+  ],
+};
+
+export const financialHealthData = {
+  incomeSources: [
+    { name: 'Client A', value: 40, fill: "hsl(var(--chart-1))" },
+    { name: 'Client B', value: 25, fill: "hsl(var(--chart-2))" },
+    { name: 'Client C', value: 15, fill: "hsl(var(--chart-3))" },
+    { name: 'Other', value: 20, fill: "hsl(var(--chart-4))" },
+  ],
+  cashFlow: [
+    { month: 'Jan', revenue: 10000, expenses: 8000 },
+    { month: 'Feb', revenue: 12000, expenses: 9000 },
+    { month: 'Mar', revenue: 9000, expenses: 9500 },
+    { month: 'Apr', revenue: 15000, expenses: 10000 },
+    { month: 'May', revenue: 13000, expenses: 11000 },
+    { month: 'Jun', revenue: 16000, expenses: 12000 },
+  ]
+};
+
+export const clientManagementData = {
+  retentionRate: 85,
+  avgProjectValue: 5500,
+  leadConversion: [
+    { stage: 'Inquiries', value: 100 },
+    { stage: 'Proposals Sent', value: 40 },
+    { stage: 'Projects Won', value: 12 },
+  ],
+  referralRate: 35,
+};
+
+export const qualityPerformanceData = {
+  revisionRate: 15,
+  satisfactionScore: 4.8,
+  portfolioUpdates: [
+    { month: 'Jan', count: 2 },
+    { month: 'Feb', count: 1 },
+    { month: 'Mar', count: 3 },
+    { month: 'Apr', count: 2 },
+    { month: 'May', count: 4 },
+    { month: 'Jun', count: 2 },
+  ],
+};

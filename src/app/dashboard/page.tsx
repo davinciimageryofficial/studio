@@ -23,6 +23,7 @@ import { ProductivityChart } from "./productivity-chart";
 import { Slider } from "@/components/ui/slider";
 import { ClientOnly } from "@/components/layout/client-only";
 import { AgencyMetrics } from "./agency-metrics";
+import { OperationalCharts } from "./operational-charts";
 
 type Task = {
     id: string;
@@ -631,6 +632,7 @@ function DashboardPageInternal() {
                          <AgencyMetrics />
                     </CardContent>
                 </Card>
+                <OperationalCharts />
             </div>
         </TabsContent>
       </Tabs>
