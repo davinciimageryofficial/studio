@@ -189,7 +189,7 @@ function DashboardPageInternal() {
       </header>
 
       <Tabs defaultValue="personal">
-        <TabsList className="mb-6">
+        <TabsList className="mb-6 bg-black text-muted-foreground">
             <TabsTrigger value="personal">Personal</TabsTrigger>
             <TabsTrigger value="agency">Agency Mode</TabsTrigger>
         </TabsList>
