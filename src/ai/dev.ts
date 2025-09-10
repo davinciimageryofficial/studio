@@ -10,5 +10,6 @@ import '@/ai/flows/post-generator.ts';
 import '@/ai/flows/skill-sync-net.ts';
 import '@/ai/flows/ad-campaign-analyzer.ts';
 import '@/ai/flows/course-generator.ts';
+import '@/ai/flows/community-policing-agent.ts';
 import '@/ai/tools/web-search.ts';
-import '@/ai/tools/navigation.ts';
+import '@/ai/tools/navigation
