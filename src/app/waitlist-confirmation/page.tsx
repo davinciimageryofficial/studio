@@ -132,7 +132,7 @@ export default function WaitlistConfirmationPage() {
                                     value={accessCode}
                                     onChange={(e) => setAccessCode(e.target.value)}
                                 />
-                                <Button onClick={handleAccessCodeSubmit}>
+                                <Button onClick={handleAccessCodeSubmit} className="bg-black hover:bg-gray-800">
                                     <Rocket className="mr-2 h-4 w-4" />
                                     Skip Waitlist
                                 </Button>
