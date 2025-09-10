@@ -5,8 +5,8 @@ import { ClientOnly } from "@/components/layout/client-only";
 
 export default function WorkmateRadarPage() {
   return (
-    <div className="p-4 sm:p-6 md:p-8">
-      <header className="relative flex flex-col items-center justify-center gap-12 overflow-hidden bg-background pb-8">
+    <div className="flex flex-col items-center">
+      <header className="relative flex w-full flex-col items-center justify-center gap-12 overflow-hidden px-4 pt-12 pb-8">
         {/* New Quantum Grid Animation */}
         <div className="relative flex h-96 w-96 items-center justify-center">
           <div className="absolute inset-0 animate-grid-pulse rounded-full bg-primary/5 [mask-image:radial-gradient(ellipse_at_center,transparent_30%,white)]"></div>
@@ -60,12 +60,12 @@ export default function WorkmateRadarPage() {
         <div className="relative text-center">
             <h1 className="text-4xl font-headline-tech font-bold tracking-tight sm:text-5xl">AI Workmate Radar</h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
-                Let our AI help you build your dream team. Describe your ideal workmate and we&apos;ll find the best matches.
+                Let our AI help you build your dream team. Describe your ideal workmate and we'll find the best matches.
             </p>
         </div>
       </header>
 
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-4xl w-full p-4 sm:p-6 md:p-8">
         <Card className="border-0 shadow-none">
           <CardHeader>
             <CardTitle>Find Your Team</CardTitle>
