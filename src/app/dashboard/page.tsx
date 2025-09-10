@@ -22,6 +22,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { ProductivityChart } from "./productivity-chart";
 import { Slider } from "@/components/ui/slider";
 import { ClientOnly } from "@/components/layout/client-only";
+import { AgencyMetrics } from "./agency-metrics";
 
 type Task = {
     id: string;
@@ -189,10 +190,12 @@ function DashboardPageInternal() {
       </header>
 
       <Tabs defaultValue="personal">
-        <TabsList className="mb-6 bg-black text-muted-foreground">
-            <TabsTrigger value="personal">Personal</TabsTrigger>
-            <TabsTrigger value="agency">Agency Mode</TabsTrigger>
-        </TabsList>
+        <div className="flex justify-end mb-6">
+            <TabsList className="bg-black text-muted-foreground">
+                <TabsTrigger value="personal">Personal</TabsTrigger>
+                <TabsTrigger value="agency">Agency Mode</TabsTrigger>
+            </TabsList>
+        </div>
         <TabsContent value="personal">
             <div className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -619,14 +622,13 @@ function DashboardPageInternal() {
                         </CardContent>
                     </Card>
                 </div>
-
-                <Card>
+                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><Building className="h-5 w-5" /> Team Productivity</CardTitle>
                         <CardDescription>An overview of your team's collective output and performance metrics.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                         <p className="text-muted-foreground">Team-wide productivity charts and member breakdowns will be available here soon.</p>
+                         <AgencyMetrics />
                     </CardContent>
                 </Card>
             </div>
