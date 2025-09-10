@@ -67,7 +67,7 @@ export default function WorkmateRadarPage() {
 
       <div className="p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-4xl">
-          <Card className="shadow-2xl">
+          <Card className="border-0 shadow-none">
             <CardHeader>
               <CardTitle>Find Your Team</CardTitle>
               <CardDescription>Fill out the form below to get AI-powered suggestions.</CardDescription>
