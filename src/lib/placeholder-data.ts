@@ -28,24 +28,24 @@ export type User = {
 };
 
 const designPortfolio: PortfolioItem[] = [
-    { title: "E-commerce Platform Redesign", description: "A complete overhaul of a client's online store, focusing on a seamless user experience and modern UI.", imageUrl: "https://picsum.photos/seed/design1/800/600", tags: ["UI/UX", "Figma", "Webflow"] },
-    { title: "Mobile Banking App Concept", description: "A concept for a neo-banking application with a focus on simplicity and intuitive financial management.", imageUrl: "https://picsum.photos/seed/design2/800/600", tags: ["Mobile App", "Prototyping"] },
-    { title: "Brand Identity for 'Innovate'", description: "Developed a comprehensive brand guide, including logo, color palette, and typography for a tech startup.", imageUrl: "https://picsum.photos/seed/design3/800/600", tags: ["Branding", "Illustration"] },
-    { title: "Interactive Data Visualization", description: "Designed an interactive dashboard for a data analytics company to visualize complex datasets.", imageUrl: "https://picsum.photos/seed/design4/800/600", tags: ["Data Viz", "UI Design"] },
+    { title: "E-commerce Platform Redesign", description: "A complete overhaul of a client's online store, focusing on a seamless user experience and modern UI.", imageUrl: "https://placehold.co/800x600/000000/000000", tags: ["UI/UX", "Figma", "Webflow"] },
+    { title: "Mobile Banking App Concept", description: "A concept for a neo-banking application with a focus on simplicity and intuitive financial management.", imageUrl: "https://placehold.co/800x600/000000/000000", tags: ["Mobile App", "Prototyping"] },
+    { title: "Brand Identity for 'Innovate'", description: "Developed a comprehensive brand guide, including logo, color palette, and typography for a tech startup.", imageUrl: "https://placehold.co/800x600/000000/000000", tags: ["Branding", "Illustration"] },
+    { title: "Interactive Data Visualization", description: "Designed an interactive dashboard for a data analytics company to visualize complex datasets.", imageUrl: "https://placehold.co/800x600/000000/000000", tags: ["Data Viz", "UI Design"] },
 ];
 
 const devPortfolio: PortfolioItem[] = [
-    { title: "Real-time Collaborative Editor", description: "Built a web-based text editor allowing multiple users to collaborate simultaneously, using WebSockets and CRDTs.", imageUrl: "https://picsum.photos/seed/dev1/800/600", tags: ["React", "Node.js", "WebSockets"] },
-    { title: "Serverless E-commerce Backend", description: "Architected and deployed a scalable, serverless backend on AWS for an e-commerce platform.", imageUrl: "https://picsum.photos/seed/dev2/800/600", tags: ["AWS", "Serverless", "TypeScript"] },
-    { title: "Next.js Static Site Generator", description: "A custom static site generator built with Next.js for a documentation website, improving performance by over 200%.", imageUrl: "https://picsum.photos/seed/dev3/800/600", tags: ["Next.js", "Performance"] },
-    { title: "GraphQL API for Mobile App", description: "Developed a flexible and efficient GraphQL API to serve data to both iOS and Android applications.", imageUrl: "https://picsum.photos/seed/dev4/800/600", tags: ["GraphQL", "API", "PostgreSQL"] },
+    { title: "Real-time Collaborative Editor", description: "Built a web-based text editor allowing multiple users to collaborate simultaneously, using WebSockets and CRDTs.", imageUrl: "https://placehold.co/800x600/000000/000000", tags: ["React", "Node.js", "WebSockets"] },
+    { title: "Serverless E-commerce Backend", description: "Architected and deployed a scalable, serverless backend on AWS for an e-commerce platform.", imageUrl: "https://placehold.co/800x600/000000/000000", tags: ["AWS", "Serverless", "TypeScript"] },
+    { title: "Next.js Static Site Generator", description: "A custom static site generator built with Next.js for a documentation website, improving performance by over 200%.", imageUrl: "https://placehold.co/800x600/000000/000000", tags: ["Next.js", "Performance"] },
+    { title: "GraphQL API for Mobile App", description: "Developed a flexible and efficient GraphQL API to serve data to both iOS and Android applications.", imageUrl: "https://placehold.co/800x600/000000/000000", tags: ["GraphQL", "API", "PostgreSQL"] },
 ];
 
 const writingPortfolio: PortfolioItem[] = [
-    { title: "The Ultimate Guide to B2B SaaS Content", description: "A 5,000-word cornerstone article that became the top-ranking piece for a major client in the SaaS industry.", imageUrl: "https://picsum.photos/seed/writing1/800/600", tags: ["SEO", "Long-form", "B2B"] },
-    { title: "Website Copy for 'Fintech Innovations'", description: "Wrote all website and landing page copy for a new fintech startup, resulting in a 25% increase in conversions.", imageUrl: "https://picsum.photos/seed/writing2/800/600", tags: ["Copywriting", "Conversion"] },
-    { title: "API Documentation for DevTools Co.", description: "Created comprehensive and easy-to-understand API documentation for a suite of developer tools.", imageUrl: "https://picsum.photos/seed/writing3/800/600", tags: ["Technical Writing", "API Docs"] },
-    { title: "Monthly Newsletter Campaign", description: "Managed and wrote a monthly newsletter for a design agency, achieving a 45% open rate.", imageUrl: "https://picsum.photos/seed/writing4/800/600", tags: ["Email Marketing", "Content Strategy"] },
+    { title: "The Ultimate Guide to B2B SaaS Content", description: "A 5,000-word cornerstone article that became the top-ranking piece for a major client in the SaaS industry.", imageUrl: "https://placehold.co/800x600/000000/000000", tags: ["SEO", "Long-form", "B2B"] },
+    { title: "Website Copy for 'Fintech Innovations'", description: "Wrote all website and landing page copy for a new fintech startup, resulting in a 25% increase in conversions.", imageUrl: "https://placehold.co/800x600/000000/000000", tags: ["Copywriting", "Conversion"] },
+    { title: "API Documentation for DevTools Co.", description: "Created comprehensive and easy-to-understand API documentation for a suite of developer tools.", imageUrl: "https://placehold.co/800x600/000000/000000", tags: ["Technical Writing", "API Docs"] },
+    { title: "Monthly Newsletter Campaign", description: "Managed and wrote a monthly newsletter for a design agency, achieving a 45% open rate.", imageUrl: "https://placehold.co/800x600/000000/000000", tags: ["Email Marketing", "Content Strategy"] },
 ];
 
 export const placeholderUsers: User[] = [
@@ -55,8 +55,8 @@ export const placeholderUsers: User[] = [
     handle: "alicej",
     headline: "UX/UI Designer | Creating Intuitive Digital Experiences",
     bio: "Passionate about crafting user-centric designs that are both beautiful and functional. 10+ years of experience in the tech industry.",
-    avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80",
-    coverImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+    avatar: "https://placehold.co/200x200/000000/000000",
+    coverImage: "https://placehold.co/1200x800/000000/000000",
     skills: ["UI/UX Design", "Figma", "Prototyping", "User Research", "Webflow"],
     portfolio: designPortfolio,
     category: "design",
@@ -70,8 +70,8 @@ export const placeholderUsers: User[] = [
     handle: "chrisp",
     headline: "Senior Frontend Developer | React & Next.js Expert",
     bio: "Building performant and scalable web applications. I love TypeScript and clean code. Always eager to learn new technologies.",
-    avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80",
-    coverImage: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+    avatar: "https://placehold.co/200x200/000000/000000",
+    coverImage: "https://placehold.co/1200x800/000000/000000",
     skills: ["React", "Next.js", "TypeScript", "GraphQL", "Tailwind CSS"],
     portfolio: devPortfolio,
     category: "development",
@@ -85,8 +85,8 @@ export const placeholderUsers: User[] = [
     handle: "charlieb",
     headline: "Content Strategist & SEO Writer",
     bio: "Helping brands tell their story and rank higher on search engines. I specialize in long-form content for B2B SaaS companies.",
-    avatar: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80",
-    coverImage: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+    avatar: "https://placehold.co/200x200/000000/000000",
+    coverImage: "https://placehold.co/1200x800/000000/000000",
     skills: ["Content Strategy", "SEO", "Copywriting", "Blogging", "Ahrefs"],
     portfolio: writingPortfolio,
     category: "writing",
@@ -100,8 +100,8 @@ export const placeholderUsers: User[] = [
     handle: "dianap",
     headline: "Full-Stack Developer | Node.js, Python, & Cloud",
     bio: "Architecting and building robust backend systems. Experienced with AWS and serverless architectures. Believer in DevOps culture.",
-    avatar: "https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80",
-    coverImage: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+    avatar: "https://placehold.co/200x200/000000/000000",
+    coverImage: "https://placehold.co/1200x800/000000/000000",
     skills: ["Node.js", "Python", "AWS", "Serverless", "PostgreSQL"],
     portfolio: devPortfolio.slice(0,2),
     category: "development",
@@ -116,8 +116,8 @@ export const placeholderUsers: User[] = [
     handle: "ethanh",
     headline: "Brand & Visual Designer",
     bio: "Creating memorable brand identities and visual systems. My work is driven by strategy and a passion for detail.",
-    avatar: "https://images.unsplash.com/photo-1557862921-37829c790f19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80",
-    coverImage: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+    avatar: "https://placehold.co/200x200/000000/000000",
+    coverImage: "https://placehold.co/1200x800/000000/000000",
     skills: ["Branding", "Illustration", "Adobe Creative Suite", "Typography"],
     portfolio: designPortfolio.slice(1,3),
     category: "design",
@@ -128,8 +128,8 @@ export const placeholderUsers: User[] = [
     handle: "fionag",
     headline: "Technical Writer & Documentation Specialist",
     bio: "Making complex topics easy to understand. I write clear, concise, and comprehensive documentation for developers and end-users.",
-    avatar: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80",
-    coverImage: "https://images.unsplash.com/photo-1587620962725-abab7fe55159?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+    avatar: "https://placehold.co/200x200/000000/000000",
+    coverImage: "https://placehold.co/1200x800/000000/000000",
     skills: ["Technical Writing", "Docs-as-Code", "API Documentation", "Markdown"],
     portfolio: writingPortfolio.slice(0,2),
     category: "writing",
@@ -143,8 +143,8 @@ export const placeholderUsers: User[] = [
     handle: "futurelabs",
     headline: "Innovation & Tech Consulting",
     bio: "We partner with startups and enterprises to build cutting-edge technology.",
-    avatar: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80",
-    coverImage: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+    avatar: "https://placehold.co/200x200/000000/000000",
+    coverImage: "https://placehold.co/1200x800/000000/000000",
     skills: ["AI/ML", "Web3", "Product Strategy"],
     portfolio: [],
     category: "development",
@@ -468,7 +468,7 @@ export const placeholderNews = [
         author: "Alex Chen",
         date: "2 hours ago",
         excerpt: "Innovate, a company building AI-powered tools for developers, announced today it has closed a $50 million Series B funding round led by Future Ventures.",
-        imageUrl: "https://picsum.photos/seed/news1/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "2",
@@ -477,7 +477,7 @@ export const placeholderNews = [
         author: "Maria Rodriguez",
         date: "1 day ago",
         excerpt: "The professional networking space gets a new contender today with the launch of Sentry, a platform designed specifically for freelancers and creatives.",
-        imageUrl: "https://picsum.photos/seed/news2/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "3",
@@ -486,7 +486,7 @@ export const placeholderNews = [
         author: "David Smith",
         date: "3 days ago",
         excerpt: "Forget the traditional 9-to-5. A new trend is emerging where elite freelancers form small, agile teams to tackle complex projects for major corporations.",
-        imageUrl: "https://picsum.photos/seed/news3/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
      {
         id: "4",
@@ -495,7 +495,7 @@ export const placeholderNews = [
         author: "Emily White",
         date: "4 days ago",
         excerpt: "Characterized by raw elements, bold typography, and a stark honesty, neobrutalism is taking the design world by storm. We explore its origins and impact.",
-        imageUrl: "https://picsum.photos/seed/news4/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "5",
@@ -504,7 +504,7 @@ export const placeholderNews = [
         author: "John Doe",
         date: "5 days ago",
         excerpt: "Struggling to figure out your rates? This guide breaks down the different pricing models and helps you find the one that works for you.",
-        imageUrl: "https://picsum.photos/seed/news5/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "6",
@@ -513,7 +513,7 @@ export const placeholderNews = [
         author: "Jane Austen",
         date: "6 days ago",
         excerpt: "Discover how to craft compelling narratives that resonate with your audience and build lasting brand loyalty. It's not just about what you sell, but the story you tell.",
-        imageUrl: "https://picsum.photos/seed/news6/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "7",
@@ -522,7 +522,7 @@ export const placeholderNews = [
         author: "Ada Lovelace",
         date: "1 week ago",
         excerpt: "From Zustand to Jotai, we explore the landscape of state management libraries in the React ecosystem beyond Redux.",
-        imageUrl: "https://picsum.photos/seed/news7/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "8",
@@ -531,7 +531,7 @@ export const placeholderNews = [
         author: "Alan Turing",
         date: "1 week ago",
         excerpt: "As a freelancer, you're a target. Learn how to secure your devices, data, and client information from cyber threats.",
-        imageUrl: "https://picsum.photos/seed/news8/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "9",
@@ -540,7 +540,7 @@ export const placeholderNews = [
         author: "Grace Hopper",
         date: "2 weeks ago",
         excerpt: "Data is not just for tech companies. See how creatives are using data to inform their work, from film production to music composition.",
-        imageUrl: "https://picsum.photos/seed/news9/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "10",
@@ -549,7 +549,7 @@ export const placeholderNews = [
         author: "Vint Cerf",
         date: "2 weeks ago",
         excerpt: "Learn how serverless architectures can help your startup scale without breaking the bank on infrastructure costs.",
-        imageUrl: "https://picsum.photos/seed/news10/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "11",
@@ -558,7 +558,7 @@ export const placeholderNews = [
         author: "Casey Newton",
         date: "Yesterday",
         excerpt: "From AI-powered design tools to the latest trends in sustainable design, here's everything you missed from this year's landmark conference.",
-        imageUrl: "https://picsum.photos/seed/news11/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "12",
@@ -567,7 +567,7 @@ export const placeholderNews = [
         author: "Kara Swisher",
         date: "2 days ago",
         excerpt: "An in-depth look at how a small team of developers and designers built a platform that's changing the game for creative professionals.",
-        imageUrl: "https://picsum.photos/seed/news12/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "13",
@@ -576,7 +576,7 @@ export const placeholderNews = [
         author: "Ben Goertzel",
         date: "3 weeks ago",
         excerpt: "Quantum computing isn't just for scientists. We explore how this emerging technology could revolutionize creative fields from design to music.",
-        imageUrl: "https://picsum.photos/seed/news13/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "14",
@@ -585,7 +585,7 @@ export const placeholderNews = [
         author: "Jessica Walsh",
         date: "3 weeks ago",
         excerpt: "A deep dive into how color theory influences consumer perception and how to choose the perfect palette for your brand.",
-        imageUrl: "https://picsum.photos/seed/news14/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "15",
@@ -594,7 +594,7 @@ export const placeholderNews = [
         author: "Brendan Eich",
         date: "4 weeks ago",
         excerpt: "Is JavaScript's reign ending? We explore how WebAssembly is enabling near-native performance for web applications.",
-        imageUrl: "https://picsum.photos/seed/news15/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "16",
@@ -603,7 +603,7 @@ export const placeholderNews = [
         author: "Sara Horowitz",
         date: "1 month ago",
         excerpt: "The founder of the Freelancers Union shares her tips for thriving in the competitive gig economy and building a sustainable career.",
-        imageUrl: "https://picsum.photos/seed/news16/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     }
 ];
 
@@ -615,7 +615,7 @@ export const placeholderCourses = [
         price: 149.99,
         category: "Development",
         description: "Take your TypeScript skills to the next level. Learn advanced patterns, decorators, and how to build type-safe, enterprise-grade applications.",
-        imageUrl: "https://picsum.photos/seed/course1/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
         level: "Advanced",
     },
     {
@@ -625,7 +625,7 @@ export const placeholderCourses = [
         price: 99.99,
         category: "Design",
         description: "A comprehensive guide to Figma. Master components, auto layout, and prototyping to create stunning and efficient designs.",
-        imageUrl: "https://picsum.photos/seed/course2/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
         level: "Beginner",
     },
     {
@@ -635,7 +635,7 @@ export const placeholderCourses = [
         price: 199.99,
         category: "Writing",
         description: "Learn how to create a content strategy that drives organic traffic. This course covers keyword research, on-page SEO, and content promotion.",
-        imageUrl: "https://picsum.photos/seed/course3/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
         level: "Intermediate",
     },
      {
@@ -645,7 +645,7 @@ export const placeholderCourses = [
         price: 129.99,
         category: "Development",
         description: "Learn how to build, deploy, and scale serverless APIs on AWS using Node.js, API Gateway, and Lambda. No servers, no problem.",
-        imageUrl: "https://picsum.photos/seed/course4/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
         level: "Intermediate",
     },
     {
@@ -655,7 +655,7 @@ export const placeholderCourses = [
         price: 249.99,
         category: "AI & Machine Learning",
         description: "Explore the fundamentals of generative AI, including large language models, diffusion models, and their applications.",
-        imageUrl: "https://picsum.photos/seed/course5/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
         level: "Beginner",
     },
     {
@@ -665,7 +665,7 @@ export const placeholderCourses = [
         price: 179.99,
         category: "Data Science",
         description: "Get hands-on experience with Pandas, Scikit-learn, and Matplotlib to analyze data and build predictive models.",
-        imageUrl: "https://picsum.photos/seed/course6/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
         level: "Intermediate",
     },
 ];
@@ -677,7 +677,7 @@ export const placeholderPodcasts = [
         author: "Alice Johnson & Ethan Hunt",
         category: "Design",
         description: "A weekly podcast about the details of design. We dive into the latest trends, tools, and challenges facing designers today.",
-        imageUrl: "https://picsum.photos/seed/podcast1/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "podcast2",
@@ -685,7 +685,7 @@ export const placeholderPodcasts = [
         author: "Christian Peta",
         category: "Development",
         description: "A morning show for developers. Join Bob as he discusses the latest news in the world of web development, from new frameworks to career advice.",
-        imageUrl: "https://picsum.photos/seed/podcast2/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "podcast3",
@@ -693,7 +693,7 @@ export const placeholderPodcasts = [
         author: "Fiona Glenanne",
         category: "Freelance",
         description: "Interviews with successful freelancers from various fields. Learn about their journey, challenges, and what it takes to succeed on your own.",
-        imageUrl: "https://picsum.photos/seed/podcast3/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "podcast4",
@@ -701,7 +701,7 @@ export const placeholderPodcasts = [
         author: "Alan Turing",
         category: "Cybersecurity",
         description: "A podcast dedicated to the world of cybersecurity. We discuss the latest threats, vulnerabilities, and how to stay safe in a digital world.",
-        imageUrl: "https://picsum.photos/seed/podcast4/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
     {
         id: "podcast5",
@@ -709,7 +709,7 @@ export const placeholderPodcasts = [
         author: "Alice Johnson",
         category: "UI/UX",
         description: "Deep dives into user interface and user experience design principles, case studies, and interviews with industry leaders.",
-        imageUrl: "https://picsum.photos/seed/podcast5/600/400",
+        imageUrl: "https://placehold.co/600x400/000000/000000",
     },
 ];
 
