@@ -5,8 +5,8 @@ import { ClientOnly } from "@/components/layout/client-only";
 
 export default function WorkmateRadarPage() {
   return (
-    <div className="min-h-[calc(100vh-8rem)]">
-      <header className="relative flex flex-col items-center justify-center gap-12 overflow-hidden bg-background p-4 pt-12">
+    <div className="p-4 sm:p-6 md:p-8">
+      <header className="relative flex flex-col items-center justify-center gap-12 overflow-hidden bg-background pb-8">
         {/* New Quantum Grid Animation */}
         <div className="relative flex h-96 w-96 items-center justify-center">
           <div className="absolute inset-0 animate-grid-pulse rounded-full bg-primary/5 [mask-image:radial-gradient(ellipse_at_center,transparent_30%,white)]"></div>
@@ -65,20 +65,18 @@ export default function WorkmateRadarPage() {
         </div>
       </header>
 
-      <div className="p-4 sm:p-6 md:p-8">
-        <div className="mx-auto max-w-4xl">
-          <Card className="border-0 shadow-none">
-            <CardHeader>
-              <CardTitle>Find Your Team</CardTitle>
-              <CardDescription>Fill out the form below to get AI-powered suggestions.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ClientOnly>
-                <WorkmateRadarForm />
-              </ClientOnly>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="mx-auto max-w-4xl">
+        <Card className="border-0 shadow-none">
+          <CardHeader>
+            <CardTitle>Find Your Team</CardTitle>
+            <CardDescription>Fill out the form below to get AI-powered suggestions.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ClientOnly>
+              <WorkmateRadarForm />
+            </ClientOnly>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
