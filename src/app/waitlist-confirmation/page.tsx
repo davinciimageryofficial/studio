@@ -91,7 +91,7 @@ export default function WaitlistConfirmationPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="px-6 pb-6 space-y-4">
-                            <div className="space-y-3 rounded-lg border bg-background p-4 text-left">
+                            <div className="space-y-3 rounded-lg border bg-card p-4 text-left">
                             <h3 className="font-semibold text-md mb-2">Your Submitted Information:</h3>
                             <div className="flex items-center gap-4">
                                 <User className="h-5 w-5 text-muted-foreground" />
