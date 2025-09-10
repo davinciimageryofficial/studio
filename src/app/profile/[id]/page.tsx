@@ -275,34 +275,32 @@ export default function ProfilePage() {
 function AboutCard({ user }: { user: User }) {
     return (
         <Card>
-            <CardHeader><CardTitle>About</CardTitle></CardHeader>
-            <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div className="md:col-span-1 flex justify-center">
-                        <Avatar className="h-32 w-32">
-                           <AvatarImage src={user.avatar} alt={user.name} />
-                           <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
+            <CardHeader>
+                <CardTitle>About</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center text-center">
+                <Avatar className="h-32 w-32 mb-4">
+                   <AvatarImage src={user.avatar} alt={user.name} />
+                   <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="space-y-4">
+                    <div>
+                        <h3 className="text-xl font-semibold">{user.name}</h3>
+                        <p className="text-sm text-muted-foreground">{user.headline}</p>
                     </div>
-                    <div className="md:col-span-3 space-y-4">
-                        <div>
-                            <h3 className="text-lg font-semibold">{user.name}</h3>
-                            <p className="text-sm text-muted-foreground">{user.headline}</p>
+                    <p className="text-muted-foreground whitespace-pre-line max-w-2xl mx-auto">{user.bio}</p>
+                     <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4" />
+                            <span>San Francisco, CA</span>
                         </div>
-                        <p className="text-muted-foreground whitespace-pre-line">{user.bio}</p>
-                         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-2">
-                                <MapPin className="h-4 w-4" />
-                                <span>San Francisco, CA</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <LinkIcon className="h-4 w-4" />
-                                <a href="#" className="hover:underline">website.com</a>
-                            </div>
-                             <div className="flex items-center gap-2">
-                                <Briefcase className="h-4 w-4" />
-                                <span>{user.jobTitle} at {user.company}</span>
-                            </div>
+                        <div className="flex items-center gap-2">
+                            <LinkIcon className="h-4 w-4" />
+                            <a href="#" className="hover:underline">website.com</a>
+                        </div>
+                         <div className="flex items-center gap-2">
+                            <Briefcase className="h-4 w-4" />
+                            <span>{user.jobTitle} at {user.company}</span>
                         </div>
                     </div>
                 </div>
