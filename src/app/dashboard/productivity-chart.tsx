@@ -2,7 +2,7 @@
 "use client"
 
 import { useMemo } from "react";
-import { ComposedChart, Bar, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, TooltipProps } from "recharts";
+import { ComposedChart, Bar, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, TooltipProps, Defs, Pattern } from "recharts";
 import { dailyProductivityData, weeklyProductivityData, monthlyProductivityData } from "@/lib/placeholder-data";
 
 type VisibleMetrics = {
@@ -79,6 +79,14 @@ export function ProductivityChart({ timeline, visibleMetrics, scale }: Productiv
   return (
      <ResponsiveContainer width="100%" height={400}>
         <ComposedChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+            <Defs>
+                <Pattern id="checker" width="10" height="10" patternUnits="userSpaceOnUse">
+                    <rect width="5" height="5" x="0" y="0" fill="hsl(var(--muted))" />
+                    <rect width="5" height="5" x="5" y="5" fill="hsl(var(--muted))" />
+                    <rect width="5" height="5" x="5" y="0" fill="hsl(var(--muted-foreground)/.2)" />
+                    <rect width="5" height="5" x="0" y="5" fill="hsl(var(--muted-foreground)/.2)" />
+                </Pattern>
+            </Defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis 
                 dataKey={dataKey}
@@ -108,7 +116,7 @@ export function ProductivityChart({ timeline, visibleMetrics, scale }: Productiv
                 iconSize={10}
                 formatter={renderLegendText}
             />
-            {visibleMetrics.revenue && <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} barSize={30} />}
+            {visibleMetrics.revenue && <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="url(#checker)" radius={[4, 4, 0, 0]} barSize={30} />}
             {visibleMetrics.projects && <Line yAxisId="left" type="monotone" dataKey="projects" name="Projects" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4 }} />}
             {visibleMetrics.impressions && <Line yAxisId="right" type="monotone" dataKey="impressions" name="Impressions" stroke="hsl(var(--chart-4))" strokeWidth={2} dot={{ r: 4 }} />}
             {visibleMetrics.acquisition && <Line yAxisId="right" type="monotone" dataKey="acquisition" name="New Clients" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={{ r: 4 }} />}
