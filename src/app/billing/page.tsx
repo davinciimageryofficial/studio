@@ -326,6 +326,12 @@ export default function BillingPage() {
   const currentPlan = plans.find(p => p.current);
   const otherPlans = plans.filter(p => !p.current);
 
+  const referralHistory = [
+      { name: "Alice Johnson", date: "2024-07-15", status: "Subscribed", reward: "$24.75 Credit" },
+      { name: "Charlie Brown", date: "2024-06-28", status: "Pending", reward: "-" },
+      { name: "Diana Prince", date: "2024-05-10", status: "Joined", reward: "-" },
+  ];
+
   const handleUpgrade = (planName: string) => {
     toast({
       title: "Upgrade Successful!",
@@ -506,34 +512,71 @@ export default function BillingPage() {
             </div>
         </TabsContent>
         <TabsContent value="referrals" className="mt-6">
-            <Card className="max-w-2xl mx-auto">
-                <CardHeader className="text-center">
-                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
-                        <Gift className="h-6 w-6 text-primary" />
-                    </div>
-                    <CardTitle>Refer a Friend, Get Rewarded</CardTitle>
-                    <CardDescription>
-                        Share your unique link with fellow freelancers. When they subscribe to a paid plan,
-                        you'll both receive a 25% discount on your next month's subscription.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="referral-link">Your Unique Referral Link</Label>
-                        <div className="flex gap-2">
-                            <Input id="referral-link" readOnly value="https://sentry.app/join?ref=chrisp123" />
-                            <Button onClick={handleCopyReferral}>
-                                <Copy className="mr-2 h-4 w-4" />
-                                Copy
-                            </Button>
+             <div className="grid gap-8 lg:grid-cols-2">
+                <Card className="flex flex-col">
+                    <CardHeader className="text-center">
+                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
+                            <Gift className="h-6 w-6 text-primary" />
                         </div>
-                    </div>
-                    <div className="text-center">
-                        <p className="font-semibold">You have 0 successful referrals.</p>
-                        <p className="text-sm text-muted-foreground">Your next bill will be discounted based on new referrals.</p>
-                    </div>
-                </CardContent>
-             </Card>
+                        <CardTitle>Refer a Friend, Get Rewarded</CardTitle>
+                        <CardDescription>
+                            Share your link with fellow freelancers. You'll both get a reward.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex-1 space-y-6">
+                        <div className="rounded-lg border bg-secondary/50 p-6 text-center">
+                            <p className="text-muted-foreground">Give friends 25% off their first month, and you'll get</p>
+                            <p className="text-3xl font-bold text-primary">25% off</p>
+                            <p className="text-muted-foreground">your next month's subscription for each successful referral.</p>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="referral-link">Your Unique Referral Link</Label>
+                            <div className="flex gap-2">
+                                <Input id="referral-link" readOnly value="https://sentry.app/join?ref=chrisp123" />
+                                <Button onClick={handleCopyReferral}>
+                                    <Copy className="mr-2 h-4 w-4" />
+                                    Copy
+                                </Button>
+                            </div>
+                        </div>
+                    </CardContent>
+                 </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Referral History</CardTitle>
+                        <CardDescription>Track the status of your referrals and rewards earned.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Name</TableHead>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Reward</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {referralHistory.map((referral, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell className="font-medium">{referral.name}</TableCell>
+                                        <TableCell>{referral.date}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={
+                                                referral.status === 'Subscribed' ? 'default' :
+                                                referral.status === 'Joined' ? 'secondary' : 'outline'
+                                            }>
+                                                {referral.status}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell>{referral.reward}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+            </div>
         </TabsContent>
         <TabsContent value="donate" className="mt-6">
              <Card className="max-w-2xl mx-auto">
@@ -565,4 +608,7 @@ export default function BillingPage() {
   );
 }
     
+    
+
+
     
