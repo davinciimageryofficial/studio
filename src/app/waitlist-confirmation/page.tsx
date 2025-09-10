@@ -47,7 +47,8 @@ export default function WaitlistConfirmationPage() {
     router.push(path);
   };
   
-  const handleAccessCodeSubmit = () => {
+  const handleAccessCodeSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (accessCode === '2004') {
         toast({
             title: "Access Granted!",
@@ -126,16 +127,18 @@ export default function WaitlistConfirmationPage() {
                                 <CardTitle className="text-lg">Have an Access Code?</CardTitle>
                                 <CardDescription>Enter your code below to skip the line and get immediate access.</CardDescription>
                             </CardHeader>
-                            <CardContent className="flex gap-2">
-                                <Input 
-                                    placeholder="Enter your access code" 
-                                    value={accessCode}
-                                    onChange={(e) => setAccessCode(e.target.value)}
-                                />
-                                <Button onClick={handleAccessCodeSubmit} className="bg-black hover:bg-gray-800">
-                                    <Rocket className="mr-2 h-4 w-4" />
-                                    Skip Waitlist
-                                </Button>
+                            <CardContent>
+                                <form onSubmit={handleAccessCodeSubmit} className="flex gap-2">
+                                    <Input 
+                                        placeholder="Enter your access code" 
+                                        value={accessCode}
+                                        onChange={(e) => setAccessCode(e.target.value)}
+                                    />
+                                    <Button type="submit" className="bg-black hover:bg-gray-800">
+                                        <Rocket className="mr-2 h-4 w-4" />
+                                        Skip Waitlist
+                                    </Button>
+                                </form>
                             </CardContent>
                         </Card>
 
