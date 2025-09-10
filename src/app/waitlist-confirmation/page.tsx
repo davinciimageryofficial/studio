@@ -75,7 +75,7 @@ export default function WaitlistConfirmationPage() {
   return (
     <ClientOnly>
        <div className="flex min-h-screen w-full items-center justify-center bg-background p-4">
-            <div className="w-full max-w-2xl">
+            <div className="w-full">
                  <Card className="w-full text-center shadow-2xl">
                     <CardHeader className="p-6">
                         <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full">
