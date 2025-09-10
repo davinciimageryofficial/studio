@@ -9,7 +9,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { placeholderUsers, User } from "@/lib/placeholder-data";
-import { Search, User as UserIcon } from "lucide-react";
+import { Search, User as UserIcon, MoreHorizontal, Flag, ShieldX } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 
 export default function DiscoverPage() {
   const categories = ["All", "Design", "Writing", "Development"];
@@ -66,9 +68,37 @@ function ProfileGrid({ users }: { users: User[] }) {
 }
 
 function ProfileCard({ user }: { user: User }) {
+  const { toast } = useToast();
+
+  const handleAction = (action: string, userName: string) => {
+    toast({
+      title: `Action: ${action}`,
+      description: `The action '${action}' for user ${userName} would be handled here.`,
+    });
+  };
+
   return (
     <Card className="overflow-hidden transition-all hover:shadow-lg">
-      <CardContent className="p-0 text-center">
+      <CardContent className="p-0 text-center relative">
+        <div className="absolute top-2 right-2">
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <MoreHorizontal className="h-5 w-5" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => handleAction('Report', user.name)}>
+                        <Flag className="mr-2 h-4 w-4" />
+                        <span>Report User</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleAction('Block', user.name)} className="text-destructive">
+                        <ShieldX className="mr-2 h-4 w-4" />
+                        <span>Block User</span>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
         <div className="h-20 bg-muted-foreground/20" />
         <Avatar className="mx-auto -mt-10 h-20 w-20 border-4 border-card">
           <AvatarFallback>
