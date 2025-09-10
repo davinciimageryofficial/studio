@@ -82,8 +82,8 @@ export default function WaitlistConfirmationPage() {
                 <div className="w-full max-w-md">
                      <Card className="w-full text-center shadow-2xl">
                         <CardHeader className="p-6">
-                            <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50">
-                            <CheckCircle className="size-10 text-green-600 dark:text-green-400" />
+                            <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full">
+                            <CheckCircle className="size-10 text-primary" />
                             </div>
                             <CardTitle className="text-3xl font-bold tracking-tighter">You're In!</CardTitle>
                             <CardDescription className="mt-1 text-lg text-muted-foreground">
