@@ -143,7 +143,7 @@ export default function WaitlistConfirmationPage() {
                         
                         <Dialog>
                         <DialogTrigger asChild>
-                            <Button className="w-full" size="lg">Back to Homepage</Button>
+                            <Button className="w-full bg-black hover:bg-gray-800 text-primary-foreground" size="lg">Back to Homepage</Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader className="text-center">
