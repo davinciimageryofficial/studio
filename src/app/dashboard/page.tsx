@@ -6,10 +6,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings, Gift } from "lucide-react";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings, Gift, Building } from "lucide-react";
 import Link from "next/link";
 import { EngagementChart } from "./charts";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -187,395 +187,451 @@ function DashboardPageInternal() {
           Welcome back, {placeholderUsers[1].name}. Here's a summary of your activity.
         </p>
       </header>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Stat Cards */}
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
-                  <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                    <div className="flex-1">
-                      <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
-                    </div>
-                    <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">1,204</div>
-                    <p className="text-xs text-muted-foreground">+20.1% from last month</p>
-                  </CardContent>
-                </Card>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-80" align="end">
-                <DropdownMenuLabel>Recent Viewers</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {recentViewers.map(activity => (
-                    <DropdownMenuItem key={activity.user.id} className="flex items-center justify-between gap-2 p-2">
-                        <div className="flex items-center gap-3">
-                            <Avatar className="h-9 w-9">
-                                <AvatarFallback>
-                                    <User className="h-5 w-5" />
-                                </AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <p className="font-semibold">{activity.user.name}</p>
-                                <p className="text-xs text-muted-foreground">{activity.user.headline}</p>
+
+      <Tabs defaultValue="personal">
+        <TabsList className="mb-6">
+            <TabsTrigger value="personal">Personal</TabsTrigger>
+            <TabsTrigger value="agency">Agency Mode</TabsTrigger>
+        </TabsList>
+        <TabsContent value="personal">
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Stat Cards */}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
+                          <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                            <div className="flex-1">
+                              <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
                             </div>
-                        </div>
-                    </DropdownMenuItem>
-                ))}
-                 <DropdownMenuSeparator />
-                 <DropdownMenuItem asChild>
-                    <Link href="#recent-activity" className="w-full justify-center">
-                        View all in Recent Activity
-                    </Link>
-                 </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
-              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                 <div className="flex-1">
-                    <CardTitle className="text-sm font-medium">New Connections</CardTitle>
-                 </div>
-                <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">+32</div>
-                <p className="text-xs text-muted-foreground">+15 from last month</p>
-              </CardContent>
-            </Card>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-80" align="end">
-                <DropdownMenuLabel>Recent Connections</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {newConnections.map(user => (
-                    <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
-                        <div className="flex items-center gap-3">
-                            <Avatar className="h-9 w-9">
-                                <AvatarFallback>
-                                    <User className="h-5 w-5" />
-                                </AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <p className="font-semibold">{user.name}</p>
-                                <p className="text-xs text-muted-foreground">{user.headline}</p>
-                            </div>
-                        </div>
-                    </DropdownMenuItem>
-                ))}
-                 <DropdownMenuSeparator />
-                 <DropdownMenuItem asChild>
-                    <Link href="/discover" className="w-full justify-center">
-                        View all Connections
-                    </Link>
-                 </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                 <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
-                    <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                        <div className="flex-1">
-                            <CardTitle className="text-sm font-medium">Pending Invitations</CardTitle>
-                        </div>
+                            <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                          </CardHeader>
+                          <CardContent>
+                            <div className="text-2xl font-bold">1,204</div>
+                            <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+                          </CardContent>
+                        </Card>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-80" align="end">
+                        <DropdownMenuLabel>Recent Viewers</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {recentViewers.map(activity => (
+                            <DropdownMenuItem key={activity.user.id} className="flex items-center justify-between gap-2 p-2">
+                                <div className="flex items-center gap-3">
+                                    <Avatar className="h-9 w-9">
+                                        <AvatarFallback>
+                                            <User className="h-5 w-5" />
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <p className="font-semibold">{activity.user.name}</p>
+                                        <p className="text-xs text-muted-foreground">{activity.user.headline}</p>
+                                    </div>
+                                </div>
+                            </DropdownMenuItem>
+                        ))}
+                         <DropdownMenuSeparator />
+                         <DropdownMenuItem asChild>
+                            <Link href="#recent-activity" className="w-full justify-center">
+                                View all in Recent Activity
+                            </Link>
+                         </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
+                      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                         <div className="flex-1">
+                            <CardTitle className="text-sm font-medium">New Connections</CardTitle>
+                         </div>
                         <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold">+32</div>
+                        <p className="text-xs text-muted-foreground">+15 from last month</p>
+                      </CardContent>
+                    </Card>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-80" align="end">
+                        <DropdownMenuLabel>Recent Connections</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {newConnections.map(user => (
+                            <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
+                                <div className="flex items-center gap-3">
+                                    <Avatar className="h-9 w-9">
+                                        <AvatarFallback>
+                                            <User className="h-5 w-5" />
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <p className="font-semibold">{user.name}</p>
+                                        <p className="text-xs text-muted-foreground">{user.headline}</p>
+                                    </div>
+                                </div>
+                            </DropdownMenuItem>
+                        ))}
+                         <DropdownMenuSeparator />
+                         <DropdownMenuItem asChild>
+                            <Link href="/discover" className="w-full justify-center">
+                                View all Connections
+                            </Link>
+                         </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                         <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
+                            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                                <div className="flex-1">
+                                    <CardTitle className="text-sm font-medium">Pending Invitations</CardTitle>
+                                </div>
+                                <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">{pendingInvitations.length}</div>
+                                <p className="text-xs text-muted-foreground">{pendingInvitations.length} waiting for your response</p>
+                            </CardContent>
+                        </Card>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-80" align="end">
+                        <DropdownMenuLabel>Pending Invitations</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {pendingInvitations.map(user => (
+                            <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
+                                <div className="flex items-center gap-3">
+                                    <Avatar className="h-9 w-9">
+                                        <AvatarFallback>
+                                            <User className="h-5 w-5" />
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <p className="font-semibold">{user.name}</p>
+                                        <p className="text-xs text-muted-foreground">{user.headline}</p>
+                                    </div>
+                                </div>
+                            </DropdownMenuItem>
+                        ))}
+                         <DropdownMenuSeparator />
+                         <DropdownMenuItem asChild>
+                            <Link href="/messages" className="w-full justify-center">
+                                View all in Messages
+                            </Link>
+                         </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+               <div className="mt-6">
+                    <header className="mb-6">
+                      <h2 className="text-2xl font-semibold tracking-tight">Task Board</h2>
+                      <p className="text-muted-foreground">Interact with project blocks, organize progress</p>
+                    </header>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {(Object.keys(tasks) as TaskStatus[]).map((status) => (
+                        <div 
+                            key={status}
+                            onDrop={(e) => handleDrop(e, status)}
+                            onDragOver={handleDragOver}
+                            className="space-y-3"
+                        >
+                          <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4 px-2">{status.replace(/([A-Z])/g, ' $1')}</h3>
+                          <div className="space-y-3">
+                            {tasks[status].map(task => (
+                              <div 
+                                  key={task.id}
+                                  draggable
+                                  onDragStart={(e) => handleDragStart(e, task.id, status)}
+                                  className="group cursor-grab border-b bg-card p-4 transition-shadow hover:shadow-md"
+                              >
+                                  <p className="text-sm font-medium pr-2 mb-4">{task.title}</p>
+                                  <div className="flex items-center justify-between">
+                                    <ClientOnly>
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                  <button className="flex items-center gap-2 text-muted-foreground">
+                                                    {priorityIcons[task.priority]}
+                                                    <span className="text-xs font-medium">{task.priority} Urgency</span>
+                                                  </button>
+                                                </TooltipTrigger>
+                                                <TooltipContent><p>{task.priority} Urgency</p></TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </ClientOnly>
+                                  </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                
+                <Card className="mt-8">
+                    <CardHeader className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <CardTitle className="flex items-center gap-2">
+                                <LineChart className="h-6 w-6" />
+                                Productivity
+                            </CardTitle>
+                            <CardDescription>
+                                A consolidated view of your key professional metrics.
+                            </CardDescription>
+                        </div>
+                         <div className="flex items-center gap-2">
+                            <div className="w-32 space-y-1">
+                                <Label htmlFor="productivity-scale" className="text-xs">Scale ({tempProductivityChartScale.toFixed(1)}x)</Label>
+                                <Slider 
+                                    id="productivity-scale"
+                                    min={0.1}
+                                    max={5}
+                                    step={0.1}
+                                    value={[tempProductivityChartScale]}
+                                    onValueChange={(value) => setTempProductivityChartScale(value[0])}
+                                    onValueCommit={(value) => setProductivityChartScale(value[0])}
+                                />
+                            </div>
+                            <Tabs defaultValue="monthly" onValueChange={(value) => setProductivityTimeline(value as any)} className="w-full sm:w-auto">
+                                <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
+                                    <TabsTrigger value="daily">Daily</TabsTrigger>
+                                    <TabsTrigger value="weekly">Weekly</TabsTrigger>
+                                    <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                                </TabsList>
+                            </Tabs>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="default" size="icon" className="bg-black text-white">
+                                        <Settings className="h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuLabel>Toggle Metrics</DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    {Object.keys(visibleMetrics).map((key) => (
+                                        <DropdownMenuCheckboxItem
+                                            key={key}
+                                            checked={visibleMetrics[key as keyof VisibleMetrics]}
+                                            onCheckedChange={(checked) => handleMetricVisibilityChange(key as keyof VisibleMetrics, !!checked)}
+                                        >
+                                            {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                                        </DropdownMenuCheckboxItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{pendingInvitations.length}</div>
-                        <p className="text-xs text-muted-foreground">{pendingInvitations.length} waiting for your response</p>
+                        <ProductivityChart timeline={productivityTimeline} visibleMetrics={visibleMetrics} scale={productivityChartScale} />
                     </CardContent>
                 </Card>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-80" align="end">
-                <DropdownMenuLabel>Pending Invitations</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {pendingInvitations.map(user => (
-                    <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
-                        <div className="flex items-center gap-3">
-                            <Avatar className="h-9 w-9">
-                                <AvatarFallback>
-                                    <User className="h-5 w-5" />
-                                </AvatarFallback>
-                            </Avatar>
+
+              <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Engagement Chart */}
+                <Card className="lg:col-span-2">
+                    <CardHeader>
+                        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
                             <div>
-                                <p className="font-semibold">{user.name}</p>
-                                <p className="text-xs text-muted-foreground">{user.headline}</p>
+                                <CardTitle>Profile Engagement</CardTitle>
+                                <CardDescription>A look at your profile views over the last 7 days.</CardDescription>
                             </div>
-                        </div>
-                    </DropdownMenuItem>
-                ))}
-                 <DropdownMenuSeparator />
-                 <DropdownMenuItem asChild>
-                    <Link href="/messages" className="w-full justify-center">
-                        View all in Messages
-                    </Link>
-                 </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
-       <div className="mt-12">
-            <header className="mb-6">
-              <h2 className="text-2xl font-semibold tracking-tight">Task Board</h2>
-              <p className="text-muted-foreground">Interact with project blocks, organize progress</p>
-            </header>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {(Object.keys(tasks) as TaskStatus[]).map((status) => (
-                <div 
-                    key={status}
-                    onDrop={(e) => handleDrop(e, status)}
-                    onDragOver={handleDragOver}
-                    className="space-y-3"
-                >
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4 px-2">{status.replace(/([A-Z])/g, ' $1')}</h3>
-                  <div className="space-y-3">
-                    {tasks[status].map(task => (
-                      <div 
-                          key={task.id}
-                          draggable
-                          onDragStart={(e) => handleDragStart(e, task.id, status)}
-                          className="group cursor-grab border-b bg-card p-4 transition-shadow hover:shadow-md"
-                      >
-                          <p className="text-sm font-medium pr-2 mb-4">{task.title}</p>
-                          <div className="flex items-center justify-between">
-                            <ClientOnly>
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <button className="flex items-center gap-2 text-muted-foreground">
-                                            {priorityIcons[task.priority]}
-                                            <span className="text-xs font-medium">{task.priority} Urgency</span>
-                                          </button>
-                                        </TooltipTrigger>
-                                        <TooltipContent><p>{task.priority} Urgency</p></TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </ClientOnly>
-                          </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        
-        <Card className="mt-8">
-            <CardHeader className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <CardTitle className="flex items-center gap-2">
-                        <LineChart className="h-6 w-6" />
-                        Productivity
-                    </CardTitle>
-                    <CardDescription>
-                        A consolidated view of your key professional metrics.
-                    </CardDescription>
-                </div>
-                 <div className="flex items-center gap-2">
-                    <div className="w-32 space-y-1">
-                        <Label htmlFor="productivity-scale" className="text-xs">Scale ({tempProductivityChartScale.toFixed(1)}x)</Label>
-                        <Slider 
-                            id="productivity-scale"
-                            min={0.1}
-                            max={5}
-                            step={0.1}
-                            value={[tempProductivityChartScale]}
-                            onValueChange={(value) => setTempProductivityChartScale(value[0])}
-                            onValueCommit={(value) => setProductivityChartScale(value[0])}
-                        />
-                    </div>
-                    <Tabs defaultValue="monthly" onValueChange={(value) => setProductivityTimeline(value as any)} className="w-full sm:w-auto">
-                        <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
-                            <TabsTrigger value="daily">Daily</TabsTrigger>
-                            <TabsTrigger value="weekly">Weekly</TabsTrigger>
-                            <TabsTrigger value="monthly">Monthly</TabsTrigger>
-                        </TabsList>
-                    </Tabs>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="default" size="icon" className="bg-black text-white">
-                                <Settings className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Toggle Metrics</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            {Object.keys(visibleMetrics).map((key) => (
-                                <DropdownMenuCheckboxItem
-                                    key={key}
-                                    checked={visibleMetrics[key as keyof VisibleMetrics]}
-                                    onCheckedChange={(checked) => handleMetricVisibilityChange(key as keyof VisibleMetrics, !!checked)}
-                                >
-                                    {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                                </DropdownMenuCheckboxItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                 </div>
-            </CardHeader>
-            <CardContent>
-                <ProductivityChart timeline={productivityTimeline} visibleMetrics={visibleMetrics} scale={productivityChartScale} />
-            </CardContent>
-        </Card>
-
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Engagement Chart */}
-        <Card className="lg:col-span-2">
-            <CardHeader>
-                <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <CardTitle>Profile Engagement</CardTitle>
-                        <CardDescription>A look at your profile views over the last 7 days.</CardDescription>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <div className="w-32 space-y-1">
-                            <Label htmlFor="scale" className="text-xs">Scale ({tempChartScale.toFixed(1)}x)</Label>
-                             <Slider 
-                                id="scale"
-                                min={0.1}
-                                max={5}
-                                step={0.1}
-                                value={[tempChartScale]}
-                                onValueChange={(value) => setTempChartScale(value[0])}
-                                onValueCommit={(value) => setChartScale(value[0])}
-                            />
-                        </div>
-                        <Tabs defaultValue="area" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
-                            <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
-                                <TabsTrigger value="bar">Bar</TabsTrigger>
-                                <TabsTrigger value="line">Line</TabsTrigger>
-                                <TabsTrigger value="area">Area</TabsTrigger>
-                            </TabsList>
-                        </Tabs>
-                    </div>
-                </div>
-            </CardHeader>
-            <CardContent className="pl-2">
-                <EngagementChart type={chartType} scale={chartScale} />
-            </CardContent>
-        </Card>
-
-        {/* Recent Activity */}
-        <Card id="recent-activity">
-            <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
-                    {recentActivities.map((activity, index) => (
-                        <div key={index} className="flex items-start gap-4">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
-                                {getActivityIcon(activity.action)}
-                            </div>
-                            <div className="flex-1">
-                                <p className="text-sm">
-                                    <span className="font-semibold">{activity.user.name}</span> {activity.action}
-                                </p>
-                                <p className="text-xs text-muted-foreground">{activity.time}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-                 <Button variant="outline" className="w-full mt-6">
-                    View All Activity
-                </Button>
-            </CardContent>
-        </Card>
-      </div>
-      
-      <div className="grid md:grid-cols-2 gap-8 mt-8">
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Gift className="text-primary" /> Refer a Friend, Get Rewarded</CardTitle>
-                <CardDescription>Invite fellow freelancers to join Sentry. You'll both receive a discount on your next month's subscription when they sign up.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Link href="/billing?tab=referrals">
-                    <Button size="lg">Get Your Referral Link</Button>
-                </Link>
-            </CardContent>
-        </Card>
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Zap className="text-primary" />AD-Sentry</CardTitle>
-                <CardDescription>Launch and manage AI-powered ad programs to promote your profile or services.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button size="lg">Launch Ad Studio</Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Ad Studio Early Access</DialogTitle>
-                            <DialogDescription>
-                                The full AD-Sentry studio is currently in a private beta. Enter an access code to get early access.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <form onSubmit={handleAccessCodeSubmit}>
-                             <div className="space-y-2 py-4">
-                                <Label htmlFor="access-code">Beta Access Code</Label>
-                                <div className="flex gap-2">
-                                    <Input 
-                                        id="access-code"
-                                        placeholder="Enter your code" 
-                                        value={accessCode}
-                                        onChange={(e) => setAccessCode(e.target.value)}
+                            <div className="flex items-center gap-4">
+                                <div className="w-32 space-y-1">
+                                    <Label htmlFor="scale" className="text-xs">Scale ({tempChartScale.toFixed(1)}x)</Label>
+                                     <Slider 
+                                        id="scale"
+                                        min={0.1}
+                                        max={5}
+                                        step={0.1}
+                                        value={[tempChartScale]}
+                                        onValueChange={(value) => setTempChartScale(value[0])}
+                                        onValueCommit={(value) => setChartScale(value[0])}
                                     />
-                                    <Button type="submit">
-                                        <Rocket className="mr-2 h-4 w-4" />
-                                        Submit
-                                    </Button>
                                 </div>
+                                <Tabs defaultValue="area" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
+                                    <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
+                                        <TabsTrigger value="bar">Bar</TabsTrigger>
+                                        <TabsTrigger value="line">Line</TabsTrigger>
+                                        <TabsTrigger value="area">Area</TabsTrigger>
+                                    </TabsList>
+                                </Tabs>
                             </div>
-                        </form>
-                    </DialogContent>
-                </Dialog>
-            </CardContent>
-        </Card>
-      </div>
-      
-      <Card className="mt-8">
-        <CardHeader>
-            <CardTitle>Download Sentry</CardTitle>
-            <CardDescription>Get the full desktop experience for maximum productivity.</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col sm:flex-row gap-4">
-            <Dialog open={isAppDownloaded} onOpenChange={setIsAppDownloaded}>
-                <DialogTrigger asChild>
-                    <Button size="lg" className="w-full" variant="outline" onClick={() => setIsAppDownloaded(true)}>
-                        <Circle className="mr-2 h-5 w-5" />
-                        for Macintosh
-                    </Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <DialogHeader>
-                    <DialogTitle>Download Started</DialogTitle>
-                    <DialogDescription>
-                        Your download for the Sentry Mac app has started. Check your downloads folder.
-                    </DialogDescription>
-                    </DialogHeader>
-                </DialogContent>
-            </Dialog>
-             <Dialog open={isAppDownloaded} onOpenChange={setIsAppDownloaded}>
-                 <DialogTrigger asChild>
-                    <Button size="lg" className="w-full" variant="outline" onClick={() => setIsAppDownloaded(true)}>
-                        <AppWindow className="mr-2 h-5 w-5" />
-                        for Windows
-                    </Button>
-                </DialogTrigger>
-                 <DialogContent>
-                    <DialogHeader>
-                    <DialogTitle>Download Started</DialogTitle>
-                    <DialogDescription>
-                        Your download for the Sentry Windows app has started. Check your downloads folder.
-                    </DialogDescription>
-                    </DialogHeader>
-                </DialogContent>
-            </Dialog>
-        </CardContent>
-      </Card>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="pl-2">
+                        <EngagementChart type={chartType} scale={chartScale} />
+                    </CardContent>
+                </Card>
 
+                {/* Recent Activity */}
+                <Card id="recent-activity">
+                    <CardHeader>
+                        <CardTitle>Recent Activity</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            {recentActivities.map((activity, index) => (
+                                <div key={index} className="flex items-start gap-4">
+                                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
+                                        {getActivityIcon(activity.action)}
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-sm">
+                                            <span className="font-semibold">{activity.user.name}</span> {activity.action}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">{activity.time}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                         <Button variant="outline" className="w-full mt-6">
+                            View All Activity
+                        </Button>
+                    </CardContent>
+                </Card>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-8 mt-8">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Gift className="text-primary" /> Refer a Friend, Get Rewarded</CardTitle>
+                        <CardDescription>Invite fellow freelancers to join Sentry. You'll both receive a discount on your next month's subscription when they sign up.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Link href="/billing?tab=referrals">
+                            <Button size="lg">Get Your Referral Link</Button>
+                        </Link>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Zap className="text-primary" />AD-Sentry</CardTitle>
+                        <CardDescription>Launch and manage AI-powered ad programs to promote your profile or services.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button size="lg">Launch Ad Studio</Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Ad Studio Early Access</DialogTitle>
+                                    <DialogDescription>
+                                        The full AD-Sentry studio is currently in a private beta. Enter an access code to get early access.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <form onSubmit={handleAccessCodeSubmit}>
+                                     <div className="space-y-2 py-4">
+                                        <Label htmlFor="access-code">Beta Access Code</Label>
+                                        <div className="flex gap-2">
+                                            <Input 
+                                                id="access-code"
+                                                placeholder="Enter your code" 
+                                                value={accessCode}
+                                                onChange={(e) => setAccessCode(e.target.value)}
+                                            />
+                                            <Button type="submit">
+                                                <Rocket className="mr-2 h-4 w-4" />
+                                                Submit
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
+                    </CardContent>
+                </Card>
+              </div>
+              
+              <Card className="mt-8">
+                <CardHeader>
+                    <CardTitle>Download Sentry</CardTitle>
+                    <CardDescription>Get the full desktop experience for maximum productivity.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col sm:flex-row gap-4">
+                    <Dialog open={isAppDownloaded} onOpenChange={setIsAppDownloaded}>
+                        <DialogTrigger asChild>
+                            <Button size="lg" className="w-full" variant="outline" onClick={() => setIsAppDownloaded(true)}>
+                                <Circle className="mr-2 h-5 w-5" />
+                                for Macintosh
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                            <DialogTitle>Download Started</DialogTitle>
+                            <DialogDescription>
+                                Your download for the Sentry Mac app has started. Check your downloads folder.
+                            </DialogDescription>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
+                     <Dialog open={isAppDownloaded} onOpenChange={setIsAppDownloaded}>
+                         <DialogTrigger asChild>
+                            <Button size="lg" className="w-full" variant="outline" onClick={() => setIsAppDownloaded(true)}>
+                                <AppWindow className="mr-2 h-5 w-5" />
+                                for Windows
+                            </Button>
+                        </DialogTrigger>
+                         <DialogContent>
+                            <DialogHeader>
+                            <DialogTitle>Download Started</DialogTitle>
+                            <DialogDescription>
+                                Your download for the Sentry Windows app has started. Check your downloads folder.
+                            </DialogDescription>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
+                </CardContent>
+              </Card>
+            </div>
+        </TabsContent>
+        <TabsContent value="agency">
+            <div className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Team Revenue</CardTitle>
+                            <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">$125,430</div>
+                            <p className="text-xs text-muted-foreground">+18.2% from last month</p>
+                        </CardContent>
+                    </Card>
+                     <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+                            <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">82</div>
+                            <p className="text-xs text-muted-foreground">+5 active this month</p>
+                        </CardContent>
+                    </Card>
+                     <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Client Acquisition</CardTitle>
+                            <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">+12</div>
+                            <p className="text-xs text-muted-foreground">New clients this quarter</p>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Building className="h-5 w-5" /> Team Productivity</CardTitle>
+                        <CardDescription>An overview of your team's collective output and performance metrics.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                         <p className="text-muted-foreground">Team-wide productivity charts and member breakdowns will be available here soon.</p>
+                    </CardContent>
+                </Card>
+            </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
