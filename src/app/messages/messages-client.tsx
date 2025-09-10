@@ -45,6 +45,15 @@ import { Textarea } from "@/components/ui/textarea";
 type Message = (typeof placeholderMessages)[0]['messages'][0] & { fromName?: string };
 type Conversation = (typeof placeholderUsers[0]) & { lastMessage: Message, messages?: Message[], type?: 'dm' | 'group' | 'agency' };
 
+const GoogleDriveIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.7925 14.424L3.06 22.5L8.25 22.5L12.795 14.424H7.7925Z" fill="#34A853"/>
+        <path d="M12.795 14.424L17.5275 6.34799L21.9375 14.424H12.795Z" fill="#FFC107"/>
+        <path d="M21.1875 1.5H2.8125L8.25 11.4585L12.795 14.424L17.5275 6.348L21.1875 1.5Z" fill="#4285F4"/>
+    </svg>
+);
+
+
 export function MessagesClient() {
   const [conversations, setConversations] = useState<Conversation[]>(() => 
     placeholderMessages.map((msg, index) => {
@@ -431,6 +440,9 @@ export function MessagesClient() {
                 <Button type="button" variant="ghost" size="icon" onClick={handleCodeSnippet}><Code className="h-5 w-5" /></Button>
                 <Button type="button" variant="ghost" size="icon" onClick={() => toast({ title: "Coming Soon!", description: "File attachment functionality would be here."})}><Paperclip className="h-5 w-5" /></Button>
                 <Button type="button" variant="ghost" size="icon" onClick={() => toast({ title: "Coming Soon!", description: "An emoji picker would appear here."})}><Smile className="h-5 w-5" /></Button>
+                <Button type="button" variant="ghost" size="icon" onClick={() => toast({ title: "Coming Soon!", description: "Google Drive integration is in development."})}>
+                    <GoogleDriveIcon />
+                </Button>
             </div>
           </form>
         </div>

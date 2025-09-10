@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CheckCircle, CreditCard, Download, Gift, Heart, Star, PlusCircle, Send } from "lucide-react";
+import { CheckCircle, CreditCard, Download, Gift, Heart, Star, PlusCircle, Send, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
@@ -334,6 +334,15 @@ export default function BillingPage() {
     // Here you would typically update the user's subscription state
   };
 
+  const handleCopyReferral = () => {
+    const referralLink = "https://sentry.app/join?ref=chrisp123";
+    navigator.clipboard.writeText(referralLink);
+    toast({
+        title: "Copied to Clipboard",
+        description: "Your referral link has been copied.",
+    });
+  }
+
   return (
     <div className="p-4 sm:p-6 md:p-8 h-full">
       <header className="mb-8">
@@ -344,8 +353,9 @@ export default function BillingPage() {
       </header>
 
       <Tabs defaultValue={initialTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-sm bg-black text-muted-foreground">
+        <TabsList className="grid w-full grid-cols-3 max-w-lg bg-black text-muted-foreground">
             <TabsTrigger value="subscription">Subscription</TabsTrigger>
+            <TabsTrigger value="referrals">Referrals</TabsTrigger>
             <TabsTrigger value="donate">Donate</TabsTrigger>
         </TabsList>
         <TabsContent value="subscription" className="mt-6">
@@ -494,6 +504,36 @@ export default function BillingPage() {
                     </Card>
                 </div>
             </div>
+        </TabsContent>
+        <TabsContent value="referrals" className="mt-6">
+            <Card className="max-w-2xl mx-auto">
+                <CardHeader className="text-center">
+                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
+                        <Gift className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle>Refer a Friend, Get Rewarded</CardTitle>
+                    <CardDescription>
+                        Share your unique link with fellow freelancers. When they subscribe to a paid plan,
+                        you'll both receive a 25% discount on your next month's subscription.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="referral-link">Your Unique Referral Link</Label>
+                        <div className="flex gap-2">
+                            <Input id="referral-link" readOnly value="https://sentry.app/join?ref=chrisp123" />
+                            <Button onClick={handleCopyReferral}>
+                                <Copy className="mr-2 h-4 w-4" />
+                                Copy
+                            </Button>
+                        </div>
+                    </div>
+                    <div className="text-center">
+                        <p className="font-semibold">You have 0 successful referrals.</p>
+                        <p className="text-sm text-muted-foreground">Your next bill will be discounted based on new referrals.</p>
+                    </div>
+                </CardContent>
+             </Card>
         </TabsContent>
         <TabsContent value="donate" className="mt-6">
              <Card className="max-w-2xl mx-auto">

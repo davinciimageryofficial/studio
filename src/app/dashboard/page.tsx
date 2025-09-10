@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings } from "lucide-react";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings, Gift } from "lucide-react";
 import Link from "next/link";
 import { EngagementChart } from "./charts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -484,6 +484,17 @@ function DashboardPageInternal() {
       </div>
       
       <div className="space-y-8 mt-8">
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Gift className="text-primary" /> Refer a Friend, Get Rewarded</CardTitle>
+                <CardDescription>Invite fellow freelancers to join Sentry. You'll both receive a discount on your next month's subscription when they sign up.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Link href="/billing?tab=referrals">
+                    <Button size="lg" className="w-full sm:w-auto">Get Your Referral Link</Button>
+                </Link>
+            </CardContent>
+        </Card>
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Zap className="text-primary" />AD-Sentry</CardTitle>
