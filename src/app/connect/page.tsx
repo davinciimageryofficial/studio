@@ -22,6 +22,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { placeholderCourses, PortfolioItem } from "@/lib/placeholder-data";
+import { useLanguage } from "@/context/language-context";
+import { translations } from "@/lib/translations";
 
 type Course = {
     id: string;
@@ -42,6 +44,8 @@ function CoursesPageInternal() {
   const [priceRange, setPriceRange] = useState([0, 300]);
   const [sortBy, setSortBy] = useState("relevance");
   const [skillLevel, setSkillLevel] = useState("all");
+  const { language } = useLanguage();
+  const t = translations[language];
 
   const courseCategories = ['Development', 'Design', 'Writing', 'AI & Machine Learning', 'Data Science', 'Freelance'];
 
@@ -70,9 +74,9 @@ function CoursesPageInternal() {
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight font-headline-tech uppercase">COURSES</h1>
+        <h1 className="text-3xl font-bold tracking-tight font-headline-tech uppercase">{t.coursesTitle}</h1>
         <p className="mt-1 text-muted-foreground">
-          Level up your skills with courses from industry experts.
+          {t.coursesDescription}
         </p>
       </header>
 
@@ -80,7 +84,7 @@ function CoursesPageInternal() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search by title or author..."
+            placeholder={t.searchByTitleOrAuthor}
             className="pl-10"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -89,10 +93,10 @@ function CoursesPageInternal() {
         <div className="flex items-center gap-2">
           <Select value={category} onValueChange={setCategory}>
             <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="All Categories" />
+              <SelectValue placeholder={t.allCategories} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
+              <SelectItem value="all">{t.allCategories}</SelectItem>
               {courseCategories.map(cat => (
                 <SelectItem key={cat} value={cat.toLowerCase()}>{cat}</SelectItem>
               ))}
@@ -105,13 +109,13 @@ function CoursesPageInternal() {
         <CollapsibleTrigger asChild>
           <Button variant="outline" size="sm">
             <SlidersHorizontal className="mr-2 h-4 w-4" />
-            Advanced Filters
+            {t.advancedFilters}
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="mt-4 rounded-md border p-6">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <div>
-                  <Label htmlFor="price-range">Price Range: ${priceRange[0]} - ${priceRange[1]}</Label>
+                  <Label htmlFor="price-range">{t.priceRange.replace('{min}', String(priceRange[0])).replace('{max}', String(priceRange[1]))}</Label>
                   <Slider
                     id="price-range"
                     min={0}
@@ -123,30 +127,30 @@ function CoursesPageInternal() {
                   />
                 </div>
                 <div>
-                   <Label htmlFor="sort-by">Sort by</Label>
+                   <Label htmlFor="sort-by">{t.sortBy}</Label>
                    <Select value={sortBy} onValueChange={setSortBy}>
                     <SelectTrigger id="sort-by" className="w-full mt-2">
-                      <SelectValue placeholder="Sort by" />
+                      <SelectValue placeholder={t.sortBy} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="relevance">Relevance</SelectItem>
-                      <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                      <SelectItem value="price-desc">Price: High to Low</SelectItem>
-                      <SelectItem value="newest">Newest</SelectItem>
+                      <SelectItem value="relevance">{t.relevance}</SelectItem>
+                      <SelectItem value="price-asc">{t.priceAsc}</SelectItem>
+                      <SelectItem value="price-desc">{t.priceDesc}</SelectItem>
+                      <SelectItem value="newest">{t.newest}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                   <Label htmlFor="skill-level">Skill Level</Label>
+                   <Label htmlFor="skill-level">{t.skillLevel}</Label>
                    <Select value={skillLevel} onValueChange={setSkillLevel}>
                     <SelectTrigger id="skill-level" className="w-full mt-2">
-                      <SelectValue placeholder="Skill Level" />
+                      <SelectValue placeholder={t.skillLevel} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Levels</SelectItem>
-                      <SelectItem value="Beginner">Beginner</SelectItem>
-                      <SelectItem value="Intermediate">Intermediate</SelectItem>
-                      <SelectItem value="Advanced">Advanced</SelectItem>
+                      <SelectItem value="all">{t.allLevels}</SelectItem>
+                      <SelectItem value="Beginner">{t.beginner}</SelectItem>
+                      <SelectItem value="Intermediate">{t.intermediate}</SelectItem>
+                      <SelectItem value="Advanced">{t.advanced}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -160,10 +164,10 @@ function CoursesPageInternal() {
             Array.from({ length: 6 }).map((_, index) => <CourseCardSkeleton key={index} />)
         ) : filteredAndSortedCourses.length > 0 ? (
             filteredAndSortedCourses.map((course) => (
-                <ContentCard key={course.id} content={course} />
+                <ContentCard key={course.id} content={course} t={t} />
             ))
         ) : (
-            <p className="text-muted-foreground col-span-full text-center">No courses found matching your criteria.</p>
+            <p className="text-muted-foreground col-span-full text-center">{t.noCoursesFound}</p>
         )}
       </div>
     </div>
@@ -178,7 +182,7 @@ export default function CoursesPage() {
     )
 }
 
-function ContentCard({ content }: { content: Course }) {
+function ContentCard({ content, t }: { content: Course, t: typeof translations['en'] }) {
   return (
     <Card className="overflow-hidden transition-all hover:shadow-lg">
         <div className="relative aspect-video">
@@ -195,7 +199,7 @@ function ContentCard({ content }: { content: Course }) {
         </div>
       <CardContent className="p-4">
         <h3 className="font-semibold text-lg truncate">{content.title}</h3>
-        <p className="text-sm text-muted-foreground">By {content.author}</p>
+        <p className="text-sm text-muted-foreground">{t.by.replace('{author}', content.author)}</p>
         <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{content.description}</p>
         <div className="mt-4 flex items-center justify-between">
             <p className="text-lg font-bold">
@@ -203,7 +207,7 @@ function ContentCard({ content }: { content: Course }) {
             </p>
             <Button variant="outline" size="sm">
                 <ShoppingCart className="mr-2 h-4 w-4" />
-                Purchase
+                {t.purchase}
             </Button>
         </div>
       </CardContent>
@@ -228,3 +232,5 @@ function CourseCardSkeleton() {
         </Card>
     )
 }
+
+    

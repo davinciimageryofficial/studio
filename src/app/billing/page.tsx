@@ -27,6 +27,9 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useLanguage } from "@/context/language-context";
+import { ClientOnly } from "@/components/layout/client-only";
+import { translations } from "@/lib/translations";
 
 
 const VisaIcon = () => (
@@ -260,10 +263,12 @@ function UpgradeDialog({ plan, paymentMethods, onUpgrade }: { plan: any, payment
 }
 
 
-export default function BillingPage() {
+function BillingPageInternal() {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') || "subscription";
   const { toast } = useToast();
+  const { language } = useLanguage();
+  const t = translations[language];
 
   const invoices = [
     { id: "INV-2024-001", date: "July 1, 2024", amount: "$99.00", status: "Paid" },
@@ -352,17 +357,17 @@ export default function BillingPage() {
   return (
     <div className="p-4 sm:p-6 md:p-8 h-full">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Billing & Donations</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t.billingTitle}</h1>
         <p className="mt-1 text-muted-foreground">
-          Manage your subscription, make a donation, and view your billing history.
+          {t.billingDescription}
         </p>
       </header>
 
       <Tabs defaultValue={initialTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 max-w-lg bg-black text-muted-foreground">
-            <TabsTrigger value="subscription">Subscription</TabsTrigger>
-            <TabsTrigger value="referrals">Referrals</TabsTrigger>
-            <TabsTrigger value="donate">Donate</TabsTrigger>
+            <TabsTrigger value="subscription">{t.subscription}</TabsTrigger>
+            <TabsTrigger value="referrals">{t.referrals}</TabsTrigger>
+            <TabsTrigger value="donate">{t.donate}</TabsTrigger>
         </TabsList>
         <TabsContent value="subscription" className="mt-6">
             <div className="grid gap-8 lg:grid-cols-3">
@@ -370,13 +375,13 @@ export default function BillingPage() {
                 {/* Current Plan */}
                 <Card className="bg-primary text-primary-foreground">
                     <CardHeader>
-                    <CardTitle>Current Plan</CardTitle>
-                    <CardDescription className="text-primary-foreground/80">You are currently on the <strong>{currentPlan?.name}</strong> plan.</CardDescription>
+                    <CardTitle>{t.currentPlan}</CardTitle>
+                    <CardDescription className="text-primary-foreground/80" dangerouslySetInnerHTML={{ __html: t.currentPlanDesc.replace('{planName}', currentPlan?.name || '') }} />
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="flex items-baseline gap-2">
                             <span className="text-4xl font-bold">{currentPlan?.price}</span>
-                            <span className="text-primary-foreground/70">/ month</span>
+                            <span className="text-primary-foreground/70">{t.pricePerMonth}</span>
                         </div>
                         <ul className="space-y-2 text-sm text-primary-foreground/80">
                             {currentPlan?.features.map(feature => (
@@ -388,15 +393,15 @@ export default function BillingPage() {
                         </ul>
                     </CardContent>
                     <CardFooter>
-                    <Button variant="secondary">Cancel Subscription</Button>
+                    <Button variant="secondary">{t.cancelSubscription}</Button>
                     </CardFooter>
                 </Card>
 
                 {/* Available Plans */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Available Plans</CardTitle>
-                            <CardDescription>Choose the plan that's right for you.</CardDescription>
+                            <CardTitle>{t.availablePlans}</CardTitle>
+                            <CardDescription>{t.availablePlansDesc}</CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {otherPlans.map(plan => (
@@ -408,7 +413,7 @@ export default function BillingPage() {
                                         </CardTitle>
                                         <div className="flex items-baseline gap-1">
                                             <span className="text-3xl font-bold">{plan.price}</span>
-                                            {plan.price !== 'Custom' && <span className="text-muted-foreground">/ month</span>}
+                                            {plan.price !== 'Custom' && <span className="text-muted-foreground">{t.pricePerMonth}</span>}
                                         </div>
                                     </CardHeader>
                                     <CardContent className="flex-1 space-y-3">
@@ -420,14 +425,14 @@ export default function BillingPage() {
                                         {plan.price === 'Custom' ? (
                                             <Dialog>
                                                 <DialogTrigger asChild>
-                                                    <Button className="w-full" variant="outline">Contact Sales</Button>
+                                                    <Button className="w-full" variant="outline">{t.contactSales}</Button>
                                                 </DialogTrigger>
                                                 <ContactSalesDialog />
                                             </Dialog>
                                         ) : (
                                             <Dialog>
                                                 <DialogTrigger asChild>
-                                                    <Button className="w-full">Upgrade</Button>
+                                                    <Button className="w-full">{t.upgrade}</Button>
                                                 </DialogTrigger>
                                                 <UpgradeDialog 
                                                     plan={plan} 
@@ -445,8 +450,8 @@ export default function BillingPage() {
                 {/* Payment Method */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Payment Methods</CardTitle>
-                        <CardDescription>Manage your saved payment options.</CardDescription>
+                        <CardTitle>{t.paymentMethods}</CardTitle>
+                        <CardDescription>{t.paymentMethodsDesc}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {paymentMethods.map((method, index) => (
@@ -461,7 +466,7 @@ export default function BillingPage() {
                                     </p>
                                 </div>
                                 {method.isDefault && <Badge variant="secondary">Default</Badge>}
-                                <Button variant="outline">Update</Button>
+                                <Button variant="outline">{t.update}</Button>
                             </div>
                         ))}
                     </CardContent>
@@ -470,7 +475,7 @@ export default function BillingPage() {
                             <DialogTrigger asChild>
                                 <Button variant="outline">
                                     <PlusCircle className="mr-2 h-4 w-4" />
-                                    Add Payment Method
+                                    {t.addPaymentMethod}
                                 </Button>
                             </DialogTrigger>
                             <AddPaymentMethodDialog />
@@ -483,8 +488,8 @@ export default function BillingPage() {
                 <div className="space-y-8">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Billing History</CardTitle>
-                            <CardDescription>View and download your past invoices.</CardDescription>
+                            <CardTitle>{t.billingHistory}</CardTitle>
+                            <CardDescription>{t.billingHistoryDesc}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {invoices.map((invoice, index) => (
@@ -504,7 +509,7 @@ export default function BillingPage() {
                         </CardContent>
                         <CardFooter>
                             <Button variant="outline" className="w-full">
-                                View All Invoices
+                                {t.viewAllInvoices}
                             </Button>
                         </CardFooter>
                     </Card>
@@ -518,24 +523,24 @@ export default function BillingPage() {
                         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
                             <Gift className="h-6 w-6 text-primary" />
                         </div>
-                        <CardTitle>Refer a Friend, Get Rewarded</CardTitle>
+                        <CardTitle>{t.referFriendTitleBilling}</CardTitle>
                         <CardDescription>
-                            Share your link with fellow freelancers. You'll both get a reward.
+                           {t.referFriendDescBilling}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex-1 space-y-6">
                         <div className="rounded-lg border bg-secondary/50 p-6 text-center">
-                            <p className="text-muted-foreground">Give friends 25% off their first month, and you'll get</p>
-                            <p className="text-3xl font-bold text-primary">25% off</p>
-                            <p className="text-muted-foreground">your next month's subscription for each successful referral.</p>
+                            <p className="text-muted-foreground">{t.referralRewardGive}</p>
+                            <p className="text-3xl font-bold text-primary">{t.referralRewardGet}</p>
+                            <p className="text-muted-foreground">{t.referralRewardDetail}</p>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="referral-link">Your Unique Referral Link</Label>
+                            <Label htmlFor="referral-link">{t.yourReferralLink}</Label>
                             <div className="flex gap-2">
                                 <Input id="referral-link" readOnly value="https://sentry.app/join?ref=chrisp123" />
                                 <Button onClick={handleCopyReferral}>
                                     <Copy className="mr-2 h-4 w-4" />
-                                    Copy
+                                    {t.copy}
                                 </Button>
                             </div>
                         </div>
@@ -543,17 +548,17 @@ export default function BillingPage() {
                  </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle>Referral History</CardTitle>
-                        <CardDescription>Track the status of your referrals and rewards earned.</CardDescription>
+                        <CardTitle>{t.referralHistory}</CardTitle>
+                        <CardDescription>{t.referralHistoryDesc}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Name</TableHead>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Reward</TableHead>
+                                    <TableHead>{t.referralName}</TableHead>
+                                    <TableHead>{t.referralDate}</TableHead>
+                                    <TableHead>{t.referralStatus}</TableHead>
+                                    <TableHead>{t.referralReward}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -584,10 +589,9 @@ export default function BillingPage() {
                     <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
                         <Heart className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle>Support Sentry</CardTitle>
+                    <CardTitle>{t.supportSentry}</CardTitle>
                     <CardDescription>
-                        Your contributions help us build a better platform for everyone.
-                        Thank you for your generosity!
+                        {t.supportSentryDesc}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -597,7 +601,7 @@ export default function BillingPage() {
                     <Button size="lg" className="w-full" asChild>
                         <Link href="/donate">
                              <Gift className="mr-2 h-5 w-5" />
-                            Go to Donation Page
+                            {t.goToDonationPage}
                         </Link>
                     </Button>
                 </CardContent>
@@ -607,8 +611,13 @@ export default function BillingPage() {
     </div>
   );
 }
-    
-    
 
+export default function BillingPage() {
+    return (
+        <ClientOnly>
+            <BillingPageInternal />
+        </ClientOnly>
+    )
+}
 
     
