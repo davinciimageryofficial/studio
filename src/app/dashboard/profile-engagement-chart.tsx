@@ -36,7 +36,7 @@ export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEn
         connections: Math.round(item.connections * scale),
         searches: Math.round(item.searches * scale),
         likes: Math.round(item.likes * scale),
-        comments: Math.round(item.comments * scale),
+        skillSyncNetMatches: Math.round(item.skillSyncNetMatches * scale),
     }));
   }, [timeline, scale, dataMap]);
 
@@ -140,7 +140,7 @@ export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEn
             <ChartComponent yAxisId="left" type="monotone" dataKey="views" name="Profile Views" fill="hsl(var(--primary))" stroke="hsl(var(--primary))" />
             <Line yAxisId="left" type="monotone" dataKey="connections" name="New Connections" stroke="hsl(var(--chart-2))" />
             <Line yAxisId="left" type="monotone" dataKey="likes" name="Post Likes" stroke="hsl(var(--chart-4))" />
-            <Line yAxisId="left" type="monotone" dataKey="comments" name="Post Comments" stroke="hsl(var(--chart-5))" />
+            <Line yAxisId="left" type="monotone" dataKey="skillSyncNetMatches" name="Skill Sync Net Matches" stroke="hsl(var(--destructive))" />
             <ChartComponent yAxisId="right" type="monotone" dataKey="searches" name="Search Appearances" fill="url(#lines)" stroke="hsl(var(--chart-1))" />
           </ComposedChart>
         </ResponsiveContainer>
