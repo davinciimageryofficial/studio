@@ -73,7 +73,10 @@ export default function SignupPage() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuItem>English</DropdownMenuItem>
-                    <DropdownMenuItem>Español</DropdownMenuItem>
+                    <DropdownMenuItem>Español (Spanish)</DropdownMenuItem>
+                    <DropdownMenuItem>Français (French)</DropdownMenuItem>
+                    <DropdownMenuItem>Deutsch (German)</DropdownMenuItem>
+                    <DropdownMenuItem>日本語 (Japanese)</DropdownMenuItem>
                     <DropdownMenuItem>简体中文 (Mandarin)</DropdownMenuItem>
                     <DropdownMenuItem>ChiShona</DropdownMenuItem>
                 </DropdownMenuContent>
