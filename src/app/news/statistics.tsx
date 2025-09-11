@@ -51,7 +51,7 @@ export function StatisticsView() {
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="mentions" fill="#18181b" />
+              <Bar dataKey="mentions" fill="#18181b" barSize={20} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
