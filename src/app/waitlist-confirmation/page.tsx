@@ -119,7 +119,7 @@ export default function WaitlistConfirmationPage() {
                         )}
                         </div>
                         
-                        <Card className="text-left">
+                        <Card className="text-left border-black">
                             <CardHeader>
                                 <CardTitle className="text-lg">Have an Access Code?</CardTitle>
                                 <CardDescription>Enter your code below to skip the line and get immediate access.</CardDescription>
