@@ -96,6 +96,12 @@ export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEn
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>
           <ComposedChart data={chartData}>
+             <defs>
+                <pattern id="lines" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                    <rect width="8" height="8" fill="hsl(var(--card))" />
+                    <path d="M 0 0 L 0 8" stroke="hsl(var(--chart-1))" strokeWidth="1" />
+                </pattern>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis
               dataKey={dataKey}
@@ -135,7 +141,7 @@ export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEn
             <Line yAxisId="left" type="monotone" dataKey="connections" name="New Connections" stroke="hsl(var(--chart-2))" />
             <Line yAxisId="left" type="monotone" dataKey="likes" name="Post Likes" stroke="hsl(var(--chart-4))" />
             <Line yAxisId="left" type="monotone" dataKey="comments" name="Post Comments" stroke="hsl(var(--chart-5))" />
-            <ChartComponent yAxisId="right" type="monotone" dataKey="searches" name="Search Appearances" fill="hsl(var(--chart-1))" stroke="hsl(var(--chart-1))" />
+            <ChartComponent yAxisId="right" type="monotone" dataKey="searches" name="Search Appearances" fill="url(#lines)" stroke="hsl(var(--chart-1))" />
           </ComposedChart>
         </ResponsiveContainer>
       </CardContent>
