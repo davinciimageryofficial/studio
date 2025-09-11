@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ComposedChart, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, TooltipProps, Bar } from "recharts";
+import { ComposedChart, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, TooltipProps, Bar, Area } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -138,6 +138,18 @@ export function ProfileEngagementChart({ timeline, onTimelineChange, visibleMetr
                     <rect width="4" height="4" fill="hsl(var(--card))" />
                     <path d="M 0 0 L 0 4" stroke="hsl(var(--primary))" strokeWidth="1" />
                 </pattern>
+                <linearGradient id="gradient-searches" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0}/>
+                </linearGradient>
+                 <linearGradient id="gradient-connections" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--chart-2))" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="hsl(var(--chart-2))" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="gradient-likes" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--chart-4))" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="hsl(var(--chart-4))" stopOpacity={0}/>
+                </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis
@@ -160,9 +172,9 @@ export function ProfileEngagementChart({ timeline, onTimelineChange, visibleMetr
             <Tooltip content={<CustomTooltip visibleMetrics={visibleMetrics} />} />
             <Legend wrapperStyle={{ paddingTop: '20px' }} />
             {visibleMetrics.views && <Bar yAxisId="left" dataKey="views" name="Profile Views" fill="url(#lines)" stroke="hsl(var(--primary))" barSize={30} />}
-            {visibleMetrics.connections && <Line yAxisId="left" type="monotone" dataKey="connections" name="New Connections" stroke="hsl(var(--chart-2))" />}
-            {visibleMetrics.searches && <Line yAxisId="left" type="monotone" dataKey="searches" name="Search Appearances" stroke="hsl(var(--chart-1))" />}
-            {visibleMetrics.likes && <Line yAxisId="left" type="monotone" dataKey="likes" name="Post Likes" stroke="hsl(var(--chart-4))" />}
+            {visibleMetrics.connections && <Area yAxisId="left" type="monotone" dataKey="connections" name="New Connections" stroke="hsl(var(--chart-2))" fill="url(#gradient-connections)" />}
+            {visibleMetrics.searches && <Area yAxisId="left" type="monotone" dataKey="searches" name="Search Appearances" stroke="hsl(var(--chart-1))" fill="url(#gradient-searches)" />}
+            {visibleMetrics.likes && <Area yAxisId="left" type="monotone" dataKey="likes" name="Post Likes" stroke="hsl(var(--chart-4))" fill="url(#gradient-likes)" />}
             {visibleMetrics.skillSyncNetMatches && <Line yAxisId="left" type="monotone" dataKey="skillSyncNetMatches" name="Skill Sync Net Matches" stroke="hsl(var(--primary))" strokeDasharray="5 5" />}
           </ComposedChart>
         </ResponsiveContainer>
