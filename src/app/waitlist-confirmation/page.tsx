@@ -20,6 +20,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/context/language-context";
+import { translations } from "@/lib/translations";
 
 type WaitlistData = {
   fullName: string;
@@ -33,6 +35,8 @@ export default function WaitlistConfirmationPage() {
   const [waitlistData, setWaitlistData] = useState<WaitlistData | null>(null);
   const [accessCode, setAccessCode] = useState("");
   const { toast } = useToast();
+  const { language } = useLanguage();
+  const t = translations[language];
 
   useEffect(() => {
     const data = localStorage.getItem("waitlistData");
@@ -51,15 +55,15 @@ export default function WaitlistConfirmationPage() {
     e?.preventDefault();
     if (accessCode === '2004') {
         toast({
-            title: "Access Granted!",
-            description: "Welcome to Sentry! You've skipped the waitlist.",
+            title: t.accessGrantedToastTitle,
+            description: t.accessGrantedToastDesc,
         });
         router.push('/dashboard');
     } else {
         toast({
             variant: "destructive",
-            title: "Invalid Code",
-            description: "The access code you entered is incorrect. Please try again.",
+            title: t.invalidCodeToastTitle,
+            description: t.invalidCodeToastDesc,
         });
     }
   };
@@ -79,32 +83,32 @@ export default function WaitlistConfirmationPage() {
             <div className="w-full">
                  <Card className="w-full max-w-lg mx-auto text-center border-0 shadow-none">
                     <CardHeader className="p-6">
-                        <CardTitle className="text-3xl font-bold tracking-tighter">You're In!</CardTitle>
+                        <CardTitle className="text-3xl font-bold tracking-tighter">{t.confirmationTitle}</CardTitle>
                         <CardDescription className="mt-1 text-lg text-muted-foreground">
-                        Thank you for joining the Sentry waitlist. We've received your information.
+                        {t.confirmationDescription}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="px-6 pb-6 space-y-0">
                         <div className="space-y-3 rounded-lg bg-card p-4 text-left">
-                        <h3 className="font-semibold text-md mb-2">Your Submitted Information:</h3>
+                        <h3 className="font-semibold text-md mb-2">{t.confirmationSubmittedInfo}</h3>
                         <div className="flex items-center gap-4">
                             <User className="h-5 w-5 text-muted-foreground" />
                             <div>
-                            <p className="text-xs text-muted-foreground">Full Name</p>
+                            <p className="text-xs text-muted-foreground">{t.signupFullName}</p>
                             <p className="font-medium text-sm">{waitlistData.fullName}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
                             <Mail className="h-5 w-5 text-muted-foreground" />
                             <div>
-                            <p className="text-xs text-muted-foreground">Email</p>
+                            <p className="text-xs text-muted-foreground">{t.signupEmail}</p>
                             <p className="font-medium text-sm">{waitlistData.email}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
                             <Briefcase className="h-5 w-5 text-muted-foreground" />
                             <div>
-                            <p className="text-xs text-muted-foreground">Profession</p>
+                            <p className="text-xs text-muted-foreground">{t.signupProfession}</p>
                             <p className="font-medium text-sm capitalize">{waitlistData.profession}</p>
                             </div>
                         </div>
@@ -112,8 +116,8 @@ export default function WaitlistConfirmationPage() {
                             <div className="flex items-center gap-4">
                             <Kanban className="h-5 w-5 text-muted-foreground" />
                             <div>
-                                <p className="text-xs text-muted-foreground">Early Access</p>
-                                <p className="font-medium text-sm">You'll be notified about beta testing opportunities!</p>
+                                <p className="text-xs text-muted-foreground">{t.confirmationEarlyAccess}</p>
+                                <p className="font-medium text-sm">{t.confirmationEarlyAccessDesc}</p>
                             </div>
                             </div>
                         )}
@@ -121,48 +125,48 @@ export default function WaitlistConfirmationPage() {
                         
                         <Card className="text-left mt-4">
                             <CardHeader>
-                                <CardTitle className="text-lg">Have an Access Code?</CardTitle>
-                                <CardDescription>Enter your code below to skip the line and get immediate access.</CardDescription>
+                                <CardTitle className="text-lg">{t.confirmationHaveCode}</CardTitle>
+                                <CardDescription>{t.confirmationHaveCodeDesc}</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <form onSubmit={handleAccessCodeSubmit} className="flex gap-2">
                                     <Input 
-                                        placeholder="Enter your access code" 
+                                        placeholder={t.confirmationAccessCodePlaceholder} 
                                         value={accessCode}
                                         onChange={(e) => setAccessCode(e.target.value)}
                                         className="border-black"
                                     />
                                     <Button type="submit" className="bg-black hover:bg-gray-800">
                                         <Rocket className="mr-2 h-4 w-4" />
-                                        Skip Waitlist
+                                        {t.confirmationSkipWaitlist}
                                     </Button>
                                 </form>
                             </CardContent>
                         </Card>
 
-                        <p className="text-xs text-muted-foreground mt-4">We'll send an email to <span className="font-medium">{waitlistData.email}</span> when it's your turn to join.</p>
+                        <p className="text-xs text-muted-foreground mt-4">{t.confirmationEmailNotice.replace('{email}', waitlistData.email)}</p>
                         
                         <Dialog>
                         <DialogTrigger asChild>
-                            <Button className="w-full bg-black hover:bg-gray-800 text-primary-foreground mt-4" size="lg">Back to Homepage</Button>
+                            <Button className="w-full bg-black hover:bg-gray-800 text-primary-foreground mt-4" size="lg">{t.confirmationBackToHome}</Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader className="text-center">
                             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
                                 <Heart className="h-6 w-6 text-primary" />
                             </div>
-                            <DialogTitle className="text-2xl">Support Sentry's Development</DialogTitle>
+                            <DialogTitle className="text-2xl">{t.confirmationSupportTitle}</DialogTitle>
                             <DialogDescription className="text-base text-muted-foreground">
-                                Sentry is built for the community, by the community. Your support helps us innovate faster and build the best platform for professionals like you.
+                                {t.confirmationSupportDesc}
                             </DialogDescription>
                             </DialogHeader>
                             <DialogFooter className="flex-col sm:flex-col sm:space-x-0 gap-2">
                             <Button size="lg" onClick={() => handleNavigation('/donate')}>
-                                Support the Platform
+                                {t.confirmationSupportButton}
                             </Button>
                             <DialogClose asChild>
                                 <Button type="button" variant="ghost" size="lg" onClick={() => handleNavigation('/')}>
-                                Go to Homepage
+                                {t.confirmationGoHomeButton}
                                 </Button>
                             </DialogClose>
                             </DialogFooter>

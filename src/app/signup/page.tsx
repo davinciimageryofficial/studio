@@ -16,6 +16,7 @@ import { ClientOnly } from "@/components/layout/client-only";
 import { Kanban, Languages } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useLanguage } from "@/context/language-context";
+import { translations } from "@/lib/translations";
 
 const signupSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters."),
@@ -36,6 +37,8 @@ export default function SignupPage() {
   const { toast } = useToast();
   const router = useRouter();
   const { language, setLanguage } = useLanguage();
+  const t = translations[language];
+
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -55,8 +58,8 @@ export default function SignupPage() {
     localStorage.setItem("waitlistData", JSON.stringify(data));
     
     toast({
-      title: "You're on the list!",
-      description: "Thanks for joining the Sentry waitlist. We'll be in touch soon.",
+      title: t.signupSuccessToastTitle,
+      description: t.signupSuccessToastDesc,
     });
 
     router.push('/waitlist-confirmation');
@@ -163,9 +166,9 @@ export default function SignupPage() {
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
                   <Kanban className="size-7 text-primary" />
                 </div>
-                <CardTitle className="text-3xl font-bold tracking-tighter">Join the Sentry Waitlist</CardTitle>
+                <CardTitle className="text-3xl font-bold tracking-tighter">{t.signupTitle}</CardTitle>
                 <CardDescription className="mt-2 text-muted-foreground">
-                  Get ready to connect, collaborate, and create with the best talent in the industry.
+                  {t.signupDescription}
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
@@ -176,9 +179,9 @@ export default function SignupPage() {
                       name="fullName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Full Name</FormLabel>
+                          <FormLabel>{t.signupFullName}</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="e.g., Jane Doe" />
+                            <Input {...field} placeholder={t.signupFullNamePlaceholder} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -189,9 +192,9 @@ export default function SignupPage() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email Address</FormLabel>
+                          <FormLabel>{t.signupEmail}</FormLabel>
                           <FormControl>
-                            <Input type="email" {...field} placeholder="e.g., you@company.com" />
+                            <Input type="email" {...field} placeholder={t.signupEmailPlaceholder} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -202,16 +205,16 @@ export default function SignupPage() {
                       name="userType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>User Category</FormLabel>
+                          <FormLabel>{t.signupUserCategory}</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select an option" />
+                                <SelectValue placeholder={t.signupUserCategoryPlaceholder} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="business">Business (hiring for projects)</SelectItem>
-                              <SelectItem value="freelancer">Freelancer (looking for work)</SelectItem>
+                              <SelectItem value="business">{t.signupUserCategoryBusiness}</SelectItem>
+                              <SelectItem value="freelancer">{t.signupUserCategoryFreelancer}</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -223,20 +226,20 @@ export default function SignupPage() {
                       name="profession"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Primary Work Category</FormLabel>
+                          <FormLabel>{t.signupProfession}</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select your main field of work" />
+                                <SelectValue placeholder={t.signupProfessionPlaceholder} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="design">Design & Creative</SelectItem>
-                              <SelectItem value="development">Development & IT</SelectItem>
-                              <SelectItem value="writing">Writing & Content Creation</SelectItem>
-                              <SelectItem value="marketing">Marketing & Sales</SelectItem>
-                              <SelectItem value="business">Business & Consulting</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
+                              <SelectItem value="design">{t.signupProfessionDesign}</SelectItem>
+                              <SelectItem value="development">{t.signupProfessionDev}</SelectItem>
+                              <SelectItem value="writing">{t.signupProfessionWriting}</SelectItem>
+                              <SelectItem value="marketing">{t.signupProfessionMarketing}</SelectItem>
+                              <SelectItem value="business">{t.signupProfessionBusiness}</SelectItem>
+                              <SelectItem value="other">{t.signupProfessionOther}</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -248,9 +251,9 @@ export default function SignupPage() {
                       name="niche"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Your Niche / Role</FormLabel>
+                          <FormLabel>{t.signupNiche}</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="e.g., UI/UX Designer, React Developer, SEO Specialist" />
+                            <Input {...field} placeholder={t.signupNichePlaceholder} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -269,13 +272,13 @@ export default function SignupPage() {
                           </FormControl>
                           <div className="space-y-1 leading-none">
                             <FormLabel>
-                              Sign up for early access to new features
+                              {t.signupEarlyAccess}
                             </FormLabel>
                           </div>
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" className="w-full" size="lg">Join Waitlist</Button>
+                    <Button type="submit" className="w-full" size="lg">{t.joinWaitlist}</Button>
                   </form>
                 </Form>
               </CardContent>
