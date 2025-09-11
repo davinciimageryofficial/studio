@@ -32,7 +32,7 @@ export function OperationalCharts() {
     profit: true,
     leads: true,
     projectsWon: true,
-    portfolioUpdates: true,
+    portfolioUpdates: false,
   });
 
   const dataMap = {
@@ -135,11 +135,11 @@ export function OperationalCharts() {
                   return value;
               }} />
               <Legend />
-              {visibleMetrics.revenue && <Line yAxisId="left" type="monotone" dataKey="revenue" name="Revenue" stroke="hsl(var(--chart-2))" strokeWidth={2} />}
+              {visibleMetrics.revenue && <Line yAxisId="left" type="monotone" dataKey="revenue" name="Revenue" stroke="hsl(var(--chart-1))" strokeWidth={3} />}
               {visibleMetrics.expenses && <Area yAxisId="left" type="monotone" dataKey="expenses" name="Expenses" stroke="hsl(var(--destructive))" fillOpacity={1} fill="url(#gradient-expenses)" />}
-              {visibleMetrics.profit && <Line yAxisId="left" type="monotone" dataKey="profit" name="Profit" stroke="hsl(var(--chart-1))" strokeWidth={3} />}
+              {visibleMetrics.profit && <Line yAxisId="left" type="monotone" dataKey="profit" name="Profit" stroke="hsl(var(--chart-1))" strokeWidth={2} strokeDasharray="5 5" />}
               {visibleMetrics.leads && <Line yAxisId="right" type="monotone" dataKey="leads" name="New Leads" stroke="hsl(var(--chart-3))" strokeWidth={2} />}
-              {visibleMetrics.projectsWon && <Line yAxisId="right" type="monotone" dataKey="projectsWon" name="Projects Won" stroke="hsl(var(--chart-1))" strokeWidth={2} />}
+              {visibleMetrics.projectsWon && <Line yAxisId="right" type="monotone" dataKey="projectsWon" name="Projects Won" stroke="#06b6d4" strokeWidth={2} />}
               {visibleMetrics.portfolioUpdates && <Line yAxisId="right" type="monotone" dataKey="portfolioUpdates" name="Portfolio Updates" stroke="hsl(var(--chart-4))" strokeWidth={2} />}
             </ComposedChart>
           </ResponsiveContainer>
