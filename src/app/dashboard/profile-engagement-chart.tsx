@@ -105,7 +105,7 @@ export function ProfileEngagementChart() {
             <Legend wrapperStyle={{ paddingTop: '20px' }} />
             <ChartComponent yAxisId="left" type="monotone" dataKey="views" name="Profile Views" fill="hsl(var(--primary))" stroke="hsl(var(--primary))" />
             <Line yAxisId="left" type="monotone" dataKey="connections" name="New Connections" stroke="hsl(var(--chart-2))" />
-            <ChartComponent yAxisId="right" type="monotone" dataKey="searches" name="Search Appearances" fill="hsl(var(--chart-4))" stroke="hsl(var(--chart-4))" />
+            <ChartComponent yAxisId="right" type="monotone" dataKey="searches" name="Search Appearances" fill="hsl(var(--chart-2))" stroke="hsl(var(--chart-2))" />
           </ComposedChart>
         </ResponsiveContainer>
       </CardContent>
