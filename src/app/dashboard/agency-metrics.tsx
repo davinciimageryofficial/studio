@@ -58,7 +58,7 @@ export function AgencyMetrics() {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {Object.entries(agencyMetricsData).map(([groupTitle, groupData]) => (
-                <Card key={groupTitle} className="flex flex-col">
+                <Card key={groupTitle} className={cn("flex flex-col", { "border-black": groupData.title === "Client & Financial Health" })}>
                     <CardHeader>
                         <CardTitle className="text-lg font-medium">{groupData.title}</CardTitle>
                     </CardHeader>
