@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { AppLayout } from "@/components/layout/app-layout";
 import { Providers } from "./providers";
+import { ClientOnly } from "@/components/layout/client-only";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const michroma = Michroma({
@@ -28,7 +29,9 @@ export default function RootLayout({
             <AppLayout>
               {children}
             </AppLayout>
-            <Toaster />
+            <ClientOnly>
+                <Toaster />
+            </ClientOnly>
         </Providers>
       </body>
     </html>
