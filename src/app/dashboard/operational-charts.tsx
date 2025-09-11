@@ -1,14 +1,14 @@
 
 "use client";
 
-import { Bar, BarChart, Line, LineChart, Pie, PieChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, AreaChart, Area, Funnel, FunnelChart, LabelList, Cell } from "recharts";
+import { Bar, BarChart, Line, LineChart, Pie, PieChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, AreaChart, Area, Funnel, FunnelChart, LabelList, Cell, ComposedChart } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { timeManagementData, financialHealthData, clientManagementData, qualityPerformanceData } from "@/lib/placeholder-data";
 import { TrendingUp, Wallet, Users, Award } from "lucide-react";
 
 export function OperationalCharts() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+    <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
       {/* Time Management */}
       <Card>
         <CardHeader>
@@ -55,19 +55,24 @@ export function OperationalCharts() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><Users className="h-5 w-5" />Client Management</CardTitle>
-          <CardDescription>Lead conversion funnel.</CardDescription>
+          <CardDescription>Lead conversion funnel and project value analysis.</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
-             <FunnelChart>
-                <Tooltip />
-                <Funnel dataKey="value" data={clientManagementData.leadConversion} isAnimationActive>
-                    <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
-                    {clientManagementData.leadConversion.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={`hsl(var(--primary), ${1 - index * 0.2})`} />
-                    ))}
-                </Funnel>
-            </FunnelChart>
+            <ComposedChart data={clientManagementData.leadConversion}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="stage" />
+              <YAxis yAxisId="left" label={{ value: 'Leads', angle: -90, position: 'insideLeft' }} />
+              <YAxis yAxisId="right" orientation="right" unit="$" label={{ value: 'Avg. Project Value', angle: -90, position: 'insideRight' }} />
+              <Tooltip />
+              <Legend />
+              <Bar yAxisId="left" dataKey="value" name="Leads" fill="hsl(var(--primary), 0.7)">
+                  {clientManagementData.leadConversion.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={`hsl(var(--primary), ${1 - index * 0.25})`} />
+                  ))}
+              </Bar>
+              <Line yAxisId="right" type="monotone" dataKey="avgProjectValue" name="Avg. Project Value" stroke="hsl(var(--chart-2))" strokeWidth={2} />
+            </ComposedChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
