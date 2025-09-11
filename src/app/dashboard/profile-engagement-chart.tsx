@@ -19,7 +19,6 @@ interface ProfileEngagementChartProps {
 }
 
 export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEngagementChartProps) {
-  const [chartType, setChartType] = useState<"bar" | "line" | "area">("line");
   const [scale, setScale] = useState(1);
   const [tempScale, setTempScale] = useState(1);
   
@@ -39,12 +38,6 @@ export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEn
         skillSyncNetMatches: Math.round(item.skillSyncNetMatches * scale),
     }));
   }, [timeline, scale, dataMap]);
-
-  const ChartComponent = {
-    bar: Bar,
-    line: Line,
-    area: Area,
-  }[chartType];
 
   const dataKey = {
       daily: 'day',
@@ -84,13 +77,6 @@ export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEn
                     <TabsTrigger value="monthly">Monthly</TabsTrigger>
                 </TabsList>
             </Tabs>
-          <Tabs defaultValue={chartType} onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
-            <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
-              <TabsTrigger value="bar">Bar</TabsTrigger>
-              <TabsTrigger value="line">Line</TabsTrigger>
-              <TabsTrigger value="area">Area</TabsTrigger>
-            </TabsList>
-          </Tabs>
         </div>
       </CardHeader>
       <CardContent>
@@ -137,11 +123,11 @@ export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEn
               }}
             />
             <Legend wrapperStyle={{ paddingTop: '20px' }} />
-            <ChartComponent yAxisId="left" type="monotone" dataKey="views" name="Profile Views" fill="hsl(var(--primary))" stroke="hsl(var(--primary))" />
+            <Line yAxisId="left" type="monotone" dataKey="views" name="Profile Views" stroke="hsl(var(--primary))" />
             <Line yAxisId="left" type="monotone" dataKey="connections" name="New Connections" stroke="hsl(var(--chart-2))" />
             <Line yAxisId="left" type="monotone" dataKey="likes" name="Post Likes" stroke="hsl(var(--chart-4))" />
             <Line yAxisId="left" type="monotone" dataKey="skillSyncNetMatches" name="Skill Sync Net Matches" stroke="hsl(var(--destructive))" />
-            <ChartComponent yAxisId="right" type="monotone" dataKey="searches" name="Search Appearances" fill="url(#lines)" stroke="hsl(var(--chart-1))" />
+            <Line yAxisId="right" type="monotone" dataKey="searches" name="Search Appearances" stroke="hsl(var(--chart-1))" />
           </ComposedChart>
         </ResponsiveContainer>
       </CardContent>
@@ -150,3 +136,5 @@ export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEn
 }
 
   
+
+    

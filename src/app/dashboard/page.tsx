@@ -386,13 +386,6 @@ function DashboardPageInternal() {
                     </div>
                   </div>
                 
-                <div className="mt-8">
-                    <ProfileEngagementChart 
-                        timeline={engagementTimeline}
-                        onTimelineChange={setEngagementTimeline}
-                    />
-                </div>
-
                 <Card className="mt-8">
                     <CardHeader className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
@@ -450,6 +443,13 @@ function DashboardPageInternal() {
                         <ProductivityChart timeline={productivityTimeline} visibleMetrics={visibleMetrics} scale={productivityChartScale} />
                     </CardContent>
                 </Card>
+
+                <div className="mt-8">
+                    <ProfileEngagementChart 
+                        timeline={engagementTimeline}
+                        onTimelineChange={setEngagementTimeline}
+                    />
+                </div>
 
               <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -635,3 +635,5 @@ export default function DashboardPage() {
 }
 
   
+
+    
