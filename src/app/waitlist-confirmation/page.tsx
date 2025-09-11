@@ -84,7 +84,7 @@ export default function WaitlistConfirmationPage() {
                         Thank you for joining the Sentry waitlist. We've received your information.
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="px-6 pb-6 space-y-2">
+                    <CardContent className="px-6 pb-6 space-y-0">
                         <div className="space-y-3 rounded-lg bg-card p-4 text-left">
                         <h3 className="font-semibold text-md mb-2">Your Submitted Information:</h3>
                         <div className="flex items-center gap-4">
@@ -119,7 +119,7 @@ export default function WaitlistConfirmationPage() {
                         )}
                         </div>
                         
-                        <Card className="text-left border-black">
+                        <Card className="text-left mt-4">
                             <CardHeader>
                                 <CardTitle className="text-lg">Have an Access Code?</CardTitle>
                                 <CardDescription>Enter your code below to skip the line and get immediate access.</CardDescription>
@@ -140,11 +140,11 @@ export default function WaitlistConfirmationPage() {
                             </CardContent>
                         </Card>
 
-                        <p className="text-xs text-muted-foreground">We'll send an email to <span className="font-medium">{waitlistData.email}</span> when it's your turn to join.</p>
+                        <p className="text-xs text-muted-foreground mt-4">We'll send an email to <span className="font-medium">{waitlistData.email}</span> when it's your turn to join.</p>
                         
                         <Dialog>
                         <DialogTrigger asChild>
-                            <Button className="w-full bg-black hover:bg-gray-800 text-primary-foreground" size="lg">Back to Homepage</Button>
+                            <Button className="w-full bg-black hover:bg-gray-800 text-primary-foreground mt-4" size="lg">Back to Homepage</Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader className="text-center">
