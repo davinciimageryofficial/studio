@@ -4,13 +4,25 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { agencyMetricsData } from "@/lib/placeholder-data";
 import { cn } from "@/lib/utils";
-import { ArrowDown, ArrowUp, Minus } from "lucide-react";
+import { ArrowDown, ArrowUp, Minus, Briefcase, DollarSign, Award, Users, TrendingUp, Workflow } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 type Metric = {
     name: string;
     value: string;
     change: string;
     trend: 'positive' | 'negative' | 'neutral';
+};
+
+type MetricCategory = {
+    title: string;
+    icon: React.ReactNode;
+    metrics: Metric[];
+};
+
+type MetricGroup = {
+    title: string;
+    categories: MetricCategory[];
 };
 
 const trendIcons = {
@@ -25,44 +37,52 @@ const trendColors = {
     neutral: "text-muted-foreground",
 };
 
-function MetricCard({ title, metrics }: { title: string; metrics: Metric[] }) {
+function MetricDisplay({ metric }: { metric: Metric }) {
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="text-lg font-medium">{title}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                {metrics.map((metric) => (
-                    <div key={metric.name}>
-                        <div className="flex justify-between items-baseline">
-                            <p className="text-sm text-muted-foreground">{metric.name}</p>
-                            {metric.change && (
-                                <div className={cn("flex items-center text-sm font-semibold", trendColors[metric.trend])}>
-                                    {trendIcons[metric.trend]}
-                                    <span>{metric.change}</span>
-                                </div>
-                            )}
-                        </div>
-                        <p className="text-2xl font-bold">{metric.value}</p>
+        <div className="flex justify-between items-center py-2">
+            <p className="text-sm text-muted-foreground">{metric.name}</p>
+            <div className="flex items-center gap-4">
+                <p className="text-sm font-semibold">{metric.value}</p>
+                {metric.change && (
+                    <div className={cn("flex items-center text-sm font-semibold w-16 justify-end", trendColors[metric.trend])}>
+                        {trendIcons[metric.trend]}
+                        <span>{metric.change}</span>
                     </div>
-                ))}
-            </CardContent>
-        </Card>
-    );
+                )}
+            </div>
+        </div>
+    )
 }
 
 export function AgencyMetrics() {
-    const { efficiency, productivity, financial, quality, customer, employee, process } = agencyMetricsData;
-
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <MetricCard title="Efficiency Metrics" metrics={efficiency} />
-            <MetricCard title="Productivity Metrics" metrics={productivity} />
-            <MetricCard title="Financial Metrics" metrics={financial} />
-            <MetricCard title="Quality Metrics" metrics={quality} />
-            <MetricCard title="Customer & Client Metrics" metrics={customer} />
-            <MetricCard title="Employee Performance" metrics={employee} />
-            <MetricCard title="Process & Workflow" metrics={process} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {Object.entries(agencyMetricsData).map(([groupTitle, groupData]) => (
+                <Card key={groupTitle} className="flex flex-col">
+                    <CardHeader>
+                        <CardTitle className="text-lg font-medium">{groupData.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                        <Accordion type="multiple" defaultValue={groupData.categories.map(c => c.title)}>
+                            {groupData.categories.map((category) => (
+                                <AccordionItem key={category.title} value={category.title}>
+                                    <AccordionTrigger>
+                                        <div className="flex items-center gap-3">
+                                            {category.icon}
+                                            <span className="font-semibold">{category.title}</span>
+                                        </div>
+                                    </AccordionTrigger>
+                                    <AccordionContent className="divide-y">
+                                        {category.metrics.map((metric) => (
+                                            <MetricDisplay key={metric.name} metric={metric} />
+                                        ))}
+                                    </AccordionContent>
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
+                    </CardContent>
+                </Card>
+            ))}
         </div>
     );
 }

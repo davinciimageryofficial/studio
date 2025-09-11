@@ -1,4 +1,7 @@
 
+import { Briefcase, DollarSign, Award, Users, TrendingUp, Workflow } from "lucide-react";
+import React from "react";
+
 export type PortfolioItem = {
   title: string;
   description: string;
@@ -769,46 +772,73 @@ export const dailyProductivityData = [
 ];
 
 export const agencyMetricsData = {
-  efficiency: [
-    { name: "Project Turnaround Time", value: "12.5 days", change: "-8%", trend: "positive" as const },
-    { name: "Resource Utilization Rate", value: "82%", change: "+3%", trend: "positive" as const },
-    { name: "Cycle Time (Design Phase)", value: "3.2 days", change: "-10%", trend: "positive" as const },
-    { name: "Task Completion Rate", value: "94%", change: "+1%", trend: "neutral" as const },
-  ],
-  productivity: [
-    { name: "Total Billable Hours (Month)", value: "482 hrs", change: "+15%", trend: "positive" as const },
-    { name: "Output per Employee", value: "3.1 Projects", change: "+0.2", trend: "positive" as const },
-    { name: "Work-in-Progress (WIP) Limit", value: "10 / 12 projects", change: "", trend: "neutral" as const },
-  ],
-  financial: [
-    { name: "Profit Margin", value: "28%", change: "+2%", trend: "positive" as const },
-    { name: "Revenue per Employee", value: "$12,850", change: "+5%", trend: "positive" as const },
-    { name: "Avg. Cost per Project", value: "$4,200", change: "-3%", trend: "positive" as const },
-    { name: "Client Retention Rate", value: "88%", change: "-1%", trend: "negative" as const },
-  ],
-  quality: [
-    { name: "Error Rate (Post-Launch)", value: "1.2%", change: "-0.5%", trend: "positive" as const },
-    { name: "Client Satisfaction (CSAT)", value: "4.7 / 5.0", change: "+0.1", trend: "positive" as const },
-    { name: "Net Promoter Score (NPS)", value: "52", change: "+5", trend: "positive" as const },
-    { name: "Deliverable Rejection Rate", value: "4%", change: "0%", trend: "neutral" as const },
-  ],
-  customer: [
-    { name: "Client Acquisition Cost (CAC)", value: "$1,500", change: "+10%", trend: "negative" as const },
-    { name: "Client Lifetime Value (CLV)", value: "$45,000", change: "+8%", trend: "positive" as const },
-    { name: "Avg. Response Time", value: "3.2 hours", change: "-15%", trend: "positive" as const },
-    { name: "Client Churn Rate (Quarterly)", value: "5%", change: "+2%", trend: "negative" as const },
-  ],
-  employee: [
-    { name: "Employee Satisfaction", value: "8.9 / 10", change: "+0.3", trend: "positive" as const },
-    { name: "Training Completion Rate", value: "92%", change: "+5%", trend: "positive" as const },
-    { name: "Absenteeism Rate", value: "1.8%", change: "-0.2%", trend: "positive" as const },
-  ],
-  process: [
-    { name: "On-Time Delivery Rate", value: "96%", change: "+2%", trend: "positive" as const },
-    { name: "Workflow Bottlenecks (Avg. Wait)", value: "8 hours", change: "-12%", trend: "positive" as const },
-    { name: "Automation Rate", value: "35%", change: "+10%", trend: "positive" as const },
-  ],
+  operationalExcellence: {
+    title: "Operational Excellence",
+    categories: [
+      {
+        title: "Efficiency",
+        icon: React.createElement(TrendingUp, { className: "h-5 w-5" }),
+        metrics: [
+          { name: "Project Turnaround Time", value: "12.5 days", change: "-8%", trend: "positive" as const },
+          { name: "Resource Utilization Rate", value: "82%", change: "+3%", trend: "positive" as const },
+          { name: "Task Completion Rate", value: "94%", change: "+1%", trend: "neutral" as const },
+        ],
+      },
+      {
+        title: "Productivity",
+        icon: React.createElement(Briefcase, { className: "h-5 w-5" }),
+        metrics: [
+          { name: "Total Billable Hours (Month)", value: "482 hrs", change: "+15%", trend: "positive" as const },
+          { name: "Output per Employee", value: "3.1 Projects", change: "+0.2", trend: "positive" as const },
+          { name: "Work-in-Progress (WIP) Limit", value: "10 / 12 projects", change: "", trend: "neutral" as const },
+        ],
+      },
+      {
+        title: "Process & Workflow",
+        icon: React.createElement(Workflow, { className: "h-5 w-5" }),
+        metrics: [
+            { name: "On-Time Delivery Rate", value: "96%", change: "+2%", trend: "positive" as const },
+            { name: "Workflow Bottlenecks (Avg. Wait)", value: "8 hours", change: "-12%", trend: "positive" as const },
+            { name: "Automation Rate", value: "35%", change: "+10%", trend: "positive" as const },
+        ],
+      }
+    ],
+  },
+  clientAndFinancialHealth: {
+    title: "Client & Financial Health",
+    categories: [
+       {
+        title: "Financials",
+        icon: React.createElement(DollarSign, { className: "h-5 w-5" }),
+        metrics: [
+          { name: "Profit Margin", value: "28%", change: "+2%", trend: "positive" as const },
+          { name: "Revenue per Employee", value: "$12,850", change: "+5%", trend: "positive" as const },
+          { name: "Avg. Cost per Project", value: "$4,200", change: "-3%", trend: "positive" as const },
+        ],
+      },
+      {
+        title: "Client Health",
+        icon: React.createElement(Users, { className: "h-5 w-5" }),
+        metrics: [
+          { name: "Client Retention Rate", value: "88%", change: "-1%", trend: "negative" as const },
+          { name: "Client Acquisition Cost (CAC)", value: "$1,500", change: "+10%", trend: "negative" as const },
+          { name: "Client Lifetime Value (CLV)", value: "$45,000", change: "+8%", trend: "positive" as const },
+          { name: "Avg. Response Time", value: "3.2 hours", change: "-15%", trend: "positive" as const },
+        ],
+      },
+      {
+        title: "Quality & Satisfaction",
+        icon: React.createElement(Award, { className: "h-5 w-5" }),
+        metrics: [
+            { name: "Error Rate (Post-Launch)", value: "1.2%", change: "-0.5%", trend: "positive" as const },
+            { name: "Client Satisfaction (CSAT)", value: "4.7 / 5.0", change: "+0.1", trend: "positive" as const },
+            { name: "Net Promoter Score (NPS)", value: "52", change: "+5", trend: "positive" as const },
+        ],
+      },
+    ],
+  },
 };
+
 
 export const timeManagementData = {
   billableHours: [
