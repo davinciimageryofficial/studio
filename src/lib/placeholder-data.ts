@@ -791,6 +791,7 @@ export const agencyMetricsData = {
           { name: "Total Billable Hours (Month)", value: "482 hrs", change: "+15%", trend: "positive" as const },
           { name: "Output per Employee", value: "3.1 Projects", change: "+0.2", trend: "positive" as const },
           { name: "Work-in-Progress (WIP) Limit", value: "10 / 12 projects", change: "", trend: "neutral" as const },
+          { name: "Avg. Time to Milestone", value: "3.5 days", change: "-5%", trend: "positive" as const },
         ],
       },
       {
