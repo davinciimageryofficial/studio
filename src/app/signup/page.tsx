@@ -75,11 +75,83 @@ export default function SignupPage() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuItem onSelect={() => setLanguage('en')}>English</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('zh')}>中文 (Chinese)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('hi')}>हिन्दी (Hindi)</DropdownMenuItem>
                     <DropdownMenuItem onSelect={() => setLanguage('es')}>Español (Spanish)</DropdownMenuItem>
                     <DropdownMenuItem onSelect={() => setLanguage('fr')}>Français (French)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ar')}>العربية (Arabic)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('bn')}>বাংলা (Bengali)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ru')}>Русский (Russian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('pt')}>Português (Portuguese)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ur')}>اردو (Urdu)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('id')}>Bahasa Indonesia</DropdownMenuItem>
                     <DropdownMenuItem onSelect={() => setLanguage('de')}>Deutsch (German)</DropdownMenuItem>
                     <DropdownMenuItem onSelect={() => setLanguage('ja')}>日本語 (Japanese)</DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => setLanguage('zh')}>简体中文 (Mandarin)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('pcm')}>Nigerian Pidgin</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('mr')}>मराठी (Marathi)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('te')}>తెలుగు (Telugu)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('tr')}>Türkçe (Turkish)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ta')}>தமிழ் (Tamil)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('vi')}>Tiếng Việt (Vietnamese)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ko')}>한국어 (Korean)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('jv')}>Basa Jawa (Javanese)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('it')}>Italiano (Italian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('gu')}>ગુજરાતી (Gujarati)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('pl')}>Polski (Polish)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('uk')}>Українська (Ukrainian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('pa')}>ਪੰਜਾਬੀ (Punjabi)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('nl')}>Nederlands (Dutch)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('yo')}>Yorùbá (Yoruba)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ms')}>Bahasa Melayu (Malay)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('th')}>ไทย (Thai)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('kn')}>ಕನ್ನಡ (Kannada)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ml')}>മലയാളം (Malayalam)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ig')}>Igbo</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ha')}>Hausa</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('or')}>ଓଡ଼ିଆ (Odia)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('my')}>မြန်မာ (Burmese)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('su')}>Basa Sunda</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ro')}>Română (Romanian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('uz')}>Oʻzbekcha (Uzbek)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('am')}>አማርኛ (Amharic)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('fa')}>فارسی (Persian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('bho')}>Bhojpuri</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('so')}>Soomaaliga (Somali)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('fil')}>Filipino</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ps')}>پښتو (Pashto)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('el')}>Ελληνικά (Greek)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('sv')}>Svenska (Swedish)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('hu')}>Magyar (Hungarian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('cs')}>Čeština (Czech)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('az')}>Azərbaycanca (Azerbaijani)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('he')}>עברית (Hebrew)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ceb')}>Cebuano</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('mg')}>Malagasy</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('bg')}>Български (Bulgarian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('be')}>Беларуская (Belarusian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('si')}>සිංහල (Sinhala)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('tt')}>Tatar</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('no')}>Norsk (Norwegian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('sk')}>Slovenčina (Slovak)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('da')}>Dansk (Danish)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('fi')}>Suomi (Finnish)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('hr')}>Hrvatski (Croatian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('lt')}>Lietuvių (Lithuanian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('sl')}>Slovenščina (Slovenian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('et')}>Eesti (Estonian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('lv')}>Latviešu (Latvian)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ga')}>Gaeilge (Irish)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('mt')}>Malti (Maltese)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('is')}>Íslenska (Icelandic)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('cy')}>Cymraeg (Welsh)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('eu')}>Euskara (Basque)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ca')}>Català (Catalan)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('gl')}>Galego (Galician)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('af')}>Afrikaans</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('sw')}>Kiswahili</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('zu')}>IsiZulu</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('xh')}>IsiXhosa</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('st')}>Sesotho</DropdownMenuItem>
                     <DropdownMenuItem onSelect={() => setLanguage('sn')}>ChiShona</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

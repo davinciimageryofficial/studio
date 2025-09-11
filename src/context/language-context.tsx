@@ -3,7 +3,19 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type Language = 'en' | 'es' | 'fr' | 'de' | 'ja' | 'zh' | 'sn';
+export type Language = 
+  | 'en' | 'zh' | 'hi' | 'es' | 'fr' | 'ar' | 'bn' | 'ru' | 'pt' | 'ur' 
+  | 'id' | 'de' | 'ja' | 'pcm' | 'mr' | 'te' | 'tr' | 'ta' | 'vi' | 'ko' 
+  | 'jv' | 'it' | 'gu' | 'pl' | 'uk' | 'pa' | 'nl' | 'yo' | 'ms' | 'th' 
+  | 'kn' | 'ml' | 'ig' | 'ha' | 'or' | 'my' | 'su' | 'ro' | 'uz' | 'am' 
+  | 'fa' | 'bho' | 'so' | 'fil' | 'ps' | 'el' | 'sv' | 'hu' | 'cs' | 'az' 
+  | 'he' | 'ceb' | 'mg' | 'bg' | 'be' | 'si' | 'tt' | 'no' | 'sk' | 'da' 
+  | 'fi' | 'hr' | 'lt' | 'sl' | 'et' | 'lv' | 'ga' | 'mt' | 'is' | 'cy' 
+  | 'eu' | 'ca' | 'gl' | 'af' | 'sw' | 'zu' | 'xh' | 'st' | 'sn' | 'ny' 
+  | 'rw' | 'kg' | 'lg' | 'rn' | 'sg' | 'ak' | 'bm' | 'ewo' | 'ff' | 'ig'
+  | 'ln' | 'lu' | 'kam' | 'kea' | 'khq' | 'ki' | 'kln' | 'kok' | 'ksb' | 'luy'
+  | 'mas' | 'mer' | 'mfe' | 'naq' | 'nyn' | 'om' | 'saq' | 'seh' | 'ses' | 'teo'
+  | 'vai' | 'wo' | 'zgh';
 
 interface LanguageContextType {
   language: Language;
