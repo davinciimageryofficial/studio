@@ -904,29 +904,29 @@ export const qualityPerformanceData = {
 };
 
 export const dailyProfileEngagementData = [
-    { day: "Mon", views: 25, connections: 1, searches: 200 },
-    { day: "Tue", views: 40, connections: 0, searches: 350 },
-    { day: "Wed", views: 35, connections: 2, searches: 300 },
-    { day: "Thu", views: 55, connections: 1, searches: 450 },
-    { day: "Fri", views: 70, connections: 3, searches: 600 },
-    { day: "Sat", views: 80, connections: 1, searches: 550 },
-    { day: "Sun", views: 60, connections: 0, searches: 400 },
+    { day: "Mon", views: 25, connections: 1, searches: 200, likes: 12, comments: 2 },
+    { day: "Tue", views: 40, connections: 0, searches: 350, likes: 18, comments: 4 },
+    { day: "Wed", views: 35, connections: 2, searches: 300, likes: 25, comments: 5 },
+    { day: "Thu", views: 55, connections: 1, searches: 450, likes: 30, comments: 8 },
+    { day: "Fri", views: 70, connections: 3, searches: 600, likes: 50, comments: 12 },
+    { day: "Sat", views: 80, connections: 1, searches: 550, likes: 60, comments: 15 },
+    { day: "Sun", views: 60, connections: 0, searches: 400, likes: 40, comments: 7 },
 ];
 
 export const weeklyProfileEngagementData = [
-  { week: "W1", views: 250, connections: 5, searches: 2000 },
-  { week: "W2", views: 300, connections: 8, searches: 2500 },
-  { week: "W3", views: 280, connections: 6, searches: 2300 },
-  { week: "W4", views: 350, connections: 10, searches: 3000 },
+  { week: "W1", views: 250, connections: 5, searches: 2000, likes: 150, comments: 20 },
+  { week: "W2", views: 300, connections: 8, searches: 2500, likes: 200, comments: 35 },
+  { week: "W3", views: 280, connections: 6, searches: 2300, likes: 180, comments: 30 },
+  { week: "W4", views: 350, connections: 10, searches: 3000, likes: 250, comments: 45 },
 ];
 
 export const monthlyProfileEngagementData = [
-    { month: "Jan", views: 1204, connections: 32, searches: 8500 },
-    { month: "Feb", views: 1500, connections: 45, searches: 10000 },
-    { month: "Mar", views: 1400, connections: 40, searches: 9500 },
-    { month: "Apr", views: 1600, connections: 50, searches: 11000 },
-    { month: "May", views: 1800, connections: 55, searches: 12000 },
-    { month: "Jun", views: 1700, connections: 52, searches: 11500 },
+    { month: "Jan", views: 1204, connections: 32, searches: 8500, likes: 800, comments: 150 },
+    { month: "Feb", views: 1500, connections: 45, searches: 10000, likes: 1200, comments: 200 },
+    { month: "Mar", views: 1400, connections: 40, searches: 9500, likes: 1100, comments: 180 },
+    { month: "Apr", views: 1600, connections: 50, searches: 11000, likes: 1500, comments: 250 },
+    { month: "May", views: 1800, connections: 55, searches: 12000, likes: 1800, comments: 300 },
+    { month: "Jun", views: 1700, connections: 52, searches: 11500, likes: 1600, comments: 280 },
 ];
 
 export const profileEngagementData = dailyProfileEngagementData;

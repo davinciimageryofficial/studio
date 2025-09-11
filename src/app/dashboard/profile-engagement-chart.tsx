@@ -19,7 +19,7 @@ interface ProfileEngagementChartProps {
 }
 
 export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEngagementChartProps) {
-  const [chartType, setChartType] = useState<"bar" | "line" | "area">("bar");
+  const [chartType, setChartType] = useState<"bar" | "line" | "area">("line");
   const [scale, setScale] = useState(1);
   const [tempScale, setTempScale] = useState(1);
   
@@ -35,6 +35,8 @@ export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEn
         views: Math.round(item.views * scale),
         connections: Math.round(item.connections * scale),
         searches: Math.round(item.searches * scale),
+        likes: Math.round(item.likes * scale),
+        comments: Math.round(item.comments * scale),
     }));
   }, [timeline, scale, dataMap]);
 
@@ -82,7 +84,7 @@ export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEn
                     <TabsTrigger value="monthly">Monthly</TabsTrigger>
                 </TabsList>
             </Tabs>
-          <Tabs defaultValue="bar" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
+          <Tabs defaultValue={chartType} onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
             <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
               <TabsTrigger value="bar">Bar</TabsTrigger>
               <TabsTrigger value="line">Line</TabsTrigger>
@@ -131,6 +133,8 @@ export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEn
             <Legend wrapperStyle={{ paddingTop: '20px' }} />
             <ChartComponent yAxisId="left" type="monotone" dataKey="views" name="Profile Views" fill="hsl(var(--primary))" stroke="hsl(var(--primary))" />
             <Line yAxisId="left" type="monotone" dataKey="connections" name="New Connections" stroke="hsl(var(--chart-2))" />
+            <Line yAxisId="left" type="monotone" dataKey="likes" name="Post Likes" stroke="hsl(var(--chart-4))" />
+            <Line yAxisId="left" type="monotone" dataKey="comments" name="Post Comments" stroke="hsl(var(--chart-5))" />
             <ChartComponent yAxisId="right" type="monotone" dataKey="searches" name="Search Appearances" fill="hsl(var(--chart-1))" stroke="hsl(var(--chart-1))" />
           </ComposedChart>
         </ResponsiveContainer>
