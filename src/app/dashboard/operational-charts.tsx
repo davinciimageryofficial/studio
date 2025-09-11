@@ -113,9 +113,9 @@ export function OperationalCharts() {
           <ResponsiveContainer width="100%" height={400}>
             <ComposedChart data={chartData}>
                <defs>
-                    <pattern id="lines" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                        <rect width="8" height="8" fill="hsl(var(--card))" />
-                        <path d="M 0 0 L 0 8" stroke="hsl(var(--muted-foreground))" strokeWidth="1" />
+                    <pattern id="lines" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                        <rect width="4" height="4" fill="hsl(var(--card))" />
+                        <path d="M 0 0 L 0 4" stroke="hsl(var(--chart-2))" strokeWidth="1" />
                     </pattern>
                 </defs>
               <CartesianGrid strokeDasharray="3 3" />
@@ -129,10 +129,10 @@ export function OperationalCharts() {
                   return value;
               }} />
               <Legend />
-              {visibleMetrics.revenue && <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="url(#lines)" radius={[4, 4, 0, 0]} />}
-              {visibleMetrics.expenses && <Area yAxisId="left" type="monotone" dataKey="expenses" name="Expenses" stroke="hsl(var(--destructive))" fill="hsl(var(--destructive), 0.4)" />}
-              {visibleMetrics.leads && <Bar yAxisId="right" dataKey="leads" name="New Leads" fill="hsl(var(--primary), 0.5)" />}
-              {visibleMetrics.projectsWon && <Line yAxisId="right" type="monotone" dataKey="projectsWon" name="Projects Won" stroke="hsl(var(--primary))" strokeWidth={2} />}
+              {visibleMetrics.revenue && <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />}
+              {visibleMetrics.expenses && <Area yAxisId="left" type="monotone" dataKey="expenses" name="Expenses" stroke="hsl(var(--destructive))" fill="hsl(var(--destructive), 0.3)" />}
+              {visibleMetrics.leads && <Bar yAxisId="right" dataKey="leads" name="New Leads" fill="hsl(var(--chart-1))" />}
+              {visibleMetrics.projectsWon && <Line yAxisId="right" type="monotone" dataKey="projectsWon" name="Projects Won" stroke="hsl(var(--chart-1))" strokeWidth={2} />}
               {visibleMetrics.portfolioUpdates && <Line yAxisId="right" type="monotone" dataKey="portfolioUpdates" name="Portfolio Updates" stroke="hsl(var(--chart-4))" strokeWidth={2} />}
             </ComposedChart>
           </ResponsiveContainer>
@@ -141,5 +141,3 @@ export function OperationalCharts() {
     </div>
   );
 }
-
-    
