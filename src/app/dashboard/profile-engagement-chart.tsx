@@ -1,35 +1,54 @@
 
+
 "use client";
 
 import { useState, useMemo } from "react";
 import { ComposedChart, Bar, Line, Area, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { profileEngagementData } from "@/lib/placeholder-data";
+import { dailyProfileEngagementData, weeklyProfileEngagementData, monthlyProfileEngagementData } from "@/lib/placeholder-data";
 import { UserCheck } from "lucide-react";
 
-export function ProfileEngagementChart() {
+type Timeline = "daily" | "weekly" | "monthly";
+
+interface ProfileEngagementChartProps {
+    timeline: Timeline;
+    onTimelineChange: (timeline: Timeline) => void;
+}
+
+export function ProfileEngagementChart({ timeline, onTimelineChange }: ProfileEngagementChartProps) {
   const [chartType, setChartType] = useState<"bar" | "line" | "area">("bar");
   const [scale, setScale] = useState(1);
   const [tempScale, setTempScale] = useState(1);
+  
+  const dataMap = {
+    daily: dailyProfileEngagementData,
+    weekly: weeklyProfileEngagementData,
+    monthly: monthlyProfileEngagementData,
+  };
 
   const chartData = useMemo(() => {
-    return profileEngagementData.map(item => ({
+    return dataMap[timeline].map(item => ({
         ...item,
         views: Math.round(item.views * scale),
         connections: Math.round(item.connections * scale),
         searches: Math.round(item.searches * scale),
     }));
-  }, [scale]);
+  }, [timeline, scale, dataMap]);
 
   const ChartComponent = {
     bar: Bar,
     line: Line,
     area: Area,
   }[chartType];
+
+  const dataKey = {
+      daily: 'day',
+      weekly: 'week',
+      monthly: 'month',
+  }[timeline];
 
   return (
     <Card>
@@ -40,7 +59,7 @@ export function ProfileEngagementChart() {
             Profile Engagement
           </CardTitle>
           <CardDescription>
-            A look at your profile views over the last 7 days.
+            A look at your profile engagement over time.
           </CardDescription>
         </div>
         <div className="flex w-full items-center gap-2 sm:w-auto">
@@ -56,6 +75,13 @@ export function ProfileEngagementChart() {
               onValueCommit={(value) => setScale(value[0])}
             />
           </div>
+           <Tabs defaultValue={timeline} onValueChange={(value) => onTimelineChange(value as any)} className="w-full sm:w-auto">
+                <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
+                    <TabsTrigger value="daily">Daily</TabsTrigger>
+                    <TabsTrigger value="weekly">Weekly</TabsTrigger>
+                    <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                </TabsList>
+            </Tabs>
           <Tabs defaultValue="bar" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
             <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
               <TabsTrigger value="bar">Bar</TabsTrigger>
@@ -70,7 +96,7 @@ export function ProfileEngagementChart() {
           <ComposedChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis
-              dataKey="day"
+              dataKey={dataKey}
               stroke="#888888"
               fontSize={12}
               tickLine={false}
@@ -112,3 +138,5 @@ export function ProfileEngagementChart() {
     </Card>
   );
 }
+
+  

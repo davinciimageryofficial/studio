@@ -903,7 +903,7 @@ export const qualityPerformanceData = {
   ],
 };
 
-export const profileEngagementData = [
+export const dailyProfileEngagementData = [
     { day: "Mon", views: 25, connections: 1, searches: 200 },
     { day: "Tue", views: 40, connections: 0, searches: 350 },
     { day: "Wed", views: 35, connections: 2, searches: 300 },
@@ -912,3 +912,23 @@ export const profileEngagementData = [
     { day: "Sat", views: 80, connections: 1, searches: 550 },
     { day: "Sun", views: 60, connections: 0, searches: 400 },
 ];
+
+export const weeklyProfileEngagementData = [
+  { week: "W1", views: 250, connections: 5, searches: 2000 },
+  { week: "W2", views: 300, connections: 8, searches: 2500 },
+  { week: "W3", views: 280, connections: 6, searches: 2300 },
+  { week: "W4", views: 350, connections: 10, searches: 3000 },
+];
+
+export const monthlyProfileEngagementData = [
+    { month: "Jan", views: 1204, connections: 32, searches: 8500 },
+    { month: "Feb", views: 1500, connections: 45, searches: 10000 },
+    { month: "Mar", views: 1400, connections: 40, searches: 9500 },
+    { month: "Apr", views: 1600, connections: 50, searches: 11000 },
+    { month: "May", views: 1800, connections: 55, searches: 12000 },
+    { month: "Jun", views: 1700, connections: 52, searches: 11500 },
+];
+
+export const profileEngagementData = dailyProfileEngagementData;
+
+  

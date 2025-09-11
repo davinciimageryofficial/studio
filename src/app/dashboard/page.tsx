@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useRef, useEffect, useMemo } from "react";
@@ -75,6 +76,7 @@ function DashboardPageInternal() {
     const { toast } = useToast();
     const router = useRouter();
     const [productivityTimeline, setProductivityTimeline] = useState<"daily" | "weekly" | "monthly">("monthly");
+    const [engagementTimeline, setEngagementTimeline] = useState<"daily" | "weekly" | "monthly">("daily");
     const [visibleMetrics, setVisibleMetrics] = useState<VisibleMetrics>({
         revenue: true,
         projects: true,
@@ -385,7 +387,10 @@ function DashboardPageInternal() {
                   </div>
                 
                 <div className="mt-8">
-                    <ProfileEngagementChart />
+                    <ProfileEngagementChart 
+                        timeline={engagementTimeline}
+                        onTimelineChange={setEngagementTimeline}
+                    />
                 </div>
 
                 <Card className="mt-8">
@@ -628,3 +633,5 @@ export default function DashboardPage() {
         </ClientOnly>
     )
 }
+
+  
