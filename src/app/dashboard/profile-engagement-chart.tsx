@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ComposedChart, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, TooltipProps } from "recharts";
+import { ComposedChart, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, TooltipProps, Bar } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -134,9 +134,9 @@ export function ProfileEngagementChart({ timeline, onTimelineChange, visibleMetr
         <ResponsiveContainer width="100%" height={350}>
           <ComposedChart data={chartData}>
              <defs>
-                <pattern id="lines" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                    <rect width="8" height="8" fill="hsl(var(--card))" />
-                    <path d="M 0 0 L 0 8" stroke="hsl(var(--chart-1))" strokeWidth="1" />
+                <pattern id="lines" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                    <rect width="4" height="4" fill="hsl(var(--card))" />
+                    <path d="M 0 0 L 0 4" stroke="hsl(var(--primary))" strokeWidth="1" />
                 </pattern>
             </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -159,7 +159,7 @@ export function ProfileEngagementChart({ timeline, onTimelineChange, visibleMetr
             />
             <Tooltip content={<CustomTooltip visibleMetrics={visibleMetrics} />} />
             <Legend wrapperStyle={{ paddingTop: '20px' }} />
-            {visibleMetrics.views && <Line yAxisId="left" type="monotone" dataKey="views" name="Profile Views" stroke="hsl(var(--primary))" />}
+            {visibleMetrics.views && <Bar yAxisId="left" dataKey="views" name="Profile Views" fill="url(#lines)" stroke="hsl(var(--primary))" barSize={10} />}
             {visibleMetrics.connections && <Line yAxisId="left" type="monotone" dataKey="connections" name="New Connections" stroke="hsl(var(--chart-2))" />}
             {visibleMetrics.searches && <Line yAxisId="left" type="monotone" dataKey="searches" name="Search Appearances" stroke="hsl(var(--chart-1))" />}
             {visibleMetrics.likes && <Line yAxisId="left" type="monotone" dataKey="likes" name="Post Likes" stroke="hsl(var(--chart-4))" />}
