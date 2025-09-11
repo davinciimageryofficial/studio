@@ -120,8 +120,8 @@ export function OperationalCharts() {
             <ComposedChart data={chartData}>
                <defs>
                     <linearGradient id="gradient-expenses" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.4}/>
-                        <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="hsl(var(--chart-3))" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="hsl(var(--chart-3))" stopOpacity={0}/>
                     </linearGradient>
                 </defs>
               <CartesianGrid strokeDasharray="3 3" />
@@ -136,7 +136,7 @@ export function OperationalCharts() {
               }} />
               <Legend />
               {visibleMetrics.revenue && <Line yAxisId="left" type="monotone" dataKey="revenue" name="Revenue" stroke="hsl(var(--chart-1))" strokeWidth={3} />}
-              {visibleMetrics.expenses && <Area yAxisId="left" type="monotone" dataKey="expenses" name="Expenses" stroke="hsl(var(--destructive))" fillOpacity={1} fill="url(#gradient-expenses)" />}
+              {visibleMetrics.expenses && <Area yAxisId="left" type="monotone" dataKey="expenses" name="Expenses" stroke="hsl(var(--chart-3))" fillOpacity={1} fill="url(#gradient-expenses)" />}
               {visibleMetrics.profit && <Line yAxisId="left" type="monotone" dataKey="profit" name="Profit" stroke="#DFFF00" strokeWidth={2} strokeDasharray="5 5" />}
               {visibleMetrics.leads && <Line yAxisId="right" type="monotone" dataKey="leads" name="New Leads" stroke="hsl(var(--chart-3))" strokeWidth={2} />}
               {visibleMetrics.projectsWon && <Line yAxisId="right" type="monotone" dataKey="projectsWon" name="Projects Won" stroke="#06b6d4" strokeWidth={2} />}
