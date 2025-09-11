@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,9 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CheckCircle, Briefcase, LogOut } from "lucide-react";
+import { CheckCircle, Briefcase, LogOut, Globe } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ThemeSwitcher } from "@/components/layout/theme-switcher";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -117,6 +119,35 @@ export default function SettingsPage() {
               Logout
             </Button>
           </CardFooter>
+        </Card>
+        
+        <Separator />
+        
+        <Card>
+            <CardHeader>
+                <CardTitle>Language & Region</CardTitle>
+                <CardDescription>Choose the language and region for your Sentry experience.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="space-y-2">
+                    <Label htmlFor="language">Language</Label>
+                     <Select defaultValue="english">
+                        <SelectTrigger id="language">
+                            <SelectValue placeholder="Select a language" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="english">English</SelectItem>
+                            <SelectItem value="spanish">Español</SelectItem>
+                            <SelectItem value="mandarin">简体中文 (Mandarin)</SelectItem>
+                            <SelectItem value="shona">ChiShona</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">This will change the language of the user interface.</p>
+                </div>
+            </CardContent>
+            <CardFooter>
+                <Button>Save Language</Button>
+            </CardFooter>
         </Card>
 
 

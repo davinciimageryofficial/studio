@@ -13,7 +13,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ClientOnly } from "@/components/layout/client-only";
-import { Kanban } from "lucide-react";
+import { Kanban, Languages } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const signupSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters."),
@@ -62,6 +63,22 @@ export default function SignupPage() {
   return (
     <ClientOnly>
       <div className="w-full bg-background">
+         <div className="absolute top-6 right-6 z-10">
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                     <Button variant="outline" size="icon">
+                        <Languages className="h-5 w-5" />
+                        <span className="sr-only">Change language</span>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem>English</DropdownMenuItem>
+                    <DropdownMenuItem>Español</DropdownMenuItem>
+                    <DropdownMenuItem>简体中文 (Mandarin)</DropdownMenuItem>
+                    <DropdownMenuItem>ChiShona</DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
         <div className="grid min-h-screen lg:grid-cols-2">
           <div className="flex items-center justify-center p-8 sm:p-12">
             <Card className="w-full max-w-md border-0 shadow-none bg-transparent">

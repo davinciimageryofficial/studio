@@ -2,9 +2,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle, Kanban } from "lucide-react";
+import { ArrowRight, CheckCircle, Kanban, Languages } from "lucide-react";
 import { ClientOnly } from "@/components/layout/client-only";
 import Link from "next/link";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export default function LandingPage() {
 
@@ -12,6 +13,22 @@ export default function LandingPage() {
     <ClientOnly>
         <div className="flex min-h-screen items-center justify-center bg-background">
             <div className="relative w-full overflow-hidden">
+                <nav className="absolute top-0 right-0 p-6 z-10">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                             <Button variant="outline" size="icon">
+                                <Languages className="h-5 w-5" />
+                                <span className="sr-only">Change language</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem>English</DropdownMenuItem>
+                            <DropdownMenuItem>Español</DropdownMenuItem>
+                            <DropdownMenuItem>简体中文 (Mandarin)</DropdownMenuItem>
+                            <DropdownMenuItem>ChiShona</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </nav>
                 <div className="grid lg:grid-cols-2 min-h-screen">
                     <div className="flex flex-col justify-center p-8 sm:p-16 lg:p-24">
                         <Kanban className="size-10 mb-4 text-primary" />
