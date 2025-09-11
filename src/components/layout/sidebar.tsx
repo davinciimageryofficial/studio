@@ -37,38 +37,46 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import { useWorkspace } from "@/context/workspace-context";
 import { useFullscreen } from "@/hooks/use-fullscreen";
 import { placeholderUsers } from "@/lib/placeholder-data";
-
-const menuItems = [
-  { href: "/dashboard", label: "Dashboard", icon: Home },
-  { href: "/feed", label: "Feed", icon: LayoutGrid },
-  { href: "/messages", label: "Messages", icon: MessageSquare },
-  { href: "/discover", label: "Discover", icon: Search },
-];
-
-const productivityItems = [
-    { href: "/workspaces", label: "Workspaces", icon: Mic },
-    { href: "/workmate-radar", label: "Workmate Radar", icon: Radar },
-    { href: "/skill-sync-net", label: "Skill Sync Net", icon: Briefcase },
-];
-
-const contentItems = [
-    { href: "/news", label: "News", icon: Newspaper },
-    { href: "/connect", label: "Courses", icon: Book },
-]
-
-const secondaryMenuItems = [
-    { href: "/billing", label: "Billing", icon: CreditCard },
-];
+import { useLanguage } from "@/context/language-context";
+import { translations } from "@/lib/translations";
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { language } = useLanguage();
+  const t = translations[language];
+
+  const menuItems = [
+    { href: "/dashboard", label: t.sidebarDashboard, icon: Home },
+    { href: "/feed", label: t.sidebarFeed, icon: LayoutGrid },
+    { href: "/messages", label: t.sidebarMessages, icon: MessageSquare },
+    { href: "/discover", label: t.sidebarDiscover, icon: Search },
+  ];
+
+  const productivityItems = [
+      { href: "/workspaces", label: t.sidebarWorkspaces, icon: Mic },
+      { href: "/workmate-radar", label: t.sidebarWorkmateRadar, icon: Radar },
+      { href: "/skill-sync-net", label: t.sidebarSkillSyncNet, icon: Briefcase },
+  ];
+
+  const contentItems = [
+      { href: "/news", label: t.sidebarNews, icon: Newspaper },
+      { href: "/connect", label: t.sidebarCourses, icon: Book },
+  ]
+
+  const secondaryMenuItems = [
+      { href: "/billing", label: t.sidebarBilling, icon: CreditCard },
+  ];
+
   const { setNextPath, isActive: isSessionActive } = useWorkspace();
   const { isFullscreen, toggleFullscreen } = useFullscreen();
   const isActive = (href: string) => (href === "/dashboard" ? pathname === href : pathname.startsWith(href) && href !== "/dashboard");
   const currentUser = placeholderUsers[1];
   const { state } = useSidebar();
-  const label = state === 'collapsed' ? 'Expand' : 'Collapse';
-
+  
+  const getLabel = () => {
+    if (state === 'collapsed') return t.sidebarExpand;
+    return t.sidebarCollapse;
+  }
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (pathname.startsWith('/workspaces') && isSessionActive) {
@@ -162,21 +170,21 @@ export function AppSidebar() {
             <SidebarMenuItem>
                 <SidebarMenuButton
                     onClick={toggleFullscreen}
-                    tooltip={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                    tooltip={isFullscreen ? t.sidebarExitFullscreen : t.sidebarFullscreen}
                     className="w-full justify-start"
                 >
                     <Fullscreen />
-                    <span>{isFullscreen ? "Exit Fullscreen" : "Fullscreen"}</span>
+                    <span>{isFullscreen ? t.sidebarExitFullscreen : t.sidebarFullscreen}</span>
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
                  <SidebarTrigger className="w-full justify-start">
                     <PanelLeft className="duration-200 group-data-[state=expanded]:rotate-180" />
-                    <span>{label}</span>
+                    <span>{getLabel()}</span>
                  </SidebarTrigger>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Profile" className="justify-start">
+              <SidebarMenuButton asChild tooltip={t.sidebarMyProfile} className="justify-start">
                 <Link href="/profile/me">
                     <UserCircle className="hidden group-data-[collapsible=icon]:block" />
                     <Avatar className="size-7 group-data-[collapsible=icon]:hidden">
@@ -184,15 +192,15 @@ export function AppSidebar() {
                         <User className="h-4 w-4" />
                       </AvatarFallback>
                     </Avatar>
-                    <span className="text-sm font-medium">My Profile</span>
+                    <span className="text-sm font-medium">{t.sidebarMyProfile}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Settings" isActive={pathname === '/settings'} className="justify-start">
+              <SidebarMenuButton asChild tooltip={t.settings} isActive={pathname === '/settings'} className="justify-start">
                 <Link href="/settings">
                   <Settings />
-                  <span>Settings</span>
+                  <span>{t.settings}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

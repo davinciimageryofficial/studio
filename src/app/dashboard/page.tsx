@@ -23,6 +23,8 @@ import { Slider } from "@/components/ui/slider";
 import { ClientOnly } from "@/components/layout/client-only";
 import { AgencyMetrics } from "./agency-metrics";
 import { OperationalCharts } from "./operational-charts";
+import { useLanguage } from "@/context/language-context";
+import { translations } from "@/lib/translations";
 
 type Task = {
     id: string;
@@ -64,6 +66,8 @@ type VisibleMetrics = {
 }
 
 function DashboardPageInternal() {
+    const { language } = useLanguage();
+    const t = translations[language];
     const [isAppDownloaded, setIsAppDownloaded] = useState(false);
     const [accessCode, setAccessCode] = useState("");
     const [tasks, setTasks] = useState(initialTasks);
@@ -180,17 +184,17 @@ function DashboardPageInternal() {
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t.dashboardTitle}</h1>
         <p className="mt-1 text-muted-foreground">
-          Welcome back, {placeholderUsers[1].name}. Here's a summary of your activity.
+          {t.dashboardWelcome.replace('{name}', placeholderUsers[1].name)}
         </p>
       </header>
 
       <Tabs defaultValue="personal">
         <div className="flex justify-end mb-6">
             <TabsList className="bg-black text-muted-foreground">
-                <TabsTrigger value="personal">Personal Mode</TabsTrigger>
-                <TabsTrigger value="agency">Agency Mode</TabsTrigger>
+                <TabsTrigger value="personal">{t.personalMode}</TabsTrigger>
+                <TabsTrigger value="agency">{t.agencyMode}</TabsTrigger>
             </TabsList>
         </div>
         <TabsContent value="personal">
@@ -200,7 +204,7 @@ function DashboardPageInternal() {
                 <Card>
                   <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
                     <div className="flex-1">
-                      <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
+                      <CardTitle className="text-sm font-medium">{t.profileViews}</CardTitle>
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -209,7 +213,7 @@ function DashboardPageInternal() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-80" align="end">
-                        <DropdownMenuLabel>Recent Viewers</DropdownMenuLabel>
+                        <DropdownMenuLabel>{t.recentViewers}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         {recentViewers.map(activity => (
                             <DropdownMenuItem key={activity.user.id} className="flex items-center justify-between gap-2 p-2">
@@ -230,7 +234,7 @@ function DashboardPageInternal() {
                          <DropdownMenuSeparator />
                          <DropdownMenuItem asChild>
                             <Link href="#recent-activity" className="w-full justify-center">
-                                View all in Recent Activity
+                                {t.viewAllRecent}
                             </Link>
                          </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -238,14 +242,14 @@ function DashboardPageInternal() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">1,204</div>
-                    <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+                    <p className="text-xs text-muted-foreground">{t.fromLastMonth}</p>
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
                      <div className="flex-1">
-                        <CardTitle className="text-sm font-medium">New Connections</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t.newConnections}</CardTitle>
                      </div>
                      <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -254,7 +258,7 @@ function DashboardPageInternal() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-80" align="end">
-                        <DropdownMenuLabel>Recent Connections</DropdownMenuLabel>
+                        <DropdownMenuLabel>{t.recentConnections}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         {newConnections.map(user => (
                             <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
@@ -275,7 +279,7 @@ function DashboardPageInternal() {
                          <DropdownMenuSeparator />
                          <DropdownMenuItem asChild>
                             <Link href="/discover" className="w-full justify-center">
-                                View all Connections
+                                {t.viewAllConnections}
                             </Link>
                          </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -283,14 +287,14 @@ function DashboardPageInternal() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">+32</div>
-                    <p className="text-xs text-muted-foreground">+15 from last month</p>
+                    <p className="text-xs text-muted-foreground">{t.connectionsLastMonth}</p>
                   </CardContent>
                 </Card>
 
                  <Card>
                     <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
                         <div className="flex-1">
-                            <CardTitle className="text-sm font-medium">Pending Invitations</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t.pendingInvitations}</CardTitle>
                         </div>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -299,7 +303,7 @@ function DashboardPageInternal() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="w-80" align="end">
-                            <DropdownMenuLabel>Pending Invitations</DropdownMenuLabel>
+                            <DropdownMenuLabel>{t.pendingInvitations}</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             {pendingInvitations.map(user => (
                                 <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
@@ -320,7 +324,7 @@ function DashboardPageInternal() {
                              <DropdownMenuSeparator />
                              <DropdownMenuItem asChild>
                                 <Link href="/messages" className="w-full justify-center">
-                                    View all in Messages
+                                    {t.viewAllMessages}
                                 </Link>
                              </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -328,15 +332,15 @@ function DashboardPageInternal() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{pendingInvitations.length}</div>
-                        <p className="text-xs text-muted-foreground">{pendingInvitations.length} waiting for your response</p>
+                        <p className="text-xs text-muted-foreground">{t.waitingResponse.replace('{count}', String(pendingInvitations.length))}</p>
                     </CardContent>
                 </Card>
               </div>
 
                <div className="mt-6">
                     <header className="mb-6">
-                      <h2 className="text-2xl font-semibold tracking-tight">Task Board</h2>
-                      <p className="text-muted-foreground">Interact with project blocks, organize progress</p>
+                      <h2 className="text-2xl font-semibold tracking-tight">{t.taskBoardTitle}</h2>
+                      <p className="text-muted-foreground">{t.taskBoardDescription}</p>
                     </header>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       {(Object.keys(tasks) as TaskStatus[]).map((status) => (
@@ -384,15 +388,15 @@ function DashboardPageInternal() {
                         <div>
                             <CardTitle className="flex items-center gap-2">
                                 <LineChart className="h-6 w-6" />
-                                Productivity
+                                {t.productivityTitle}
                             </CardTitle>
                             <CardDescription>
-                                A consolidated view of your key professional metrics.
+                                {t.productivityDescription}
                             </CardDescription>
                         </div>
                          <div className="flex items-center gap-2">
                             <div className="w-32 space-y-1">
-                                <Label htmlFor="productivity-scale" className="text-xs">Scale ({tempProductivityChartScale.toFixed(1)}x)</Label>
+                                <Label htmlFor="productivity-scale" className="text-xs">{t.scale} ({tempProductivityChartScale.toFixed(1)}x)</Label>
                                 <Slider 
                                     id="productivity-scale"
                                     min={0.1}
@@ -405,9 +409,9 @@ function DashboardPageInternal() {
                             </div>
                             <Tabs defaultValue="monthly" onValueChange={(value) => setProductivityTimeline(value as any)} className="w-full sm:w-auto">
                                 <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
-                                    <TabsTrigger value="daily">Daily</TabsTrigger>
-                                    <TabsTrigger value="weekly">Weekly</TabsTrigger>
-                                    <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                                    <TabsTrigger value="daily">{t.daily}</TabsTrigger>
+                                    <TabsTrigger value="weekly">{t.weekly}</TabsTrigger>
+                                    <TabsTrigger value="monthly">{t.monthly}</TabsTrigger>
                                 </TabsList>
                             </Tabs>
                             <DropdownMenu>
@@ -417,7 +421,7 @@ function DashboardPageInternal() {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                    <DropdownMenuLabel>Toggle Metrics</DropdownMenuLabel>
+                                    <DropdownMenuLabel>{t.toggleMetrics}</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     {Object.keys(visibleMetrics).map((key) => (
                                         <DropdownMenuCheckboxItem
@@ -442,7 +446,7 @@ function DashboardPageInternal() {
                 {/* Recent Activity */}
                 <Card id="recent-activity" className="lg:col-span-3">
                     <CardHeader>
-                        <CardTitle>Recent Activity</CardTitle>
+                        <CardTitle>{t.recentActivity}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
@@ -461,7 +465,7 @@ function DashboardPageInternal() {
                             ))}
                         </div>
                          <Button variant="outline" className="w-full mt-6">
-                            View All Activity
+                            {t.viewAllActivity}
                         </Button>
                     </CardContent>
                 </Card>
@@ -470,24 +474,24 @@ function DashboardPageInternal() {
               <div className="grid md:grid-cols-2 gap-8 mt-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Gift className="text-primary" /> Refer a Friend, Get Rewarded</CardTitle>
-                        <CardDescription>Invite fellow freelancers to join Sentry. You'll both receive a discount on your next month's subscription when they sign up.</CardDescription>
+                        <CardTitle className="flex items-center gap-2"><Gift className="text-primary" /> {t.referFriendTitle}</CardTitle>
+                        <CardDescription>{t.referFriendDescription}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Link href="/billing?tab=referrals">
-                            <Button size="lg">Get Your Referral Link</Button>
+                            <Button size="lg">{t.getReferralLink}</Button>
                         </Link>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Zap className="text-primary" />AD-Sentry</CardTitle>
-                        <CardDescription>Launch and manage AI-powered ad programs to promote your profile or services.</CardDescription>
+                        <CardTitle className="flex items-center gap-2"><Zap className="text-primary" />{t.adSentryTitle}</CardTitle>
+                        <CardDescription>{t.adSentryDescription}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Dialog>
                             <DialogTrigger asChild>
-                                <Button size="lg">Launch Ad Studio</Button>
+                                <Button size="lg">{t.launchAdStudio}</Button>
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
@@ -521,15 +525,15 @@ function DashboardPageInternal() {
               
               <Card className="mt-8">
                 <CardHeader>
-                    <CardTitle>Download Sentry</CardTitle>
-                    <CardDescription>Get the full desktop experience for maximum productivity.</CardDescription>
+                    <CardTitle>{t.downloadSentryTitle}</CardTitle>
+                    <CardDescription>{t.downloadSentryDescription}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col sm:flex-row gap-4">
                     <Dialog open={isAppDownloaded} onOpenChange={setIsAppDownloaded}>
                         <DialogTrigger asChild>
                             <Button size="lg" className="w-full" variant="outline" onClick={() => setIsAppDownloaded(true)}>
                                 <Circle className="mr-2 h-5 w-5" />
-                                for Macintosh
+                                {t.forMac}
                             </Button>
                         </DialogTrigger>
                         <DialogContent>
@@ -545,7 +549,7 @@ function DashboardPageInternal() {
                          <DialogTrigger asChild>
                             <Button size="lg" className="w-full" variant="outline" onClick={() => setIsAppDownloaded(true)}>
                                 <AppWindow className="mr-2 h-5 w-5" />
-                                for Windows
+                                {t.forWindows}
                             </Button>
                         </DialogTrigger>
                          <DialogContent>
@@ -566,7 +570,7 @@ function DashboardPageInternal() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Team Revenue</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t.teamRevenue}</CardTitle>
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
@@ -576,7 +580,7 @@ function DashboardPageInternal() {
                     </Card>
                      <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t.totalProjects}</CardTitle>
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
@@ -586,7 +590,7 @@ function DashboardPageInternal() {
                     </Card>
                      <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Client Acquisition</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t.clientAcquisition}</CardTitle>
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
@@ -597,8 +601,8 @@ function DashboardPageInternal() {
                 </div>
                  <Card className="border-0 shadow-none bg-transparent">
                     <CardHeader className="px-0">
-                        <CardTitle className="flex items-center gap-2"><Building className="h-5 w-5" /> Team Productivity</CardTitle>
-                        <CardDescription>An overview of your team's collective output and performance metrics.</CardDescription>
+                        <CardTitle className="flex items-center gap-2"><Building className="h-5 w-5" /> {t.teamProductivity}</CardTitle>
+                        <CardDescription>{t.teamProductivityDesc}</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
                          <AgencyMetrics />
