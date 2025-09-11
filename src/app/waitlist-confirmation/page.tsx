@@ -130,6 +130,7 @@ export default function WaitlistConfirmationPage() {
                                         placeholder="Enter your access code" 
                                         value={accessCode}
                                         onChange={(e) => setAccessCode(e.target.value)}
+                                        className="border-black"
                                     />
                                     <Button type="submit" className="bg-black hover:bg-gray-800">
                                         <Rocket className="mr-2 h-4 w-4" />
