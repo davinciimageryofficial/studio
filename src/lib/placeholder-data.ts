@@ -1,4 +1,5 @@
 
+
 import { Briefcase, DollarSign, Award, Users, TrendingUp, Workflow } from "lucide-react";
 import React from "react";
 
@@ -901,3 +902,13 @@ export const qualityPerformanceData = {
     { month: 'Jun', count: 2 },
   ],
 };
+
+export const profileEngagementData = [
+    { day: "Mon", views: 25, connections: 1, searches: 200 },
+    { day: "Tue", views: 40, connections: 0, searches: 350 },
+    { day: "Wed", views: 35, connections: 2, searches: 300 },
+    { day: "Thu", views: 55, connections: 1, searches: 450 },
+    { day: "Fri", views: 70, connections: 3, searches: 600 },
+    { day: "Sat", views: 80, connections: 1, searches: 550 },
+    { day: "Sun", views: 60, connections: 0, searches: 400 },
+];

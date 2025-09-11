@@ -25,6 +25,7 @@ import { AgencyMetrics } from "./agency-metrics";
 import { OperationalCharts } from "./operational-charts";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
+import { ProfileEngagementChart } from "./profile-engagement-chart";
 
 type Task = {
     id: string;
@@ -383,6 +384,10 @@ function DashboardPageInternal() {
                     </div>
                   </div>
                 
+                <div className="mt-8">
+                    <ProfileEngagementChart />
+                </div>
+
                 <Card className="mt-8">
                     <CardHeader className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
