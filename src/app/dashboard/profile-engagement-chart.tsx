@@ -163,7 +163,7 @@ export function ProfileEngagementChart({ timeline, onTimelineChange, visibleMetr
             {visibleMetrics.connections && <Line yAxisId="left" type="monotone" dataKey="connections" name="New Connections" stroke="hsl(var(--chart-2))" />}
             {visibleMetrics.searches && <Line yAxisId="left" type="monotone" dataKey="searches" name="Search Appearances" stroke="hsl(var(--chart-1))" />}
             {visibleMetrics.likes && <Line yAxisId="left" type="monotone" dataKey="likes" name="Post Likes" stroke="hsl(var(--chart-4))" />}
-            {visibleMetrics.skillSyncNetMatches && <Line yAxisId="left" type="monotone" dataKey="skillSyncNetMatches" name="Skill Sync Net Matches" stroke="hsl(var(--destructive))" />}
+            {visibleMetrics.skillSyncNetMatches && <Line yAxisId="left" type="monotone" dataKey="skillSyncNetMatches" name="Skill Sync Net Matches" stroke="hsl(var(--primary))" />}
           </ComposedChart>
         </ResponsiveContainer>
       </CardContent>
