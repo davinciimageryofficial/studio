@@ -587,12 +587,12 @@ function DashboardPageInternal() {
                         </CardContent>
                     </Card>
                 </div>
-                 <Card>
-                    <CardHeader>
+                 <Card className="border-0 shadow-none bg-transparent">
+                    <CardHeader className="px-0">
                         <CardTitle className="flex items-center gap-2"><Building className="h-5 w-5" /> Team Productivity</CardTitle>
                         <CardDescription>An overview of your team's collective output and performance metrics.</CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                          <AgencyMetrics />
                     </CardContent>
                 </Card>
