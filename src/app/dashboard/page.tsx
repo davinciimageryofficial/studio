@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { placeholderUsers } from "@/lib/placeholder-data";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings, Gift, Building } from "lucide-react";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings, Gift, Building, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -197,22 +197,18 @@ function DashboardPageInternal() {
             <div className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Stat Cards */}
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
-                          <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                            <div className="flex-1">
-                              <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
-                            </div>
-                            <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-                          </CardHeader>
-                          <CardContent>
-                            <div className="text-2xl font-bold">1,204</div>
-                            <p className="text-xs text-muted-foreground">+20.1% from last month</p>
-                          </CardContent>
-                        </Card>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-80" align="end">
+                <Card>
+                  <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="flex-1">
+                      <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-80" align="end">
                         <DropdownMenuLabel>Recent Viewers</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         {recentViewers.map(activity => (
@@ -237,24 +233,27 @@ function DashboardPageInternal() {
                                 View all in Recent Activity
                             </Link>
                          </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
-                      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                         <div className="flex-1">
-                            <CardTitle className="text-sm font-medium">New Connections</CardTitle>
-                         </div>
-                        <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">+32</div>
-                        <p className="text-xs text-muted-foreground">+15 from last month</p>
-                      </CardContent>
-                    </Card>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-80" align="end">
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">1,204</div>
+                    <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                     <div className="flex-1">
+                        <CardTitle className="text-sm font-medium">New Connections</CardTitle>
+                     </div>
+                     <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-80" align="end">
                         <DropdownMenuLabel>Recent Connections</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         {newConnections.map(user => (
@@ -279,50 +278,59 @@ function DashboardPageInternal() {
                                 View all Connections
                             </Link>
                          </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                         <Card className="cursor-pointer transition-all hover:scale-105 hover:shadow-xl">
-                            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                                <div className="flex-1">
-                                    <CardTitle className="text-sm font-medium">Pending Invitations</CardTitle>
-                                </div>
-                                <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{pendingInvitations.length}</div>
-                                <p className="text-xs text-muted-foreground">{pendingInvitations.length} waiting for your response</p>
-                            </CardContent>
-                        </Card>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-80" align="end">
-                        <DropdownMenuLabel>Pending Invitations</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        {pendingInvitations.map(user => (
-                            <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
-                                <div className="flex items-center gap-3">
-                                    <Avatar className="h-9 w-9">
-                                        <AvatarImage src={user.avatar} alt={user.name} />
-                                        <AvatarFallback>
-                                            <User className="h-5 w-5" />
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div>
-                                        <p className="font-semibold">{user.name}</p>
-                                        <p className="text-xs text-muted-foreground">{user.headline}</p>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">+32</div>
+                    <p className="text-xs text-muted-foreground">+15 from last month</p>
+                  </CardContent>
+                </Card>
+
+                 <Card>
+                    <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                        <div className="flex-1">
+                            <CardTitle className="text-sm font-medium">Pending Invitations</CardTitle>
+                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-6 w-6">
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="w-80" align="end">
+                            <DropdownMenuLabel>Pending Invitations</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            {pendingInvitations.map(user => (
+                                <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
+                                    <div className="flex items-center gap-3">
+                                        <Avatar className="h-9 w-9">
+                                            <AvatarImage src={user.avatar} alt={user.name} />
+                                            <AvatarFallback>
+                                                <User className="h-5 w-5" />
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                            <p className="font-semibold">{user.name}</p>
+                                            <p className="text-xs text-muted-foreground">{user.headline}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            </DropdownMenuItem>
-                        ))}
-                         <DropdownMenuSeparator />
-                         <DropdownMenuItem asChild>
-                            <Link href="/messages" className="w-full justify-center">
-                                View all in Messages
-                            </Link>
-                         </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                                </DropdownMenuItem>
+                            ))}
+                             <DropdownMenuSeparator />
+                             <DropdownMenuItem asChild>
+                                <Link href="/messages" className="w-full justify-center">
+                                    View all in Messages
+                                </Link>
+                             </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{pendingInvitations.length}</div>
+                        <p className="text-xs text-muted-foreground">{pendingInvitations.length} waiting for your response</p>
+                    </CardContent>
+                </Card>
               </div>
 
                <div className="mt-6">
