@@ -77,11 +77,8 @@ export default function WaitlistConfirmationPage() {
     <ClientOnly>
        <div className="flex min-h-screen w-full items-center justify-center bg-background p-4">
             <div className="w-full">
-                 <Card className="w-full text-center shadow-2xl">
+                 <Card className="w-full max-w-lg mx-auto text-center shadow-2xl">
                     <CardHeader className="p-6">
-                        <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full">
-                        <CheckCircle className="size-10 text-primary" />
-                        </div>
                         <CardTitle className="text-3xl font-bold tracking-tighter">You're In!</CardTitle>
                         <CardDescription className="mt-1 text-lg text-muted-foreground">
                         Thank you for joining the Sentry waitlist. We've received your information.
