@@ -116,10 +116,6 @@ export function OperationalCharts() {
                         <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.4}/>
                         <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0}/>
                     </linearGradient>
-                    <pattern id="lines" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                        <rect width="4" height="4" fill="hsl(var(--card))" />
-                        <path d="M 0 0 L 0 4" stroke="hsl(var(--chart-3))" strokeWidth="1" />
-                    </pattern>
                 </defs>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey={dataKey} />
@@ -132,10 +128,10 @@ export function OperationalCharts() {
                   return value;
               }} />
               <Legend />
-              {visibleMetrics.revenue && <Bar yAxisId="left" dataKey="revenue" name="Revenue" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />}
+              {visibleMetrics.revenue && <Line yAxisId="left" type="monotone" dataKey="revenue" name="Revenue" stroke="hsl(var(--chart-2))" strokeWidth={2} />}
               {visibleMetrics.expenses && <Area yAxisId="left" type="monotone" dataKey="expenses" name="Expenses" stroke="hsl(var(--destructive))" fillOpacity={1} fill="url(#gradient-expenses)" />}
-              {visibleMetrics.leads && <Bar yAxisId="right" dataKey="leads" name="New Leads" fill="url(#lines)" />}
-              {visibleMetrics.projectsWon && <Line yAxisId="right" type="monotone" dataKey="projectsWon" name="Projects Won" stroke="hsl(var(--chart-3))" strokeWidth={2} />}
+              {visibleMetrics.leads && <Line yAxisId="right" type="monotone" dataKey="leads" name="New Leads" stroke="hsl(var(--chart-3))" strokeWidth={2} />}
+              {visibleMetrics.projectsWon && <Line yAxisId="right" type="monotone" dataKey="projectsWon" name="Projects Won" stroke="hsl(var(--chart-1))" strokeWidth={2} />}
               {visibleMetrics.portfolioUpdates && <Line yAxisId="right" type="monotone" dataKey="portfolioUpdates" name="Portfolio Updates" stroke="hsl(var(--chart-4))" strokeWidth={2} />}
             </ComposedChart>
           </ResponsiveContainer>
