@@ -75,7 +75,7 @@ function DashboardPageInternal() {
         projects: true,
         impressions: true,
         acquisition: true,
-        revPerProject: true,
+        revPerProject: false,
     });
     const [productivityChartScale, setProductivityChartScale] = useState(1);
     const [tempProductivityChartScale, setTempProductivityChartScale] = useState(1);
