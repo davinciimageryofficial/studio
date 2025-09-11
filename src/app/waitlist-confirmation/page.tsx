@@ -87,7 +87,7 @@ export default function WaitlistConfirmationPage() {
                         Thank you for joining the Sentry waitlist. We've received your information.
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="px-6 pb-6 space-y-4">
+                    <CardContent className="px-6 pb-6 space-y-2">
                         <div className="space-y-3 rounded-lg border bg-card p-4 text-left">
                         <h3 className="font-semibold text-md mb-2">Your Submitted Information:</h3>
                         <div className="flex items-center gap-4">
