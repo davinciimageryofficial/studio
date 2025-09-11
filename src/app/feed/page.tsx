@@ -33,7 +33,7 @@ import {
   ChevronDown,
   DollarSign,
   Info,
-  Lightbulb,
+  Kanban,
 } from "lucide-react";
 import Image from "next/image";
 import { ConversationStarters } from "../conversation-starters";
@@ -265,7 +265,7 @@ function FeedPageInternal() {
             <Dialog>
                  <DialogTrigger asChild>
                     <button className="flex flex-1 items-center justify-center bg-black text-white hover:bg-gray-800">
-                        <Lightbulb className="h-5 w-5" />
+                        <Kanban className="h-5 w-5" />
                         <span className="sr-only">{t.pocketGuide}</span>
                     </button>
                  </DialogTrigger>
@@ -713,5 +713,7 @@ function PostCard({ post, onUpdate, onDelete, onReply, t, isReply = false }: { p
     </Card>
   );
 }
+
+    
 
     

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, Eye, DollarSign, Target, MousePointerClick, Lightbulb, CheckCircle, Sparkles, AlertCircle } from "lucide-react";
+import { PlusCircle, Eye, DollarSign, Target, MousePointerClick, Kanban, CheckCircle, Sparkles, AlertCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -306,7 +306,7 @@ function CreateCampaignDialog({ t }: { t: typeof translations['en'] }) {
                     {/* Pocket Guide */}
                     <div className="space-y-4 md:border-l md:pl-6">
                         <h3 className="text-lg font-semibold flex items-center gap-2">
-                           <Lightbulb className="w-5 h-5 text-primary" />
+                           <Kanban className="w-5 h-5 text-primary" />
                            {t.pocketGuide}
                         </h3>
                         <div className="text-sm space-y-4">
@@ -370,5 +370,7 @@ function CreateCampaignDialog({ t }: { t: typeof translations['en'] }) {
         </DialogContent>
     );
 }
+
+    
 
     
