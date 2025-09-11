@@ -904,29 +904,29 @@ export const qualityPerformanceData = {
 };
 
 export const dailyProfileEngagementData = [
-    { day: "Mon", views: 30, connections: 2, searches: 250, likes: 15, skillSyncNetMatches: 2 },
-    { day: "Tue", views: 45, connections: 1, searches: 380, likes: 22, skillSyncNetMatches: 1 },
-    { day: "Wed", views: 50, connections: 3, searches: 400, likes: 30, skillSyncNetMatches: 3 },
-    { day: "Thu", views: 60, connections: 1, searches: 500, likes: 40, skillSyncNetMatches: 1 },
-    { day: "Fri", views: 80, connections: 4, searches: 650, likes: 60, skillSyncNetMatches: 4 },
-    { day: "Sat", views: 90, connections: 2, searches: 600, likes: 75, skillSyncNetMatches: 2 },
-    { day: "Sun", views: 70, connections: 1, searches: 450, likes: 50, skillSyncNetMatches: 1 },
+    { day: "Mon", views: 250, connections: 5, searches: 450, likes: 80, skillSyncNetMatches: 3 },
+    { day: "Tue", views: 280, connections: 3, searches: 520, likes: 95, skillSyncNetMatches: 2 },
+    { day: "Wed", views: 320, connections: 6, searches: 580, likes: 110, skillSyncNetMatches: 5 },
+    { day: "Thu", views: 300, connections: 2, searches: 600, likes: 100, skillSyncNetMatches: 2 },
+    { day: "Fri", views: 400, connections: 8, searches: 750, likes: 150, skillSyncNetMatches: 6 },
+    { day: "Sat", views: 450, connections: 4, searches: 700, likes: 180, skillSyncNetMatches: 4 },
+    { day: "Sun", views: 350, connections: 3, searches: 650, likes: 120, skillSyncNetMatches: 2 },
 ];
 
 export const weeklyProfileEngagementData = [
-  { week: "W1", views: 300, connections: 8, searches: 2500, likes: 180, skillSyncNetMatches: 8 },
-  { week: "W2", views: 350, connections: 10, searches: 2800, likes: 220, skillSyncNetMatches: 10 },
-  { week: "W3", views: 320, connections: 9, searches: 2600, likes: 200, skillSyncNetMatches: 9 },
-  { week: "W4", views: 400, connections: 12, searches: 3200, likes: 280, skillSyncNetMatches: 12 },
+  { week: "W1", views: 1800, connections: 15, searches: 3500, likes: 800, skillSyncNetMatches: 12 },
+  { week: "W2", views: 2000, connections: 18, searches: 3800, likes: 950, skillSyncNetMatches: 15 },
+  { week: "W3", views: 1900, connections: 16, searches: 3700, likes: 900, skillSyncNetMatches: 14 },
+  { week: "W4", views: 2400, connections: 22, searches: 4500, likes: 1200, skillSyncNetMatches: 20 },
 ];
 
 export const monthlyProfileEngagementData = [
-    { month: "Jan", views: 1500, connections: 40, searches: 9000, likes: 950, skillSyncNetMatches: 30 },
-    { month: "Feb", views: 1800, connections: 50, searches: 11000, likes: 1400, skillSyncNetMatches: 40 },
-    { month: "Mar", views: 1600, connections: 45, searches: 10000, likes: 1200, skillSyncNetMatches: 35 },
-    { month: "Apr", views: 1900, connections: 55, searches: 12000, likes: 1700, skillSyncNetMatches: 45 },
-    { month: "May", views: 2200, connections: 60, searches: 14000, likes: 2000, skillSyncNetMatches: 55 },
-    { month: "Jun", views: 2000, connections: 58, searches: 13000, likes: 1800, skillSyncNetMatches: 50 },
+    { month: "Jan", views: 8000, connections: 70, searches: 14000, likes: 3500, skillSyncNetMatches: 50 },
+    { month: "Feb", views: 8500, connections: 85, searches: 15000, likes: 4000, skillSyncNetMatches: 60 },
+    { month: "Mar", views: 8200, connections: 78, searches: 14500, likes: 3800, skillSyncNetMatches: 55 },
+    { month: "Apr", views: 9000, connections: 95, searches: 16000, likes: 4500, skillSyncNetMatches: 70 },
+    { month: "May", views: 9500, connections: 105, searches: 17000, likes: 5000, skillSyncNetMatches: 80 },
+    { month: "Jun", views: 9200, connections: 100, searches: 16500, likes: 4800, skillSyncNetMatches: 75 },
 ];
 
 export const profileEngagementData = dailyProfileEngagementData;
