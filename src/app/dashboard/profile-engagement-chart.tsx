@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 
 type Timeline = "daily" | "weekly" | "monthly";
 
-type VisibleEngagementMetrics = {
+export type VisibleEngagementMetrics = {
     views: boolean;
     connections: boolean;
     searches: boolean;
