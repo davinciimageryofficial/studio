@@ -12,23 +12,38 @@ import { placeholderUsers, User } from "@/lib/placeholder-data";
 import { Search, User as UserIcon, MoreHorizontal, Flag, ShieldX } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/context/language-context";
+import { translations } from "@/lib/translations";
+import { ClientOnly } from "@/components/layout/client-only";
 
-export default function DiscoverPage() {
+function DiscoverPageInternal() {
+  const { language } = useLanguage();
+  const t = translations[language];
   const categories = ["All", "Design", "Writing", "Development"];
+  
+  const { toast } = useToast();
+
+  const handleAction = (action: string, userName: string) => {
+    toast({
+      title: `${t.action}: ${action}`,
+      description: `${t.actionDesc.replace('{action}', action).replace('{userName}', userName)}`,
+    });
+  };
+
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight font-headline-tech uppercase">Discover Talent</h1>
+        <h1 className="text-3xl font-bold tracking-tight font-headline-tech uppercase">{t.discoverTitle}</h1>
         <p className="mt-1 text-muted-foreground">
-          Find the perfect collaborator for your next project.
+          {t.discoverDescription}
         </p>
       </header>
 
       <div className="mb-6">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search by name, skill, or keyword..." className="pl-10" />
+          <Input placeholder={t.discoverSearchPlaceholder} className="pl-10" />
         </div>
       </div>
 
@@ -41,42 +56,41 @@ export default function DiscoverPage() {
           ))}
         </TabsList>
         <TabsContent value="All">
-          <ProfileGrid users={placeholderUsers} />
+          <ProfileGrid users={placeholderUsers} handleAction={handleAction} t={t} />
         </TabsContent>
         <TabsContent value="Design">
-          <ProfileGrid users={placeholderUsers.filter(u => u.category === 'design')} />
+          <ProfileGrid users={placeholderUsers.filter(u => u.category === 'design')} handleAction={handleAction} t={t} />
         </TabsContent>
         <TabsContent value="Writing">
-          <ProfileGrid users={placeholderUsers.filter(u => u.category === 'writing')} />
+          <ProfileGrid users={placeholderUsers.filter(u => u.category === 'writing')} handleAction={handleAction} t={t} />
         </TabsContent>
         <TabsContent value="Development">
-          <ProfileGrid users={placeholderUsers.filter(u => u.category === 'development')} />
+          <ProfileGrid users={placeholderUsers.filter(u => u.category === 'development')} handleAction={handleAction} t={t} />
         </TabsContent>
       </Tabs>
     </div>
   );
 }
 
-function ProfileGrid({ users }: { users: User[] }) {
+export default function DiscoverPage() {
+    return (
+        <ClientOnly>
+            <DiscoverPageInternal />
+        </ClientOnly>
+    )
+}
+
+function ProfileGrid({ users, handleAction, t }: { users: User[], handleAction: (action: string, userName: string) => void, t: typeof translations['en'] }) {
   return (
     <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {users.map((user) => (
-        <ProfileCard key={user.id} user={user} />
+        <ProfileCard key={user.id} user={user} handleAction={handleAction} t={t} />
       ))}
     </div>
   );
 }
 
-function ProfileCard({ user }: { user: User }) {
-  const { toast } = useToast();
-
-  const handleAction = (action: string, userName: string) => {
-    toast({
-      title: `Action: ${action}`,
-      description: `The action '${action}' for user ${userName} would be handled here.`,
-    });
-  };
-
+function ProfileCard({ user, handleAction, t }: { user: User, handleAction: (action: string, userName: string) => void, t: typeof translations['en'] }) {
   return (
     <Card className="overflow-hidden transition-all hover:shadow-lg">
       <CardContent className="p-0 text-center relative">
@@ -90,11 +104,11 @@ function ProfileCard({ user }: { user: User }) {
                 <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => handleAction('Report', user.name)}>
                         <Flag className="mr-2 h-4 w-4" />
-                        <span>Report User</span>
+                        <span>{t.reportUser}</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleAction('Block', user.name)} className="text-destructive">
                         <ShieldX className="mr-2 h-4 w-4" />
-                        <span>Block User</span>
+                        <span>{t.blockUser}</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -117,7 +131,7 @@ function ProfileCard({ user }: { user: User }) {
           </div>
           <Link href={`/profile/${user.id}`} legacyBehavior={false}>
             <Button variant="outline" className="mt-6 w-full">
-              View Profile
+              {t.viewProfile}
             </Button>
           </Link>
         </div>
@@ -125,3 +139,5 @@ function ProfileCard({ user }: { user: User }) {
     </Card>
   );
 }
+
+    

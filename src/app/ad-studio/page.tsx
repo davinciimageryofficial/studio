@@ -20,6 +20,9 @@ import { z } from "zod";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { useLanguage } from "@/context/language-context";
+import { translations } from "@/lib/translations";
+import { ClientOnly } from "@/components/layout/client-only";
 
 const campaigns = [
   { name: "Summer Sale Promotion", status: "Active", type: "Sponsored Content", spend: "$500", conversions: 25 },
@@ -40,49 +43,52 @@ const campaignFormSchema = z.object({
 type CampaignFormValues = z.infer<typeof campaignFormSchema>;
 
 
-export default function AdStudioPage() {
+function AdStudioPageInternal() {
+  const { language } = useLanguage();
+  const t = translations[language];
+
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <header className="mb-8 flex items-center justify-between">
         <div>
-            <h1 className="text-3xl font-bold tracking-tight">AD-Sentry Studio</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{t.adStudioTitle}</h1>
             <p className="mt-1 text-muted-foreground">
-                Manage your AI-powered ad campaigns to promote your profile or services.
+                {t.adStudioDescription}
             </p>
         </div>
         <Dialog>
             <DialogTrigger asChild>
                 <Button>
                     <PlusCircle className="mr-2 h-4 w-4" />
-                    Create Campaign
+                    {t.createCampaign}
                 </Button>
             </DialogTrigger>
-            <CreateCampaignDialog />
+            <CreateCampaignDialog t={t} />
         </Dialog>
       </header>
 
       <Tabs defaultValue="campaigns" className="w-full">
         <TabsList className="grid w-full grid-cols-4 bg-black text-muted-foreground">
-          <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="audiences">Audiences</TabsTrigger>
-          <TabsTrigger value="billing">Billing & Ads</TabsTrigger>
+          <TabsTrigger value="campaigns">{t.campaigns}</TabsTrigger>
+          <TabsTrigger value="analytics">{t.analytics}</TabsTrigger>
+          <TabsTrigger value="audiences">{t.audiences}</TabsTrigger>
+          <TabsTrigger value="billing">{t.billing}</TabsTrigger>
         </TabsList>
         <TabsContent value="campaigns" className="mt-6">
             <Card>
                 <CardHeader>
-                    <CardTitle>Your Campaigns</CardTitle>
-                    <CardDescription>An overview of all your ad campaigns.</CardDescription>
+                    <CardTitle>{t.yourCampaigns}</CardTitle>
+                    <CardDescription>{t.yourCampaignsDesc}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Campaign Name</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Spend</TableHead>
-                                <TableHead>Conversions</TableHead>
+                                <TableHead>{t.campaignName}</TableHead>
+                                <TableHead>{t.status}</TableHead>
+                                <TableHead>{t.type}</TableHead>
+                                <TableHead>{t.spend}</TableHead>
+                                <TableHead>{t.conversions}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -107,23 +113,23 @@ export default function AdStudioPage() {
         <TabsContent value="analytics" className="mt-6">
             <Card>
                 <CardHeader>
-                    <CardTitle>Analytics Dashboard</CardTitle>
-                    <CardDescription>Track the performance of your campaigns in real-time.</CardDescription>
+                    <CardTitle>{t.analyticsDashboard}</CardTitle>
+                    <CardDescription>{t.analyticsDashboardDesc}</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Impressions</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t.impressions}</CardTitle>
                             <Eye className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">1.2M</div>
-                            <p className="text-xs text-muted-foreground">+15.2% from last month</p>
+                            <p className="text-xs text-muted-foreground">{t.fromLastMonth}</p>
                         </CardContent>
                     </Card>
                      <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Total Spend</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t.totalSpend}</CardTitle>
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
@@ -133,7 +139,7 @@ export default function AdStudioPage() {
                     </Card>
                      <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Conversions</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t.conversions}</CardTitle>
                             <Target className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
@@ -143,7 +149,7 @@ export default function AdStudioPage() {
                     </Card>
                      <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Click-Through Rate</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t.ctr}</CardTitle>
                             <MousePointerClick className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
@@ -157,22 +163,22 @@ export default function AdStudioPage() {
         <TabsContent value="audiences" className="mt-6">
              <Card>
                 <CardHeader>
-                    <CardTitle>Audience Management</CardTitle>
-                    <CardDescription>Create and manage your target audiences for ad campaigns.</CardDescription>
+                    <CardTitle>{t.audienceManagement}</CardTitle>
+                    <CardDescription>{t.audienceManagementDesc}</CardDescription>
                 </CardHeader>
                 <CardContent className="min-h-96 flex items-center justify-center text-muted-foreground">
-                    <p>Audience creation and targeting tools will be available here.</p>
+                    <p>{t.audienceToolsComingSoon}</p>
                 </CardContent>
             </Card>
         </TabsContent>
         <TabsContent value="billing" className="mt-6">
             <Card>
                 <CardHeader>
-                    <CardTitle>Billing & Ads</CardTitle>
-                    <CardDescription>Manage your payment methods and view your transaction history for ad spend.</CardDescription>
+                    <CardTitle>{t.billingAndAds}</CardTitle>
+                    <CardDescription>{t.billingAndAdsDesc}</CardDescription>
                 </CardHeader>
                 <CardContent className="min-h-96 flex items-center justify-center text-muted-foreground">
-                    <p>Ad billing and payment management will be available here.</p>
+                    <p>{t.billingToolsComingSoon}</p>
                 </CardContent>
             </Card>
         </TabsContent>
@@ -181,7 +187,15 @@ export default function AdStudioPage() {
   );
 }
 
-function CreateCampaignDialog() {
+export default function AdStudioPage() {
+    return (
+        <ClientOnly>
+            <AdStudioPageInternal />
+        </ClientOnly>
+    );
+}
+
+function CreateCampaignDialog({ t }: { t: typeof translations['en'] }) {
     const [analysis, setAnalysis] = useState<AdCampaignAnalyzerOutput | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -244,9 +258,9 @@ function CreateCampaignDialog() {
     return (
         <DialogContent className="max-w-4xl">
             <DialogHeader>
-                <DialogTitle>Create a New Ad Campaign</DialogTitle>
+                <DialogTitle>{t.createCampaignTitle}</DialogTitle>
                 <DialogDescription>
-                    Set up your campaign details, ad creative, and targeting options.
+                    {t.createCampaignDesc}
                 </DialogDescription>
             </DialogHeader>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -254,23 +268,23 @@ function CreateCampaignDialog() {
                     {/* Main Form */}
                     <div className="md:col-span-2 space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="campaign-name">Campaign Name</Label>
-                            <Input id="campaign-name" placeholder="e.g., Summer Freelance Promotion" {...form.register("campaignName")} />
+                            <Label htmlFor="campaign-name">{t.campaignName}</Label>
+                            <Input id="campaign-name" placeholder={t.campaignNamePlaceholder} {...form.register("campaignName")} />
                             {form.formState.errors.campaignName && <p className="text-sm text-destructive">{form.formState.errors.campaignName.message}</p>}
                         </div>
                         <div className="space-y-2">
-                            <Label>Ad Type</Label>
+                            <Label>{t.adType}</Label>
                             <Controller
                                 name="adType"
                                 control={form.control}
                                 render={({ field }) => (
                                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <SelectTrigger><SelectValue placeholder="Select an ad format" /></SelectTrigger>
+                                        <SelectTrigger><SelectValue placeholder={t.adTypePlaceholder} /></SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="profile-spotlight">Profile Spotlight Ad</SelectItem>
-                                            <SelectItem value="product-listing">Product Listing Ad</SelectItem>
-                                            <SelectItem value="sponsored-content">Sponsored Content</SelectItem>
-                                            <SelectItem value="job-gig">Job or Gig Ad</SelectItem>
+                                            <SelectItem value="profile-spotlight">{t.adTypeProfile}</SelectItem>
+                                            <SelectItem value="product-listing">{t.adTypeProduct}</SelectItem>
+                                            <SelectItem value="sponsored-content">{t.adTypeContent}</SelectItem>
+                                            <SelectItem value="job-gig">{t.adTypeJob}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 )}
@@ -278,13 +292,13 @@ function CreateCampaignDialog() {
                              {form.formState.errors.adType && <p className="text-sm text-destructive">{form.formState.errors.adType.message}</p>}
                         </div>
                          <div className="space-y-2">
-                            <Label htmlFor="ad-content">Ad Content</Label>
-                            <Textarea id="ad-content" placeholder="Write your ad copy here..." className="min-h-32" {...form.register("adContent")} />
+                            <Label htmlFor="ad-content">{t.adContent}</Label>
+                            <Textarea id="ad-content" placeholder={t.adContentPlaceholder} className="min-h-32" {...form.register("adContent")} />
                             {form.formState.errors.adContent && <p className="text-sm text-destructive">{form.formState.errors.adContent.message}</p>}
                         </div>
                          <div className="space-y-2">
-                            <Label htmlFor="targeting-keywords">Targeting Keywords</Label>
-                            <Input id="targeting-keywords" placeholder="e.g., React developer, UI/UX design, copywriter" {...form.register("targetingKeywords")} />
+                            <Label htmlFor="targeting-keywords">{t.targetingKeywords}</Label>
+                            <Input id="targeting-keywords" placeholder={t.targetingKeywordsPlaceholder} {...form.register("targetingKeywords")} />
                              {form.formState.errors.targetingKeywords && <p className="text-sm text-destructive">{form.formState.errors.targetingKeywords.message}</p>}
                         </div>
 
@@ -293,7 +307,7 @@ function CreateCampaignDialog() {
                     <div className="space-y-4 md:border-l md:pl-6">
                         <h3 className="text-lg font-semibold flex items-center gap-2">
                            <Lightbulb className="w-5 h-5 text-primary" />
-                           Pocket Guide
+                           {t.pocketGuide}
                         </h3>
                         <div className="text-sm space-y-4">
                              {isAnalyzing ? (
@@ -306,21 +320,21 @@ function CreateCampaignDialog() {
                             ) : error ? (
                                  <Alert variant="destructive">
                                     <AlertCircle className="h-4 w-4" />
-                                    <AlertTitle>Analysis Error</AlertTitle>
+                                    <AlertTitle>{t.analysisError}</AlertTitle>
                                     <AlertDescription>{error}</AlertDescription>
                                 </Alert>
                             ) : analysis ? (
                                 <div className="space-y-4">
                                     {analysis.campaignNameStrength && (
                                         <div>
-                                            <h4 className="font-semibold">Campaign Name Strength</h4>
+                                            <h4 className="font-semibold">{t.campaignNameStrength}</h4>
                                             <Progress value={analysis.campaignNameStrength.score} className="my-2 h-2" />
                                             <p className="text-muted-foreground">{analysis.campaignNameStrength.feedback}</p>
                                         </div>
                                     )}
                                      {analysis.adContentSuggestions && analysis.adContentSuggestions.length > 0 && (
                                         <div>
-                                            <h4 className="font-semibold">Content Suggestions</h4>
+                                            <h4 className="font-semibold">{t.contentSuggestions}</h4>
                                             <ul className="list-disc list-inside text-muted-foreground mt-1 space-y-1">
                                                 {analysis.adContentSuggestions.map((s, i) => <li key={i}>{s}</li>)}
                                             </ul>
@@ -328,7 +342,7 @@ function CreateCampaignDialog() {
                                     )}
                                      {analysis.keywordSuggestions && analysis.keywordSuggestions.length > 0 && (
                                         <div>
-                                            <h4 className="font-semibold">Keyword Suggestions</h4>
+                                            <h4 className="font-semibold">{t.keywordSuggestions}</h4>
                                              <ul className="list-disc list-inside text-muted-foreground mt-1 space-y-1">
                                                 {analysis.keywordSuggestions.map((s, i) => <li key={i}>{s}</li>)}
                                             </ul>
@@ -337,7 +351,7 @@ function CreateCampaignDialog() {
                                 </div>
                             ) : (
                                 <div className="text-muted-foreground">
-                                    <p>As you fill out the form, I'll provide live feedback and suggestions here to help you create a successful ad campaign.</p>
+                                    <p>{t.pocketGuideDesc}</p>
                                 </div>
                             )}
                         </div>
@@ -345,11 +359,11 @@ function CreateCampaignDialog() {
                 </div>
                  <DialogFooter>
                     <DialogClose asChild>
-                        <Button type="button" variant="secondary">Cancel</Button>
+                        <Button type="button" variant="secondary">{t.cancel}</Button>
                     </DialogClose>
                     <Button type="submit">
                         <CheckCircle className="mr-2 h-4 w-4" />
-                        Launch Campaign
+                        {t.launchCampaign}
                     </Button>
                 </DialogFooter>
             </form>
@@ -357,3 +371,4 @@ function CreateCampaignDialog() {
     );
 }
 
+    

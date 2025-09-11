@@ -64,21 +64,23 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { useLanguage } from "@/context/language-context";
+import { translations } from "@/lib/translations";
 
 
-function FeedContent({ posts, onUpdate, onDelete, onReply }: { posts: Post[], onUpdate: (post: Post) => void, onDelete: (postId: number) => void, onReply: (parentPostId: number, reply: Post) => void }) {
+function FeedContent({ posts, onUpdate, onDelete, onReply, t }: { posts: Post[], onUpdate: (post: Post) => void, onDelete: (postId: number) => void, onReply: (parentPostId: number, reply: Post) => void, t: typeof translations['en'] }) {
     return (
         <div className="space-y-6 mt-6">
             {posts.length > 0 ? (
                 posts.map((post) => (
                     <ClientOnly key={post.id}>
-                        <PostCard post={post} onUpdate={onUpdate} onDelete={onDelete} onReply={onReply} />
+                        <PostCard post={post} onUpdate={onUpdate} onDelete={onDelete} onReply={onReply} t={t} />
                     </ClientOnly>
                 ))
             ) : (
                 <Card>
                     <CardContent className="p-8 text-center text-muted-foreground">
-                        No posts found for this filter.
+                        {t.noPostsFound}
                     </CardContent>
                 </Card>
             )}
@@ -86,24 +88,24 @@ function FeedContent({ posts, onUpdate, onDelete, onReply }: { posts: Post[], on
     );
 }
 
-function PocketGuideDialog({ onStartPost }: { onStartPost: () => void }) {
+function PocketGuideDialog({ onStartPost, t }: { onStartPost: () => void, t: typeof translations['en'] }) {
     return (
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Pocket Guide</DialogTitle>
-                <DialogDescription>AI-powered suggestions to spark your next conversation.</DialogDescription>
+                <DialogTitle>{t.pocketGuide}</DialogTitle>
+                <DialogDescription>{t.pocketGuideDesc}</DialogDescription>
             </DialogHeader>
             <div className="py-4">
                 <ConversationStarters />
             </div>
             <DialogFooter>
                 <DialogClose asChild>
-                    <Button type="button" variant="secondary">Close</Button>
+                    <Button type="button" variant="secondary">{t.close}</Button>
                 </DialogClose>
                 <DialogClose asChild>
                     <Button type="button" onClick={onStartPost}>
                         <Edit className="mr-2 h-4 w-4" />
-                        Create Post
+                        {t.createPost}
                     </Button>
                 </DialogClose>
             </DialogFooter>
@@ -111,12 +113,13 @@ function PocketGuideDialog({ onStartPost }: { onStartPost: () => void }) {
     )
 }
 
-export default function FeedPage() {
+function FeedPageInternal() {
   const [posts, setPosts] = useState<Post[]>(placeholderPosts);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("you-centric");
   const [selectedNiche, setSelectedNiche] = useState<string | null>(null);
-
+  const { language } = useLanguage();
+  const t = translations[language];
 
   const addPost = (newPostData: PostGeneratorOutput) => {
     const author = placeholderUsers.find((u) => u.id === newPostData.authorId);
@@ -218,12 +221,12 @@ export default function FeedPage() {
         <div className="mx-auto max-w-2xl">
            <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6">
             <TabsList className="grid w-full grid-cols-3 bg-black text-muted-foreground">
-              <TabsTrigger value="you-centric">You-Centric</TabsTrigger>
-              <TabsTrigger value="clique">Clique</TabsTrigger>
+              <TabsTrigger value="you-centric">{t.feedYouCentric}</TabsTrigger>
+              <TabsTrigger value="clique">{t.feedClique}</TabsTrigger>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                    <TabsTrigger value="niche" className={cn(activeTab === 'niche' && "bg-background text-foreground shadow-sm")}>
-                        {selectedNiche || 'Niche'}
+                        {selectedNiche || t.feedNiche}
                         <ChevronDown className="ml-2 h-4 w-4" />
                     </TabsTrigger>
                 </DropdownMenuTrigger>
@@ -244,13 +247,13 @@ export default function FeedPage() {
               </DropdownMenu>
             </TabsList>
             <TabsContent value="you-centric">
-              <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} />
+              <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} t={t} />
             </TabsContent>
             <TabsContent value="clique">
-               <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} />
+               <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} t={t} />
             </TabsContent>
             <TabsContent value="niche">
-               <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} />
+               <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} t={t} />
             </TabsContent>
           </Tabs>
         </div>
@@ -263,17 +266,17 @@ export default function FeedPage() {
                  <DialogTrigger asChild>
                     <button className="flex flex-1 items-center justify-center bg-black text-white hover:bg-gray-800">
                         <Lightbulb className="h-5 w-5" />
-                        <span className="sr-only">Pocket Guide</span>
+                        <span className="sr-only">{t.pocketGuide}</span>
                     </button>
                  </DialogTrigger>
-                <PocketGuideDialog onStartPost={() => setIsComposerOpen(true)} />
+                <PocketGuideDialog onStartPost={() => setIsComposerOpen(true)} t={t} />
             </Dialog>
             <div className="h-px bg-border" />
             <Dialog open={isComposerOpen} onOpenChange={setIsComposerOpen}>
                 <DialogTrigger asChild>
                     <button className="flex flex-1 items-center justify-center bg-black text-white hover:bg-gray-800">
                         <Edit className="h-5 w-5" />
-                        <span className="sr-only">Create Post</span>
+                        <span className="sr-only">{t.createPost}</span>
                     </button>
                 </DialogTrigger>
                  <CreatePostDialog
@@ -281,6 +284,7 @@ export default function FeedPage() {
                         addPost(post);
                         setIsComposerOpen(false);
                     }}
+                    t={t}
                 />
             </Dialog>
           </div>
@@ -289,10 +293,20 @@ export default function FeedPage() {
   );
 }
 
+export default function FeedPage() {
+    return (
+        <ClientOnly>
+            <FeedPageInternal />
+        </ClientOnly>
+    )
+}
+
 function CreatePostDialog({ 
     onPostGenerated,
+    t
 }: { 
-    onPostGenerated: (post: PostGeneratorOutput) => void, 
+    onPostGenerated: (post: PostGeneratorOutput) => void,
+    t: typeof translations['en']
 }) {
   const [postContent, setPostContent] = useState("");
   const [analysisResult, setAnalysisResult] = useState<AnalyzePostOutput | null>(null);
@@ -342,7 +356,7 @@ function CreatePostDialog({
   return (
     <DialogContent className="max-w-2xl">
       <DialogHeader>
-        <DialogTitle>Create a Post</DialogTitle>
+        <DialogTitle>{t.createPost}</DialogTitle>
       </DialogHeader>
       <div className="flex items-start gap-4 pt-4">
         <Avatar>
@@ -353,7 +367,7 @@ function CreatePostDialog({
         <div className="w-full">
           <Textarea
             ref={textareaRef}
-            placeholder="What's on your mind?"
+            placeholder={t.postPlaceholder}
             className="mb-2 min-h-48 w-full resize-none border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base"
             value={postContent}
             onChange={(e) => setPostContent(e.target.value)}
@@ -367,25 +381,25 @@ function CreatePostDialog({
                     <TooltipTrigger asChild>
                         <Button variant="ghost" size="icon" onClick={() => handleTextFormat('bold')}><Bold /></Button>
                     </TooltipTrigger>
-                    <TooltipContent><p>Bold</p></TooltipContent>
+                    <TooltipContent><p>{t.bold}</p></TooltipContent>
                 </Tooltip>
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button variant="ghost" size="icon" onClick={() => handleTextFormat('italic')}><Italic /></Button>
                     </TooltipTrigger>
-                    <TooltipContent><p>Italic</p></TooltipContent>
+                    <TooltipContent><p>{t.italic}</p></TooltipContent>
                 </Tooltip>
                  <Tooltip>
                     <TooltipTrigger asChild>
                         <Button variant="ghost" size="icon" onClick={() => handleTextFormat('codeblock')}><Code /></Button>
                     </TooltipTrigger>
-                    <TooltipContent><p>Code Block</p></TooltipContent>
+                    <TooltipContent><p>{t.codeBlock}</p></TooltipContent>
                 </Tooltip>
                  <Tooltip>
                     <TooltipTrigger asChild>
                         <Button variant="ghost" size="icon"><Link2 /></Button>
                     </TooltipTrigger>
-                    <TooltipContent><p>Insert Link</p></TooltipContent>
+                    <TooltipContent><p>{t.insertLink}</p></TooltipContent>
                 </Tooltip>
             </div>
         </TooltipProvider>
@@ -399,12 +413,12 @@ function CreatePostDialog({
                       disabled={!postContent.trim() || isAnalyzing}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-4 w-4"><circle cx="12" cy="12" r="7"></circle><line x1="19" y1="5" x2="19" y2="19"></line></svg>
-                      {isAnalyzing ? "Analyzing..." : "Analyze"}
+                      {isAnalyzing ? t.analyzing : t.analyze}
                     </Button>
                 </DialogTrigger>
                 {/* Analysis DialogContent would go here */}
             </Dialog>
-            <Button>Post</Button>
+            <Button>{t.post}</Button>
         </div>
       </DialogFooter>
     </DialogContent>
@@ -412,7 +426,7 @@ function CreatePostDialog({
 }
 
 
-function ApplyForJobDialog({ post }: { post: Post }) {
+function ApplyForJobDialog({ post, t }: { post: Post, t: typeof translations['en'] }) {
     const [coverLetter, setCoverLetter] = useState("");
     const applicant = placeholderUsers.find(u => u.id === '2'); // Assuming current user is Bob Williams
 
@@ -432,8 +446,8 @@ function ApplyForJobDialog({ post }: { post: Post }) {
     return (
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Apply for: {post.jobDetails.title}</DialogTitle>
-                <DialogDescription>Your application will be sent to {post.author.name}.</DialogDescription>
+                <DialogTitle>{t.applyFor}: {post.jobDetails.title}</DialogTitle>
+                <DialogDescription>{t.applicationSentTo.replace('{name}', post.author.name)}</DialogDescription>
             </DialogHeader>
             <div className="py-4 space-y-4">
                 <div className="flex items-start gap-4 rounded-md border bg-muted p-4">
@@ -446,10 +460,10 @@ function ApplyForJobDialog({ post }: { post: Post }) {
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="cover-letter">Cover Letter (Optional)</Label>
+                    <Label htmlFor="cover-letter">{t.coverLetter}</Label>
                     <Textarea 
                         id="cover-letter"
-                        placeholder="Briefly explain why you're a great fit for this role..."
+                        placeholder={t.coverLetterPlaceholder}
                         className="min-h-32"
                         value={coverLetter}
                         onChange={(e) => setCoverLetter(e.target.value)}
@@ -457,10 +471,10 @@ function ApplyForJobDialog({ post }: { post: Post }) {
                 </div>
             </div>
             <DialogFooter>
-                <DialogClose asChild><Button variant="secondary">Cancel</Button></DialogClose>
+                <DialogClose asChild><Button variant="secondary">{t.cancel}</Button></DialogClose>
                 <DialogClose asChild>
                     <Button asChild>
-                        <Link href={`/messages?${query}`}>Message Recruiter</Link>
+                        <Link href={`/messages?${query}`}>{t.messageRecruiter}</Link>
                     </Button>
                 </DialogClose>
             </DialogFooter>
@@ -468,7 +482,7 @@ function ApplyForJobDialog({ post }: { post: Post }) {
     )
 }
 
-function ReplyDialog({ post, onReply }: { post: Post, onReply: (reply: Post) => void }) {
+function ReplyDialog({ post, onReply, t }: { post: Post, onReply: (reply: Post) => void, t: typeof translations['en'] }) {
     const [replyContent, setReplyContent] = useState("");
     const currentUser = placeholderUsers.find(u => u.id === '2')!; // Bob Williams
 
@@ -493,25 +507,25 @@ function ReplyDialog({ post, onReply }: { post: Post, onReply: (reply: Post) => 
     return (
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Reply to {post.author.name}</DialogTitle>
+                <DialogTitle>{t.replyTo} {post.author.name}</DialogTitle>
                 <DialogDescription asChild>
                      <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                        Replying to: "{post.content}"
+                        {t.replyingTo}: "{post.content}"
                     </p>
                 </DialogDescription>
             </DialogHeader>
             <div className="pt-4">
                 <Textarea 
-                    placeholder="Write your reply..."
+                    placeholder={t.writeYourReply}
                     className="min-h-24"
                     value={replyContent}
                     onChange={(e) => setReplyContent(e.target.value)}
                 />
             </div>
              <DialogFooter>
-                <DialogClose asChild><Button variant="secondary">Cancel</Button></DialogClose>
+                <DialogClose asChild><Button variant="secondary">{t.cancel}</Button></DialogClose>
                 <DialogClose asChild>
-                    <Button onClick={handleReplySubmit} disabled={!replyContent.trim()}>Reply</Button>
+                    <Button onClick={handleReplySubmit} disabled={!replyContent.trim()}>{t.reply}</Button>
                 </DialogClose>
             </DialogFooter>
         </DialogContent>
@@ -519,7 +533,7 @@ function ReplyDialog({ post, onReply }: { post: Post, onReply: (reply: Post) => 
 }
 
 
-function PostCard({ post, onUpdate, onDelete, onReply, isReply = false }: { post: Post, onUpdate: (post: Post) => void, onDelete: (postId: number) => void, onReply: (parentPostId: number, reply: Post) => void, isReply?: boolean }) {
+function PostCard({ post, onUpdate, onDelete, onReply, t, isReply = false }: { post: Post, onUpdate: (post: Post) => void, onDelete: (postId: number) => void, onReply: (parentPostId: number, reply: Post) => void, t: typeof translations['en'], isReply?: boolean }) {
     const author = post.author;
     const [isLiked, setIsLiked] = useState(false);
     const [retweetCount, setRetweetCount] = useState(post.retweets);
@@ -537,8 +551,8 @@ function PostCard({ post, onUpdate, onDelete, onReply, isReply = false }: { post
     
     const handleAction = (action: string) => {
         toast({
-            title: `Action: ${action}`,
-            description: "This functionality would be implemented in a real application.",
+            title: `${t.action}: ${action}`,
+            description: t.actionDesc.replace('{action}', action),
         });
     }
 
@@ -554,7 +568,7 @@ function PostCard({ post, onUpdate, onDelete, onReply, isReply = false }: { post
                 </div>
                 <div>
                      <h3 className="font-semibold">{post.jobDetails.title}</h3>
-                     <p className="text-sm text-muted-foreground">Opportunity from {author.name}</p>
+                     <p className="text-sm text-muted-foreground">{t.opportunityFrom} {author.name}</p>
                 </div>
             </div>
         </CardHeader>
@@ -595,33 +609,33 @@ function PostCard({ post, onUpdate, onDelete, onReply, isReply = false }: { post
                         <>
                             <DropdownMenuItem onClick={() => handleAction('Edit')}>
                                 <Edit className="mr-2 h-4 w-4" />
-                                <span>Edit Post</span>
+                                <span>{t.editPost}</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => onDelete(post.id)} className="text-destructive">
                                 <Trash2 className="mr-2 h-4 w-4" />
-                                <span>Delete Post</span>
+                                <span>{t.deletePost}</span>
                             </DropdownMenuItem>
                         </>
                     ) : (
                         <>
                             <DropdownMenuItem onClick={() => handleAction('Follow')}>
                                 <UserPlus className="mr-2 h-4 w-4" />
-                                <span>Follow @{author.handle}</span>
+                                <span>{t.follow.replace('{handle}', author.handle)}</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleAction('Report')}>
                                 <Flag className="mr-2 h-4 w-4" />
-                                <span>Report Post</span>
+                                <span>{t.reportPost}</span>
                             </DropdownMenuItem>
                         </>
                     )}
                      <DropdownMenuSeparator />
                      <DropdownMenuItem onClick={() => handleAction('Save')}>
                         <Save className="mr-2 h-4 w-4" />
-                        <span>Save Post</span>
+                        <span>{t.savePost}</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleAction('Share')}>
                         <Share2 className="mr-2 h-4 w-4" />
-                        <span>Share Post</span>
+                        <span>{t.sharePost}</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -633,14 +647,14 @@ function PostCard({ post, onUpdate, onDelete, onReply, isReply = false }: { post
                     <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-2 font-medium">
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
-                            <span>Budget</span>
+                            <span>{t.budget}</span>
                         </div>
                         <span>{post.jobDetails.budget}</span>
                     </div>
                      <div className="flex items-start justify-between text-sm">
                         <div className="flex items-center gap-2 font-medium">
                             <Info className="h-4 w-4 text-muted-foreground" />
-                            <span>Keywords</span>
+                            <span>{t.keywords}</span>
                         </div>
                          <div className="flex flex-wrap justify-end gap-2">
                             {post.jobDetails.keywords.map(keyword => (
@@ -650,9 +664,9 @@ function PostCard({ post, onUpdate, onDelete, onReply, isReply = false }: { post
                     </div>
                      <Dialog>
                         <DialogTrigger asChild>
-                            <Button className="w-full mt-2">Apply Now</Button>
+                            <Button className="w-full mt-2">{t.applyNow}</Button>
                         </DialogTrigger>
-                        <ApplyForJobDialog post={post} />
+                        <ApplyForJobDialog post={post} t={t} />
                     </Dialog>
                 </div>
             )}
@@ -664,7 +678,7 @@ function PostCard({ post, onUpdate, onDelete, onReply, isReply = false }: { post
                             <span>{post.replies?.length || post.comments}</span>
                         </Button>
                     </DialogTrigger>
-                    <ReplyDialog post={post} onReply={(reply) => onReply(post.id, reply)} />
+                    <ReplyDialog post={post} onReply={(reply) => onReply(post.id, reply)} t={t} />
                 </Dialog>
               <Button variant="ghost" size="sm" className="flex items-center gap-2" onClick={handleRetweet}>
                 <Repeat2 className="h-5 w-5" />
@@ -689,7 +703,7 @@ function PostCard({ post, onUpdate, onDelete, onReply, isReply = false }: { post
              {post.replies && post.replies.length > 0 && (
                 <div className="mt-4 space-y-4 border-l-2 pl-4">
                     {post.replies.map(reply => (
-                        <PostCard key={reply.id} post={reply} onUpdate={onUpdate} onDelete={onDelete} onReply={onReply} isReply={true} />
+                        <PostCard key={reply.id} post={reply} onUpdate={onUpdate} onDelete={onDelete} onReply={onReply} t={t} isReply={true} />
                     ))}
                 </div>
             )}
@@ -699,3 +713,5 @@ function PostCard({ post, onUpdate, onDelete, onReply, isReply = false }: { post
     </Card>
   );
 }
+
+    
