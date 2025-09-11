@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { placeholderUsers } from "@/lib/placeholder-data";
 import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings, Gift, Building } from "lucide-react";
 import Link from "next/link";
-import { EngagementChart } from "./charts";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
@@ -65,7 +64,6 @@ type VisibleMetrics = {
 }
 
 function DashboardPageInternal() {
-    const [chartType, setChartType] = useState<"bar" | "line" | "area">("area");
     const [isAppDownloaded, setIsAppDownloaded] = useState(false);
     const [accessCode, setAccessCode] = useState("");
     const [tasks, setTasks] = useState(initialTasks);
@@ -79,8 +77,6 @@ function DashboardPageInternal() {
         acquisition: true,
         revPerProject: true,
     });
-    const [chartScale, setChartScale] = useState(1);
-    const [tempChartScale, setTempChartScale] = useState(1);
     const [productivityChartScale, setProductivityChartScale] = useState(1);
     const [tempProductivityChartScale, setTempProductivityChartScale] = useState(1);
 
@@ -223,6 +219,7 @@ function DashboardPageInternal() {
                             <DropdownMenuItem key={activity.user.id} className="flex items-center justify-between gap-2 p-2">
                                 <div className="flex items-center gap-3">
                                     <Avatar className="h-9 w-9">
+                                        <AvatarImage src={activity.user.avatar} alt={activity.user.name} />
                                         <AvatarFallback>
                                             <User className="h-5 w-5" />
                                         </AvatarFallback>
@@ -264,6 +261,7 @@ function DashboardPageInternal() {
                             <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
                                 <div className="flex items-center gap-3">
                                     <Avatar className="h-9 w-9">
+                                        <AvatarImage src={user.avatar} alt={user.name} />
                                         <AvatarFallback>
                                             <User className="h-5 w-5" />
                                         </AvatarFallback>
@@ -305,6 +303,7 @@ function DashboardPageInternal() {
                             <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
                                 <div className="flex items-center gap-3">
                                     <Avatar className="h-9 w-9">
+                                        <AvatarImage src={user.avatar} alt={user.name} />
                                         <AvatarFallback>
                                             <User className="h-5 w-5" />
                                         </AvatarFallback>
@@ -431,44 +430,9 @@ function DashboardPageInternal() {
                 </Card>
 
               <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Engagement Chart */}
-                <Card className="lg:col-span-2">
-                    <CardHeader>
-                        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-                            <div>
-                                <CardTitle>Profile Engagement</CardTitle>
-                                <CardDescription>A look at your profile views over the last 7 days.</CardDescription>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <div className="w-32 space-y-1">
-                                    <Label htmlFor="scale" className="text-xs">Scale ({tempChartScale.toFixed(1)}x)</Label>
-                                     <Slider 
-                                        id="scale"
-                                        min={0.1}
-                                        max={5}
-                                        step={0.1}
-                                        value={[tempChartScale]}
-                                        onValueChange={(value) => setTempChartScale(value[0])}
-                                        onValueCommit={(value) => setChartScale(value[0])}
-                                    />
-                                </div>
-                                <Tabs defaultValue="area" onValueChange={(value) => setChartType(value as any)} className="w-full sm:w-auto">
-                                    <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-black text-muted-foreground">
-                                        <TabsTrigger value="bar">Bar</TabsTrigger>
-                                        <TabsTrigger value="line">Line</TabsTrigger>
-                                        <TabsTrigger value="area">Area</TabsTrigger>
-                                    </TabsList>
-                                </Tabs>
-                            </div>
-                        </div>
-                    </CardHeader>
-                    <CardContent className="pl-2">
-                        <EngagementChart type={chartType} scale={chartScale} />
-                    </CardContent>
-                </Card>
 
                 {/* Recent Activity */}
-                <Card id="recent-activity">
+                <Card id="recent-activity" className="lg:col-span-3">
                     <CardHeader>
                         <CardTitle>Recent Activity</CardTitle>
                     </CardHeader>
