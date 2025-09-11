@@ -13,8 +13,8 @@ import { CheckCircle, Briefcase, LogOut, Globe } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useLanguage, Language } from '@/context/language-context';
 
-type Language = 'en' | 'es' | 'zh' | 'sn' | 'fr' | 'de' | 'ja';
 
 const translations: Record<Language, Record<string, string>> = {
     en: {
@@ -239,8 +239,8 @@ const translations: Record<Language, Record<string, string>> = {
 
 export default function SettingsPage() {
   const router = useRouter();
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>('en');
-  const t = translations[selectedLanguage];
+  const { language, setLanguage } = useLanguage();
+  const t = translations[language];
 
   const handleLogout = () => {
     router.push('/logout');
@@ -357,7 +357,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-4">
                 <div className="space-y-2">
                     <Label htmlFor="language">{t.language}</Label>
-                     <Select defaultValue="en" onValueChange={(value) => setSelectedLanguage(value as Language)}>
+                     <Select value={language} onValueChange={(value) => setLanguage(value as Language)}>
                         <SelectTrigger id="language">
                             <SelectValue placeholder="Select a language" />
                         </SelectTrigger>

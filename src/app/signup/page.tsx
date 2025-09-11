@@ -15,6 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { ClientOnly } from "@/components/layout/client-only";
 import { Kanban, Languages } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useLanguage } from "@/context/language-context";
 
 const signupSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters."),
@@ -34,6 +35,7 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 export default function SignupPage() {
   const { toast } = useToast();
   const router = useRouter();
+  const { language, setLanguage } = useLanguage();
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -72,13 +74,13 @@ export default function SignupPage() {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem>English</DropdownMenuItem>
-                    <DropdownMenuItem>Español (Spanish)</DropdownMenuItem>
-                    <DropdownMenuItem>Français (French)</DropdownMenuItem>
-                    <DropdownMenuItem>Deutsch (German)</DropdownMenuItem>
-                    <DropdownMenuItem>日本語 (Japanese)</DropdownMenuItem>
-                    <DropdownMenuItem>简体中文 (Mandarin)</DropdownMenuItem>
-                    <DropdownMenuItem>ChiShona</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('en')}>English</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('es')}>Español (Spanish)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('fr')}>Français (French)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('de')}>Deutsch (German)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('ja')}>日本語 (Japanese)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('zh')}>简体中文 (Mandarin)</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setLanguage('sn')}>ChiShona</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>
