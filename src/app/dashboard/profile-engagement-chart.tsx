@@ -159,11 +159,11 @@ export function ProfileEngagementChart({ timeline, onTimelineChange, visibleMetr
             />
             <Tooltip content={<CustomTooltip visibleMetrics={visibleMetrics} />} />
             <Legend wrapperStyle={{ paddingTop: '20px' }} />
-            {visibleMetrics.views && <Bar yAxisId="left" dataKey="views" name="Profile Views" fill="url(#lines)" stroke="hsl(var(--primary))" barSize={10} />}
+            {visibleMetrics.views && <Bar yAxisId="left" dataKey="views" name="Profile Views" fill="url(#lines)" stroke="hsl(var(--primary))" barSize={30} />}
             {visibleMetrics.connections && <Line yAxisId="left" type="monotone" dataKey="connections" name="New Connections" stroke="hsl(var(--chart-2))" />}
             {visibleMetrics.searches && <Line yAxisId="left" type="monotone" dataKey="searches" name="Search Appearances" stroke="hsl(var(--chart-1))" />}
             {visibleMetrics.likes && <Line yAxisId="left" type="monotone" dataKey="likes" name="Post Likes" stroke="hsl(var(--chart-4))" />}
-            {visibleMetrics.skillSyncNetMatches && <Line yAxisId="left" type="monotone" dataKey="skillSyncNetMatches" name="Skill Sync Net Matches" stroke="hsl(var(--primary))" />}
+            {visibleMetrics.skillSyncNetMatches && <Line yAxisId="left" type="monotone" dataKey="skillSyncNetMatches" name="Skill Sync Net Matches" stroke="hsl(var(--primary))" strokeDasharray="5 5" />}
           </ComposedChart>
         </ResponsiveContainer>
       </CardContent>
@@ -172,5 +172,3 @@ export function ProfileEngagementChart({ timeline, onTimelineChange, visibleMetr
 }
 
   
-
-    
