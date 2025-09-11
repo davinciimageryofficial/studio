@@ -3,7 +3,7 @@
 
 import { Bar, BarChart, Line, LineChart, Pie, PieChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, AreaChart, Area, Funnel, FunnelChart, LabelList, Cell, ComposedChart } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { financialHealthData, clientManagementData, qualityPerformanceData } from "@/lib/placeholder-data";
+import { monthlyProductivityData, weeklyProductivityData } from "@/lib/placeholder-data";
 import { TrendingUp, Wallet, Users, Award, Settings } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMe
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { monthlyProductivityData, weeklyProductivityData } from "@/lib/placeholder-data";
 
 
 type VisibleMetrics = {
@@ -54,7 +53,7 @@ export function OperationalCharts() {
       projectsWon: Math.round(item.projects * scale),
       portfolioUpdates: Math.round((item.impressions / 2000) * scale),
     }));
-  }, [timeline, scale]);
+  }, [timeline, scale, dataMap]);
   
   const dataKey = timeline === 'monthly' ? 'month' : 'week';
 
