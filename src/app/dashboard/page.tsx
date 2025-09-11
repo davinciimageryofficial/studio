@@ -67,6 +67,14 @@ type VisibleMetrics = {
     revPerProject: boolean;
 }
 
+type VisibleEngagementMetrics = {
+    views: boolean;
+    connections: boolean;
+    searches: boolean;
+    likes: boolean;
+    skillSyncNetMatches: boolean;
+}
+
 function DashboardPageInternal() {
     const { language } = useLanguage();
     const t = translations[language];
@@ -83,6 +91,13 @@ function DashboardPageInternal() {
         impressions: true,
         acquisition: true,
         revPerProject: false,
+    });
+    const [visibleEngagementMetrics, setVisibleEngagementMetrics] = useState<VisibleEngagementMetrics>({
+        views: true,
+        connections: true,
+        searches: true,
+        likes: true,
+        skillSyncNetMatches: true,
     });
     const [productivityChartScale, setProductivityChartScale] = useState(1);
     const [tempProductivityChartScale, setTempProductivityChartScale] = useState(1);
@@ -175,6 +190,10 @@ function DashboardPageInternal() {
     
     const handleMetricVisibilityChange = (metric: keyof VisibleMetrics, checked: boolean) => {
         setVisibleMetrics(prev => ({ ...prev, [metric]: checked }));
+    };
+
+    const handleEngagementMetricVisibilityChange = (metric: keyof VisibleEngagementMetrics, checked: boolean) => {
+        setVisibleEngagementMetrics(prev => ({ ...prev, [metric]: checked }));
     };
     
     const getActivityIcon = (action: string) => {
@@ -448,6 +467,8 @@ function DashboardPageInternal() {
                     <ProfileEngagementChart 
                         timeline={engagementTimeline}
                         onTimelineChange={setEngagementTimeline}
+                        visibleMetrics={visibleEngagementMetrics}
+                        onMetricVisibilityChange={handleEngagementMetricVisibilityChange}
                     />
                 </div>
 
