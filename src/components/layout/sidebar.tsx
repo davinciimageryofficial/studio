@@ -42,7 +42,13 @@ import { translations } from "@/lib/translations";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { language } = useLanguage();
+  const { language, isHydrated } = useLanguage();
+  
+  if (!isHydrated) {
+    // Render nothing or a placeholder until the language is hydrated
+    return null; 
+  }
+
   const t = translations[language];
 
   const menuItems = [

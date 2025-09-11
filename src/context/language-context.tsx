@@ -8,6 +8,7 @@ export type Language = 'en' | 'es' | 'fr' | 'de' | 'ja' | 'zh' | 'sn';
 interface LanguageContextType {
   language: Language;
   setLanguage: (language: Language) => void;
+  isHydrated: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -22,12 +23,14 @@ export const useLanguage = () => {
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('en');
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('sentry-language') as Language | null;
     if (savedLanguage) {
       setLanguage(savedLanguage);
     }
+    setIsHydrated(true);
   }, []);
 
   const handleSetLanguage = (lang: Language) => {
@@ -36,7 +39,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, isHydrated }}>
       {children}
     </LanguageContext.Provider>
   );

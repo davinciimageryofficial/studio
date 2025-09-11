@@ -22,19 +22,15 @@ export function AppLayout({
   }
 
   return (
-      <>
+      <ClientOnly>
         <AppSidebar />
         <SidebarInset>
           <div className="flex flex-col h-screen">
-            <ClientOnly>
-              <GlobalSearch />
-            </ClientOnly>
+            <GlobalSearch />
             <div className="flex-1 overflow-y-auto">{children}</div>
           </div>
         </SidebarInset>
-        <ClientOnly>
-            <NavigationPrompt />
-        </ClientOnly>
-      </>
+        <NavigationPrompt />
+      </ClientOnly>
   )
 }
