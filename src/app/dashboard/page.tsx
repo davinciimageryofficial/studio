@@ -193,7 +193,7 @@ function DashboardPageInternal() {
       <Tabs defaultValue="personal">
         <div className="flex justify-end mb-6">
             <TabsList className="bg-black text-muted-foreground">
-                <TabsTrigger value="personal">Personal</TabsTrigger>
+                <TabsTrigger value="personal">Personal Mode</TabsTrigger>
                 <TabsTrigger value="agency">Agency Mode</TabsTrigger>
             </TabsList>
         </div>
