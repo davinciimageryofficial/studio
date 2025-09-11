@@ -27,6 +27,7 @@ export type User = {
   verified?: boolean;
   reliabilityScore: number;
   communityStanding: string;
+  disputes: number;
   communityFlags?: {
       reason: string;
       severity: 'low' | 'medium' | 'high';
@@ -75,6 +76,7 @@ export const placeholderUsers: User[] = [
     verified: true,
     reliabilityScore: 95,
     communityStanding: "Highly-rated member with a history of successful collaborations.",
+    disputes: 0,
   },
   {
     id: "2",
@@ -92,6 +94,7 @@ export const placeholderUsers: User[] = [
     verified: true,
     reliabilityScore: 98,
     communityStanding: "Established member with a strong record of positive feedback.",
+    disputes: 0,
   },
   {
     id: "3",
@@ -109,6 +112,7 @@ export const placeholderUsers: User[] = [
     verified: true,
     reliabilityScore: 45,
     communityStanding: "This member has multiple unresolved payment disputes.",
+    disputes: 2,
     communityFlags: [
         { reason: "Fraudulent activity detected", severity: "high" },
         { reason: "Unresolved payment dispute", severity: "medium" },
@@ -127,6 +131,7 @@ export const placeholderUsers: User[] = [
     category: "development",
     reliabilityScore: 88,
     communityStanding: "Reliable member with positive transaction history.",
+    disputes: 0,
     currentSession: {
         workspaceName: "Project Phoenix",
         with: ["1"], // With Alice Johnson
@@ -145,6 +150,7 @@ export const placeholderUsers: User[] = [
     category: "design",
     reliabilityScore: 75,
     communityStanding: "Newer member, proceed with standard caution.",
+    disputes: 1,
     communityFlags: [
         { reason: "Unresponsive to applicants", severity: "low" },
     ]
@@ -165,6 +171,7 @@ export const placeholderUsers: User[] = [
     verified: true,
     reliabilityScore: 92,
     communityStanding: "Consistent and professional member.",
+    disputes: 0,
   },
   {
     id: "7",
@@ -179,6 +186,7 @@ export const placeholderUsers: User[] = [
     category: "development",
     reliabilityScore: 85,
     communityStanding: "Agency profile with a positive project history.",
+    disputes: 0,
   },
 ];
 

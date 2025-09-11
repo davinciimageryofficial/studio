@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { placeholderUsers, User, PortfolioItem } from "@/lib/placeholder-data";
@@ -6,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy, Users, BarChart, MessageSquare, Star, ArrowUp, ArrowDown, GripVertical, ChevronDown, ShieldCheck, AlertTriangle } from "lucide-react";
+import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy, Users, BarChart, MessageSquare, Star, ArrowUp, ArrowDown, GripVertical, ChevronDown, ShieldCheck, AlertTriangle, ShieldX } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
@@ -330,6 +331,8 @@ function SkillsCard({ skills, isMyProfile, handleSaveSkills }: { skills: string[
 
 function CommunityStandingCard({ user }: { user: User }) {
     const scoreColor = user.reliabilityScore > 80 ? "text-green-600" : user.reliabilityScore > 60 ? "text-yellow-600" : "text-red-600";
+    const disputeColor = user.disputes === 0 ? "text-green-600" : "text-yellow-600";
+    
     const getFlagIcon = (severity: 'low' | 'medium' | 'high') => {
         switch (severity) {
             case 'high': return <AlertTriangle className="h-4 w-4 text-red-500" />;
@@ -380,6 +383,12 @@ function CommunityStandingCard({ user }: { user: User }) {
                  <div className="flex items-center gap-2 text-sm text-green-600">
                     <CheckCircle className="h-4 w-4" />
                     <span>Payment Method Verified</span>
+                 </div>
+                 <div className="flex items-center gap-2 text-sm">
+                    <ShieldX className={`h-4 w-4 ${disputeColor}`} />
+                    <span className={disputeColor}>
+                        Disputes Record: {user.disputes}
+                    </span>
                  </div>
             </CardContent>
         </Card>
