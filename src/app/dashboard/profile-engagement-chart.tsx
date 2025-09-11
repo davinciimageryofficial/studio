@@ -134,10 +134,6 @@ export function ProfileEngagementChart({ timeline, onTimelineChange, visibleMetr
         <ResponsiveContainer width="100%" height={350}>
           <ComposedChart data={chartData}>
              <defs>
-                <pattern id="lines" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                    <rect width="4" height="4" fill="hsl(var(--card))" />
-                    <path d="M 0 0 L 0 4" stroke="hsl(var(--primary))" strokeWidth="1" />
-                </pattern>
                 <linearGradient id="gradient-searches" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.4}/>
                     <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0}/>
@@ -171,7 +167,7 @@ export function ProfileEngagementChart({ timeline, onTimelineChange, visibleMetr
             />
             <Tooltip content={<CustomTooltip visibleMetrics={visibleMetrics} />} />
             <Legend wrapperStyle={{ paddingTop: '20px' }} />
-            {visibleMetrics.views && <Bar yAxisId="left" dataKey="views" name="Profile Views" fill="url(#lines)" stroke="hsl(var(--primary))" barSize={30} />}
+            {visibleMetrics.views && <Line yAxisId="left" type="monotone" dataKey="views" name="Profile Views" stroke="hsl(var(--primary))" />}
             {visibleMetrics.connections && <Area yAxisId="left" type="monotone" dataKey="connections" name="New Connections" stroke="hsl(var(--chart-2))" fill="url(#gradient-connections)" />}
             {visibleMetrics.searches && <Area yAxisId="left" type="monotone" dataKey="searches" name="Search Appearances" stroke="hsl(var(--chart-1))" fill="url(#gradient-searches)" />}
             {visibleMetrics.likes && <Area yAxisId="left" type="monotone" dataKey="likes" name="Post Likes" stroke="hsl(var(--chart-4))" fill="url(#gradient-likes)" />}
