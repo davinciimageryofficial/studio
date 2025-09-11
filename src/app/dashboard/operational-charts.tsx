@@ -16,6 +16,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 type VisibleMetrics = {
     revenue: boolean;
     expenses: boolean;
+    profit: boolean;
     leads: boolean;
     projectsWon: boolean;
     portfolioUpdates: boolean;
@@ -28,6 +29,7 @@ export function OperationalCharts() {
   const [visibleMetrics, setVisibleMetrics] = useState<VisibleMetrics>({
     revenue: true,
     expenses: true,
+    profit: true,
     leads: true,
     projectsWon: true,
     portfolioUpdates: true,
@@ -45,14 +47,19 @@ export function OperationalCharts() {
         leads: d.acquisition * 8 + Math.floor(Math.random() * 5),
     }));
     
-    return rawData.map(item => ({
-      ...item,
-      revenue: Math.round(item.revenue * scale),
-      expenses: Math.round(item.expenses * scale),
-      leads: Math.round(item.leads * scale),
-      projectsWon: Math.round(item.projects * scale),
-      portfolioUpdates: Math.round((item.impressions / 2000) * scale),
-    }));
+    return rawData.map(item => {
+      const revenue = Math.round(item.revenue * scale);
+      const expenses = Math.round(item.expenses * scale);
+      return {
+        ...item,
+        revenue,
+        expenses,
+        profit: revenue - expenses,
+        leads: Math.round(item.leads * scale),
+        projectsWon: Math.round(item.projects * scale),
+        portfolioUpdates: Math.round((item.impressions / 2000) * scale),
+      }
+    });
   }, [timeline, scale, dataMap]);
   
   const dataKey = timeline === 'monthly' ? 'month' : 'week';
@@ -122,7 +129,7 @@ export function OperationalCharts() {
               <YAxis yAxisId="left" unit="$" tickFormatter={(value) => `${value}k`} />
               <YAxis yAxisId="right" orientation="right" allowDecimals={false} />
               <Tooltip formatter={(value: number, name: string) => {
-                  if (name === 'Revenue' || name === 'Expenses') {
+                  if (name === 'Revenue' || name === 'Expenses' || name === 'Profit') {
                       return `$${(value * 1000).toLocaleString()}`;
                   }
                   return value;
@@ -130,6 +137,7 @@ export function OperationalCharts() {
               <Legend />
               {visibleMetrics.revenue && <Line yAxisId="left" type="monotone" dataKey="revenue" name="Revenue" stroke="hsl(var(--chart-2))" strokeWidth={2} />}
               {visibleMetrics.expenses && <Area yAxisId="left" type="monotone" dataKey="expenses" name="Expenses" stroke="hsl(var(--destructive))" fillOpacity={1} fill="url(#gradient-expenses)" />}
+              {visibleMetrics.profit && <Line yAxisId="left" type="monotone" dataKey="profit" name="Profit" stroke="hsl(var(--chart-1))" strokeWidth={3} />}
               {visibleMetrics.leads && <Line yAxisId="right" type="monotone" dataKey="leads" name="New Leads" stroke="hsl(var(--chart-3))" strokeWidth={2} />}
               {visibleMetrics.projectsWon && <Line yAxisId="right" type="monotone" dataKey="projectsWon" name="Projects Won" stroke="hsl(var(--chart-1))" strokeWidth={2} />}
               {visibleMetrics.portfolioUpdates && <Line yAxisId="right" type="monotone" dataKey="portfolioUpdates" name="Portfolio Updates" stroke="hsl(var(--chart-4))" strokeWidth={2} />}
