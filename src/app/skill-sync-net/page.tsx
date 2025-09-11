@@ -549,7 +549,7 @@ function ProjectMatchCard({ project }: { project: NonNullable<NonNullable<SkillS
     const query = new URLSearchParams({ project: JSON.stringify(projectData) }).toString();
 
     return (
-        <Card className="shadow-lg">
+        <Card className="shadow-lg border-black">
             <CardHeader>
                 <div className="pt-4">
                     <CardTitle className="text-xl font-semibold">{project.title}</CardTitle>
