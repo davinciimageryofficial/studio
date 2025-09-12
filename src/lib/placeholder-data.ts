@@ -14,11 +14,11 @@ export type PortfolioItem = {
 export type User = {
   id: string;
   name: string;
-  handle: string;
+  handle?: string;
   headline: string;
   bio: string;
   avatar: string;
-  coverImage: string;
+  coverImage?: string;
   skills: string[];
   portfolio: PortfolioItem[];
   category: "design" | "writing" | "development";
@@ -940,4 +940,5 @@ export const monthlyProfileEngagementData = [
 export const profileEngagementData = dailyProfileEngagementData;
 
   
+
 

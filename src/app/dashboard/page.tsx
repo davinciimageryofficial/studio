@@ -6,7 +6,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { placeholderUsers } from "@/lib/placeholder-data";
+import { placeholderUsers as staticUsers } from "@/lib/placeholder-data";
 import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings, Gift, Building, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -27,6 +27,10 @@ import { OperationalCharts } from "./operational-charts";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
 import { ProfileEngagementChart } from "./profile-engagement-chart";
+import { supabase, auth } from "@/lib/supabase";
+import type { User as UserType } from "@/lib/placeholder-data";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 type Task = {
     id: string;
@@ -102,35 +106,66 @@ function DashboardPageInternal() {
     const [productivityChartScale, setProductivityChartScale] = useState(1);
     const [tempProductivityChartScale, setTempProductivityChartScale] = useState(1);
 
+    const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+    const [otherUsers, setOtherUsers] = useState<UserType[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const recentActivities = [
-        {
-            user: placeholderUsers[2],
-            action: "viewed your profile.",
-            time: "2 hours ago",
-        },
-        {
-            user: placeholderUsers[3],
-            action: "sent you a connection request.",
-            time: "1 day ago",
-        },
-        {
-            user: placeholderUsers[4],
-            action: "viewed your profile.",
-            time: "1 day ago",
-        },
-        {
-            user: placeholderUsers[5],
-            action: "accepted your connection request.",
-            time: "2 days ago",
-        },
-    ];
+    useEffect(() => {
+        const fetchUserData = async () => {
+            setIsLoading(true);
+            const { data: { user: authUser } } = await auth.getUser();
+            
+            if (authUser) {
+                // Fetch profile from 'users' table
+                const { data: userProfile, error: profileError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', authUser.id)
+                    .single();
+
+                if (userProfile) {
+                    setCurrentUser(userProfile);
+                } else {
+                     // If no profile, use auth data and a static user for missing fields
+                    setCurrentUser({ ...staticUsers[1], id: authUser.id, name: authUser.email || "New User" });
+                }
+            } else {
+                // Not logged in, use static data for demo
+                setCurrentUser(staticUsers[1]);
+            }
+
+            // Fetch other users for activity feeds
+            const { data: allUsers, error: usersError } = await supabase
+                .from('users')
+                .select('*')
+                .limit(10);
+            
+            if (allUsers) {
+                setOtherUsers(allUsers.filter(u => u.id !== authUser?.id));
+            } else {
+                setOtherUsers(staticUsers.filter(u => u.id !== '2'));
+            }
+
+            setIsLoading(false);
+        };
+
+        fetchUserData();
+    }, []);
+
+
+    const recentActivities = useMemo(() => {
+        if (otherUsers.length < 4) return [];
+        return [
+            { user: otherUsers[0], action: "viewed your profile.", time: "2 hours ago" },
+            { user: otherUsers[1], action: "sent you a connection request.", time: "1 day ago" },
+            { user: otherUsers[2], action: "viewed your profile.", time: "1 day ago" },
+            { user: otherUsers[3], action: "accepted your connection request.", time: "2 days ago" },
+        ];
+    }, [otherUsers]);
     
-    const recentViewers = recentActivities.filter(a => a.action.includes("viewed"));
-
-
-    const pendingInvitations = placeholderUsers.slice(3, 6);
-    const newConnections = placeholderUsers.slice(2, 5);
+    const recentViewers = useMemo(() => recentActivities.filter(a => a.action.includes("viewed")), [recentActivities]);
+    const pendingInvitations = useMemo(() => otherUsers.slice(1, 4), [otherUsers]);
+    const newConnections = useMemo(() => otherUsers.slice(0, 3), [otherUsers]);
     
     const handleAccessCodeSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -206,10 +241,19 @@ function DashboardPageInternal() {
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">{t.dashboardTitle}</h1>
-        <p className="mt-1 text-muted-foreground">
-          {t.dashboardWelcome.replace('{name}', placeholderUsers[1].name)}
-        </p>
+        {isLoading ? (
+            <div className="space-y-2">
+                <Skeleton className="h-9 w-1/2" />
+                <Skeleton className="h-5 w-3/4" />
+            </div>
+        ) : (
+            <>
+                <h1 className="text-3xl font-bold tracking-tight">{t.dashboardTitle}</h1>
+                <p className="mt-1 text-muted-foreground">
+                    {t.dashboardWelcome.replace('{name}', currentUser?.name || 'Guest')}
+                </p>
+            </>
+        )}
       </header>
 
       <Tabs defaultValue="personal">
@@ -654,7 +698,3 @@ export default function DashboardPage() {
         </ClientOnly>
     )
 }
-
-  
-
-    
