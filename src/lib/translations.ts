@@ -434,5 +434,3 @@ export const translations: Record<Language, typeof englishTranslations> = {
     wo: createTranslation("Wolof"),
     zgh: createTranslation("Standard Moroccan Tamazight"),
 };
-
-    

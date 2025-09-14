@@ -13,17 +13,29 @@ import { Kanban } from "lucide-react";
 import { signup } from "@/app/auth/actions";
 import { useState } from "react";
 import { ClientOnly } from "@/components/layout/client-only";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useLanguage } from "@/context/language-context";
+import { translations } from "@/lib/translations";
 
 const signupSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
   password: z.string().min(8, "Password must be at least 8 characters."),
+  profession: z.string().min(1, "Please select your profession."),
+  earlyAccess: z.boolean().default(false),
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
 
 function SignupPageInternal() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const router = useRouter();
+    const { toast } = useToast();
+    const { language } = useLanguage();
+    const t = translations[language];
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -31,6 +43,8 @@ function SignupPageInternal() {
       fullName: "",
       email: "",
       password: "",
+      profession: undefined,
+      earlyAccess: false,
     },
   });
 
@@ -39,11 +53,21 @@ function SignupPageInternal() {
     formData.append('fullName', data.fullName);
     formData.append('email', data.email);
     formData.append('password', data.password);
+    formData.append('profession', data.profession);
+    formData.append('earlyAccess', String(data.earlyAccess));
+    
+    // Store data in localStorage for the confirmation page
+    localStorage.setItem('waitlistData', JSON.stringify(data));
 
     const result = await signup(formData);
 
     if (result?.error) {
         setErrorMessage(result.error);
+    } else {
+        toast({
+            title: t.signupSuccessToastTitle,
+            description: t.signupSuccessToastDesc,
+        });
     }
   };
 
@@ -54,8 +78,8 @@ function SignupPageInternal() {
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
                     <Kanban className="size-7 text-primary" />
                 </div>
-                <CardTitle className="text-2xl font-bold">Create an Account</CardTitle>
-                <CardDescription>Join Sentry to connect with professionals.</CardDescription>
+                <CardTitle className="text-2xl font-bold">{t.signupTitle}</CardTitle>
+                <CardDescription>{t.signupDescription}</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -65,9 +89,9 @@ function SignupPageInternal() {
                       name="fullName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Full Name</FormLabel>
+                          <FormLabel>{t.signupFullName}</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Jane Doe" />
+                            <Input {...field} placeholder={t.signupFullNamePlaceholder} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -78,9 +102,9 @@ function SignupPageInternal() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>{t.signupEmail}</FormLabel>
                           <FormControl>
-                            <Input type="email" {...field} placeholder="you@example.com" />
+                            <Input type="email" {...field} placeholder={t.signupEmailPlaceholder} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -99,11 +123,55 @@ function SignupPageInternal() {
                         </FormItem>
                       )}
                     />
+                    <FormField
+                      control={form.control}
+                      name="profession"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t.signupProfession}</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t.signupProfessionPlaceholder} />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectItem value="design">{t.signupProfessionDesign}</SelectItem>
+                                    <SelectItem value="development">{t.signupProfessionDev}</SelectItem>
+                                    <SelectItem value="writing">{t.signupProfessionWriting}</SelectItem>
+                                    <SelectItem value="marketing">{t.signupProfessionMarketing}</SelectItem>
+                                    <SelectItem value="business">{t.signupProfessionBusiness}</SelectItem>
+                                    <SelectItem value="other">{t.signupProfessionOther}</SelectItem>
+                                </SelectContent>
+                            </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                     <FormField
+                        control={form.control}
+                        name="earlyAccess"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                            <FormControl>
+                                <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel>
+                                {t.signupEarlyAccess}
+                                </FormLabel>
+                            </div>
+                            </FormItem>
+                        )}
+                    />
                     {errorMessage && (
                         <p className="text-sm font-medium text-destructive">{errorMessage}</p>
                     )}
                     <Button type="submit" className="w-full">
-                      Create Account
+                      {t.joinWaitlist}
                     </Button>
                   </form>
                 </Form>

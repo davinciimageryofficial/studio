@@ -46,6 +46,9 @@ export async function signup(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const fullName = formData.get('fullName') as string;
+  const profession = formData.get('profession') as string;
+  const earlyAccess = formData.get('earlyAccess') === 'true';
+
   const cookieStore = cookies()
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -65,9 +68,8 @@ export async function signup(formData: FormData) {
     }
   )
 
-  // The handle_new_user function and trigger will now automatically create the profile.
-  // So we just need to sign up the user.
-  const { data, error } = await supabase.auth.signUp({
+  // First, sign up the user in auth.users
+  const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -78,21 +80,35 @@ export async function signup(formData: FormData) {
     },
   })
 
-  if (error) {
-    // The trigger might fail silently, so if we get a user back but no profile,
-    // we can still return a generic error. The most common issue is RLS.
-    if (error.message.includes("duplicate key value")) {
+  if (authError) {
+    if (authError.message.includes("duplicate key value")) {
         return { error: "A user with this email already exists."}
     }
-    return { error: error.message };
+    return { error: authError.message };
   }
 
-  if (!data.user) {
+  if (!authData.user) {
     return { error: "An unexpected error occurred during signup. Please try again."}
   }
 
+  // The handle_new_user trigger will create the profile automatically.
+  // Now, add the user to the waitlist table.
+  const { error: waitlistError } = await supabase.from('waitlist').insert({
+      id: authData.user.id,
+      email: email,
+      full_name: fullName,
+      profession: profession,
+      wants_early_access: earlyAccess,
+  });
+
+  if (waitlistError) {
+      // Even if waitlist fails, the user is signed up. We should probably handle this
+      // more gracefully, but for now we'll just log it and continue.
+      console.error("Error adding user to waitlist:", waitlistError.message);
+  }
+
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect('/waitlist-confirmation')
 }
 
 export async function logout() {
