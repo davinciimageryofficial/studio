@@ -176,6 +176,51 @@ export async function getAgencyOperationalChartData() {
     }));
 }
 
+
+export async function getAgencyMetrics() {
+    const supabase = createSupabaseServerClient();
+    const { data: agency } = await supabase.from('agencies').select('id').limit(1).single();
+    if (!agency) return null;
+
+    const [
+        { count: activeClients, error: activeClientsError },
+        { data: latestMetrics, error: latestMetricsError },
+        { count: activeProjects, error: activeProjectsError }
+    ] = await Promise.all([
+        supabase.from('clients').select('*', { count: 'exact', head: true }).eq('agency_id', agency.id).eq('status', 'Active'),
+        supabase.from('monthly_metrics').select('*').eq('agency_id', agency.id).order('month', { ascending: false }).limit(1).single(),
+        supabase.from('projects').select('*', { count: 'exact', head: true }).eq('agency_id', agency.id).eq('status', 'In Progress')
+    ]);
+
+    if (activeClientsError || latestMetricsError || activeProjectsError) {
+        console.error('Error fetching agency metrics:', { activeClientsError, latestMetricsError, activeProjectsError });
+        return null;
+    }
+
+    return {
+        financials: {
+            monthlyRevenue: latestMetrics.revenue,
+            monthlyProfit: latestMetrics.revenue - latestMetrics.expenses,
+        },
+        clients: {
+            activeClients: activeClients || 0,
+            satisfaction: latestMetrics.client_satisfaction_score,
+        },
+        projects: {
+            activeProjects: activeProjects || 0,
+            // These would be more complex calculations in a real app
+            onTimeDelivery: 98.5, 
+            budgetAdherence: 95.2,
+        },
+        team: {
+            satisfaction: latestMetrics.team_satisfaction_score,
+            // These would be more complex calculations
+            capacity: 85,
+        }
+    };
+}
+
+
 // =================================================================
 // Feed & Posts Functions
 // =================================================================

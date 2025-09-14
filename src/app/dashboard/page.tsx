@@ -25,7 +25,7 @@ import { OperationalCharts } from "./operational-charts";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
 import { ProfileEngagementChart } from "./profile-engagement-chart";
-import { getCurrentUser, getUsers, getAgencyDashboardMetrics } from "@/lib/database";
+import { getCurrentUser, getUsers, getAgencyDashboardMetrics, getAgencyMetrics } from "@/lib/database";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { User as UserType } from '@/lib/types';
 
@@ -106,22 +106,24 @@ function DashboardPageInternal() {
 
     const [currentUser, setCurrentUser] = useState<UserType | null>(null);
     const [otherUsers, setOtherUsers] = useState<UserType[]>([]);
-    const [agencyMetrics, setAgencyMetrics] = useState({ teamRevenue: 0, totalProjects: 0, clientAcquisition: 0 });
+    const [dashboardMetrics, setDashboardMetrics] = useState({ teamRevenue: 0, totalProjects: 0, clientAcquisition: 0 });
+    const [agencyMetrics, setAgencyMetrics] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
             setIsLoading(true);
             try {
-                const [user, others, metrics] = await Promise.all([
+                const [user, others, dashMetrics, agencyMetricsData] = await Promise.all([
                     getCurrentUser(),
-                    getUsers(), // Fetch all users now
-                    getAgencyDashboardMetrics()
+                    getUsers(),
+                    getAgencyDashboardMetrics(),
+                    getAgencyMetrics(),
                 ]);
                 setCurrentUser(user);
-                // Filter out current user from all users list
                 setOtherUsers(others.filter(o => o.id !== user?.id));
-                setAgencyMetrics(metrics);
+                setDashboardMetrics(dashMetrics);
+                setAgencyMetrics(agencyMetricsData);
             } catch (error) {
                 console.error("Failed to fetch dashboard data:", error);
                 toast({
@@ -633,7 +635,7 @@ function DashboardPageInternal() {
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            {isLoading ? <Skeleton className="h-8 w-3/4" /> : <div className="text-2xl font-bold">${agencyMetrics.teamRevenue.toLocaleString()}</div>}
+                            {isLoading ? <Skeleton className="h-8 w-3/4" /> : <div className="text-2xl font-bold">${dashboardMetrics.teamRevenue.toLocaleString()}</div>}
                             <p className="text-xs text-muted-foreground">+18.2% from last month</p>
                         </CardContent>
                     </Card>
@@ -643,7 +645,7 @@ function DashboardPageInternal() {
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{agencyMetrics.totalProjects}</div>}
+                            {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.totalProjects}</div>}
                             <p className="text-xs text-muted-foreground">+5 active this month</p>
                         </CardContent>
                     </Card>
@@ -653,7 +655,7 @@ function DashboardPageInternal() {
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                           {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">+{agencyMetrics.clientAcquisition}</div>}
+                           {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">+{dashboardMetrics.clientAcquisition}</div>}
                             <p className="text-xs text-muted-foreground">New clients this quarter</p>
                         </CardContent>
                     </Card>
@@ -664,7 +666,7 @@ function DashboardPageInternal() {
                         <CardDescription>{t.teamProductivityDesc}</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
-                         <AgencyMetrics />
+                         <AgencyMetrics metrics={agencyMetrics} isLoading={isLoading} />
                     </CardContent>
                 </Card>
                 <OperationalCharts />
