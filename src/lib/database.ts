@@ -3,8 +3,7 @@
 
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import { placeholderUsers } from './placeholder-data';
-import type { User, Post, Course } from './placeholder-data';
+import type { User, Post, Course } from './types';
 
 /**
  * Creates a Supabase client for server-side operations.
@@ -31,17 +30,20 @@ function createSupabaseServerClient() {
   );
 }
 
+// =================================================================
+// User & Profile Functions
+// =================================================================
+
 /**
  * Fetches the current authenticated user's profile.
- * If no user is logged in, or no profile exists, it returns a default user.
+ * If no user is logged in, or no profile exists, it returns null.
  */
-export async function getCurrentUser(): Promise<User> {
+export async function getCurrentUser(): Promise<User | null> {
     const supabase = createSupabaseServerClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
 
     if (!authUser) {
-        // Return a default guest user if not logged in
-        return placeholderUsers[1];
+        return null;
     }
     
     const { data: userProfile, error } = await supabase
@@ -51,58 +53,63 @@ export async function getCurrentUser(): Promise<User> {
         .single();
     
     if (error || !userProfile) {
-        console.warn("Could not fetch user profile, returning placeholder.", error);
-        // Return a placeholder but with the correct ID if profile is missing
-        return { ...placeholderUsers[1], id: authUser.id, name: userProfile?.full_name || authUser.email || 'New User' };
+        console.warn("Could not fetch user profile for ID:", authUser.id, error);
+        return null;
     }
 
-    // Map full_name to name
     const { full_name, ...rest } = userProfile;
-
     return { ...rest, name: full_name } as User;
 }
 
 /**
- * Fetches all users from the database, excluding the current user.
+ * Fetches all user profiles from the database.
  */
-export async function getOtherUsers(): Promise<User[]> {
+export async function getUsers(): Promise<User[]> {
     const supabase = createSupabaseServerClient();
-    const { data: { user: authUser } } = await supabase.auth.getUser();
-    
-    let query = supabase.from('profiles').select('id, full_name, headline, avatar, category, reliability_score');
-    if (authUser) {
-        query = query.neq('id', authUser.id);
-    }
-    
-    const { data: users, error } = await query.limit(10);
-    
-    if (error || !users) {
-        console.warn("Could not fetch other users, returning placeholders.", error);
-        return placeholderUsers.filter(u => u.id !== authUser?.id);
+    const { data: users, error } = await supabase.from('profiles').select('*');
+    if (error) {
+        console.error("Error fetching users:", error);
+        return [];
     }
     return users.map(({ full_name, ...rest }) => ({...rest, name: full_name})) as User[];
 }
 
+/**
+ * Fetches a single user profile by their ID.
+ */
+export async function getUserById(id: string): Promise<User | null> {
+    const supabase = createSupabaseServerClient();
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
+    if (error || !data) {
+        console.error(`Error fetching user ${id}:`, error);
+        return null;
+    }
+    const { full_name, ...rest } = data;
+    return { ...rest, name: full_name } as User;
+}
+
+
+// =================================================================
+// Dashboard & Agency Functions
+// =================================================================
 
 /**
  * Fetches agency-related metrics for the dashboard.
- * This includes total revenue, project counts, and client acquisition numbers.
  */
 export async function getAgencyDashboardMetrics() {
     const supabase = createSupabaseServerClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { teamRevenue: 0, totalProjects: 0, clientAcquisition: 0 };
     
-    // In a real app, you would fetch the user's agency_id
-    // For now, let's assume one agency for simplicity and find it by owner_id
+    // Using a placeholder agency for now as we don't have multi-agency logic
     const { data: agency, error: agencyError } = await supabase
         .from('agencies')
         .select('id')
-        .eq('owner_id', user.id)
+        .limit(1)
         .single();
 
     if (agencyError || !agency) {
-        console.log("No agency found for user, returning 0 metrics.");
+        console.log("No agencies found, returning 0 metrics.");
         return { teamRevenue: 0, totalProjects: 0, clientAcquisition: 0 };
     }
 
@@ -118,16 +125,8 @@ export async function getAgencyDashboardMetrics() {
     
     const teamRevenue = data.reduce((acc, month) => acc + month.revenue, 0);
 
-    // These would be more complex queries in a real app
-    const { count: totalProjects } = await supabase
-        .from('projects')
-        .select('*', { count: 'exact', head: true })
-        .eq('agency_id', agency.id);
-    
-    const { count: clientAcquisition } = await supabase
-        .from('clients')
-        .select('*', { count: 'exact', head: true })
-        .eq('agency_id', agency.id);
+    const { count: totalProjects } = await supabase.from('projects').select('*', { count: 'exact', head: true }).eq('agency_id', agency.id);
+    const { count: clientAcquisition } = await supabase.from('clients').select('*', { count: 'exact', head: true }).eq('agency_id', agency.id);
 
     return {
         teamRevenue,
@@ -148,7 +147,7 @@ export async function getAgencyOperationalChartData() {
     const { data: agency, error: agencyError } = await supabase
         .from('agencies')
         .select('id')
-        .eq('owner_id', user.id)
+        .limit(1)
         .single();
 
     if (agencyError || !agency) {
@@ -166,14 +165,125 @@ export async function getAgencyOperationalChartData() {
         return [];
     }
     
-    // Format data for the chart
     return data.map(d => ({
         month: new Date(d.month).toLocaleString('default', { month: 'short' }),
-        revenue: d.revenue / 1000, // Assuming revenue is in dollars, chart expects thousands
+        revenue: d.revenue / 1000,
         expenses: d.expenses / 1000,
         profit: (d.revenue - d.expenses) / 1000,
         leads: d.new_leads,
         projectsWon: d.projects_won,
         portfolioUpdates: d.portfolio_updates,
+    }));
+}
+
+// =================================================================
+// Feed & Posts Functions
+// =================================================================
+
+export async function getPosts(): Promise<Post[]> {
+    const supabase = createSupabaseServerClient();
+    const { data, error } = await supabase
+        .from('posts')
+        .select(`
+            *,
+            author:profiles!author_id (
+                id,
+                full_name,
+                headline,
+                avatar_url
+            )
+        `)
+        .is('parent_id', null) // Fetch only top-level posts
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error("Error fetching posts:", error);
+        return [];
+    }
+
+    // This is a simplified representation. A real app would need a more complex query for replies.
+    return data.map(p => ({
+        ...p,
+        author: {
+            ...p.author,
+            name: p.author.full_name
+        }
+    })) as Post[];
+}
+
+
+// =================================================================
+// Courses Functions
+// =================================================================
+
+export async function getCourses(): Promise<Course[]> {
+    const supabase = createSupabaseServerClient();
+    const { data, error } = await supabase
+        .from('courses')
+        .select('*');
+
+    if (error) {
+        console.error("Error fetching courses:", error);
+        return [];
+    }
+    return data as Course[];
+}
+
+
+// =================================================================
+// News Functions
+// =================================================================
+export async function getNews() {
+    const supabase = createSupabaseServerClient();
+    const { data, error } = await supabase.from('articles').select('*').order('created_at', {ascending: false});
+    if (error) {
+        console.error('Error fetching news:', error);
+        return [];
+    }
+    return data.map(a => ({
+        ...a,
+        date: new Date(a.created_at).toLocaleDateString(),
+        imageUrl: a.image_url,
+    }));
+}
+
+
+// =================================================================
+// Messages Functions
+// =================================================================
+export async function getConversations() {
+    const supabase = createSupabaseServerClient();
+    const {data: { user }} = await supabase.auth.getUser();
+    if (!user) return [];
+
+    const { data, error } = await supabase
+        .from('conversations')
+        .select(`
+            *,
+            participants:conversation_participants!conversation_id(
+                profile:profiles!user_id(id, full_name, avatar_url, headline)
+            ),
+            last_message:messages!last_message_id(
+                id, content, created_at
+            )
+        `)
+        .or(`participants.user_id.eq.${user.id}`);
+        
+    if (error) {
+        console.error('Error fetching conversations', error);
+        return [];
+    }
+
+    return data.map(c => ({
+        id: c.id,
+        name: c.is_group ? c.name : c.participants.find((p: any) => p.profile.id !== user.id)?.profile.full_name || 'Conversation',
+        avatar: c.is_group ? c.avatar_url : c.participants.find((p: any) => p.profile.id !== user.id)?.profile.avatar_url,
+        lastMessage: {
+            text: c.last_message?.content || 'No messages yet',
+            time: c.last_message ? new Date(c.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+        },
+        // other fields to match Conversation type
+        type: c.is_group ? 'group' : 'dm',
+        messages: [], // messages should be fetched on demand
     }));
 }

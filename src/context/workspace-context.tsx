@@ -1,10 +1,10 @@
 
 "use client";
 
-import { placeholderUsers } from "@/lib/placeholder-data";
+import { getUsers } from "@/lib/database";
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
+import type { User } from "@/lib/types";
 
-type User = typeof placeholderUsers[0];
 type SessionType = "solo" | "team" | null;
 
 interface WorkspaceContextType {
@@ -78,9 +78,10 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         return clearTimer;
     }, [isActive, startTimer, clearTimer]);
     
-    const startSession = (type: SessionType) => {
+    const startSession = async (type: SessionType) => {
         if (type === 'team') {
-            setParticipants(placeholderUsers.slice(0, 3));
+            const users = await getUsers();
+            setParticipants(users.slice(0, 3));
         }
         setSessionType(type);
         setIsActive(true);

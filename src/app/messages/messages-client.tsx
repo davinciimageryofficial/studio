@@ -2,7 +2,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { placeholderUsers, placeholderMessages } from "@/lib/placeholder-data";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,9 +40,25 @@ import { useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { User as UserType } from "@/lib/types";
+import { getConversations, getUsers } from "@/lib/database";
 
-type Message = (typeof placeholderMessages)[0]['messages'][0] & { fromName?: string };
-type Conversation = (typeof placeholderUsers[0]) & { lastMessage: Message, messages?: Message[], type?: 'dm' | 'group' | 'agency' };
+
+type Message = {
+    from: string,
+    text: string,
+    time: string,
+    fromName?: string
+};
+
+type Conversation = { 
+    id: string;
+    name: string;
+    avatar?: string;
+    lastMessage: Message,
+    messages?: Message[],
+    type?: 'dm' | 'group' | 'agency' 
+};
 
 const GoogleDriveIcon = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -55,17 +70,9 @@ const GoogleDriveIcon = () => (
 
 
 export function MessagesClient() {
-  const [conversations, setConversations] = useState<Conversation[]>(() => 
-    placeholderMessages.map((msg, index) => {
-        const user = placeholderUsers.find(u => u.id === msg.userId);
-        return { 
-            ...user!, 
-            lastMessage: msg.messages[msg.messages.length - 1],
-            messages: msg.messages,
-            type: index % 3 === 0 ? 'group' : (index % 3 === 1 ? 'agency' : 'dm'),
-        };
-  }));
-  const [activeConversationId, setActiveConversationId] = useState(conversations[0]?.id);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [allUsers, setAllUsers] = useState<UserType[]>([]);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState("base");
   const [showAvatars, setShowAvatars] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
@@ -77,6 +84,18 @@ export function MessagesClient() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+      async function loadData() {
+          const [convos, users] = await Promise.all([getConversations(), getUsers()]);
+          setConversations(convos as Conversation[]);
+          setAllUsers(users);
+          if (convos.length > 0) {
+              setActiveConversationId(convos[0].id);
+          }
+      }
+      loadData();
+  }, []);
 
 
   useEffect(() => {
@@ -102,17 +121,11 @@ export function MessagesClient() {
             setConversations([...conversations]);
             setActiveConversationId(partnerConversation.id);
         } else {
+            const partnerDetails = allUsers.find(u => u.id === partnerId);
             const newConversation: Conversation = {
                 id: partnerId,
                 name: partnerName,
-                handle: partnerName.toLowerCase().replace(/\s/g, ''),
-                avatar: `https://picsum.photos/seed/${partnerId}/200/200`,
-                headline: partnerHeadline,
-                bio: "",
-                coverImage: "",
-                skills: [],
-                portfolio: [],
-                category: 'development',
+                avatar: partnerDetails?.avatar,
                 lastMessage: newMessageObj,
                 messages: [newMessageObj],
             };
@@ -146,7 +159,7 @@ export function MessagesClient() {
     } else if (applicationParam) {
         try {
             const app = JSON.parse(applicationParam);
-            const recruiter = placeholderUsers.find(u => u.id === app.recruiterId);
+            const recruiter = allUsers.find(u => u.id === app.recruiterId);
 
             if (recruiter) {
                 const applicationMessage = `
@@ -172,7 +185,7 @@ export function MessagesClient() {
         }
     }
 
-  }, [searchParams, toast]);
+  }, [searchParams, toast, allUsers, conversations]);
 
   useEffect(() => {
     // Scroll to the bottom when new messages are added
@@ -464,7 +477,16 @@ function NewCommunityDialog() {
     const { toast } = useToast();
     const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
     const [creationType, setCreationType] = useState<'group' | 'agency'>('group');
-    const connections = placeholderUsers.filter(u => u.id !== '2'); // Exclude current user
+    const [connections, setConnections] = useState<UserType[]>([]);
+
+    useEffect(() => {
+        async function fetchUsers() {
+            const users = await getUsers();
+            // Exclude current user placeholder
+            setConnections(users.filter(u => u.id !== '2'));
+        }
+        fetchUsers();
+    }, []);
 
     const handleSelectUser = (userId: string) => {
         setSelectedUsers(prev => 

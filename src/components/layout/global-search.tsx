@@ -9,13 +9,14 @@ import { searchAI, type SearchAIOutput } from "@/ai/flows/search-ai";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { placeholderUsers } from "@/lib/placeholder-data";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { useSidebar } from "../ui/sidebar";
 import { useRouter } from "next/navigation";
 import { ScrollArea } from "../ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ThemeSwitcher } from "./theme-switcher";
+import { getUsers } from "@/lib/database";
+import type { User as UserType } from "@/lib/types";
 
 type Message = {
     sender: 'user' | 'ai';
@@ -33,6 +34,23 @@ export function GlobalSearch() {
   const router = useRouter();
   const followUpInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function loadNotifications() {
+        // In a real app, you would fetch notifications from a dedicated notifications table.
+        // For now, we'll create some sample notifications from the first few users.
+        const users = await getUsers();
+        if (users.length >= 4) {
+            setNotifications([
+                { user: users[2], action: "viewed your profile.", time: "2h" },
+                { user: users[3], action: "sent you a connection request.", time: "1d" },
+                { user: users[4], action: "accepted your connection request.", time: "2d" },
+            ]);
+        }
+    }
+    loadNotifications();
+  }, []);
 
   // Save conversation to localStorage whenever it changes
   useEffect(() => {
@@ -92,12 +110,6 @@ export function GlobalSearch() {
     }
   }, [loading]);
   
-  const notifications = [
-    { user: placeholderUsers[2], action: "viewed your profile.", time: "2h" },
-    { user: placeholderUsers[3], action: "sent you a connection request.", time: "1d" },
-    { user: placeholderUsers[4], action: "accepted your connection request.", time: "2d" },
-  ];
-
   const suggestions = [
     "Open the courses page",
     "Who are the top designers in London?",

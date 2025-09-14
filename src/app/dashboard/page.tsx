@@ -1,12 +1,10 @@
 
-
 "use client";
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { placeholderUsers as staticUsers, type User as UserType } from "@/lib/placeholder-data";
 import { ArrowUpRight, Users, Eye, UserPlus, Check, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings, Gift, Building, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -27,8 +25,9 @@ import { OperationalCharts } from "./operational-charts";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
 import { ProfileEngagementChart } from "./profile-engagement-chart";
-import { getCurrentUser, getOtherUsers, getAgencyDashboardMetrics } from "@/lib/database";
+import { getCurrentUser, getUsers, getAgencyDashboardMetrics } from "@/lib/database";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { User as UserType } from '@/lib/types';
 
 
 type Task = {
@@ -116,26 +115,30 @@ function DashboardPageInternal() {
             try {
                 const [user, others, metrics] = await Promise.all([
                     getCurrentUser(),
-                    getOtherUsers(),
+                    getUsers(), // Fetch all users now
                     getAgencyDashboardMetrics()
                 ]);
                 setCurrentUser(user);
-                setOtherUsers(others);
+                // Filter out current user from all users list
+                setOtherUsers(others.filter(o => o.id !== user?.id));
                 setAgencyMetrics(metrics);
             } catch (error) {
                 console.error("Failed to fetch dashboard data:", error);
-                // Fallback to static data on error
-                setCurrentUser(staticUsers[1]);
-                setOtherUsers(staticUsers.filter(u => u.id !== '2'));
+                toast({
+                    title: "Error",
+                    description: "Could not load dashboard data.",
+                    variant: "destructive"
+                })
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchDashboardData();
-    }, []);
+    }, [toast]);
 
 
+    // Memos for derived data, now using live 'otherUsers'
     const recentActivities = useMemo(() => {
         if (otherUsers.length < 4) return [];
         return [
@@ -185,7 +188,6 @@ function DashboardPageInternal() {
 
         let taskToMove: Task | undefined;
         
-        // Find and remove task from source column
         const newSourceTasks = tasks[sourceColumn].filter(task => {
             if (task.id === taskId) {
                 taskToMove = task;
@@ -195,7 +197,6 @@ function DashboardPageInternal() {
         });
 
         if (taskToMove) {
-            // Add task to destination column
             const newDestinationTasks = [...tasks[destinationColumn], taskToMove];
             
             setTasks(prevTasks => ({
@@ -224,7 +225,7 @@ function DashboardPageInternal() {
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <header className="mb-8">
-        {isLoading ? (
+        {isLoading || !currentUser ? (
             <div className="space-y-2">
                 <Skeleton className="h-9 w-1/2" />
                 <Skeleton className="h-5 w-3/4" />

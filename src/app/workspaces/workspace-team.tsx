@@ -14,8 +14,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
-import { placeholderUsers } from '@/lib/placeholder-data';
-import { User } from '@/lib/placeholder-data';
+import { getUsers } from '@/lib/database';
+import { User } from '@/lib/types';
 
 
 function ParticipantCard({ participant, isMuted, isCameraOff, isSpeaking }: { participant: User, isMuted: boolean, isCameraOff: boolean, isSpeaking: boolean }) {
@@ -54,7 +54,16 @@ function ControlButton({ icon: Icon, label, isActive, onClick, variant = 'second
 
 function InviteDialog() {
     const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-    const connections = placeholderUsers.filter(u => u.id !== '2'); // Exclude current user
+    const [connections, setConnections] = useState<User[]>([]);
+
+    useEffect(() => {
+        async function fetchConnections() {
+            const users = await getUsers();
+            // In a real app, you'd filter for actual connections. For now, just exclude current user.
+            setConnections(users.filter(u => u.id !== '2'));
+        }
+        fetchConnections();
+    }, []);
 
     const handleSelectUser = (userId: string) => {
         setSelectedUsers(prev => 

@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { placeholderPosts, placeholderUsers } from "@/lib/placeholder-data";
 import {
   MessageCircle,
   Heart,
@@ -59,7 +58,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { freelanceNiches } from "@/app/skill-sync-net/page";
-import { Post, User as UserType } from "@/lib/placeholder-data";
+import { Post, User as UserType } from "@/lib/types";
+import { getPosts, getCurrentUser } from "@/lib/database";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
@@ -68,13 +68,21 @@ import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
 
 
-function FeedContent({ posts, onUpdate, onDelete, onReply, t }: { posts: Post[], onUpdate: (post: Post) => void, onDelete: (postId: number) => void, onReply: (parentPostId: number, reply: Post) => void, t: typeof translations['en'] }) {
+function FeedContent({ posts, onUpdate, onDelete, onReply, t, isLoading, currentUser }: { posts: Post[], onUpdate: (post: Post) => void, onDelete: (postId: number) => void, onReply: (parentPostId: number, reply: Post) => void, t: typeof translations['en'], isLoading: boolean, currentUser: UserType | null }) {
+    if (isLoading) {
+        return (
+            <div className="space-y-6 mt-6">
+                {[...Array(3)].map((_, i) => <PostCardSkeleton key={i} />)}
+            </div>
+        )
+    }
+    
     return (
         <div className="space-y-6 mt-6">
             {posts.length > 0 ? (
                 posts.map((post) => (
                     <ClientOnly key={post.id}>
-                        <PostCard post={post} onUpdate={onUpdate} onDelete={onDelete} onReply={onReply} t={t} />
+                        <PostCard post={post} onUpdate={onUpdate} onDelete={onDelete} onReply={onReply} t={t} currentUser={currentUser} />
                     </ClientOnly>
                 ))
             ) : (
@@ -114,23 +122,43 @@ function PocketGuideDialog({ onStartPost, t }: { onStartPost: () => void, t: typ
 }
 
 function FeedPageInternal() {
-  const [posts, setPosts] = useState<Post[]>(placeholderPosts);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("you-centric");
   const [selectedNiche, setSelectedNiche] = useState<string | null>(null);
   const { language } = useLanguage();
   const t = translations[language];
 
+  useEffect(() => {
+    async function loadData() {
+        setIsLoading(true);
+        const [postsData, currentUserData] = await Promise.all([getPosts(), getCurrentUser()]);
+        setPosts(postsData);
+        setCurrentUser(currentUserData);
+        setIsLoading(false);
+    }
+    loadData();
+  }, []);
+
   const addPost = (newPostData: PostGeneratorOutput) => {
-    const author = placeholderUsers.find((u) => u.id === newPostData.authorId);
-    if (author) {
-      const newPost: Post = {
-        ...newPostData,
-        author,
-        type: 'post',
-        replies: [],
-      };
-      setPosts((prevPosts) => [newPost, ...prevPosts]);
+    if (currentUser) {
+        const newPost: Post = {
+            id: newPostData.id,
+            author: currentUser,
+            author_id: currentUser.id,
+            content: newPostData.content,
+            created_at: new Date().toISOString(),
+            image: null,
+            likes_count: 0,
+            replies_count: 0,
+            reposts_count: 0,
+            views_count: 0,
+            type: 'post',
+            replies: [],
+        };
+        setPosts((prevPosts) => [newPost, ...prevPosts]);
     }
   };
 
@@ -165,40 +193,23 @@ function FeedPageInternal() {
   }
   
   const getFilteredPosts = () => {
+      // Placeholder for filtering logic. A real app would have more complex logic,
+      // possibly fetching filtered data from the backend.
       if (activeTab === "you-centric") {
-          const followingIds = ['1', '3', '5', '7'];
-          return posts.filter(post => followingIds.includes(post.author.id));
+          return posts;
       }
       if (activeTab === "clique") {
           return posts.filter(post => post.author.category === 'design');
       }
       if (activeTab === "niche") {
-          if (!selectedNiche) return [];
+          if (!selectedNiche) return posts;
           const nicheLower = selectedNiche.toLowerCase();
-          
-          const findMainCategory = (niche: string) => {
-              for (const [category, subNiches] of Object.entries(freelanceNiches)) {
-                  if (subNiches.map(n => n.toLowerCase()).includes(niche.toLowerCase())) {
-                      return category;
-                  }
-              }
-              return null;
-          };
-
-          const mainNicheCategory = findMainCategory(selectedNiche);
-          
-          return posts.filter(post => {
-            let authorMatchesCategory = false;
-            if (mainNicheCategory) {
-                if (post.author.category === 'development' && mainNicheCategory === "Development & IT") authorMatchesCategory = true;
-                if (post.author.category === 'design' && mainNicheCategory === "Design & Creative") authorMatchesCategory = true;
-                if (post.author.category === 'writing' && mainNicheCategory === "Writing & Content Creation") authorMatchesCategory = true;
-            }
-            const authorSkills = post.author.skills.map(s => s.toLowerCase());
-            return authorMatchesCategory || authorSkills.includes(nicheLower);
-          });
+          return posts.filter(post => 
+            post.content.toLowerCase().includes(nicheLower) ||
+            post.author.skills.map(s => s.toLowerCase()).includes(nicheLower)
+          );
       }
-      return [];
+      return posts;
   };
 
   const handleTabChange = (value: string) => {
@@ -246,15 +257,7 @@ function FeedPageInternal() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </TabsList>
-            <TabsContent value="you-centric">
-              <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} t={t} />
-            </TabsContent>
-            <TabsContent value="clique">
-               <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} t={t} />
-            </TabsContent>
-            <TabsContent value="niche">
-               <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} t={t} />
-            </TabsContent>
+            <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} t={t} isLoading={isLoading} currentUser={currentUser} />
           </Tabs>
         </div>
       </main>
@@ -285,6 +288,7 @@ function FeedPageInternal() {
                         setIsComposerOpen(false);
                     }}
                     t={t}
+                    currentUser={currentUser}
                 />
             </Dialog>
           </div>
@@ -303,10 +307,12 @@ export default function FeedPage() {
 
 function CreatePostDialog({ 
     onPostGenerated,
-    t
+    t,
+    currentUser
 }: { 
     onPostGenerated: (post: PostGeneratorOutput) => void,
-    t: typeof translations['en']
+    t: typeof translations['en'],
+    currentUser: UserType | null,
 }) {
   const [postContent, setPostContent] = useState("");
   const [analysisResult, setAnalysisResult] = useState<AnalyzePostOutput | null>(null);
@@ -360,6 +366,7 @@ function CreatePostDialog({
       </DialogHeader>
       <div className="flex items-start gap-4 pt-4">
         <Avatar>
+          <AvatarImage src={currentUser?.avatar} alt={currentUser?.name} />
           <AvatarFallback>
             <User className="h-5 w-5" />
           </AvatarFallback>
@@ -426,16 +433,15 @@ function CreatePostDialog({
 }
 
 
-function ApplyForJobDialog({ post, t }: { post: Post, t: typeof translations['en'] }) {
+function ApplyForJobDialog({ post, t, currentUser }: { post: Post, t: typeof translations['en'], currentUser: UserType | null }) {
     const [coverLetter, setCoverLetter] = useState("");
-    const applicant = placeholderUsers.find(u => u.id === '2'); // Assuming current user is Bob Williams
 
-    if (!post.jobDetails || !applicant) return null;
+    if (!post.jobDetails || !currentUser) return null;
     
     const applicationDetails = {
-        applicantName: applicant.name,
-        applicantHeadline: applicant.headline,
-        applicantId: applicant.id,
+        applicantName: currentUser.name,
+        applicantHeadline: currentUser.headline,
+        applicantId: currentUser.id,
         jobTitle: post.jobDetails.title,
         coverLetter: coverLetter,
         recruiterId: post.author.id,
@@ -452,11 +458,12 @@ function ApplyForJobDialog({ post, t }: { post: Post, t: typeof translations['en
             <div className="py-4 space-y-4">
                 <div className="flex items-start gap-4 rounded-md border bg-muted p-4">
                     <Avatar>
+                        <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
                         <AvatarFallback><User /></AvatarFallback>
                     </Avatar>
                     <div>
-                        <p className="font-semibold">{applicant.name}</p>
-                        <p className="text-sm text-muted-foreground">{applicant.headline}</p>
+                        <p className="font-semibold">{currentUser.name}</p>
+                        <p className="text-sm text-muted-foreground">{currentUser.headline}</p>
                     </div>
                 </div>
                 <div className="space-y-2">
@@ -482,23 +489,23 @@ function ApplyForJobDialog({ post, t }: { post: Post, t: typeof translations['en
     )
 }
 
-function ReplyDialog({ post, onReply, t }: { post: Post, onReply: (reply: Post) => void, t: typeof translations['en'] }) {
+function ReplyDialog({ post, onReply, t, currentUser }: { post: Post, onReply: (reply: Post) => void, t: typeof translations['en'], currentUser: UserType | null }) {
     const [replyContent, setReplyContent] = useState("");
-    const currentUser = placeholderUsers.find(u => u.id === '2')!; // Bob Williams
 
     const handleReplySubmit = () => {
-        if (!replyContent.trim()) return;
+        if (!replyContent.trim() || !currentUser) return;
         const newReply: Post = {
             id: Date.now(),
             author: currentUser,
+            author_id: currentUser.id,
             content: replyContent,
-            timestamp: "Just now",
-            likes: 0,
-            comments: 0,
-            retweets: 0,
-            views: "0",
-            type: 'post',
+            created_at: new Date().toISOString(),
             image: null,
+            likes_count: 0,
+            replies_count: 0,
+            reposts_count: 0,
+            views_count: 0,
+            type: 'post',
             replies: [],
         };
         onReply(newReply);
@@ -533,11 +540,11 @@ function ReplyDialog({ post, onReply, t }: { post: Post, onReply: (reply: Post) 
 }
 
 
-function PostCard({ post, onUpdate, onDelete, onReply, t, isReply = false }: { post: Post, onUpdate: (post: Post) => void, onDelete: (postId: number) => void, onReply: (parentPostId: number, reply: Post) => void, t: typeof translations['en'], isReply?: boolean }) {
+function PostCard({ post, onUpdate, onDelete, onReply, t, currentUser, isReply = false }: { post: Post, onUpdate: (post: Post) => void, onDelete: (postId: number) => void, onReply: (parentPostId: number, reply: Post) => void, t: typeof translations['en'], currentUser: UserType | null, isReply?: boolean }) {
     const author = post.author;
     const [isLiked, setIsLiked] = useState(false);
-    const [retweetCount, setRetweetCount] = useState(post.retweets);
-    const likeCount = isLiked ? post.likes + 1 : post.likes;
+    const [retweetCount, setRetweetCount] = useState(post.reposts_count);
+    const likeCount = isLiked ? post.likes_count + 1 : post.likes_count;
     const { toast } = useToast();
 
     const handleLike = () => {
@@ -556,10 +563,14 @@ function PostCard({ post, onUpdate, onDelete, onReply, t, isReply = false }: { p
         });
     }
 
-    const isMyPost = post.author.id === '2'; // Assuming user '2' is the current user
+    const isMyPost = currentUser?.id === post.author.id;
+
+    if (!author) {
+        return <PostCardSkeleton />;
+    }
 
   return (
-    <Card className="border-0">
+    <Card className={cn("border-0", isReply && "border-t-0 rounded-none shadow-none")}>
        {post.type === 'job' && post.jobDetails && (
         <CardHeader className="bg-muted/50 p-4">
             <div className="flex items-center gap-3">
@@ -573,28 +584,26 @@ function PostCard({ post, onUpdate, onDelete, onReply, t, isReply = false }: { p
             </div>
         </CardHeader>
       )}
-      <CardContent className="p-4">
+      <CardContent className={cn("p-4", isReply && "pt-4 pb-0")}>
         <div className="flex items-start gap-4">
-          {post.type === 'post' && (
-            <Avatar>
-                <AvatarFallback>
-                    <User className="h-5 w-5" />
-                </AvatarFallback>
-            </Avatar>
-          )}
+          <Avatar>
+            <AvatarImage src={author.avatar} alt={author.name} />
+            <AvatarFallback>
+                <User className="h-5 w-5" />
+            </AvatarFallback>
+          </Avatar>
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
                     <span className="font-semibold">{author.name}</span>
                     <span className="text-sm text-muted-foreground">
-                    @{author.handle} · {post.timestamp}
+                    @{author.name?.toLowerCase().replace(" ", "")} · {new Date(post.created_at).toLocaleDateString()}
                     </span>
                 </div>
-                {author.jobTitle && author.company && (
+                {author.headline && (
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Briefcase className="h-3 w-3" />
-                        <span>{author.jobTitle} at {author.company}</span>
+                        <span>{author.headline}</span>
                     </div>
                 )}
               </div>
@@ -620,7 +629,7 @@ function PostCard({ post, onUpdate, onDelete, onReply, t, isReply = false }: { p
                         <>
                             <DropdownMenuItem onClick={() => handleAction('Follow')}>
                                 <UserPlus className="mr-2 h-4 w-4" />
-                                <span>{t.follow.replace('{handle}', author.handle)}</span>
+                                <span>{t.follow.replace('{handle}', author.name?.toLowerCase().replace(" ", "") || 'user')}</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleAction('Report')}>
                                 <Flag className="mr-2 h-4 w-4" />
@@ -666,7 +675,7 @@ function PostCard({ post, onUpdate, onDelete, onReply, t, isReply = false }: { p
                         <DialogTrigger asChild>
                             <Button className="w-full mt-2">{t.applyNow}</Button>
                         </DialogTrigger>
-                        <ApplyForJobDialog post={post} t={t} />
+                        <ApplyForJobDialog post={post} t={t} currentUser={currentUser} />
                     </Dialog>
                 </div>
             )}
@@ -675,10 +684,10 @@ function PostCard({ post, onUpdate, onDelete, onReply, t, isReply = false }: { p
                     <DialogTrigger asChild>
                         <Button variant="ghost" size="sm" className="flex items-center gap-2">
                             <MessageCircle className="h-5 w-5" />
-                            <span>{post.replies?.length || post.comments}</span>
+                            <span>{post.replies_count}</span>
                         </Button>
                     </DialogTrigger>
-                    <ReplyDialog post={post} onReply={(reply) => onReply(post.id, reply)} t={t} />
+                    <ReplyDialog post={post} onReply={(reply) => onReply(post.id, reply)} t={t} currentUser={currentUser} />
                 </Dialog>
               <Button variant="ghost" size="sm" className="flex items-center gap-2" onClick={handleRetweet}>
                 <Repeat2 className="h-5 w-5" />
@@ -697,13 +706,13 @@ function PostCard({ post, onUpdate, onDelete, onReply, t, isReply = false }: { p
                 >
                   <path d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm1.5 0c0 4.563 3.687 8.25 8.25 8.25s8.25-3.687 8.25-8.25S16.563 3.75 12 3.75 3.75 7.437 3.75 12zM9 9.75a.75.75 0 000 1.5h6a.75.75 0 000-1.5H9zm0 3a.75.75 0 000 1.5h4a.75.75 0 000-1.5H9z"></path>
                 </svg>
-                <span>{post.views}</span>
+                <span>{post.views_count}</span>
               </Button>
             </div>
              {post.replies && post.replies.length > 0 && (
                 <div className="mt-4 space-y-4 border-l-2 pl-4">
                     {post.replies.map(reply => (
-                        <PostCard key={reply.id} post={reply} onUpdate={onUpdate} onDelete={onDelete} onReply={onReply} t={t} isReply={true} />
+                        <PostCard key={reply.id} post={reply} onUpdate={onUpdate} onDelete={onDelete} onReply={onReply} t={t} currentUser={currentUser} isReply={true} />
                     ))}
                 </div>
             )}
@@ -714,6 +723,31 @@ function PostCard({ post, onUpdate, onDelete, onReply, t, isReply = false }: { p
   );
 }
 
-    
-
-    
+function PostCardSkeleton() {
+    return (
+        <Card className="border-0">
+            <CardContent className="p-4">
+                <div className="flex items-start gap-4">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="flex-1 space-y-3">
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-2">
+                                <Skeleton className="h-4 w-24" />
+                                <Skeleton className="h-3 w-32" />
+                            </div>
+                            <Skeleton className="h-6 w-6" />
+                        </div>
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-5/6" />
+                        <div className="flex items-center justify-between pt-2">
+                            <Skeleton className="h-6 w-12" />
+                            <Skeleton className="h-6 w-12" />
+                            <Skeleton className="h-6 w-12" />
+                            <Skeleton className="h-6 w-12" />
+                        </div>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    )
+}

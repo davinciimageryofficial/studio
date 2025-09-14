@@ -39,7 +39,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { placeholderUsers } from "@/lib/placeholder-data";
+import { getCurrentUser } from "@/lib/database";
+import type { User as UserType } from "@/lib/types";
 
 
 const formSchema = z.object({
@@ -229,8 +230,10 @@ export function WorkmateRadarForm() {
     setError(null);
     setResult(null);
     try {
-        // Using placeholderUser[1] (Bob Williams) as the current user for this example
-        const currentUser = placeholderUsers[1];
+        const currentUser = await getCurrentUser();
+        if (!currentUser) {
+            throw new Error("Could not find current user to automatch.");
+        }
         const autoProfile = `This user has the headline "${currentUser.headline}". Their bio is: "${currentUser.bio}". Their skills include: ${currentUser.skills.join(", ")}. Find collaborators who would complement this user's profile.`;
         
         const output = await aiWorkmateRadar({

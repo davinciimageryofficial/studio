@@ -17,13 +17,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { ClientOnly } from "@/components/layout/client-only";
-import { placeholderUsers } from "@/lib/placeholder-data";
 import { Badge } from "@/components/ui/badge";
 import { z } from "zod";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { getCurrentUser } from "@/lib/database";
+import type { User as UserType } from "@/lib/types";
 
 const clientFormSchema = z.object({
   projectTitle: z.string().min(5, "Project title must be at least 5 characters."),
@@ -415,13 +416,16 @@ function FreelancerView() {
         setResult(null);
 
         try {
-            const currentUser = placeholderUsers.find(u => u.id === '2');
+            const currentUser = await getCurrentUser();
+            if (!currentUser) {
+                throw new Error("User profile not found. Please complete your profile first.");
+            }
             const input: SkillSyncNetInput = {
                 context: "freelancer_seeking_project",
                 freelancerProfile: {
-                    headline: currentUser!.headline,
-                    bio: currentUser!.bio,
-                    skills: currentUser!.skills,
+                    headline: currentUser.headline,
+                    bio: currentUser.bio,
+                    skills: currentUser.skills,
                 }
             };
             const output = await skillSyncNet(input);
@@ -631,10 +635,3 @@ export default function SkillSyncNetPage() {
         </ClientOnly>
     );
 }
-
-    
-
-    
-
-    
-

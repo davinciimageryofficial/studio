@@ -33,16 +33,27 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useWorkspace } from "@/context/workspace-context";
 import { useFullscreen } from "@/hooks/use-fullscreen";
-import { placeholderUsers } from "@/lib/placeholder-data";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
+import { useEffect, useState } from "react";
+import { getCurrentUser } from "@/lib/database";
+import type { User as UserType } from "@/lib/types";
 
 export function AppSidebar() {
   const pathname = usePathname();
   const { language, isHydrated } = useLanguage();
+  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+
+  useEffect(() => {
+    async function fetchUser() {
+      const user = await getCurrentUser();
+      setCurrentUser(user);
+    }
+    fetchUser();
+  }, []);
   
   if (!isHydrated) {
     // Render nothing or a placeholder until the language is hydrated
@@ -76,7 +87,6 @@ export function AppSidebar() {
   const { setNextPath, isActive: isSessionActive } = useWorkspace();
   const { isFullscreen, toggleFullscreen } = useFullscreen();
   const isActive = (href: string) => (href === "/dashboard" ? pathname === href : pathname.startsWith(href) && href !== "/dashboard");
-  const currentUser = placeholderUsers[1];
   const { state } = useSidebar();
   
   const getLabel = () => {
@@ -194,6 +204,7 @@ export function AppSidebar() {
                 <Link href="/profile/me">
                     <UserCircle className="hidden group-data-[collapsible=icon]:block" />
                     <Avatar className="size-7 group-data-[collapsible=icon]:hidden">
+                      <AvatarImage src={currentUser?.avatar} />
                       <AvatarFallback>
                         <User className="h-4 w-4" />
                       </AvatarFallback>
