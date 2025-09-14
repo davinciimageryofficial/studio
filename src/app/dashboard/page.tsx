@@ -6,8 +6,8 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { placeholderUsers as staticUsers } from "@/lib/placeholder-data";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, X, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings, Gift, Building, MoreHorizontal } from "lucide-react";
+import { placeholderUsers as staticUsers, type User as UserType } from "@/lib/placeholder-data";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings, Gift, Building, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -27,8 +27,7 @@ import { OperationalCharts } from "./operational-charts";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
 import { ProfileEngagementChart } from "./profile-engagement-chart";
-import { supabase, auth } from "@/lib/supabase";
-import type { User as UserType } from "@/lib/placeholder-data";
+import { getCurrentUser, getOtherUsers, getAgencyDashboardMetrics } from "@/lib/database";
 import { Skeleton } from "@/components/ui/skeleton";
 
 
@@ -108,48 +107,32 @@ function DashboardPageInternal() {
 
     const [currentUser, setCurrentUser] = useState<UserType | null>(null);
     const [otherUsers, setOtherUsers] = useState<UserType[]>([]);
+    const [agencyMetrics, setAgencyMetrics] = useState({ teamRevenue: 0, totalProjects: 0, clientAcquisition: 0 });
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const fetchUserData = async () => {
+        const fetchDashboardData = async () => {
             setIsLoading(true);
-            const { data: { user: authUser } } = await auth.getUser();
-            
-            if (authUser) {
-                // Fetch profile from 'users' table
-                const { data: userProfile, error: profileError } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('id', authUser.id)
-                    .single();
-
-                if (userProfile) {
-                    setCurrentUser(userProfile);
-                } else {
-                     // If no profile, use auth data and a static user for missing fields
-                    setCurrentUser({ ...staticUsers[1], id: authUser.id, name: authUser.email || "New User" });
-                }
-            } else {
-                // Not logged in, use static data for demo
+            try {
+                const [user, others, metrics] = await Promise.all([
+                    getCurrentUser(),
+                    getOtherUsers(),
+                    getAgencyDashboardMetrics()
+                ]);
+                setCurrentUser(user);
+                setOtherUsers(others);
+                setAgencyMetrics(metrics);
+            } catch (error) {
+                console.error("Failed to fetch dashboard data:", error);
+                // Fallback to static data on error
                 setCurrentUser(staticUsers[1]);
-            }
-
-            // Fetch other users for activity feeds
-            const { data: allUsers, error: usersError } = await supabase
-                .from('users')
-                .select('*')
-                .limit(10);
-            
-            if (allUsers) {
-                setOtherUsers(allUsers.filter(u => u.id !== authUser?.id));
-            } else {
                 setOtherUsers(staticUsers.filter(u => u.id !== '2'));
+            } finally {
+                setIsLoading(false);
             }
-
-            setIsLoading(false);
         };
 
-        fetchUserData();
+        fetchDashboardData();
     }, []);
 
 
@@ -649,7 +632,7 @@ function DashboardPageInternal() {
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">$125,430</div>
+                            {isLoading ? <Skeleton className="h-8 w-3/4" /> : <div className="text-2xl font-bold">${agencyMetrics.teamRevenue.toLocaleString()}</div>}
                             <p className="text-xs text-muted-foreground">+18.2% from last month</p>
                         </CardContent>
                     </Card>
@@ -659,7 +642,7 @@ function DashboardPageInternal() {
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">82</div>
+                            {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{agencyMetrics.totalProjects}</div>}
                             <p className="text-xs text-muted-foreground">+5 active this month</p>
                         </CardContent>
                     </Card>
@@ -669,7 +652,7 @@ function DashboardPageInternal() {
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">+12</div>
+                           {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">+{agencyMetrics.clientAcquisition}</div>}
                             <p className="text-xs text-muted-foreground">New clients this quarter</p>
                         </CardContent>
                     </Card>
