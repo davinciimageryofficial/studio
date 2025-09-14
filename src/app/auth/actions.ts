@@ -65,7 +65,9 @@ export async function signup(formData: FormData) {
     }
   )
 
-  const { data: { user }, error } = await supabase.auth.signUp({
+  // The handle_new_user function and trigger will now automatically create the profile.
+  // So we just need to sign up the user.
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -77,25 +79,17 @@ export async function signup(formData: FormData) {
   })
 
   if (error) {
+    // The trigger might fail silently, so if we get a user back but no profile,
+    // we can still return a generic error. The most common issue is RLS.
+    if (error.message.includes("duplicate key value")) {
+        return { error: "A user with this email already exists."}
+    }
     return { error: error.message };
   }
-  
-  // Create a profile entry
-  if (user) {
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: user.id,
-      full_name: fullName,
-      email: email,
-    });
 
-    if (profileError) {
-        // If profile creation fails, we should probably delete the user
-        // For now, we'll just log the error
-        console.error('Error creating profile:', profileError);
-        return { error: "Could not create user profile. Please try again." }
-    }
+  if (!data.user) {
+    return { error: "An unexpected error occurred during signup. Please try again."}
   }
-
 
   revalidatePath('/', 'layout')
   redirect('/dashboard')
@@ -122,5 +116,5 @@ export async function logout() {
     )
 
     await supabase.auth.signOut();
-    redirect('/login');
+    redirect('/logout');
 }
