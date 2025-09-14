@@ -20,6 +20,12 @@ function createSupabaseServerClient() {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
+        set(name: string, value: string, options) {
+            cookieStore.set({ name, value, ...options })
+        },
+        remove(name: string, options) {
+            cookieStore.delete({ name, ...options })
+        },
       },
     }
   );
@@ -39,7 +45,7 @@ export async function getCurrentUser(): Promise<User> {
     }
     
     const { data: userProfile, error } = await supabase
-        .from('users')
+        .from('profiles')
         .select('*')
         .eq('id', authUser.id)
         .single();
@@ -47,10 +53,13 @@ export async function getCurrentUser(): Promise<User> {
     if (error || !userProfile) {
         console.warn("Could not fetch user profile, returning placeholder.", error);
         // Return a placeholder but with the correct ID if profile is missing
-        return { ...placeholderUsers[1], id: authUser.id, name: authUser.email || 'New User' };
+        return { ...placeholderUsers[1], id: authUser.id, name: userProfile?.full_name || authUser.email || 'New User' };
     }
 
-    return userProfile as User;
+    // Map full_name to name
+    const { full_name, ...rest } = userProfile;
+
+    return { ...rest, name: full_name } as User;
 }
 
 /**
@@ -60,7 +69,7 @@ export async function getOtherUsers(): Promise<User[]> {
     const supabase = createSupabaseServerClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
     
-    let query = supabase.from('users').select('*');
+    let query = supabase.from('profiles').select('id, full_name, headline, avatar, category, reliability_score');
     if (authUser) {
         query = query.neq('id', authUser.id);
     }
@@ -71,7 +80,7 @@ export async function getOtherUsers(): Promise<User[]> {
         console.warn("Could not fetch other users, returning placeholders.", error);
         return placeholderUsers.filter(u => u.id !== authUser?.id);
     }
-    return users as User[];
+    return users.map(({ full_name, ...rest }) => ({...rest, name: full_name})) as User[];
 }
 
 

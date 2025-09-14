@@ -13,6 +13,8 @@ const michroma = Michroma({
   variable: '--font-michroma',
 });
 
+export const dynamic = 'force-dynamic'
+
 export default function RootLayout({
   children,
 }: Readonly<{

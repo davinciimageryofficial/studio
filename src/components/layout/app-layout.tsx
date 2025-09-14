@@ -14,7 +14,7 @@ export function AppLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  const publicPages = ['/', '/signup', '/waitlist-confirmation', '/logout', '/donate'];
+  const publicPages = ['/', '/login', '/signup', '/waitlist-confirmation', '/logout', '/donate'];
   const isPublicPage = publicPages.includes(pathname);
 
   if (isPublicPage) {
