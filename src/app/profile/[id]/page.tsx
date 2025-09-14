@@ -1,17 +1,15 @@
 
-
 'use client';
 
-import { placeholderUsers, User, PortfolioItem } from "@/lib/placeholder-data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy, Users, BarChart, MessageSquare, Star, ArrowUp, ArrowDown, GripVertical, ChevronDown, ShieldCheck, AlertTriangle, ShieldX } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose, DialogDescription } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -22,13 +20,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { PortfolioView } from "./portfolio-view";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { getUserById, getExperiencesByUserId, getCurrentUser } from "@/lib/database";
+import type { User, PortfolioItem, Experience } from "@/lib/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
-
-type Experience = {
-    title: string;
-    company: string;
-    duration: string;
-};
 
 type ProfileData = {
     name: string;
@@ -64,28 +59,94 @@ const sectionTitles: Record<ProfileSection, string> = {
     recommendations: 'Recommendations',
 };
 
+function ProfilePageSkeleton() {
+    return (
+        <div className="bg-muted/40">
+            <Card className="rounded-none relative">
+                <CardContent className="p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:gap-6">
+                        <div className="flex-1 mt-4 sm:mt-0 text-center sm:text-left space-y-2">
+                            <Skeleton className="h-9 w-1/2 mx-auto sm:mx-0" />
+                            <Skeleton className="h-5 w-3/4 mx-auto sm:mx-0" />
+                            <div className="flex items-center justify-center sm:justify-start gap-4 pt-2">
+                                <Skeleton className="h-5 w-24" />
+                                <Skeleton className="h-5 w-24" />
+                            </div>
+                        </div>
+                        <div className="mt-4 flex w-full flex-col items-center sm:items-end gap-4 sm:w-auto">
+                            <div className="flex items-center gap-2">
+                                <Skeleton className="h-8 w-8 rounded-full" />
+                                <Skeleton className="h-8 w-8 rounded-full" />
+                            </div>
+                            <Skeleton className="h-10 w-32" />
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+             <div className="p-4 sm:p-6 md:p-8">
+                <Skeleton className="h-10 w-full max-w-2xl mx-auto" />
+                <div className="max-w-4xl mx-auto mt-6 space-y-8">
+                    <Card><CardHeader><Skeleton className="h-8 w-1/4" /></CardHeader><CardContent><Skeleton className="h-20 w-full" /></CardContent></Card>
+                    <Card><CardHeader><Skeleton className="h-8 w-1/4" /></CardHeader><CardContent><Skeleton className="h-12 w-full" /></CardContent></Card>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function ProfilePage() {
   const params = useParams<{ id: string }>();
-  const isMyProfile = params.id === 'me';
-  const initialUser = isMyProfile ? placeholderUsers[1] : placeholderUsers.find((u) => u.id === params.id);
+  const [user, setUser] = useState<User | null>(null);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const isMyProfile = params.id === 'me' || (currentUser && currentUser.id === params.id);
   
-  const [user, setUser] = useState(initialUser);
   const [sections, setSections] = useState<ProfileSection[]>(['about', 'community', 'skills', 'achievements', 'network', 'impact', 'recommendations']);
 
-
-  const initialExperiences: Experience[] = [
-    { title: "Senior Frontend Developer", company: "Innovate Inc.", duration: "Jan 2020 - Present · 4+ years" },
-    { title: "Web Developer", company: "Solutions Co.", duration: "Jun 2017 - Dec 2019 · 2.5 years" },
-  ];
-
-  const [experiences, setExperiences] = useState(initialExperiences);
-  const [skills, setSkills] = useState(user?.skills || []);
   const [socials, setSocials] = useState<SocialLinks>({
     twitter: "https://x.com/sentry",
     linkedin: "https://linkedin.com/in/sentry",
     instagram: "",
   });
 
+  useEffect(() => {
+    async function fetchData() {
+        setIsLoading(true);
+        const loggedInUser = await getCurrentUser();
+        setCurrentUser(loggedInUser);
+        
+        const profileId = params.id === 'me' ? loggedInUser?.id : params.id;
+
+        if (!profileId) {
+            setIsLoading(false);
+            notFound();
+            return;
+        }
+
+        const [profileUser, profileExperiences] = await Promise.all([
+            getUserById(profileId),
+            getExperiencesByUserId(profileId)
+        ]);
+
+        if (!profileUser) {
+            setIsLoading(false);
+            notFound();
+            return;
+        }
+
+        setUser(profileUser);
+        setExperiences(profileExperiences);
+        setIsLoading(false);
+    }
+    fetchData();
+  }, [params.id]);
+
+
+  if (isLoading) {
+    return <ProfilePageSkeleton />;
+  }
 
   if (!user) {
     notFound();
@@ -102,7 +163,6 @@ export default function ProfilePage() {
   };
 
   const handleSaveSkills = (updatedSkills: string[]) => {
-    setSkills(updatedSkills);
      setUser(prevUser => prevUser ? { ...prevUser, skills: updatedSkills } : null);
   };
   
@@ -120,7 +180,7 @@ export default function ProfilePage() {
 
   const overviewCardProps = {
     user,
-    skills,
+    skills: user.skills,
     isMyProfile,
     handleSaveSkills,
   };
@@ -259,7 +319,7 @@ export default function ProfilePage() {
                                                 <div className="flex items-center gap-2"><Building className="h-4 w-4" /><span>{exp.company}</span></div>
                                                 <div className="flex items-center gap-2"><Calendar className="h-4 w-4" /><span>{exp.duration}</span></div>
                                             </div>
-                                            <p>This is a placeholder description for the role. In the future, users will be able to add detailed descriptions, achievements, and link relevant portfolio projects here.</p>
+                                            <p>{exp.description || 'This is a placeholder description for the role. In the future, users will be able to add detailed descriptions, achievements, and link relevant portfolio projects here.'}</p>
                                         </CardContent>
                                     </Card>
                                 </div>
@@ -279,6 +339,7 @@ export default function ProfilePage() {
 }
 
 function AboutCard({ user }: { user: User }) {
+    if (!user) return null;
     return (
         <Card>
             <CardHeader>
@@ -330,6 +391,7 @@ function SkillsCard({ skills, isMyProfile, handleSaveSkills }: { skills: string[
 }
 
 function CommunityStandingCard({ user }: { user: User }) {
+    if (!user) return null;
     const scoreColor = user.reliabilityScore > 80 ? "text-green-600" : user.reliabilityScore > 60 ? "text-yellow-600" : "text-red-600";
     const disputeColor = user.disputes === 0 ? "text-green-600" : "text-yellow-600";
     
@@ -673,7 +735,7 @@ function EditExperienceDialog({ initialExperiences, onSave }: { initialExperienc
     const [experiences, setExperiences] = useState(initialExperiences);
     
     const handleAdd = () => {
-        setExperiences([...experiences, { title: "", company: "", duration: "" }]);
+        setExperiences([...experiences, { title: "", company: "", duration: "", description: "" }]);
     };
 
     const handleRemove = (index: number) => {

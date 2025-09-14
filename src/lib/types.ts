@@ -6,6 +6,13 @@ export type PortfolioItem = {
   tags: string[];
 };
 
+export type Experience = {
+    title: string;
+    company: string;
+    duration: string;
+    description?: string;
+};
+
 export type User = {
   id: string;
   name: string;

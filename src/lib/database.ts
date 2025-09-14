@@ -3,7 +3,7 @@
 
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import type { User, Post, Course } from './types';
+import type { User, Post, Course, Experience } from './types';
 
 /**
  * Creates a Supabase client for server-side operations.
@@ -58,7 +58,9 @@ export async function getCurrentUser(): Promise<User | null> {
     }
 
     const { full_name, ...rest } = userProfile;
-    return { ...rest, name: full_name } as User;
+    // A real app would fetch portfolio items from a separate table.
+    // For now, we return an empty array.
+    return { ...rest, name: full_name, portfolio: [] } as User;
 }
 
 /**
@@ -71,7 +73,7 @@ export async function getUsers(): Promise<User[]> {
         console.error("Error fetching users:", error);
         return [];
     }
-    return users.map(({ full_name, ...rest }) => ({...rest, name: full_name})) as User[];
+    return users.map(({ full_name, ...rest }) => ({...rest, name: full_name, portfolio: []})) as User[];
 }
 
 /**
@@ -85,7 +87,25 @@ export async function getUserById(id: string): Promise<User | null> {
         return null;
     }
     const { full_name, ...rest } = data;
-    return { ...rest, name: full_name } as User;
+    return { ...rest, name: full_name, portfolio: [] } as User;
+}
+
+/**
+ * Fetches work experiences for a given user ID.
+ */
+export async function getExperiencesByUserId(userId: string): Promise<Experience[]> {
+    const supabase = createSupabaseServerClient();
+    const { data, error } = await supabase
+        .from('experiences')
+        .select('*')
+        .eq('user_id', userId)
+        .order('start_date', { ascending: false });
+
+    if (error) {
+        console.error(`Error fetching experiences for user ${userId}:`, error);
+        return [];
+    }
+    return data as Experience[];
 }
 
 
