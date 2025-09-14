@@ -101,7 +101,6 @@ export async function getAgencyDashboardMetrics() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { teamRevenue: 0, totalProjects: 0, clientAcquisition: 0 };
     
-    // Using a placeholder agency for now as we don't have multi-agency logic
     const { data: agency, error: agencyError } = await supabase
         .from('agencies')
         .select('id')
@@ -197,6 +196,8 @@ export async function getAgencyMetrics() {
         return null;
     }
 
+    if (!latestMetrics) return null;
+
     return {
         financials: {
             monthlyRevenue: latestMetrics.revenue,
@@ -208,13 +209,11 @@ export async function getAgencyMetrics() {
         },
         projects: {
             activeProjects: activeProjects || 0,
-            // These would be more complex calculations in a real app
             onTimeDelivery: 98.5, 
             budgetAdherence: 95.2,
         },
         team: {
             satisfaction: latestMetrics.team_satisfaction_score,
-            // These would be more complex calculations
             capacity: 85,
         }
     };
@@ -246,7 +245,6 @@ export async function getPosts(): Promise<Post[]> {
         return [];
     }
 
-    // This is a simplified representation. A real app would need a more complex query for replies.
     return data.map(p => ({
         ...p,
         author: {
@@ -327,8 +325,163 @@ export async function getConversations() {
             text: c.last_message?.content || 'No messages yet',
             time: c.last_message ? new Date(c.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
         },
-        // other fields to match Conversation type
         type: c.is_group ? 'group' : 'dm',
-        messages: [], // messages should be fetched on demand
+        messages: [],
     }));
+}
+
+// =================================================================
+// Personal Dashboard Chart Functions
+// =================================================================
+
+export async function getPersonalProductivityChartData(timeline: 'daily' | 'weekly' | 'monthly') {
+    const supabase = createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    if (timeline === 'monthly') {
+        const { data, error } = await supabase
+            .from('user_monthly_metrics')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('month', { ascending: true });
+        
+        if (error) {
+            console.error("Error fetching monthly user metrics:", error);
+            return [];
+        }
+        
+        return data.map(d => ({
+            month: new Date(d.month).toLocaleString('default', { month: 'short' }),
+            revenue: d.total_revenue / 1000,
+            projects: d.total_projects,
+            impressions: d.total_impressions,
+            acquisition: d.new_clients,
+            revPerProject: d.avg_rev_per_project / 1000
+        }));
+    }
+
+    // For daily and weekly, we'll fetch daily and aggregate
+    const { data, error } = await supabase
+        .from('user_daily_metrics')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('date', { ascending: false })
+        .limit(timeline === 'daily' ? 7 : 30); // 7 days for daily, 4 weeks of data for weekly
+
+    if (error) {
+        console.error("Error fetching daily user metrics:", error);
+        return [];
+    }
+
+    if (timeline === 'daily') {
+        return data.reverse().map(d => ({
+            day: new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' }),
+            revenue: d.revenue_generated / 1000,
+            projects: d.projects_completed,
+            impressions: d.search_appearances + d.profile_views,
+            acquisition: d.connections_made,
+            revPerProject: d.projects_completed > 0 ? (d.revenue_generated / d.projects_completed) / 1000 : 0
+        }));
+    }
+
+    if (timeline === 'weekly') {
+        const weeks: any = {};
+        data.forEach(d => {
+            const date = new Date(d.date);
+            const weekStart = new Date(date.setDate(date.getDate() - date.getDay())).toISOString().split('T')[0];
+            if (!weeks[weekStart]) {
+                weeks[weekStart] = { revenue: 0, projects: 0, impressions: 0, acquisition: 0, count: 0, revPerProject: 0 };
+            }
+            weeks[weekStart].revenue += d.revenue_generated;
+            weeks[weekStart].projects += d.projects_completed;
+            weeks[weekStart].impressions += d.search_appearances + d.profile_views;
+            weeks[weekStart].acquisition += d.connections_made;
+            weeks[weekStart].count++;
+        });
+
+        return Object.keys(weeks).map(weekStart => ({
+            week: `Week of ${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+            ...weeks[weekStart],
+            revenue: (weeks[weekStart].revenue / 1000),
+            revPerProject: weeks[weekStart].projects > 0 ? (weeks[weekStart].revenue / weeks[weekStart].projects) / 1000 : 0
+        })).slice(-4); // Return last 4 weeks
+    }
+    
+    return [];
+}
+
+
+export async function getProfileEngagementChartData(timeline: 'daily' | 'weekly' | 'monthly') {
+    const supabase = createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    const { data, error } = await supabase
+        .from('user_daily_metrics')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('date', { ascending: false })
+        .limit(timeline === 'daily' ? 7 : (timeline === 'weekly' ? 28 : 90)); // Fetch more for aggregation
+
+    if (error) {
+        console.error("Error fetching engagement data:", error);
+        return [];
+    }
+    
+    data.reverse(); // oldest to newest
+
+    if (timeline === 'daily') {
+        return data.slice(-7).map(d => ({
+            day: new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' }),
+            views: d.profile_views,
+            connections: d.connections_made,
+            searches: d.search_appearances,
+            likes: d.post_likes,
+            skillSyncNetMatches: d.skill_sync_matches,
+        }));
+    }
+    
+    if (timeline === 'weekly') {
+        const weeks: any = {};
+        data.forEach(d => {
+            const date = new Date(d.date);
+            const weekStart = new Date(date.setDate(date.getDate() - date.getDay() + 1)).toISOString().split('T')[0]; // Start week on Monday
+            if (!weeks[weekStart]) {
+                weeks[weekStart] = { views: 0, connections: 0, searches: 0, likes: 0, skillSyncNetMatches: 0 };
+            }
+            weeks[weekStart].views += d.profile_views;
+            weeks[weekStart].connections += d.connections_made;
+            weeks[weekStart].searches += d.search_appearances;
+            weeks[weekStart].likes += d.post_likes;
+            weeks[weekStart].skillSyncNetMatches += d.skill_sync_matches;
+        });
+
+        return Object.keys(weeks).map(weekStart => ({
+            week: `W/C ${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+            ...weeks[weekStart],
+        })).slice(-4);
+    }
+    
+    if (timeline === 'monthly') {
+        const months: any = {};
+        data.forEach(d => {
+            const monthStart = new Date(d.date).toISOString().substring(0, 7) + '-01';
+            if (!months[monthStart]) {
+                months[monthStart] = { views: 0, connections: 0, searches: 0, likes: 0, skillSyncNetMatches: 0 };
+            }
+            months[monthStart].views += d.profile_views;
+            months[monthStart].connections += d.connections_made;
+            months[monthStart].searches += d.search_appearances;
+            months[monthStart].likes += d.post_likes;
+            months[monthStart].skillSyncNetMatches += d.skill_sync_matches;
+        });
+        
+        return Object.keys(months).map(monthStart => ({
+            month: new Date(monthStart).toLocaleString('default', { month: 'short' }),
+             ...months[monthStart],
+        })).slice(-12);
+    }
+
+    return [];
 }

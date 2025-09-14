@@ -2,16 +2,17 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ComposedChart, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, TooltipProps, Bar, Area } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { dailyProfileEngagementData, weeklyProfileEngagementData, monthlyProfileEngagementData } from "@/lib/placeholder-data";
+import { getProfileEngagementChartData } from "@/lib/database";
 import { Settings, UserCheck } from "lucide-react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Timeline = "daily" | "weekly" | "monthly";
 
@@ -52,15 +53,21 @@ const CustomTooltip = ({ active, payload, label, visibleMetrics }: TooltipProps<
 export function ProfileEngagementChart({ timeline, onTimelineChange, visibleMetrics, onMetricVisibilityChange }: ProfileEngagementChartProps) {
   const [scale, setScale] = useState(1);
   const [tempScale, setTempScale] = useState(1);
-  
-  const dataMap = {
-    daily: dailyProfileEngagementData,
-    weekly: weeklyProfileEngagementData,
-    monthly: monthlyProfileEngagementData,
-  };
+  const [isLoading, setIsLoading] = useState(true);
+  const [originalData, setOriginalData] = useState<any[]>([]);
 
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoading(true);
+      const data = await getProfileEngagementChartData(timeline);
+      setOriginalData(data);
+      setIsLoading(false);
+    }
+    fetchData();
+  }, [timeline]);
+  
   const chartData = useMemo(() => {
-    return dataMap[timeline].map(item => ({
+    return originalData.map(item => ({
         ...item,
         views: Math.round(item.views * scale),
         connections: Math.round(item.connections * scale),
@@ -68,7 +75,7 @@ export function ProfileEngagementChart({ timeline, onTimelineChange, visibleMetr
         likes: Math.round(item.likes * scale),
         skillSyncNetMatches: Math.round(item.skillSyncNetMatches * scale),
     }));
-  }, [timeline, scale, dataMap]);
+  }, [scale, originalData]);
 
   const dataKey = {
       daily: 'day',
@@ -131,6 +138,11 @@ export function ProfileEngagementChart({ timeline, onTimelineChange, visibleMetr
         </div>
       </CardHeader>
       <CardContent>
+        {isLoading ? (
+            <div className="h-[350px] w-full flex items-center justify-center">
+              <Skeleton className="h-full w-full" />
+            </div>
+          ) : (
         <ResponsiveContainer width="100%" height={350}>
           <ComposedChart data={chartData}>
              <defs>
@@ -174,9 +186,8 @@ export function ProfileEngagementChart({ timeline, onTimelineChange, visibleMetr
             {visibleMetrics.skillSyncNetMatches && <Line yAxisId="left" type="monotone" dataKey="skillSyncNetMatches" name="Skill Sync Net Matches" stroke="hsl(var(--primary))" strokeDasharray="5 5" />}
           </ComposedChart>
         </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   );
 }
-
-  

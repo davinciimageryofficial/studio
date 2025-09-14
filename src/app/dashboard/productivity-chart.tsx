@@ -1,9 +1,10 @@
 
 "use client"
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { ComposedChart, Bar, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip, TooltipProps } from "recharts";
-import { dailyProductivityData, weeklyProductivityData, monthlyProductivityData } from "@/lib/placeholder-data";
+import { getPersonalProductivityChartData } from "@/lib/database";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type VisibleMetrics = {
     revenue: boolean;
@@ -51,30 +52,43 @@ const renderLegendText = (value: string) => {
 
 
 export function ProductivityChart({ timeline, visibleMetrics, scale }: ProductivityChartProps) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [originalData, setOriginalData] = useState<any[]>([]);
 
-  const dataMap = {
-    daily: dailyProductivityData,
-    weekly: weeklyProductivityData,
-    monthly: monthlyProductivityData,
-  };
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoading(true);
+      const data = await getPersonalProductivityChartData(timeline);
+      setOriginalData(data);
+      setIsLoading(false);
+    }
+    fetchData();
+  }, [timeline]);
 
   const chartData = useMemo(() => {
-    const rawData = dataMap[timeline];
-    return rawData.map(item => ({
+    return originalData.map(item => ({
         ...item,
-        revenue: Math.round(item.revenue * scale),
-        projects: Math.round(item.projects * scale),
-        impressions: Math.round(item.impressions * scale),
-        acquisition: Math.round(item.acquisition * scale),
-        revPerProject: Math.round(item.revPerProject * scale * 100) / 100, // Keep some precision
+        revenue: (item.revenue || 0) * scale,
+        projects: Math.round((item.projects || 0) * scale),
+        impressions: Math.round((item.impressions || 0) * scale),
+        acquisition: Math.round((item.acquisition || 0) * scale),
+        revPerProject: (item.revPerProject || 0) * scale,
     }));
-  }, [timeline, scale, dataMap]);
+  }, [scale, originalData]);
 
   const dataKey = {
       daily: 'day',
       weekly: 'week',
       monthly: 'month',
   }[timeline];
+
+  if (isLoading) {
+    return (
+      <div className="h-[400px] w-full flex items-center justify-center">
+        <Skeleton className="h-full w-full" />
+      </div>
+    )
+  }
 
   return (
      <ResponsiveContainer width="100%" height={400}>
