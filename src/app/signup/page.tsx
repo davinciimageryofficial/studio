@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Kanban } from "lucide-react";
 import { signup } from "@/app/auth/actions";
 import { useState } from "react";
+import { ClientOnly } from "@/components/layout/client-only";
 
 const signupSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters."),
@@ -21,7 +22,7 @@ const signupSchema = z.object({
 
 type SignupFormValues = z.infer<typeof signupSchema>;
 
-export default function SignupPage() {
+function SignupPageInternal() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const form = useForm<SignupFormValues>({
@@ -116,4 +117,12 @@ export default function SignupPage() {
         </Card>
     </div>
   );
+}
+
+export default function SignupPage() {
+    return (
+        <ClientOnly>
+            <SignupPageInternal />
+        </ClientOnly>
+    )
 }
