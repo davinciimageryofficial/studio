@@ -22,6 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 type WaitlistData = {
   fullName: string;
@@ -88,21 +89,22 @@ export default function WaitlistConfirmationPage() {
                         {t.confirmationDescription}
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="px-6 pb-6 space-y-0">
-                        <div className="space-y-3 rounded-lg bg-card p-4 text-left">
+                    <CardContent className="px-6 pb-6 space-y-4">
+                        <Alert>
+                            <Mail className="h-4 w-4" />
+                            <AlertTitle>Verify Your Email</AlertTitle>
+                            <AlertDescription>
+                                We've sent a confirmation link to <strong>{waitlistData.email}</strong>. Please check your inbox and spam folder to verify your account before logging in.
+                            </AlertDescription>
+                        </Alert>
+
+                        <div className="space-y-3 rounded-lg bg-card p-4 text-left border">
                         <h3 className="font-semibold text-md mb-2">{t.confirmationSubmittedInfo}</h3>
                         <div className="flex items-center gap-4">
                             <User className="h-5 w-5 text-muted-foreground" />
                             <div>
                             <p className="text-xs text-muted-foreground">{t.signupFullName}</p>
                             <p className="font-medium text-sm">{waitlistData.fullName}</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <Mail className="h-5 w-5 text-muted-foreground" />
-                            <div>
-                            <p className="text-xs text-muted-foreground">{t.signupEmail}</p>
-                            <p className="font-medium text-sm">{waitlistData.email}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
@@ -144,7 +146,7 @@ export default function WaitlistConfirmationPage() {
                             </CardContent>
                         </Card>
 
-                        <p className="text-xs text-muted-foreground mt-4">{t.confirmationEmailNotice.replace('{email}', waitlistData.email)}</p>
+                        <p className="text-xs text-muted-foreground pt-2">Note: To simplify development, you can disable email confirmation in your Supabase project's Authentication settings.</p>
                         
                         <Dialog>
                         <DialogTrigger asChild>
