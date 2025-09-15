@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Kanban } from "lucide-react";
 import { useState } from "react";
+import { ClientOnly } from "@/components/layout/client-only";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -21,7 +22,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export default function LoginPage() {
+function LoginPageInternal() {
   const { toast } = useToast();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -107,4 +108,12 @@ export default function LoginPage() {
       </Card>
     </div>
   );
+}
+
+export default function LoginPage() {
+    return (
+        <ClientOnly>
+            <LoginPageInternal />
+        </ClientOnly>
+    );
 }
