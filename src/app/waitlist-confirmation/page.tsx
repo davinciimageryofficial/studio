@@ -93,9 +93,7 @@ export default function WaitlistConfirmationPage() {
                         <Alert>
                             <Mail className="h-4 w-4" />
                             <AlertTitle>Verify Your Email</AlertTitle>
-                            <AlertDescription>
-                                We've sent a confirmation link to <strong>{waitlistData.email}</strong>. Please check your inbox and spam folder to verify your account before logging in.
-                            </AlertDescription>
+                            <AlertDescription dangerouslySetInnerHTML={{ __html: t.confirmationEmailNotice.replace('{email}', `<strong>${waitlistData.email}</strong>`) }} />
                         </Alert>
 
                         <div className="space-y-3 rounded-lg bg-card p-4 text-left border">
@@ -145,8 +143,6 @@ export default function WaitlistConfirmationPage() {
                                 </form>
                             </CardContent>
                         </Card>
-
-                        <p className="text-xs text-muted-foreground pt-2">Note: To simplify development, you can disable email confirmation in your Supabase project's Authentication settings.</p>
                         
                         <Dialog>
                         <DialogTrigger asChild>

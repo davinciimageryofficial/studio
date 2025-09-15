@@ -20,7 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { PortfolioView } from "./portfolio-view";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { getUserById, getExperiencesByUserId, getCurrentUser } from "@/lib/database";
+import { getUserById, getExperiencesByUserId, getCurrentUser, logout as performLogout } from "@/lib/database";
 import type { User, PortfolioItem, Experience } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -590,7 +590,6 @@ function EditProfileDialog({
     onSaveSocials: (socials: SocialLinks) => void,
 }) {
     const [profile, setProfile] = useState(initialProfile);
-    const router = useRouter();
 
     const handleChange = (field: keyof ProfileData, value: string) => {
         setProfile(prev => ({...prev, [field]: value}));
@@ -600,8 +599,8 @@ function EditProfileDialog({
         onSave(profile);
     }
     
-    const handleLogout = () => {
-        router.push('/logout');
+    const handleLogout = async () => {
+        await performLogout();
     };
 
     return (

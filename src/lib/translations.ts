@@ -80,7 +80,7 @@ const englishTranslations = {
     confirmationHaveCodeDesc: "Enter your code below to skip the line and get immediate access.",
     confirmationAccessCodePlaceholder: "Enter your access code",
     confirmationSkipWaitlist: "Skip Waitlist",
-    confirmationEmailNotice: "We'll send an email to {email} when it's your turn to join.",
+    confirmationEmailNotice: "We've sent a confirmation link to {email}. Please check your inbox and spam folder to verify your account before logging in.",
     confirmationBackToHome: "Back to Homepage",
     confirmationSupportTitle: "Support Sentry's Development",
     confirmationSupportDesc: "Sentry is built for the community, by the community. Your support helps us innovate faster and build the best platform for professionals like you.",

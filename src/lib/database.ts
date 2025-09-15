@@ -1,5 +1,4 @@
 
-
 'use server';
 
 import { createServerClient } from '@supabase/ssr';
@@ -604,4 +603,3 @@ export async function saveSoloSession(durationSeconds: number) {
 
     return { success: true };
 }
-

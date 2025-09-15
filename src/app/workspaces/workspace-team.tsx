@@ -1,6 +1,7 @@
+
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useWorkspace } from '@/context/workspace-context';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,19 +17,18 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
 import { getUsers } from '@/lib/database';
 import { User } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 
-function ParticipantCard({ participant, isMuted, isCameraOff, isSpeaking }: { participant: User, isMuted: boolean, isCameraOff: boolean, isSpeaking: boolean }) {
+function ParticipantCard({ participant, isMuted, isCameraOff, isSpeaking, videoRef }: { participant: User, isMuted: boolean, isCameraOff: boolean, isSpeaking: boolean, videoRef?: React.RefObject<HTMLVideoElement> }) {
   return (
     <div className={cn(
       "relative aspect-video rounded-lg overflow-hidden bg-muted flex items-center justify-center transition-all duration-300",
       isSpeaking ? "ring-4 ring-primary ring-offset-2 ring-offset-background" : ""
     )}>
-      {isCameraOff ? (
-          <VideoOff className="h-12 w-12 text-muted-foreground" />
-      ) : (
-          <Video className="h-12 w-12 text-muted-foreground" />
-      )}
+       <video ref={videoRef} className={cn("absolute inset-0 w-full h-full object-cover", isCameraOff && "hidden")} autoPlay playsInline muted={isMuted} />
+      {isCameraOff && <VideoOff className="h-12 w-12 text-muted-foreground" />}
       <div className="absolute bottom-2 left-2 flex items-center gap-2 rounded-full bg-black/50 px-3 py-1 text-xs text-white">
         {isMuted ? <MicOff className="h-4 w-4 text-red-500" /> : <Mic className="h-4 w-4" />}
         <span>{participant.name}</span>
@@ -111,12 +111,46 @@ function InviteDialog() {
 
 export function WorkspaceTeam() {
   const { participants, endSession } = useWorkspace();
+  const { toast } = useToast();
   const [isMuted, setIsMuted] = useState(false);
   const [isCameraOff, setIsCameraOff] = useState(false);
   const [isSharingScreen, setIsSharingScreen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [pinnedParticipantId, setPinnedParticipantId] = useState<string | null>(participants[0]?.id || null);
   const [layout, setLayout] = useState<'sidebar' | 'grid' | 'gallery'>('sidebar');
+  const [hasCameraPermission, setHasCameraPermission] = useState(false);
+  
+  const videoRefs = useRef<Record<string, React.RefObject<HTMLVideoElement>>>({});
+  participants.forEach(p => {
+    if (!videoRefs.current[p.id]) {
+        videoRefs.current[p.id] = React.createRef<HTMLVideoElement>();
+    }
+  });
+
+  useEffect(() => {
+    const getCameraPermission = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+        setHasCameraPermission(true);
+
+        participants.forEach(p => {
+            if(videoRefs.current[p.id]?.current) {
+                videoRefs.current[p.id].current!.srcObject = stream;
+            }
+        })
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        setHasCameraPermission(false);
+        toast({
+          variant: 'destructive',
+          title: 'Camera Access Denied',
+          description: 'Please enable camera permissions in your browser settings to use this app.',
+        });
+      }
+    };
+
+    getCameraPermission();
+  }, [participants, toast]);
 
   const getGridLayout = (count: number) => {
     if (count <= 1) return "grid-cols-1";
@@ -158,7 +192,7 @@ export function WorkspaceTeam() {
                     <div className={cn("grid gap-2 p-2", getGridLayout(participants.length))}>
                     {participants.map((p, index) => (
                         <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer">
-                            <ParticipantCard participant={p} isMuted={index > 0} isCameraOff={index > 1} isSpeaking={index === 0} />
+                            <ParticipantCard participant={p} isMuted={index > 0} isCameraOff={isCameraOff} isSpeaking={index === 0} videoRef={videoRefs.current[p.id]} />
                         </div>
                     ))}
                     </div>
@@ -170,7 +204,7 @@ export function WorkspaceTeam() {
                     <div className="flex gap-2 p-2">
                          {participants.map((p, index) => (
                             <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer w-48 flex-shrink-0">
-                                <ParticipantCard participant={p} isMuted={index > 0} isCameraOff={index > 1} isSpeaking={index === 0} />
+                                <ParticipantCard participant={p} isMuted={index > 0} isCameraOff={isCameraOff} isSpeaking={index === 0} videoRef={videoRefs.current[p.id]} />
                             </div>
                         ))}
                     </div>
@@ -180,13 +214,13 @@ export function WorkspaceTeam() {
              return (
                  <div className="flex-1 flex flex-col md:flex-row gap-2 p-2">
                     <div className="flex-1 h-full">
-                        {pinnedParticipant && <ParticipantCard participant={pinnedParticipant} isMuted={false} isCameraOff={false} isSpeaking={true} />}
+                        {pinnedParticipant && <ParticipantCard participant={pinnedParticipant} isMuted={false} isCameraOff={isCameraOff} isSpeaking={true} videoRef={videoRefs.current[pinnedParticipant.id]}/>}
                     </div>
                     <ScrollArea className="w-full md:w-48 h-24 md:h-full">
                         <div className="flex md:flex-col gap-2">
                             {otherParticipants.map(p => (
                                 <div key={p.id} onClick={() => setPinnedParticipantId(p.id)} className="cursor-pointer">
-                                    <ParticipantCard participant={p} isMuted={true} isCameraOff={false} isSpeaking={false} />
+                                    <ParticipantCard participant={p} isMuted={true} isCameraOff={isCameraOff} isSpeaking={false} videoRef={videoRefs.current[p.id]} />
                                 </div>
                             ))}
                         </div>
@@ -200,6 +234,16 @@ export function WorkspaceTeam() {
   return (
     <div className="flex h-[calc(100vh-4.5rem)] w-full bg-background">
       <div className="flex flex-1 flex-col">
+        {!hasCameraPermission && (
+            <div className="p-4">
+                <Alert variant="destructive">
+                    <AlertTitle>Camera Access Required</AlertTitle>
+                    <AlertDescription>
+                        Please allow camera access to use this feature. The component is attempting to render, but cannot access your camera.
+                    </AlertDescription>
+                </Alert>
+            </div>
+        )}
         {renderLayout()}
         <CardFooter className="px-2 py-1 border-t bg-black text-white rounded-b-lg">
           <div className="flex justify-between items-center w-full">
