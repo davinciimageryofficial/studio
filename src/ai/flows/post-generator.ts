@@ -9,7 +9,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { placeholderUsers } from '@/lib/placeholder-data';
+import { getUsers } from '@/lib/database';
 
 const PostGeneratorInputSchema = z.object({
   persona: z.enum(['designer', 'developer', 'writer']).describe("The professional persona for whom to generate the post."),
@@ -35,17 +35,14 @@ export async function generatePost(input: PostGeneratorInput): Promise<PostGener
 
 
 // Select a user based on the persona
-const getAuthorForPersona = (persona: PostGeneratorInput['persona']) => {
-    switch (persona) {
-        case 'designer':
-            return placeholderUsers.find(u => u.category === 'design')!;
-        case 'developer':
-            return placeholderUsers.find(u => u.category === 'development')!;
-        case 'writer':
-            return placeholderUsers.find(u => u.category === 'writing')!;
-        default:
-            return placeholderUsers[0];
+const getAuthorForPersona = async (persona: PostGeneratorInput['persona']) => {
+    const users = await getUsers();
+    const filteredUsers = users.filter(u => u.category === persona);
+    if (filteredUsers.length > 0) {
+        return filteredUsers[Math.floor(Math.random() * filteredUsers.length)];
     }
+    // Fallback to a random user if no match
+    return users[Math.floor(Math.random() * users.length)];
 }
 
 const prompt = ai.definePrompt({
@@ -80,7 +77,7 @@ const postGeneratorFlow = ai.defineFlow(
   },
   async (input) => {
     const { output } = await prompt(input);
-    const author = getAuthorForPersona(input.persona);
+    const author = await getAuthorForPersona(input.persona);
     
     return {
         ...output!,

@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { CheckCircle, CreditCard, Download, Gift, Heart, Star, PlusCircle, Send, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSearchParams } from "next/navigation";
@@ -30,6 +30,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useLanguage } from "@/context/language-context";
 import { ClientOnly } from "@/components/layout/client-only";
 import { translations } from "@/lib/translations";
+import { getBillingInfo } from "@/lib/database";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 const VisaIcon = () => (
@@ -270,18 +272,22 @@ function BillingPageInternal() {
   const { language } = useLanguage();
   const t = translations[language];
 
-  const invoices = [
-    { id: "INV-2024-001", date: "July 1, 2024", amount: "$99.00", status: "Paid" },
-    { id: "INV-2024-002", date: "June 1, 2024", amount: "$99.00", status: "Paid" },
-    { id: "INV-2024-003", date: "May 1, 2024", amount: "$99.00", status: "Paid" },
-    { id: "INV-2024-004", date: "April 1, 2024", amount: "$99.00", status: "Paid" },
-  ];
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const paymentMethods = [
-    { type: 'visa', details: 'Visa ending in 1234', expiry: '08/2026', isDefault: true },
-    { type: 'mastercard', details: 'Mastercard ending in 5678', expiry: '11/2025', isDefault: false },
-    { type: 'paypal', details: 'chris.peta@example.com', isDefault: false },
-  ];
+  useEffect(() => {
+    async function loadBillingInfo() {
+        setIsLoading(true);
+        const billingData = await getBillingInfo();
+        if (billingData) {
+            setInvoices(billingData.invoices);
+            setPaymentMethods(billingData.paymentMethods);
+        }
+        setIsLoading(false);
+    }
+    loadBillingInfo();
+  }, []);
 
   const plans = [
     {
@@ -454,21 +460,28 @@ function BillingPageInternal() {
                         <CardDescription>{t.paymentMethodsDesc}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        {paymentMethods.map((method, index) => (
-                            <div key={index} className="flex items-center gap-4 rounded-md border p-4">
-                                {method.type === 'visa' && <VisaIcon />}
-                                {method.type === 'mastercard' && <MastercardIcon />}
-                                {method.type === 'paypal' && <PayPalIcon />}
-                                <div className="flex-1">
-                                    <p className="font-semibold">{method.details}</p>
-                                    <p className="text-sm text-muted-foreground">
-                                        {method.type !== 'paypal' ? `Expires ${method.expiry}` : "Primary PayPal Account"}
-                                    </p>
-                                </div>
-                                {method.isDefault && <Badge variant="secondary">Default</Badge>}
-                                <Button variant="outline">{t.update}</Button>
+                        {isLoading ? (
+                            <div className="space-y-4">
+                                <Skeleton className="h-16 w-full" />
+                                <Skeleton className="h-16 w-full" />
                             </div>
-                        ))}
+                        ) : (
+                            paymentMethods.map((method, index) => (
+                                <div key={index} className="flex items-center gap-4 rounded-md border p-4">
+                                    {method.type === 'visa' && <VisaIcon />}
+                                    {method.type === 'mastercard' && <MastercardIcon />}
+                                    {method.type === 'paypal' && <PayPalIcon />}
+                                    <div className="flex-1">
+                                        <p className="font-semibold">{method.details}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            {method.type !== 'paypal' ? `Expires ${method.expiry}` : "Primary PayPal Account"}
+                                        </p>
+                                    </div>
+                                    {method.isDefault && <Badge variant="secondary">Default</Badge>}
+                                    <Button variant="outline">{t.update}</Button>
+                                </div>
+                            ))
+                        )}
                     </CardContent>
                     <CardFooter>
                          <Dialog>
@@ -492,20 +505,28 @@ function BillingPageInternal() {
                             <CardDescription>{t.billingHistoryDesc}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            {invoices.map((invoice, index) => (
-                                <div key={invoice.id}>
-                                    <div className="flex items-center justify-between">
-                                        <div className="grid gap-1">
-                                            <p className="font-semibold">{invoice.id}</p>
-                                            <p className="text-sm text-muted-foreground">{invoice.date} - {invoice.amount}</p>
-                                        </div>
-                                        <Button variant="outline" size="icon">
-                                            <Download className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                    {index < invoices.length - 1 && <Separator className="mt-4" />}
+                            {isLoading ? (
+                                <div className="space-y-4">
+                                    <Skeleton className="h-12 w-full" />
+                                    <Skeleton className="h-12 w-full" />
+                                    <Skeleton className="h-12 w-full" />
                                 </div>
-                            ))}
+                            ) : (
+                                invoices.map((invoice, index) => (
+                                    <div key={invoice.id}>
+                                        <div className="flex items-center justify-between">
+                                            <div className="grid gap-1">
+                                                <p className="font-semibold">{invoice.id}</p>
+                                                <p className="text-sm text-muted-foreground">{invoice.date} - {invoice.amount}</p>
+                                            </div>
+                                            <Button variant="outline" size="icon">
+                                                <Download className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                        {index < invoices.length - 1 && <Separator className="mt-4" />}
+                                    </div>
+                                ))
+                            )}
                         </CardContent>
                         <CardFooter>
                             <Button variant="outline" className="w-full">
@@ -619,5 +640,3 @@ export default function BillingPage() {
         </ClientOnly>
     )
 }
-
-    

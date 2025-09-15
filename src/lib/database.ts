@@ -505,3 +505,46 @@ export async function getProfileEngagementChartData(timeline: 'daily' | 'weekly'
 
     return [];
 }
+
+// =================================================================
+// Ad Studio Functions
+// =================================================================
+
+export async function getCampaigns() {
+    const supabase = createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    const { data, error } = await supabase
+        .from('campaigns')
+        .select('*')
+        .eq('user_id', user.id);
+
+    if (error) {
+        console.error("Error fetching campaigns:", error);
+        return [];
+    }
+    return data;
+}
+
+// =================================================================
+// Billing Functions
+// =================================================================
+
+export async function getBillingInfo() {
+     const supabase = createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    // These are just placeholders. A real app would have complex logic here.
+    const invoices = [
+        { id: "INV-2024-001", date: "July 1, 2024", amount: "$99.00", status: "Paid" },
+        { id: "INV-2024-002", date: "June 1, 2024", amount: "$99.00", status: "Paid" },
+    ];
+
+    const paymentMethods = [
+        { type: 'visa', details: 'Visa ending in 1234', expiry: '08/2026', isDefault: true },
+    ];
+    
+    return { invoices, paymentMethods };
+}

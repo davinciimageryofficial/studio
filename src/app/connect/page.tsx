@@ -21,24 +21,15 @@ import { Slider } from "@/components/ui/slider";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import { placeholderCourses, PortfolioItem } from "@/lib/placeholder-data";
+import { getCourses } from "@/lib/database";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
+import type { Course } from "@/lib/types";
 
-type Course = {
-    id: string;
-    title: string;
-    author: string;
-    price: number;
-    category: string;
-    description: string;
-    imageUrl: string;
-    level: string;
-}
 
 function CoursesPageInternal() {
-  const [courses, setCourses] = useState<Course[]>(placeholderCourses);
-  const [isLoading, setIsLoading] = useState(false);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [priceRange, setPriceRange] = useState([0, 300]);
@@ -46,6 +37,16 @@ function CoursesPageInternal() {
   const [skillLevel, setSkillLevel] = useState("all");
   const { language } = useLanguage();
   const t = translations[language];
+
+  useEffect(() => {
+    async function loadCourses() {
+        setIsLoading(true);
+        const fetchedCourses = await getCourses();
+        setCourses(fetchedCourses);
+        setIsLoading(false);
+    }
+    loadCourses();
+  }, []);
 
   const courseCategories = ['Development', 'Design', 'Writing', 'AI & Machine Learning', 'Data Science', 'Freelance'];
 
@@ -64,8 +65,8 @@ function CoursesPageInternal() {
         case 'price-desc':
           return b.price - a.price;
         case 'newest':
-          // This is a placeholder, a real app would use a date field
-          return parseInt(b.id.replace('course', '')) - parseInt(a.id.replace('course', ''));
+            // A real app would use a date field, but we can simulate with ID for now
+            return Number(b.id) - Number(a.id);
         default:
           return 0; // 'relevance' - no specific sorting for now
       }
@@ -187,7 +188,7 @@ function ContentCard({ content, t }: { content: Course, t: typeof translations['
     <Card className="overflow-hidden transition-all hover:shadow-lg">
         <div className="relative aspect-video">
             <Image
-            src={content.imageUrl}
+            src={content.image_url}
             alt={content.title}
             fill
             className="object-cover"
@@ -232,5 +233,3 @@ function CourseCardSkeleton() {
         </Card>
     )
 }
-
-    

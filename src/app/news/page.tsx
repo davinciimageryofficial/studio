@@ -1,10 +1,9 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { placeholderNews } from "@/lib/placeholder-data";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,19 @@ import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatisticsView } from "./statistics";
 import { ClientOnly } from "@/components/layout/client-only";
+import { getNews } from "@/lib/database";
+import { Skeleton } from "@/components/ui/skeleton";
 
+type Article = {
+  id: number;
+  created_at: string;
+  title: string;
+  excerpt: string;
+  image_url: string;
+  author: string;
+  category: string;
+  date: string;
+};
 
 type Category = 
   | "All" 
@@ -44,19 +55,31 @@ type Category =
 
 export default function NewsPage() {
   const [selectedCategory, setSelectedCategory] = useState<Category>("All");
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadNews() {
+        setIsLoading(true);
+        const newsArticles = await getNews();
+        setArticles(newsArticles);
+        setIsLoading(false);
+    }
+    loadNews();
+  }, []);
 
   const getArticlesForCategory = (category: Category) => {
     switch (category) {
       case "All":
-        return placeholderNews;
+        return articles;
       case "Personalized": // Placeholder for personalized content
-        return placeholderNews.slice(2,6);
+        return articles.slice(2,6);
       case "Trending":
-        return placeholderNews.slice(0, 4); // Placeholder for trending
+        return articles.slice(0, 4); // Placeholder for trending
       case "Statistics":
         return []; // This tab has its own component
       default:
-        return placeholderNews.filter(
+        return articles.filter(
           (article) => article.category.toLowerCase() === category.toLowerCase()
         );
     }
@@ -107,6 +130,8 @@ export default function NewsPage() {
           <TabsContent key={category} value={category} forceMount={['Statistics'].includes(category)}>
             {category === 'Statistics' ? (
               <StatisticsView />
+            ) : isLoading ? (
+                <NewsGridSkeleton />
             ) : (
               <NewsGrid articles={getArticlesForCategory(category)} />
             )}
@@ -118,7 +143,41 @@ export default function NewsPage() {
   );
 }
 
-function NewsGrid({ articles }: { articles: typeof placeholderNews }) {
+function NewsGridSkeleton() {
+    return (
+         <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+                <Card className="overflow-hidden">
+                    <Skeleton className="aspect-video w-full" />
+                    <CardContent className="p-6 space-y-3">
+                        <Skeleton className="h-6 w-24 rounded-full" />
+                        <Skeleton className="h-8 w-3/4" />
+                        <Skeleton className="h-5 w-full" />
+                        <Skeleton className="h-5 w-5/6" />
+                        <Skeleton className="h-4 w-1/2 pt-2" />
+                    </CardContent>
+                </Card>
+            </div>
+            <div className="space-y-8">
+                {[...Array(3)].map((_, i) => (
+                    <div key={i} className="grid grid-cols-3 gap-4">
+                        <div className="col-span-1">
+                            <Skeleton className="aspect-square w-full rounded-lg" />
+                        </div>
+                        <div className="col-span-2 space-y-2">
+                            <Skeleton className="h-5 w-16 rounded-full" />
+                            <Skeleton className="h-5 w-full" />
+                            <Skeleton className="h-5 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+         </div>
+    )
+}
+
+function NewsGrid({ articles }: { articles: Article[] }) {
   if (articles.length === 0) {
     return <p className="text-center text-muted-foreground">No articles found in this category.</p>;
   }
@@ -134,7 +193,7 @@ function NewsGrid({ articles }: { articles: typeof placeholderNews }) {
           <Card className="overflow-hidden">
             <div className="relative aspect-video">
               <Image
-                src={featured.imageUrl}
+                src={featured.image_url}
                 alt={featured.title}
                 fill
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -163,7 +222,7 @@ function NewsGrid({ articles }: { articles: typeof placeholderNews }) {
                 <div className="col-span-1">
                   <div className="aspect-square overflow-hidden rounded-lg">
                       <Image
-                        src={article.imageUrl}
+                        src={article.image_url}
                         alt={article.title}
                         width={150}
                         height={150}

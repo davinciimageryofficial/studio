@@ -7,10 +7,14 @@ export type PortfolioItem = {
 };
 
 export type Experience = {
+    id?: number;
+    user_id?: string;
     title: string;
     company: string;
     duration: string;
     description?: string;
+    start_date?: string;
+    end_date?: string | null;
 };
 
 export type User = {
