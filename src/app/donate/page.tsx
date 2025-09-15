@@ -6,19 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Heart, Gift, Loader2 } from "lucide-react";
+import { Heart, Gift } from "lucide-react";
 import Link from "next/link";
 import { ClientOnly } from "@/components/layout/client-only";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
 
 function DonatePageInternal() {
   const [donationAmount, setDonationAmount] = useState("15");
-  const [isLoading, setIsLoading] = useState(false);
   const presetAmounts = ["5", "15", "50", "100"];
   const { toast } = useToast();
-  const router = useRouter();
-
 
   const handlePresetClick = (amount: string) => {
     setDonationAmount(amount);
@@ -69,13 +65,9 @@ function DonatePageInternal() {
               />
             </div>
           </div>
-          <Button size="lg" className="w-full h-11 text-base" onClick={handleDonateClick} disabled={isLoading}>
-            {isLoading ? (
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            ) : (
-                <Gift className="mr-2 h-5 w-5" />
-            )}
-            {isLoading ? "Processing..." : `Donate $${donationAmount}`}
+          <Button size="lg" className="w-full h-11 text-base" onClick={handleDonateClick}>
+            <Gift className="mr-2 h-5 w-5" />
+            Donate ${donationAmount}
           </Button>
            <Button asChild variant="link" className="w-full">
                <Link href="/">Maybe later, take me to the homepage</Link>

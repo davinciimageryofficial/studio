@@ -21,7 +21,7 @@ import type { User as UserType } from "@/lib/types";
 type Message = {
     sender: 'user' | 'ai';
     text: string;
-    destination?: string;
+    destination?: string | null;
 };
 
 export function GlobalSearch() {
@@ -52,21 +52,16 @@ export function GlobalSearch() {
     loadNotifications();
   }, []);
 
-  // Save conversation to localStorage whenever it changes
+  // Clear conversation history on initial load by not loading from localStorage
   useEffect(() => {
-    // By removing this effect, we prevent loading chat history.
-    // If you want to re-enable it, uncomment the following lines:
-    // const savedHistory = localStorage.getItem("geminiChatHistory");
-    // if (savedHistory) {
-    //   setConversation(JSON.parse(savedHistory));
-    // }
+    // localStorage.removeItem("aiChatHistory"); // Optional: clear any old history
   }, []);
 
   useEffect(() => {
     if (conversation.length > 0) {
-      localStorage.setItem("geminiChatHistory", JSON.stringify(conversation));
+      localStorage.setItem("aiChatHistory", JSON.stringify(conversation));
     } else {
-      localStorage.removeItem("geminiChatHistory");
+      localStorage.removeItem("aiChatHistory");
     }
   }, [conversation]);
 
@@ -75,24 +70,22 @@ export function GlobalSearch() {
     if (!searchQuery.trim()) return;
 
     setLoading(true);
-    setConversation(prev => [...prev, { sender: 'user', text: searchQuery }]);
+    const newConversation = [...conversation, { sender: 'user' as 'user', text: searchQuery }];
+    setConversation(newConversation);
+    
     if (!showResults) setShowResults(true); 
     setIsSuggestionsActive(false);
+    setQuery("");
 
     try {
       const output: SearchAIOutput = await searchAI({ query: searchQuery });
       
-      const aiResponse: Message = { sender: 'ai', text: output.answer };
-      if (output.destination) {
-        aiResponse.destination = output.destination;
-      }
+      const aiResponse: Message = { sender: 'ai', text: output.answer, destination: output.destination };
       setConversation(prev => [...prev, aiResponse]);
 
       if (output.destination) {
         const path = output.destination === 'profile' ? '/profile/me' : `/${output.destination}`;
         router.push(path);
-        // We might want to close the search pane on navigation
-        // For now, we'll leave it open so the user sees the confirmation message.
       }
 
     } catch (error) {
@@ -118,7 +111,6 @@ export function GlobalSearch() {
   ];
 
   const handleSuggestionClick = (suggestion: string) => {
-    setQuery(suggestion);
     handleSearch(suggestion);
   };
   
@@ -129,16 +121,6 @@ export function GlobalSearch() {
     setShowResults(false);
     setConversation([]); // Clear conversation on close
   }
-
-  // Effect to show results if there's a conversation history
-  useEffect(() => {
-    if (conversation.length > 0) {
-      setShowResults(true);
-    } else {
-      setShowResults(false);
-    }
-  }, [conversation]);
-
 
   return (
     <div className={cn(
@@ -276,7 +258,7 @@ export function GlobalSearch() {
                         </div>
                     </ScrollArea>
                     <form 
-                        onSubmit={(e) => { e.preventDefault(); const val = (e.target as any).elements.followup.value; handleSearch(val); (e.target as any).reset(); }}
+                        onSubmit={(e) => { e.preventDefault(); const val = (e.target as any).elements.followup.value; handleSearch(val); }}
                         className="mt-4 border-t pt-4"
                     >
                         <div className="relative">

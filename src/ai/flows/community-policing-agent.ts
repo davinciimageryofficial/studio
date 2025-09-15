@@ -8,8 +8,7 @@
  * - CommunityPolicingInput - The input type for the analyzeUserBehavior function.
  * - CommunityPolicingOutput - The return type for the analyzeUserBehavior function.
  */
-
-import { ai } from '@/ai/genkit';
+import { openai } from '@/ai/inference';
 import { z } from 'zod';
 
 const CommunityPolicingInputSchema = z.object({
@@ -33,28 +32,7 @@ const CommunityPolicingOutputSchema = z.object({
 export type CommunityPolicingOutput = z.infer<typeof CommunityPolicingOutputSchema>;
 
 
-export async function analyzeUserBehavior(input: CommunityPolicingInput): Promise<CommunityPolicingOutput> {
-  return communityPolicingFlow(input);
-}
-
-
-const prompt = ai.definePrompt({
-  name: 'communityPolicingPrompt',
-  input: { schema: CommunityPolicingInputSchema },
-  output: { schema: CommunityPolicingOutputSchema },
-  prompt: `You are the Sentry Community Policing AI. Your role is to analyze a user's activity to promote a safe and reliable professional environment.
-
-**User to Analyze:** {{{userId}}}
-
-**Recent Activity Log:**
-{{#each userActivity}}
-- {{{this}}}
-{{/each}}
-
-**Transaction & Dispute History:**
-{{#each transactionHistory}}
-- Type: {{{type}}}, Details: {{{details}}}
-{{/each}}
+const systemPrompt = `You are the Sentry Community Policing AI. Your role is to analyze a user's activity to promote a safe and reliable professional environment.
 
 **Your Tasks:**
 1.  **Assess Reliability Score (0-100):**
@@ -74,20 +52,47 @@ const prompt = ai.definePrompt({
     - If no negative patterns are found, return an empty array for flags.
 
 Your entire output must be in the specified JSON format.
-`,
-});
+The JSON schema for the output is:
+{
+  "reliabilityScore": number,
+  "summary": string,
+  "flags": [{ "reason": string, "severity": "low" | "medium" | "high" }]
+}
+`;
+
+function buildUserPrompt(input: CommunityPolicingInput): string {
+    return `
+**User to Analyze:** ${input.userId}
+
+**Recent Activity Log:**
+${input.userActivity.map(activity => `- ${activity}`).join('\n')}
+
+**Transaction & Dispute History:**
+${input.transactionHistory.map(tx => `- Type: ${tx.type}, Details: ${tx.details}`).join('\n')}
+`;
+}
 
 
-const communityPolicingFlow = ai.defineFlow(
-  {
-    name: 'communityPolicingFlow',
-    inputSchema: CommunityPolicingInputSchema,
-    outputSchema: CommunityPolicingOutputSchema,
-  },
-  async (input) => {
-    // In a real application, you'd fetch this data from a database.
-    // For now, we'll use the data passed in the input.
-    const { output } = await prompt(input);
-    return output!;
-  }
-);
+export async function analyzeUserBehavior(input: CommunityPolicingInput): Promise<CommunityPolicingOutput> {
+    const response = await openai.chat.completions.create({
+        model: "google/gemma-3-27b-instruct/bf-16",
+        messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: buildUserPrompt(input) }
+        ],
+        response_format: { type: "json_object" },
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+        throw new Error("AI failed to generate a response.");
+    }
+    
+    try {
+        return JSON.parse(content) as CommunityPolicingOutput;
+    } catch (e) {
+        console.error("Failed to parse AI response as JSON:", content);
+        throw new Error("AI returned invalid data format.");
+    }
+}
+

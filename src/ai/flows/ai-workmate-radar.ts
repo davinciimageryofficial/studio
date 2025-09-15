@@ -8,9 +8,8 @@
  * - AIWorkmateRadarInput - The input type for the aiWorkmateRadar function.
  * - AIWorkmateRadarOutput - The return type for the aiWorkmateRadar function.
  */
-
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { openai } from '@/ai/inference';
+import { z } from 'zod';
 
 const AIWorkmateRadarInputSchema = z.object({
   userProfile: z.string().describe('The user profile data including skills, experience, and preferences, or a project description.'),
@@ -32,42 +31,68 @@ const AIWorkmateRadarOutputSchema = z.object({
 });
 export type AIWorkmateRadarOutput = z.infer<typeof AIWorkmateRadarOutputSchema>;
 
-export async function aiWorkmateRadar(input: AIWorkmateRadarInput): Promise<AIWorkmateRadarOutput> {
-  return aiWorkmateRadarFlow(input);
-}
-
-const prompt = ai.definePrompt({
-  name: 'aiWorkmateRadarPrompt',
-  input: {schema: AIWorkmateRadarInputSchema},
-  output: {schema: AIWorkmateRadarOutputSchema},
-  prompt: `You are an AI Talent Scout for Sentry, a professional networking platform. Your task is to find the perfect collaborators for a user.
+const systemPrompt = `You are an AI Talent Scout for Sentry, a professional networking platform. Your task is to find the perfect collaborators for a user.
 
 Analyze the user's profile or project description below. Based on this, suggest a dream team for the specified category.
-
-**User Information / Project Description:**
-"""
-{{{userProfile}}}
-"""
-
-**Categorization Needed:** {{{categorization}}}
-**Team Size to Suggest:** {{{teamSize}}}
 
 **Your Task:**
 1.  Identify the core strengths and needs from the user's information.
 2.  Suggest team members who complement the user's skills and would be a great fit for the project.
 3.  For each suggested member, provide a realistic name, a match score between 70 and 95, a list of 3-5 relevant skills, and a compelling, one-sentence bio that highlights their expertise.
-4.  Ensure the output is a valid JSON array of suggested team members.
-`, 
-});
+4.  Ensure the output is a valid JSON object.
+The JSON schema for the output is:
+{
+  "suggestedMembers": [
+    {
+      "profileId": string,
+      "name": string,
+      "matchScore": number (70-95),
+      "skills": string[],
+      "shortBio": string
+    }
+  ]
+}
+`;
 
-const aiWorkmateRadarFlow = ai.defineFlow(
-  {
-    name: 'aiWorkmateRadarFlow',
-    inputSchema: AIWorkmateRadarInputSchema,
-    outputSchema: AIWorkmateRadarOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);
+function buildUserPrompt(input: AIWorkmateRadarInput): string {
+    return `
+User Information / Project Description:
+"""
+${input.userProfile}
+"""
+
+Categorization Needed: ${input.categorization}
+Team Size to Suggest: ${input.teamSize}
+`;
+}
+
+
+export async function aiWorkmateRadar(input: AIWorkmateRadarInput): Promise<AIWorkmateRadarOutput> {
+    const response = await openai.chat.completions.create({
+        model: "google/gemma-3-27b-instruct/bf-16",
+        messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: buildUserPrompt(input) }
+        ],
+        response_format: { type: "json_object" },
+    });
+    
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+        throw new Error("AI failed to generate a response.");
+    }
+
+    try {
+        const parsed = JSON.parse(content);
+        // Add a simple unique ID for profileId
+        if (parsed.suggestedMembers) {
+            parsed.suggestedMembers.forEach((member: any) => {
+                member.profileId = `user-${Date.now()}-${Math.random()}`;
+            });
+        }
+        return parsed as AIWorkmateRadarOutput;
+    } catch (e) {
+        console.error("Failed to parse AI response as JSON:", content);
+        throw new Error("AI returned invalid data format.");
+    }
+}

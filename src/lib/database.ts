@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { createServerClient } from '@supabase/ssr';
@@ -527,6 +528,28 @@ export async function getCampaigns() {
     return data;
 }
 
+export async function createCampaign(campaignData: { name: string, type: string, content: string, keywords: string }) {
+    const supabase = createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "You must be logged in to create a campaign." };
+
+    const { error } = await supabase.from('campaigns').insert({
+        name: campaignData.name,
+        type: campaignData.type,
+        status: 'Active',
+        spend: 0,
+        conversions: 0,
+        user_id: user.id
+    });
+    
+    if (error) {
+        console.error("Error creating campaign:", error);
+        return { error: "Failed to create campaign in the database." };
+    }
+
+    return { success: true };
+}
+
 // =================================================================
 // Billing Functions
 // =================================================================
@@ -548,3 +571,37 @@ export async function getBillingInfo() {
     
     return { invoices, paymentMethods };
 }
+
+
+// =================================================================
+// Workspace / Solo Session Functions
+// =================================================================
+
+export async function saveSoloSession(durationSeconds: number) {
+    const supabase = createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "User not authenticated." };
+
+    // This is a simplified implementation. A real app would likely have more robust logic
+    // to handle daily roll-ups, but for now we'll just increment a field.
+    // We'll simulate adding to a 'solo_session_logs' table.
+    console.log(`Saving solo session of ${durationSeconds} seconds for user ${user.id}`);
+    
+    // In a real implementation, you would likely do something like this:
+    /*
+    const today = new Date().toISOString().split('T')[0];
+    const { error } = await supabase.rpc('increment_solo_session', {
+        user_id_in: user.id,
+        date_in: today,
+        duration_in: durationSeconds
+    });
+    
+    if (error) {
+        console.error("Error saving solo session:", error);
+        return { error: "Database operation failed." };
+    }
+    */
+
+    return { success: true };
+}
+

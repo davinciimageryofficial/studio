@@ -6,8 +6,7 @@
  *
  * - analyzePost - A function that takes post content and user context to return suggestions and a perception analysis.
  */
-
-import { ai } from '@/ai/genkit';
+import { openai } from '@/ai/inference';
 import { z } from 'zod';
 
 const AnalyzePostInputSchema = z.object({
@@ -37,31 +36,9 @@ const AnalyzePostOutputSchema = z.object({
 export type AnalyzePostOutput = z.infer<typeof AnalyzePostOutputSchema>;
 
 
-export async function analyzePost(input: AnalyzePostInput): Promise<AnalyzePostOutput> {
-  return postAnalyzerFlow(input);
-}
-
-const prompt = ai.definePrompt({
-  name: 'postAnalyzerPrompt',
-  input: { schema: AnalyzePostInputSchema },
-  output: { schema: AnalyzePostOutputSchema },
-  prompt: `You are an AI assistant for a professional networking platform. Your task is to act as a writing coach, helping users improve their posts before they publish them.
+const systemPrompt = `You are an AI assistant for a professional networking platform. Your task is to act as a writing coach, helping users improve their posts before they publish them.
 
 Analyze the user's draft post based on their profile and their stated target audience.
-
-**User Profile:**
-- Headline: {{{userProfile.headline}}}
-- Bio: {{{userProfile.bio}}}
-- Skills: {{#each userProfile.skills}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
-
-**Target Audience:** {{{targetAudience}}}
-
-**Post Draft:**
-"""
-{{{postContent}}}
-"""
-
----
 
 **Your Analysis:**
 
@@ -72,18 +49,52 @@ Analyze the user's draft post based on their profile and their stated target aud
     *   **Engagement:** How likely is this post to spark conversation and interaction?
     *   **Clarity:** How clear and easy to understand is the main message of the post?
 
-Your entire output must be in the specified JSON format.
-`,
-});
+Your entire output must be in the specified JSON format. The schema is:
+{
+    "suggestions": string[],
+    "perceptionAnalysis": [
+        { "metric": "Professionalism", "score": number, "explanation": string },
+        { "metric": "Engagement", "score": number, "explanation": string },
+        { "metric": "Clarity", "score": number, "explanation": string }
+    ]
+}
+`;
 
-const postAnalyzerFlow = ai.defineFlow(
-  {
-    name: 'postAnalyzerFlow',
-    inputSchema: AnalyzePostInputSchema,
-    outputSchema: AnalyzePostOutputSchema,
-  },
-  async (input) => {
-    const { output } = await prompt(input);
-    return output!;
-  }
-);
+function buildUserPrompt(input: AnalyzePostInput): string {
+    return `
+**User Profile:**
+- Headline: ${input.userProfile.headline}
+- Bio: ${input.userProfile.bio}
+- Skills: ${input.userProfile.skills.join(', ')}
+
+**Target Audience:** ${input.targetAudience}
+
+**Post Draft:**
+"""
+${input.postContent}
+"""
+`;
+}
+
+export async function analyzePost(input: AnalyzePostInput): Promise<AnalyzePostOutput> {
+    const response = await openai.chat.completions.create({
+        model: "google/gemma-3-27b-instruct/bf-16",
+        messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: buildUserPrompt(input) }
+        ],
+        response_format: { type: "json_object" },
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+        throw new Error("AI failed to generate a response.");
+    }
+    
+    try {
+        return JSON.parse(content) as AnalyzePostOutput;
+    } catch (e) {
+        console.error("Failed to parse AI response as JSON:", content);
+        throw new Error("AI returned invalid data format.");
+    }
+}

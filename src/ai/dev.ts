@@ -2,14 +2,8 @@
 import { config } from 'dotenv';
 config();
 
-import '@/ai/flows/ai-workmate-radar.ts';
-import '@/ai/flows/search-ai.ts';
-import '@/ai/flows/conversation-starters.ts';
-import '@/ai/flows/post-analyzer.ts';
-import '@/ai/flows/post-generator.ts';
-import '@/ai/flows/skill-sync-net.ts';
-import '@/ai/flows/ad-campaign-analyzer.ts';
-import '@/ai/flows/course-generator.ts';
-import '@/ai/flows/community-policing-agent.ts';
-import '@/ai/tools/web-search.ts';
-import '@/ai/tools/navigation.ts';
+// This file is now primarily for ensuring environment variables are loaded.
+// The Genkit-specific dev server commands are no longer needed as we've
+// migrated to a different AI provider.
+// We keep the file to avoid breaking any existing `npm run` scripts that might reference it,
+// but its content can be simplified.
