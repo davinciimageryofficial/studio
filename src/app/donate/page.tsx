@@ -25,15 +25,10 @@ function DonatePageInternal() {
   };
 
   const handleDonateClick = () => {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-        setIsLoading(false);
-        toast({
-            title: "Offline for Now",
-            description: "Transaction processing is currently offline. Thanks for your interest in supporting us!",
-        });
-    }, 1000);
+    toast({
+        title: "Feature Not Implemented",
+        description: "Real payment processing is not available in this prototype.",
+    });
   };
 
   return (

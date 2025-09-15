@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { placeholderUsers } from "@/lib/placeholder-data";
 import { Play, Pause, RotateCcw, Plus, Users, Timer as TimerIcon, CheckCircle, Award, ArrowUp, Zap, Hand, User, Video, Mic } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
@@ -16,8 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { WorkspaceTeam } from "./workspace-team";
+import { saveSoloSession } from "@/lib/database";
 
-type UserType = typeof placeholderUsers[0];
 
 export default function WorkspacesPage() {
     const { 
@@ -66,9 +65,23 @@ export default function WorkspacesPage() {
     startSession('team');
   };
 
-  const handleEndSessionWrapper = () => {
-    const sessionHours = time / 3600;
-    setMonthlyFlowHours(prev => prev + sessionHours);
+  const handleEndSessionWrapper = async () => {
+    const sessionSeconds = time;
+    if (sessionSeconds > 0) {
+        const { error } = await saveSoloSession(sessionSeconds);
+        if (error) {
+            toast({
+                title: "Error Saving Session",
+                description: "Could not save your session duration to the database.",
+                variant: "destructive"
+            });
+        } else {
+             toast({
+                title: "Session Saved!",
+                description: `Your ${formatTime(sessionSeconds)} focus session has been logged.`,
+            });
+        }
+    }
     endSession();
   };
 
