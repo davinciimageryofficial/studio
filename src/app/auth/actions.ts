@@ -77,7 +77,9 @@ export async function signup(formData: FormData) {
       data: {
         full_name: fullName,
         category: profession,
-      }
+      },
+      // This will auto-confirm the email and allow instant login
+      email_confirm: true,
     },
   })
 
@@ -109,7 +111,9 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/waitlist-confirmation')
+  // Since email is auto-confirmed, we can log the user in and redirect to dashboard
+  await supabase.auth.signInWithPassword({ email, password });
+  redirect('/dashboard')
 }
 
 export async function logout() {
