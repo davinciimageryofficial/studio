@@ -4,26 +4,6 @@
 /**
  * @fileOverview A tool for the AI to perform web searches.
  */
-import { openai } from '@/ai/inference';
-
-export const searchTheWebSchema = {
-    type: 'function',
-    function: {
-        name: 'searchTheWeb',
-        description: 'Searches the web for information on a given topic. Use this when you need external information to answer a user\'s question.',
-        parameters: {
-            type: 'object',
-            properties: {
-                query: {
-                    type: 'string',
-                    description: 'The search query.',
-                }
-            },
-            required: ['query'],
-        }
-    }
-};
-
 export async function searchTheWeb(args: { query: string }) {
     console.log(`[Web Search Tool] Searching for: ${args.query}`);
 
@@ -45,4 +25,3 @@ export async function searchTheWeb(args: { query: string }) {
 
     return 'No specific results found for this query. Try a different search term.';
   }
-

@@ -8,8 +8,8 @@
  */
 import { openai } from '@/ai/inference';
 import { SearchAIInputSchema, SearchAIOutputSchema, type SearchAIInput, type SearchAIOutput } from '@/ai/schemas/search-ai';
-import { searchTheWeb, searchTheWebSchema } from '../tools/web-search';
-import { navigateTo, navigateToSchema } from '../tools/navigation';
+import { searchTheWeb } from '../tools/web-search';
+import { navigateTo } from '../tools/navigation';
 
 export type { SearchAIInput, SearchAIOutput };
 
@@ -29,6 +29,54 @@ Your entire output must be a valid JSON object. The schema is:
 }
 `;
 
+const searchTheWebSchema = {
+    type: 'function' as const,
+    function: {
+        name: 'searchTheWeb',
+        description: 'Searches the web for information on a given topic. Use this when you need external information to answer a user\'s question.',
+        parameters: {
+            type: 'object' as const,
+            properties: {
+                query: {
+                    type: 'string' as const,
+                    description: 'The search query.',
+                }
+            },
+            required: ['query'],
+        }
+    }
+};
+
+const navigateToSchema = {
+    type: 'function' as const,
+    function: {
+        name: 'navigateTo',
+        description: 'Navigates the user to a specific page within the Sentry application. Use this when the user asks to go to a page, open a feature, or view a specific section.',
+        parameters: {
+            type: 'object' as const,
+            properties: {
+                destination: {
+                    type: 'string' as const,
+                    enum: [
+                        "dashboard", 
+                        "feed", 
+                        "messages", 
+                        "discover", 
+                        "workspaces", 
+                        "workmate-radar", 
+                        "news", 
+                        "courses", 
+                        "billing", 
+                        "profile", 
+                        "settings"
+                    ],
+                    description: 'The destination page key.',
+                }
+            },
+            required: ['destination'],
+        }
+    }
+};
 
 export async function searchAI(input: SearchAIInput): Promise<SearchAIOutput> {
     const messages: any[] = [
