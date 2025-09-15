@@ -76,6 +76,7 @@ export async function signup(formData: FormData) {
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
       data: {
         full_name: fullName,
+        category: profession,
       }
     },
   })
