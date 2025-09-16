@@ -259,33 +259,35 @@ function FeedPageInternal() {
     <div className="bg-background">
       <main className="p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-2xl">
-          <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6">
-            <TabsList className="grid w-full grid-cols-3 bg-black text-muted-foreground">
-              <TabsTrigger value="you-centric">{t.feedYouCentric}</TabsTrigger>
-              <TabsTrigger value="clique">{t.feedClique}</TabsTrigger>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50", activeTab === 'niche' ? "bg-background text-foreground shadow-sm" : "")}>
-                      {selectedNiche || t.feedNiche}
-                      <ChevronDown className="ml-2 h-4 w-4" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64" align="center">
-                    {Object.entries(freelanceNiches).map(([category, subNiches]) => (
-                        <DropdownMenuSub key={category}>
-                            <DropdownMenuSubTrigger>{category}</DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent className="p-0">
-                                {subNiches.map(niche => (
-                                    <DropdownMenuItem key={niche} onSelect={() => handleNicheSelect(niche)}>
-                                        {niche}
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuSubContent>
-                        </DropdownMenuSub>
-                    ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TabsList>
+           <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6">
+            <div className="grid grid-cols-3 rounded-md bg-black p-1 text-muted-foreground">
+                <TabsList className="col-span-2 grid w-full grid-cols-2 bg-transparent p-0">
+                    <TabsTrigger value="you-centric" className="bg-transparent text-muted-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">{t.feedYouCentric}</TabsTrigger>
+                    <TabsTrigger value="clique" className="bg-transparent text-muted-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">{t.feedClique}</TabsTrigger>
+                </TabsList>
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50", activeTab === 'niche' ? "bg-background text-foreground shadow-sm" : "text-muted-foreground")}>
+                            {selectedNiche || t.feedNiche}
+                            <ChevronDown className="ml-2 h-4 w-4" />
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-64" align="center">
+                        {Object.entries(freelanceNiches).map(([category, subNiches]) => (
+                            <DropdownMenuSub key={category}>
+                                <DropdownMenuSubTrigger>{category}</DropdownMenuSubTrigger>
+                                <DropdownMenuSubContent className="p-0">
+                                    {subNiches.map(niche => (
+                                        <DropdownMenuItem key={niche} onSelect={() => handleNicheSelect(niche)}>
+                                            {niche}
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuSubContent>
+                            </DropdownMenuSub>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
             <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} t={t} isLoading={isLoading} currentUser={currentUser} />
           </Tabs>
         </div>
@@ -780,5 +782,3 @@ function PostCardSkeleton() {
         </Card>
     )
 }
-
-    
