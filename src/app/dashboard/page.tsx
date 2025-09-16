@@ -297,7 +297,7 @@ function DashboardPageInternal() {
                   </CardHeader>
                   <CardContent>
                     {isLoading ? <Skeleton className="h-8 w-1/2" /> : <div className="text-2xl font-bold">{personalMetrics.profileViews.toLocaleString()}</div>}
-                    <p className="text-xs text-muted-foreground">{t.fromLastMonth}</p>
+                    <p className="text-xs text-muted-foreground">+20.1% {t.fromLastMonth}</p>
                   </CardContent>
                 </Card>
 
@@ -342,7 +342,7 @@ function DashboardPageInternal() {
                   </CardHeader>
                   <CardContent>
                     {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">+{personalMetrics.newConnections}</div>}
-                    <p className="text-xs text-muted-foreground">{t.connectionsLastMonth}</p>
+                    <p className="text-xs text-muted-foreground">+12.5% {t.fromLastMonth}</p>
                   </CardContent>
                 </Card>
 
