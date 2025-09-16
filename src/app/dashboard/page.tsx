@@ -5,12 +5,12 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowUpRight, Users, Eye, UserPlus, Check, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings, Gift, Building, MoreHorizontal } from "lucide-react";
+import { ArrowUpRight, Users, Eye, UserPlus, Check, AppWindow, User, Zap, Circle, Rocket, GripVertical, ArrowUp, ArrowDown, Minus, LineChart, Settings, Gift, Building, MoreHorizontal, Edit, Trash2, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,7 @@ import { ProfileEngagementChart } from "./profile-engagement-chart";
 import { getCurrentUser, getUsers, getAgencyDashboardMetrics, getAgencyMetrics, getPersonalDashboardMetrics } from "@/lib/database";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { User as UserType } from '@/lib/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 type Task = {
@@ -76,6 +77,61 @@ type VisibleEngagementMetrics = {
     likes: boolean;
     skillSyncNetMatches: boolean;
 }
+
+function TaskDialog({ task, onSave, triggerButton, column }: { task?: Task, onSave: (task: Task) => void, triggerButton: React.ReactNode, column: TaskStatus }) {
+    const [title, setTitle] = useState(task?.title || "");
+    const [priority, setPriority] = useState<Task['priority']>(task?.priority || 'Medium');
+    const isEditing = !!task;
+
+    const handleSave = () => {
+        if (title.trim()) {
+            onSave({
+                id: task?.id || `task-${Date.now()}`,
+                title: title.trim(),
+                priority,
+            });
+        }
+    };
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>{triggerButton}</DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{isEditing ? 'Edit Task' : 'Add New Task'}</DialogTitle>
+                </DialogHeader>
+                <div className="py-4 space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="task-title">Title</Label>
+                        <Input id="task-title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="What needs to be done?" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="task-priority">Priority</Label>
+                        <Select value={priority} onValueChange={(value: Task['priority']) => setPriority(value)}>
+                            <SelectTrigger id="task-priority">
+                                <SelectValue placeholder="Select priority" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="High">High</SelectItem>
+                                <SelectItem value="Medium">Medium</SelectItem>
+                                <SelectItem value="Low">Low</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+                <DialogFooter>
+                    <DialogClose asChild><Button variant="secondary">Cancel</Button></DialogClose>
+                    <DialogClose asChild>
+                        <Button onClick={handleSave} disabled={!title.trim()}>
+                            {isEditing ? 'Save Changes' : 'Add Task'}
+                        </Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
 
 function DashboardPageInternal() {
     const { language } = useLanguage();
@@ -210,6 +266,32 @@ function DashboardPageInternal() {
                 [destinationColumn]: newDestinationTasks,
             }));
         }
+    };
+
+    const handleSaveTask = (updatedTask: Task, column: TaskStatus) => {
+        const columnTasks = tasks[column];
+        const taskExists = columnTasks.some(t => t.id === updatedTask.id);
+
+        if (taskExists) {
+            // Edit existing task
+            setTasks(prev => ({
+                ...prev,
+                [column]: prev[column].map(t => t.id === updatedTask.id ? updatedTask : t),
+            }));
+        } else {
+            // Add new task
+            setTasks(prev => ({
+                ...prev,
+                [column]: [...prev[column], updatedTask],
+            }));
+        }
+    };
+
+    const handleDeleteTask = (taskId: string, column: TaskStatus) => {
+        setTasks(prev => ({
+            ...prev,
+            [column]: prev[column].filter(t => t.id !== taskId),
+        }));
     };
     
     const handleMetricVisibilityChange = (metric: keyof VisibleMetrics, checked: boolean) => {
@@ -418,8 +500,25 @@ function DashboardPageInternal() {
                                   onDragStart={(e) => handleDragStart(e, task.id, status)}
                                   className="group cursor-grab border-b bg-card p-4 transition-shadow hover:shadow-md"
                               >
-                                  <p className="text-sm font-medium pr-2 mb-4">{task.title}</p>
-                                  <div className="flex items-center justify-between">
+                                  <div className="flex items-start justify-between">
+                                      <p className="text-sm font-medium pr-2 flex-1">{task.title}</p>
+                                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                          <TaskDialog
+                                              task={task}
+                                              onSave={(updatedTask) => handleSaveTask(updatedTask, status)}
+                                              column={status}
+                                              triggerButton={
+                                                  <Button variant="ghost" size="icon" className="h-7 w-7">
+                                                      <Edit className="h-4 w-4" />
+                                                  </Button>
+                                              }
+                                          />
+                                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleDeleteTask(task.id, status)}>
+                                              <Trash2 className="h-4 w-4" />
+                                          </Button>
+                                      </div>
+                                  </div>
+                                  <div className="flex items-center justify-between mt-4">
                                     <ClientOnly>
                                         <TooltipProvider>
                                             <Tooltip>
@@ -437,6 +536,16 @@ function DashboardPageInternal() {
                               </div>
                             ))}
                           </div>
+                           <TaskDialog
+                                onSave={(newTask) => handleSaveTask(newTask, status)}
+                                column={status}
+                                triggerButton={
+                                    <Button variant="outline" className="w-full mt-2">
+                                        <PlusCircle className="mr-2 h-4 w-4" />
+                                        Add Task
+                                    </Button>
+                                }
+                           />
                         </div>
                       ))}
                     </div>
