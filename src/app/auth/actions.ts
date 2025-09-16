@@ -78,8 +78,6 @@ export async function signup(formData: FormData) {
         full_name: fullName,
         category: profession,
       },
-      // This will auto-confirm the email and allow instant login
-      email_confirm: true,
     },
   })
 
