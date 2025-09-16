@@ -114,6 +114,20 @@ export async function getExperiencesByUserId(userId: string): Promise<Experience
 // =================================================================
 
 /**
+ * Fetches key metrics for the personal dashboard.
+ */
+export async function getPersonalDashboardMetrics() {
+    // In a real app, these values would be calculated from database queries.
+    // For this prototype, we'll return realistic mock data.
+    return {
+        profileViews: 1204,
+        newConnections: 32,
+        pendingInvitations: 3
+    };
+}
+
+
+/**
  * Fetches agency-related metrics for the dashboard.
  */
 export async function getAgencyDashboardMetrics() {
@@ -343,7 +357,7 @@ export async function getConversations() {
         avatar: c.is_group ? c.avatar_url : c.participants.find((p: any) => p.profile.id !== user.id)?.profile.avatar_url,
         lastMessage: {
             text: c.last_message?.content || 'No messages yet',
-            time: c.last_message ? new Date(c.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+            time: c.last_message ? new Date(c.last_message.created_at).toLocaleDateString([], { hour: '2-digit', minute: '2-digit' }) : '',
         },
         type: c.is_group ? 'group' : 'dm',
         messages: [],

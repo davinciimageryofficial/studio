@@ -25,7 +25,7 @@ import { OperationalCharts } from "./operational-charts";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
 import { ProfileEngagementChart } from "./profile-engagement-chart";
-import { getCurrentUser, getUsers, getAgencyDashboardMetrics, getAgencyMetrics } from "@/lib/database";
+import { getCurrentUser, getUsers, getAgencyDashboardMetrics, getAgencyMetrics, getPersonalDashboardMetrics } from "@/lib/database";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { User as UserType } from '@/lib/types';
 
@@ -107,6 +107,7 @@ function DashboardPageInternal() {
     const [currentUser, setCurrentUser] = useState<UserType | null>(null);
     const [otherUsers, setOtherUsers] = useState<UserType[]>([]);
     const [dashboardMetrics, setDashboardMetrics] = useState({ teamRevenue: 0, totalProjects: 0, clientAcquisition: 0 });
+    const [personalMetrics, setPersonalMetrics] = useState({ profileViews: 0, newConnections: 0, pendingInvitations: 0 });
     const [agencyMetrics, setAgencyMetrics] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -114,15 +115,17 @@ function DashboardPageInternal() {
         const fetchDashboardData = async () => {
             setIsLoading(true);
             try {
-                const [user, others, dashMetrics, agencyMetricsData] = await Promise.all([
+                const [user, others, dashMetrics, personalDashMetrics, agencyMetricsData] = await Promise.all([
                     getCurrentUser(),
                     getUsers(),
                     getAgencyDashboardMetrics(),
+                    getPersonalDashboardMetrics(),
                     getAgencyMetrics(),
                 ]);
                 setCurrentUser(user);
                 setOtherUsers(others.filter(o => o.id !== user?.id));
                 setDashboardMetrics(dashMetrics);
+                setPersonalMetrics(personalDashMetrics);
                 setAgencyMetrics(agencyMetricsData);
             } catch (error) {
                 console.error("Failed to fetch dashboard data:", error);
@@ -293,7 +296,7 @@ function DashboardPageInternal() {
                     </DropdownMenu>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">1,204</div>
+                    {isLoading ? <Skeleton className="h-8 w-1/2" /> : <div className="text-2xl font-bold">{personalMetrics.profileViews.toLocaleString()}</div>}
                     <p className="text-xs text-muted-foreground">{t.fromLastMonth}</p>
                   </CardContent>
                 </Card>
@@ -338,7 +341,7 @@ function DashboardPageInternal() {
                     </DropdownMenu>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+32</div>
+                    {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">+{personalMetrics.newConnections}</div>}
                     <p className="text-xs text-muted-foreground">{t.connectionsLastMonth}</p>
                   </CardContent>
                 </Card>
@@ -383,8 +386,8 @@ function DashboardPageInternal() {
                         </DropdownMenu>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{pendingInvitations.length}</div>
-                        <p className="text-xs text-muted-foreground">{t.waitingResponse.replace('{count}', String(pendingInvitations.length))}</p>
+                        {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{personalMetrics.pendingInvitations}</div>}
+                        <p className="text-xs text-muted-foreground">{t.waitingResponse.replace('{count}', String(personalMetrics.pendingInvitations))}</p>
                     </CardContent>
                 </Card>
               </div>
