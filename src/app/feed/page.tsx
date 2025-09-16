@@ -264,27 +264,27 @@ function FeedPageInternal() {
               <TabsTrigger value="you-centric">{t.feedYouCentric}</TabsTrigger>
               <TabsTrigger value="clique">{t.feedClique}</TabsTrigger>
                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                       <Button variant="ghost" className={cn("w-full rounded-sm text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50", activeTab === 'niche' && "bg-background text-foreground shadow-sm")}>
-                            {selectedNiche || t.feedNiche}
-                            <ChevronDown className="ml-2 h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-64" align="center">
-                        {Object.entries(freelanceNiches).map(([category, subNiches]) => (
-                            <DropdownMenuSub key={category}>
-                                <DropdownMenuSubTrigger>{category}</DropdownMenuSubTrigger>
-                                <DropdownMenuSubContent className="p-0">
-                                    {subNiches.map(niche => (
-                                        <DropdownMenuItem key={niche} onSelect={() => handleNicheSelect(niche)}>
-                                            {niche}
-                                        </DropdownMenuItem>
-                                    ))}
-                                </DropdownMenuSubContent>
-                            </DropdownMenuSub>
-                        ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50", activeTab === 'niche' ? "bg-background text-foreground shadow-sm" : "")}>
+                        {selectedNiche || t.feedNiche}
+                        <ChevronDown className="ml-2 h-4 w-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-64" align="center">
+                      {Object.entries(freelanceNiches).map(([category, subNiches]) => (
+                          <DropdownMenuSub key={category}>
+                              <DropdownMenuSubTrigger>{category}</DropdownMenuSubTrigger>
+                              <DropdownMenuSubContent className="p-0">
+                                  {subNiches.map(niche => (
+                                      <DropdownMenuItem key={niche} onSelect={() => handleNicheSelect(niche)}>
+                                          {niche}
+                                      </DropdownMenuItem>
+                                  ))}
+                              </DropdownMenuSubContent>
+                          </DropdownMenuSub>
+                      ))}
+                  </DropdownMenuContent>
+              </DropdownMenu>
             </TabsList>
             <FeedContent posts={filteredPosts} onUpdate={handlePostUpdate} onDelete={handleDeletePost} onReply={handleReply} t={t} isLoading={isLoading} currentUser={currentUser} />
           </Tabs>
@@ -780,7 +780,3 @@ function PostCardSkeleton() {
         </Card>
     )
 }
-
-    
-
-    
