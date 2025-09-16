@@ -140,7 +140,7 @@ function DashboardPageInternal() {
         };
 
         fetchDashboardData();
-    }, [toast]);
+    }, []);
 
 
     // Memos for derived data, now using live 'otherUsers'
