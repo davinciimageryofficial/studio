@@ -68,6 +68,9 @@ function SignupPageInternal() {
             title: t.signupSuccessToastTitle,
             description: t.signupSuccessToastDesc,
         });
+        // The server action already redirects, but we can push here as a fallback
+        // in case the server redirect doesn't work as expected in some client-side scenarios.
+        router.push('/waitlist-confirmation');
     }
   };
 
