@@ -5,7 +5,7 @@ import "./globals.css";
 import { AppLayout } from "@/components/layout/app-layout";
 import { Providers } from "./providers";
 import { ClientOnly } from "@/components/layout/client-only";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const michroma = Michroma({
