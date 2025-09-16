@@ -66,6 +66,7 @@ export function ProductivityChart({ timeline, visibleMetrics, scale }: Productiv
   }, [timeline]);
 
   const chartData = useMemo(() => {
+    if (!originalData) return [];
     return originalData.map(item => ({
         ...item,
         revenue: (item.revenue || 0) * scale,
@@ -88,6 +89,14 @@ export function ProductivityChart({ timeline, visibleMetrics, scale }: Productiv
         <Skeleton className="h-full w-full" />
       </div>
     )
+  }
+  
+  if (chartData.length === 0) {
+      return (
+        <div className="h-[400px] w-full flex items-center justify-center text-muted-foreground">
+          No productivity data available for this period.
+        </div>
+      )
   }
 
   return (

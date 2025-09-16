@@ -119,7 +119,6 @@ const englishTranslations = {
     recentViewers: "Recent Viewers",
     viewAllRecent: "View all in Recent Activity",
     newConnections: "New Connections",
-    connectionsLastMonth: "from last month",
     recentConnections: "Recent Connections",
     viewAllConnections: "View all Connections",
     pendingInvitations: "Pending Invitations",

@@ -107,7 +107,7 @@ function DashboardPageInternal() {
     const [currentUser, setCurrentUser] = useState<UserType | null>(null);
     const [otherUsers, setOtherUsers] = useState<UserType[]>([]);
     const [dashboardMetrics, setDashboardMetrics] = useState({ teamRevenue: 0, totalProjects: 0, clientAcquisition: 0 });
-    const [personalMetrics, setPersonalMetrics] = useState({ profileViews: 0, newConnections: 0, pendingInvitations: 0 });
+    const [personalMetrics, setPersonalMetrics] = useState({ profileViews: 0, newConnections: 0, pendingInvitations: 0, profileViewsChange: 0, newConnectionsChange: 0 });
     const [agencyMetrics, setAgencyMetrics] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -140,7 +140,7 @@ function DashboardPageInternal() {
         };
 
         fetchDashboardData();
-    }, []);
+    }, [toast]);
 
 
     // Memos for derived data, now using live 'otherUsers'
@@ -155,8 +155,8 @@ function DashboardPageInternal() {
     }, [otherUsers]);
     
     const recentViewers = useMemo(() => recentActivities.filter(a => a.action.includes("viewed")), [recentActivities]);
-    const pendingInvitations = useMemo(() => otherUsers.slice(1, 4), [otherUsers]);
-    const newConnections = useMemo(() => otherUsers.slice(0, 3), [otherUsers]);
+    const pendingInvitationsList = useMemo(() => otherUsers.slice(1, 4), [otherUsers]);
+    const newConnectionsList = useMemo(() => otherUsers.slice(0, 3), [otherUsers]);
     
     const handleAccessCodeSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -297,7 +297,9 @@ function DashboardPageInternal() {
                   </CardHeader>
                   <CardContent>
                     {isLoading ? <Skeleton className="h-8 w-1/2" /> : <div className="text-2xl font-bold">{personalMetrics.profileViews.toLocaleString()}</div>}
-                    <p className="text-xs text-muted-foreground">+20.1% {t.fromLastMonth}</p>
+                     <p className="text-xs text-muted-foreground">
+                        {personalMetrics.profileViewsChange >= 0 ? '+' : ''}{personalMetrics.profileViewsChange.toFixed(1)}% {t.fromLastMonth}
+                    </p>
                   </CardContent>
                 </Card>
 
@@ -315,7 +317,7 @@ function DashboardPageInternal() {
                       <DropdownMenuContent className="w-80" align="end">
                         <DropdownMenuLabel>{t.recentConnections}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        {newConnections.map(user => (
+                        {newConnectionsList.map(user => (
                             <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
                                 <div className="flex items-center gap-3">
                                     <Avatar className="h-9 w-9">
@@ -342,7 +344,9 @@ function DashboardPageInternal() {
                   </CardHeader>
                   <CardContent>
                     {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">+{personalMetrics.newConnections}</div>}
-                    <p className="text-xs text-muted-foreground">+12.5% {t.fromLastMonth}</p>
+                    <p className="text-xs text-muted-foreground">
+                         {personalMetrics.newConnectionsChange >= 0 ? '+' : ''}{personalMetrics.newConnectionsChange.toFixed(1)}% {t.fromLastMonth}
+                    </p>
                   </CardContent>
                 </Card>
 
@@ -360,7 +364,7 @@ function DashboardPageInternal() {
                           <DropdownMenuContent className="w-80" align="end">
                             <DropdownMenuLabel>{t.pendingInvitations}</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            {pendingInvitations.map(user => (
+                            {pendingInvitationsList.map(user => (
                                 <DropdownMenuItem key={user.id} className="flex items-center justify-between gap-2 p-2">
                                     <div className="flex items-center gap-3">
                                         <Avatar className="h-9 w-9">
@@ -387,7 +391,7 @@ function DashboardPageInternal() {
                     </CardHeader>
                     <CardContent>
                         {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{personalMetrics.pendingInvitations}</div>}
-                        <p className="text-xs text-muted-foreground">{t.waitingResponse.replace('{count}', String(personalMetrics.pendingInvitations))}</p>
+                        <p className="text-xs text-muted-foreground">{personalMetrics.pendingInvitations > 0 ? t.waitingResponse.replace('{count}', String(personalMetrics.pendingInvitations)) : "No pending invitations"}</p>
                     </CardContent>
                 </Card>
               </div>

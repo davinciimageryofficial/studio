@@ -117,12 +117,57 @@ export async function getExperiencesByUserId(userId: string): Promise<Experience
  * Fetches key metrics for the personal dashboard.
  */
 export async function getPersonalDashboardMetrics() {
-    // In a real app, these values would be calculated from database queries.
-    // For this prototype, we'll return realistic mock data.
+    const supabase = createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return { profileViews: 0, newConnections: 0, pendingInvitations: 0, profileViewsChange: 0, newConnectionsChange: 0 };
+    }
+    
+    const today = new Date();
+    const last30Days = new Date(today);
+    last30Days.setDate(today.getDate() - 30);
+    const last60Days = new Date(today);
+    last60Days.setDate(today.getDate() - 60);
+
+    const { data: currentPeriodData, error: currentError } = await supabase
+        .from('user_daily_metrics')
+        .select('profile_views, connections_made')
+        .eq('user_id', user.id)
+        .gte('date', last30Days.toISOString().split('T')[0]);
+    
+    const { data: previousPeriodData, error: previousError } = await supabase
+        .from('user_daily_metrics')
+        .select('profile_views, connections_made')
+        .eq('user_id', user.id)
+        .gte('date', last60Days.toISOString().split('T')[0])
+        .lt('date', last30Days.toISOString().split('T')[0]);
+        
+    if (currentError || previousError) {
+        console.error("Error fetching personal dashboard metrics", {currentError, previousError});
+        return { profileViews: 0, newConnections: 0, pendingInvitations: 0, profileViewsChange: 0, newConnectionsChange: 0 };
+    }
+
+    const currentViews = currentPeriodData.reduce((sum, row) => sum + row.profile_views, 0);
+    const currentConnections = currentPeriodData.reduce((sum, row) => sum + row.connections_made, 0);
+
+    const previousViews = previousPeriodData.reduce((sum, row) => sum + row.profile_views, 0);
+    const previousConnections = previousPeriodData.reduce((sum, row) => sum + row.connections_made, 0);
+
+    const calculateChange = (current: number, previous: number) => {
+        if (previous === 0) return current > 0 ? 100 : 0;
+        return ((current - previous) / previous) * 100;
+    };
+    
+    // Placeholder for pending invitations
+    const pendingInvitations = 0;
+
     return {
-        profileViews: 1204,
-        newConnections: 32,
-        pendingInvitations: 3
+        profileViews: currentViews,
+        newConnections: currentConnections,
+        pendingInvitations: pendingInvitations,
+        profileViewsChange: calculateChange(currentViews, previousViews),
+        newConnectionsChange: calculateChange(currentConnections, previousConnections)
     };
 }
 
@@ -400,8 +445,8 @@ export async function getPersonalProductivityChartData(timeline: 'daily' | 'week
         .from('user_daily_metrics')
         .select('*')
         .eq('user_id', user.id)
-        .order('date', { ascending: false })
-        .limit(timeline === 'daily' ? 7 : 30); // 7 days for daily, 4 weeks of data for weekly
+        .order('date', { ascending: true })
+        .limit(timeline === 'daily' ? 7 : 28); // 7 days for daily, 4 weeks of data for weekly
 
     if (error) {
         console.error("Error fetching daily user metrics:", error);
@@ -409,7 +454,7 @@ export async function getPersonalProductivityChartData(timeline: 'daily' | 'week
     }
 
     if (timeline === 'daily') {
-        return data.reverse().map(d => ({
+        return data.map(d => ({
             day: new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' }),
             revenue: d.revenue_generated / 1000,
             projects: d.projects_completed,
@@ -420,24 +465,29 @@ export async function getPersonalProductivityChartData(timeline: 'daily' | 'week
     }
 
     if (timeline === 'weekly') {
-        const weeks: any = {};
+        const weeks: { [key: string]: any } = {};
         data.forEach(d => {
             const date = new Date(d.date);
-            const weekStart = new Date(date.setDate(date.getDate() - date.getDay())).toISOString().split('T')[0];
-            if (!weeks[weekStart]) {
-                weeks[weekStart] = { revenue: 0, projects: 0, impressions: 0, acquisition: 0, count: 0, revPerProject: 0 };
+            const dayOfWeek = date.getUTCDay();
+            const weekStart = new Date(date.setUTCDate(date.getUTCDate() - dayOfWeek));
+            const weekStartString = weekStart.toISOString().split('T')[0];
+
+            if (!weeks[weekStartString]) {
+                weeks[weekStartString] = { revenue: 0, projects: 0, impressions: 0, acquisition: 0, count: 0 };
             }
-            weeks[weekStart].revenue += d.revenue_generated;
-            weeks[weekStart].projects += d.projects_completed;
-            weeks[weekStart].impressions += d.search_appearances + d.profile_views;
-            weeks[weekStart].acquisition += d.connections_made;
-            weeks[weekStart].count++;
+            weeks[weekStartString].revenue += d.revenue_generated;
+            weeks[weekStartString].projects += d.projects_completed;
+            weeks[weekStartString].impressions += d.search_appearances + d.profile_views;
+            weeks[weekStartString].acquisition += d.connections_made;
+            weeks[weekStartString].count++;
         });
 
         return Object.keys(weeks).map(weekStart => ({
-            week: `Week of ${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
-            ...weeks[weekStart],
+            week: `W/C ${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
             revenue: (weeks[weekStart].revenue / 1000),
+            projects: weeks[weekStart].projects,
+            impressions: weeks[weekStart].impressions,
+            acquisition: weeks[weekStart].acquisition,
             revPerProject: weeks[weekStart].projects > 0 ? (weeks[weekStart].revenue / weeks[weekStart].projects) / 1000 : 0
         })).slice(-4); // Return last 4 weeks
     }
