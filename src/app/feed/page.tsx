@@ -59,7 +59,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { freelanceNiches } from "@/app/skill-sync-net/page";
 import { Post, User as UserType } from "@/lib/types";
-import { getPosts, getCurrentUser } from "@/lib/database";
+import { getPosts, getCurrentUser, getUserById } from "@/lib/database";
+import { supabase } from "@/lib/supabase";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
@@ -142,6 +143,31 @@ function FeedPageInternal() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    const channel = supabase.channel('realtime posts');
+    channel
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, async (payload) => {
+        const newPostData = payload.new as Post;
+        // Only add top-level posts in real-time
+        if (!newPostData.parent_id) {
+          const author = await getUserById(newPostData.author_id);
+          if (author) {
+            const fullPost = {
+              ...newPostData,
+              author,
+              replies: [],
+            };
+            setPosts((prevPosts) => [fullPost, ...prevPosts]);
+          }
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   const addPost = (newPostData: PostGeneratorOutput) => {
     if (currentUser) {
         const newPost: Post = {
@@ -158,7 +184,10 @@ function FeedPageInternal() {
             type: 'post',
             replies: [],
         };
-        setPosts((prevPosts) => [newPost, ...prevPosts]);
+        // This is now handled by the real-time subscription,
+        // but we can keep it for optimistic UI updates if we want.
+        // For now, we'll let the subscription handle it to avoid duplicates.
+        // setPosts((prevPosts) => [newPost, ...prevPosts]);
     }
   };
 
@@ -206,7 +235,7 @@ function FeedPageInternal() {
           const nicheLower = selectedNiche.toLowerCase();
           return posts.filter(post => 
             post.content.toLowerCase().includes(nicheLower) ||
-            post.author.skills.map(s => s.toLowerCase()).includes(nicheLower)
+            (post.author.skills && post.author.skills.map(s => s.toLowerCase()).includes(nicheLower))
           );
       }
       return posts;
@@ -252,8 +281,7 @@ function FeedPageInternal() {
                                     </DropdownMenuItem>
                                 ))}
                             </DropdownMenuSubContent>
-                        </DropdownMenuSub>
-                    ))}
+                        </DropdownMenu>
                 </DropdownMenuContent>
               </DropdownMenu>
             </TabsList>
@@ -751,3 +779,5 @@ function PostCardSkeleton() {
         </Card>
     )
 }
+
+    

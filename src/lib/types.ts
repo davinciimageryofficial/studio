@@ -56,6 +56,7 @@ export type Post = {
   reposts_count: number;
   views_count: number;
   type: 'post' | 'job';
+  parent_id?: number | null;
   jobDetails?: {
     title: string;
     budget: string;
@@ -75,3 +76,5 @@ export type Course = {
     image_url: string;
     level: string;
 }
+
+    
