@@ -109,9 +109,9 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  // Instead of auto-logging in, redirect to a confirmation page.
-  // This is a more robust flow for serverless environments like Vercel.
-  redirect('/waitlist-confirmation');
+  // Return success instead of redirecting from the server action.
+  // The client will handle the redirect.
+  return { success: true };
 }
 
 export async function logout() {
