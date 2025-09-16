@@ -6,13 +6,13 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  "projectId": "sentry-supabase-32172921-b26f1",
-  "appId": "1:427607387035:web:586bcd94ca0f4da5784f3e",
-  "storageBucket": "sentry-supabase-32172921-b26f1.firebasestorage.app",
-  "apiKey": "AIzaSyA7ElqO-IgVETyoUkNbafxC9Ekfw-yagIo",
-  "authDomain": "sentry-supabase-32172921-b26f1.firebaseapp.com",
-  "measurementId": "",
-  "messagingSenderId": "427607387035"
+  "projectId": process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  "appId": process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  "storageBucket": process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  "apiKey": process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  "authDomain": process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  "measurementId": process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+  "messagingSenderId": process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
 };
 
 // Initialize Firebase
