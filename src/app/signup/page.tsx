@@ -48,6 +48,7 @@ function SignupPageInternal() {
   });
 
   const onSubmit: SubmitHandler<SignupFormValues> = async (data) => {
+    setErrorMessage(null);
     const formData = new FormData();
     formData.append('fullName', data.fullName);
     formData.append('email', data.email);
