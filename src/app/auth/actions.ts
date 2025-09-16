@@ -111,9 +111,9 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  // Since email is auto-confirmed, we can log the user in and redirect to dashboard
-  await supabase.auth.signInWithPassword({ email, password });
-  redirect('/dashboard')
+  // Instead of auto-logging in, redirect to a confirmation page.
+  // This is a more robust flow for serverless environments like Vercel.
+  redirect('/waitlist-confirmation');
 }
 
 export async function logout() {
