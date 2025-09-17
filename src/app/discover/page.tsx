@@ -19,26 +19,16 @@ import { getUsers } from "@/lib/database";
 import { User } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function DiscoverPageInternal() {
+function DiscoverPageInternal({ initialUsers }: { initialUsers: User[] }) {
   const { language } = useLanguage();
   const t = translations[language];
   const categories = ["All", "Design", "Writing", "Development"];
   
   const { toast } = useToast();
-  const [users, setUsers] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("All");
-
-  useEffect(() => {
-    async function fetchUsers() {
-      setIsLoading(true);
-      const fetchedUsers = await getUsers();
-      setUsers(fetchedUsers);
-      setIsLoading(false);
-    }
-    fetchUsers();
-  }, []);
 
   const handleAction = (action: string, userName: string) => {
     toast({
@@ -97,10 +87,11 @@ function DiscoverPageInternal() {
   );
 }
 
-export default function DiscoverPage() {
+export default async function DiscoverPage() {
+    const users = await getUsers();
     return (
         <ClientOnly>
-            <DiscoverPageInternal />
+            <DiscoverPageInternal initialUsers={users} />
         </ClientOnly>
     )
 }

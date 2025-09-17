@@ -25,8 +25,6 @@ import { translations } from "@/lib/translations";
 import { ClientOnly } from "@/components/layout/client-only";
 import { getCampaigns, createCampaign as createCampaignInDb } from "@/lib/database";
 import { useToast } from "@/hooks/use-toast";
-import { Form } from "@/components/ui/form";
-
 
 const campaignFormSchema = z.object({
   name: z.string().min(1, "Campaign name is required."),
@@ -47,11 +45,11 @@ type Campaign = {
     conversions: number;
 }
 
-function AdStudioPageInternal() {
+function AdStudioPageInternal({ initialCampaigns }: { initialCampaigns: Campaign[] }) {
   const { language } = useLanguage();
   const t = translations[language];
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
+  const [isLoading, setIsLoading] = useState(false);
 
   const loadCampaigns = useCallback(async () => {
     setIsLoading(true);
@@ -59,11 +57,6 @@ function AdStudioPageInternal() {
     setCampaigns(fetchedCampaigns);
     setIsLoading(false);
   }, []);
-
-
-  useEffect(() => {
-    loadCampaigns();
-  }, [loadCampaigns]);
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
@@ -213,10 +206,11 @@ function AdStudioPageInternal() {
   );
 }
 
-export default function AdStudioPage() {
+export default async function AdStudioPage() {
+    const campaigns = await getCampaigns();
     return (
         <ClientOnly>
-            <AdStudioPageInternal />
+            <AdStudioPageInternal initialCampaigns={campaigns} />
         </ClientOnly>
     );
 }
@@ -303,112 +297,110 @@ function CreateCampaignDialog({ t, onCampaignCreated }: { t: typeof translations
                     {t.createCampaignDesc}
                 </DialogDescription>
             </DialogHeader>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-4">
-                        {/* Main Form */}
-                        <div className="md:col-span-2 space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="campaign-name">{t.campaignName}</Label>
-                                <Input id="campaign-name" placeholder={t.campaignNamePlaceholder} {...form.register("name")} />
-                                {form.formState.errors.name && <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>}
-                            </div>
-                            <div className="space-y-2">
-                                <Label>{t.adType}</Label>
-                                <Controller
-                                    name="type"
-                                    control={form.control}
-                                    render={({ field }) => (
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <SelectTrigger><SelectValue placeholder={t.adTypePlaceholder} /></SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="profile-spotlight">{t.adTypeProfile}</SelectItem>
-                                                <SelectItem value="product-listing">{t.adTypeProduct}</SelectItem>
-                                                <SelectItem value="sponsored-content">{t.adTypeContent}</SelectItem>
-                                                <SelectItem value="job-gig">{t.adTypeJob}</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    )}
-                                />
-                                {form.formState.errors.type && <p className="text-sm text-destructive">{form.formState.errors.type.message}</p>}
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="ad-content">{t.adContent}</Label>
-                                <Textarea id="ad-content" placeholder={t.adContentPlaceholder} className="min-h-32" {...form.register("content")} />
-                                {form.formState.errors.content && <p className="text-sm text-destructive">{form.formState.errors.content.message}</p>}
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="targeting-keywords">{t.targetingKeywords}</Label>
-                                <Input id="targeting-keywords" placeholder={t.targetingKeywordsPlaceholder} {...form.register("keywords")} />
-                                {form.formState.errors.keywords && <p className="text-sm text-destructive">{form.formState.errors.keywords.message}</p>}
-                            </div>
-
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-4">
+                    {/* Main Form */}
+                    <div className="md:col-span-2 space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="campaign-name">{t.campaignName}</Label>
+                            <Input id="campaign-name" placeholder={t.campaignNamePlaceholder} {...form.register("name")} />
+                            {form.formState.errors.name && <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>}
                         </div>
-                        {/* Pocket Guide */}
-                        <div className="space-y-4 md:border-l md:pl-6">
-                            <h3 className="text-lg font-semibold flex items-center gap-2">
-                            <Kanban className="w-5 h-5 text-primary" />
-                            {t.pocketGuide}
-                            </h3>
-                            <div className="text-sm space-y-4">
-                                {isAnalyzing ? (
-                                    <div className="space-y-4">
-                                        <Skeleton className="h-4 w-1/3" />
-                                        <Skeleton className="h-8 w-full" />
-                                        <Skeleton className="h-4 w-full" />
-                                        <Skeleton className="h-4 w-5/6" />
-                                    </div>
-                                ) : error ? (
-                                    <Alert variant="destructive">
-                                        <AlertCircle className="h-4 w-4" />
-                                        <AlertTitle>{t.analysisError}</AlertTitle>
-                                        <AlertDescription>{error}</AlertDescription>
-                                    </Alert>
-                                ) : analysis ? (
-                                    <div className="space-y-4">
-                                        {analysis.campaignNameStrength && (
-                                            <div>
-                                                <h4 className="font-semibold">{t.campaignNameStrength}</h4>
-                                                <Progress value={analysis.campaignNameStrength.score} className="my-2 h-2" />
-                                                <p className="text-muted-foreground">{analysis.campaignNameStrength.feedback}</p>
-                                            </div>
-                                        )}
-                                        {analysis.adContentSuggestions && analysis.adContentSuggestions.length > 0 && (
-                                            <div>
-                                                <h4 className="font-semibold">{t.contentSuggestions}</h4>
-                                                <ul className="list-disc list-inside text-muted-foreground mt-1 space-y-1">
-                                                    {analysis.adContentSuggestions.map((s, i) => <li key={i}>{s}</li>)}
-                                                </ul>
-                                            </div>
-                                        )}
-                                        {analysis.keywordSuggestions && analysis.keywordSuggestions.length > 0 && (
-                                            <div>
-                                                <h4 className="font-semibold">{t.keywordSuggestions}</h4>
-                                                <ul className="list-disc list-inside text-muted-foreground mt-1 space-y-1">
-                                                    {analysis.keywordSuggestions.map((s, i) => <li key={i}>{s}</li>)}
-                                                </ul>
-                                            </div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <div className="text-muted-foreground">
-                                        <p>{t.pocketGuideDesc}</p>
-                                    </div>
+                        <div className="space-y-2">
+                            <Label>{t.adType}</Label>
+                            <Controller
+                                name="type"
+                                control={form.control}
+                                render={({ field }) => (
+                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <SelectTrigger><SelectValue placeholder={t.adTypePlaceholder} /></SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="profile-spotlight">{t.adTypeProfile}</SelectItem>
+                                            <SelectItem value="product-listing">{t.adTypeProduct}</SelectItem>
+                                            <SelectItem value="sponsored-content">{t.adTypeContent}</SelectItem>
+                                            <SelectItem value="job-gig">{t.adTypeJob}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 )}
-                            </div>
+                            />
+                             {form.formState.errors.type && <p className="text-sm text-destructive">{form.formState.errors.type.message}</p>}
+                        </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="ad-content">{t.adContent}</Label>
+                            <Textarea id="ad-content" placeholder={t.adContentPlaceholder} className="min-h-32" {...form.register("content")} />
+                            {form.formState.errors.content && <p className="text-sm text-destructive">{form.formState.errors.content.message}</p>}
+                        </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="targeting-keywords">{t.targetingKeywords}</Label>
+                            <Input id="targeting-keywords" placeholder={t.targetingKeywordsPlaceholder} {...form.register("keywords")} />
+                             {form.formState.errors.keywords && <p className="text-sm text-destructive">{form.formState.errors.keywords.message}</p>}
+                        </div>
+
+                    </div>
+                    {/* Pocket Guide */}
+                    <div className="space-y-4 md:border-l md:pl-6">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                           <Kanban className="w-5 h-5 text-primary" />
+                           {t.pocketGuide}
+                        </h3>
+                        <div className="text-sm space-y-4">
+                             {isAnalyzing ? (
+                                <div className="space-y-4">
+                                    <Skeleton className="h-4 w-1/3" />
+                                    <Skeleton className="h-8 w-full" />
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-5/6" />
+                                </div>
+                            ) : error ? (
+                                 <Alert variant="destructive">
+                                    <AlertCircle className="h-4 w-4" />
+                                    <AlertTitle>{t.analysisError}</AlertTitle>
+                                    <AlertDescription>{error}</AlertDescription>
+                                </Alert>
+                            ) : analysis ? (
+                                <div className="space-y-4">
+                                    {analysis.campaignNameStrength && (
+                                        <div>
+                                            <h4 className="font-semibold">{t.campaignNameStrength}</h4>
+                                            <Progress value={analysis.campaignNameStrength.score} className="my-2 h-2" />
+                                            <p className="text-muted-foreground">{analysis.campaignNameStrength.feedback}</p>
+                                        </div>
+                                    )}
+                                     {analysis.adContentSuggestions && analysis.adContentSuggestions.length > 0 && (
+                                        <div>
+                                            <h4 className="font-semibold">{t.contentSuggestions}</h4>
+                                            <ul className="list-disc list-inside text-muted-foreground mt-1 space-y-1">
+                                                {analysis.adContentSuggestions.map((s, i) => <li key={i}>{s}</li>)}
+                                            </ul>
+                                        </div>
+                                    )}
+                                     {analysis.keywordSuggestions && analysis.keywordSuggestions.length > 0 && (
+                                        <div>
+                                            <h4 className="font-semibold">{t.keywordSuggestions}</h4>
+                                             <ul className="list-disc list-inside text-muted-foreground mt-1 space-y-1">
+                                                {analysis.keywordSuggestions.map((s, i) => <li key={i}>{s}</li>)}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="text-muted-foreground">
+                                    <p>{t.pocketGuideDesc}</p>
+                                </div>
+                            )}
                         </div>
                     </div>
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <Button type="button" variant="secondary">{t.cancel}</Button>
-                        </DialogClose>
-                        <Button type="submit">
-                            <CheckCircle className="mr-2 h-4 w-4" />
-                            {t.launchCampaign}
-                        </Button>
-                    </DialogFooter>
-                </form>
-            </Form>
+                </div>
+                 <DialogFooter>
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary">{t.cancel}</Button>
+                    </DialogClose>
+                    <Button type="submit">
+                        <CheckCircle className="mr-2 h-4 w-4" />
+                        {t.launchCampaign}
+                    </Button>
+                </DialogFooter>
+            </form>
         </DialogContent>
     );
 }

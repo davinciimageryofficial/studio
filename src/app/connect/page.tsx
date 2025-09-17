@@ -27,9 +27,9 @@ import { translations } from "@/lib/translations";
 import type { Course } from "@/lib/types";
 
 
-function CoursesPageInternal() {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+function CoursesPageInternal({ initialCourses }: { initialCourses: Course[] }) {
+  const [courses, setCourses] = useState<Course[]>(initialCourses);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [priceRange, setPriceRange] = useState([0, 300]);
@@ -37,16 +37,6 @@ function CoursesPageInternal() {
   const [skillLevel, setSkillLevel] = useState("all");
   const { language } = useLanguage();
   const t = translations[language];
-
-  useEffect(() => {
-    async function loadCourses() {
-        setIsLoading(true);
-        const fetchedCourses = await getCourses();
-        setCourses(fetchedCourses);
-        setIsLoading(false);
-    }
-    loadCourses();
-  }, []);
 
   const courseCategories = ['Development', 'Design', 'Writing', 'AI & Machine Learning', 'Data Science', 'Freelance'];
 
@@ -175,10 +165,11 @@ function CoursesPageInternal() {
   );
 }
 
-export default function CoursesPage() {
+export default async function CoursesPage() {
+    const courses = await getCourses();
     return (
         <ClientOnly>
-            <CoursesPageInternal />
+            <CoursesPageInternal initialCourses={courses} />
         </ClientOnly>
     )
 }

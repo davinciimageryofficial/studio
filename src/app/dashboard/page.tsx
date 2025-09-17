@@ -25,7 +25,7 @@ import { OperationalCharts } from "./operational-charts";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
 import { ProfileEngagementChart } from "./profile-engagement-chart";
-import { getCurrentUser, getUsers, getAgencyDashboardMetrics, getAgencyMetrics, getPersonalDashboardMetrics } from "@/lib/database";
+import { getCurrentUser, getUsers, getAgencyDashboardMetrics, getPersonalDashboardMetrics, getAgencyMetrics } from "@/lib/database";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { User as UserType } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -133,7 +133,19 @@ function TaskDialog({ task, onSave, triggerButton, column }: { task?: Task, onSa
 }
 
 
-function DashboardPageInternal() {
+function DashboardPageInternal({
+    currentUser,
+    otherUsers,
+    dashboardMetrics,
+    personalMetrics,
+    agencyMetrics
+}: {
+    currentUser: UserType | null,
+    otherUsers: UserType[],
+    dashboardMetrics: { teamRevenue: number, totalProjects: number, clientAcquisition: number },
+    personalMetrics: { profileViews: number, newConnections: number, pendingInvitations: number, profileViewsChange: number, newConnectionsChange: number },
+    agencyMetrics: any,
+}) {
     const { language } = useLanguage();
     const t = translations[language];
     const [isAppDownloaded, setIsAppDownloaded] = useState(false);
@@ -159,53 +171,6 @@ function DashboardPageInternal() {
     });
     const [productivityChartScale, setProductivityChartScale] = useState(1);
     const [tempProductivityChartScale, setTempProductivityChartScale] = useState(1);
-
-    const [currentUser, setCurrentUser] = useState<UserType | null>(null);
-    const [otherUsers, setOtherUsers] = useState<UserType[]>([]);
-    const [dashboardMetrics, setDashboardMetrics] = useState({ teamRevenue: 0, totalProjects: 0, clientAcquisition: 0 });
-    const [personalMetrics, setPersonalMetrics] = useState({ profileViews: 0, newConnections: 0, pendingInvitations: 0, profileViewsChange: 0, newConnectionsChange: 0 });
-    const [agencyMetrics, setAgencyMetrics] = useState<any>(null);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchDashboardData = async () => {
-            setIsLoading(true);
-            try {
-                const user = await getCurrentUser();
-                setCurrentUser(user);
-
-                if (!user) {
-                    setIsLoading(false);
-                    return;
-                }
-
-                const [others, dashMetrics, personalDashMetrics, agencyMetricsData] = await Promise.all([
-                    getUsers(),
-                    getAgencyDashboardMetrics(),
-                    getPersonalDashboardMetrics(),
-                    getAgencyMetrics(),
-                ]);
-                
-                setOtherUsers(others.filter(o => o.id !== user.id));
-                setDashboardMetrics(dashMetrics);
-                setPersonalMetrics(personalDashMetrics);
-                setAgencyMetrics(agencyMetricsData);
-
-            } catch (error) {
-                console.error("Failed to fetch dashboard data:", error);
-                toast({
-                    title: "Error",
-                    description: "Could not load dashboard data.",
-                    variant: "destructive"
-                })
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchDashboardData();
-    }, [toast]);
-
 
     // Memos for derived data, now using live 'otherUsers'
     const recentActivities = useMemo(() => {
@@ -377,7 +342,7 @@ function DashboardPageInternal() {
                     </DropdownMenu>
                   </CardHeader>
                   <CardContent>
-                    {isLoading ? <Skeleton className="h-8 w-1/2" /> : <div className="text-2xl font-bold">{personalMetrics.profileViews.toLocaleString()}</div>}
+                    <div className="text-2xl font-bold">{personalMetrics.profileViews.toLocaleString()}</div>
                      <p className="text-xs text-muted-foreground">
                         {personalMetrics.profileViewsChange >= 0 ? '+' : ''}{personalMetrics.profileViewsChange.toFixed(1)}% {t.fromLastMonth}
                     </p>
@@ -424,7 +389,7 @@ function DashboardPageInternal() {
                     </DropdownMenu>
                   </CardHeader>
                   <CardContent>
-                    {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">+{personalMetrics.newConnections}</div>}
+                    <div className="text-2xl font-bold">+{personalMetrics.newConnections}</div>
                     <p className="text-xs text-muted-foreground">
                          {personalMetrics.newConnectionsChange >= 0 ? '+' : ''}{personalMetrics.newConnectionsChange.toFixed(1)}% {t.fromLastMonth}
                     </p>
@@ -471,7 +436,7 @@ function DashboardPageInternal() {
                         </DropdownMenu>
                     </CardHeader>
                     <CardContent>
-                        {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{personalMetrics.pendingInvitations}</div>}
+                        <div className="text-2xl font-bold">{personalMetrics.pendingInvitations}</div>
                         <p className="text-xs text-muted-foreground">{personalMetrics.pendingInvitations > 0 ? t.waitingResponse.replace('{count}', String(personalMetrics.pendingInvitations)) : "No pending invitations"}</p>
                     </CardContent>
                 </Card>
@@ -750,7 +715,7 @@ function DashboardPageInternal() {
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            {isLoading ? <Skeleton className="h-8 w-3/4" /> : <div className="text-2xl font-bold">${dashboardMetrics.teamRevenue.toLocaleString()}</div>}
+                            <div className="text-2xl font-bold">${dashboardMetrics.teamRevenue.toLocaleString()}</div>
                             <p className="text-xs text-muted-foreground">Total revenue generated by the team.</p>
                         </CardContent>
                     </Card>
@@ -760,7 +725,7 @@ function DashboardPageInternal() {
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.totalProjects}</div>}
+                            <div className="text-2xl font-bold">{dashboardMetrics.totalProjects}</div>
                             <p className="text-xs text-muted-foreground">Total projects across the agency.</p>
                         </CardContent>
                     </Card>
@@ -770,7 +735,7 @@ function DashboardPageInternal() {
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                           {isLoading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">+{dashboardMetrics.clientAcquisition}</div>}
+                           <div className="text-2xl font-bold">+{dashboardMetrics.clientAcquisition}</div>
                             <p className="text-xs text-muted-foreground">New clients this quarter.</p>
                         </CardContent>
                     </Card>
@@ -781,7 +746,7 @@ function DashboardPageInternal() {
                         <CardDescription>{t.teamProductivityDesc}</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
-                         <AgencyMetrics metrics={agencyMetrics} isLoading={isLoading} />
+                         <AgencyMetrics metrics={agencyMetrics} isLoading={!agencyMetrics} />
                     </CardContent>
                 </Card>
                 <OperationalCharts />
@@ -792,18 +757,32 @@ function DashboardPageInternal() {
   );
 }
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+    const [
+        currentUser,
+        allUsers,
+        dashboardMetrics,
+        personalMetrics,
+        agencyMetrics,
+    ] = await Promise.all([
+        getCurrentUser(),
+        getUsers(),
+        getAgencyDashboardMetrics(),
+        getPersonalDashboardMetrics(),
+        getAgencyMetrics(),
+    ]);
+
+    const otherUsers = allUsers.filter(u => u.id !== currentUser?.id);
+
     return (
         <ClientOnly>
-            <DashboardPageInternal />
+            <DashboardPageInternal 
+                currentUser={currentUser}
+                otherUsers={otherUsers}
+                dashboardMetrics={dashboardMetrics}
+                personalMetrics={personalMetrics}
+                agencyMetrics={agencyMetrics}
+            />
         </ClientOnly>
     )
 }
-
-    
-
-    
-
-    
-
-    
