@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -61,6 +60,8 @@ function SignupPageInternal() {
 
     if (result?.error) {
         setErrorMessage(result.error);
+    } else if (result?.success) {
+        router.push('/dashboard');
     }
   };
 
