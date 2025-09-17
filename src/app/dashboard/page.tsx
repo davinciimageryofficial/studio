@@ -171,18 +171,27 @@ function DashboardPageInternal() {
         const fetchDashboardData = async () => {
             setIsLoading(true);
             try {
-                const [user, others, dashMetrics, personalDashMetrics, agencyMetricsData] = await Promise.all([
-                    getCurrentUser(),
+                const user = await getCurrentUser();
+                setCurrentUser(user);
+
+                if (!user) {
+                    // If no user, we can't fetch the rest of the data.
+                    setIsLoading(false);
+                    return;
+                }
+
+                const [others, dashMetrics, personalDashMetrics, agencyMetricsData] = await Promise.all([
                     getUsers(),
                     getAgencyDashboardMetrics(),
                     getPersonalDashboardMetrics(),
                     getAgencyMetrics(),
                 ]);
-                setCurrentUser(user);
-                setOtherUsers(others.filter(o => o.id !== user?.id));
+                
+                setOtherUsers(others.filter(o => o.id !== user.id));
                 setDashboardMetrics(dashMetrics);
                 setPersonalMetrics(personalDashMetrics);
                 setAgencyMetrics(agencyMetricsData);
+
             } catch (error) {
                 console.error("Failed to fetch dashboard data:", error);
                 toast({
@@ -800,6 +809,8 @@ export default function DashboardPage() {
         </ClientOnly>
     )
 }
+
+    
 
     
 
