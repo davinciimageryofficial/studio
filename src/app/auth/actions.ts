@@ -31,7 +31,7 @@ export async function signup(formData: FormData) {
 
   const supabase = createSupabaseServerClient()
 
-  // First, sign up the user in auth.users
+  // First, try to sign up the user in auth.users
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
     password,
@@ -45,22 +45,22 @@ export async function signup(formData: FormData) {
   })
 
   if (authError) {
-    if (authError.message.includes("User already registered")) {
-        // This is not a fatal error, the user might be re-trying.
-        // We can proceed to try and sign them in and upsert their waitlist status.
-    } else {
+    // If the user is already registered, this is not a fatal error.
+    // We can proceed to sign them in and update their waitlist status.
+    if (!authError.message.includes("User already registered")) {
        return { error: authError.message };
     }
   }
 
-  // Manually sign in the user after successful signup or if they already exist.
+  // Manually sign in the user. This works for both new signups (if email confirmation is disabled)
+  // and for existing users who are trying to sign up again.
   const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
   });
 
   if (signInError) {
-      return { error: "Login failed. Please check your credentials and try logging in manually." };
+      return { error: "Login failed after signup attempt. Please check your credentials and try logging in manually." };
   }
   
   const user = signInData.user;
@@ -68,8 +68,8 @@ export async function signup(formData: FormData) {
     return { error: "An unexpected error occurred after login. Please try again."}
   }
 
-  // The handle_new_user trigger will create the profile automatically.
-  // Now, add the user to the waitlist table using upsert to prevent duplicate errors.
+  // Now, use upsert to add the user to the waitlist table, preventing duplicate errors.
+  // The handle_new_user trigger will create the profile automatically on first signup.
   const { error: waitlistError } = await supabase.from('waitlist').upsert({
       id: user.id,
       email: email,
@@ -79,9 +79,8 @@ export async function signup(formData: FormData) {
   }, { onConflict: 'id' });
 
   if (waitlistError) {
-      // This is a critical error.
-      console.error("Database error saving new user to waitlist:", waitlistError.message);
-      return { error: "Database error saving new user. Please contact support."}
+      console.error("Database error saving user to waitlist:", waitlistError.message);
+      return { error: "A database error occurred while saving your information. Please contact support."}
   }
 
   revalidatePath('/', 'layout')
