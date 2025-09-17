@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -61,7 +62,13 @@ function SignupPageInternal() {
     if (result?.error) {
         setErrorMessage(result.error);
     } else if (result?.success) {
-        router.push('/dashboard');
+        toast({
+            title: t.signupSuccessToastTitle,
+            description: t.signupSuccessToastDesc,
+        });
+        // Store data for confirmation page
+        localStorage.setItem("waitlistData", JSON.stringify(data));
+        router.push('/waitlist-confirmation');
     }
   };
 
