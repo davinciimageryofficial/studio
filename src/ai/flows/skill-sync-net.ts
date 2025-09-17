@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -6,7 +5,7 @@
  *
  * - skillSyncNet - A function that handles the matching process.
  */
-import { openai } from '@/ai/inference';
+import { ai } from '@/ai/genkit';
 import { 
     SkillSyncNetInputSchema,
     SkillSyncNetOutputSchema,
@@ -16,7 +15,7 @@ import {
 
 export type { SkillSyncNetInput, SkillSyncNetOutput };
 
-const clientSystemPrompt = `You are Skill Sync Net, an AI-powered talent scout. Your task is to find the perfect freelancer for a client's project.
+const getClientSystemPrompt = (input: SkillSyncNetInput) => `You are Skill Sync Net, an AI-powered talent scout. Your task is to find the perfect freelancer for a client's project.
 
 Analyze the client's project brief below and generate a profile for one ideal freelance candidate.
 
@@ -28,21 +27,15 @@ Analyze the client's project brief below and generate a profile for one ideal fr
 5.  Provide a match confidence score between 85 and 98.
 6.  Ensure your entire output is in the specified JSON format under the "match.freelancer" key.
 
-The JSON schema for the output is:
-{
-  "match": {
-    "freelancer": {
-      "name": string,
-      "headline": string,
-      "skills": string[],
-      "matchReasoning": string,
-      "matchConfidence": number
-    }
-  }
-}
+**Client's Project Brief:**
+- **Title:** ${input.clientBrief?.projectTitle}
+- **Description:** ${input.clientBrief?.projectDescription}
+- **Required Skills:** ${input.clientBrief?.requiredSkills}
+- **Budget:** $${input.clientBrief?.budget}
+- **Timeline:** ${input.clientBrief?.timeline}
 `;
 
-const freelancerSystemPrompt = `You are Skill Sync Net, an AI-powered project finder. Your task is to find the perfect project for a freelancer.
+const getFreelancerSystemPrompt = (input: SkillSyncNetInput) => `You are Skill Sync Net, an AI-powered project finder. Your task is to find the perfect project for a freelancer.
 
 Analyze the freelancer's profile below and generate one ideal project listing.
 
@@ -56,70 +49,48 @@ Analyze the freelancer's profile below and generate one ideal project listing.
 7.  Provide a match confidence score between 85 and 98.
 8.  Ensure your entire output is in the specified JSON format under the "match.project" key.
 
-The JSON schema for the output is:
-{
-    "match": {
-        "project": {
-            "title": string,
-            "clientName": string,
-            "description": string,
-            "requiredSkills": string[],
-            "budget": number,
-            "timeline": string,
-            "matchReasoning": string,
-            "matchConfidence": number
-        }
-    }
-}
+**Freelancer's Profile:**
+- **Headline:** ${input.freelancerProfile?.headline}
+- **Bio:** ${input.freelancerProfile?.bio}
+- **Skills:** ${input.freelancerProfile?.skills.join(', ')}
 `;
 
 
+const skillSyncNetFlow = ai.defineFlow(
+    {
+        name: 'skillSyncNetFlow',
+        inputSchema: SkillSyncNetInputSchema,
+        outputSchema: SkillSyncNetOutputSchema,
+    },
+    async (input) => {
+        let systemPrompt: string;
+
+        if (input.context === 'client_seeking_freelancer') {
+            if (!input.clientBrief) throw new Error("Client brief is required.");
+            systemPrompt = getClientSystemPrompt(input);
+        } else if (input.context === 'freelancer_seeking_project') {
+            if (!input.freelancerProfile) throw new Error("Freelancer profile is required.");
+            systemPrompt = getFreelancerSystemPrompt(input);
+        } else {
+            throw new Error("Invalid context provided.");
+        }
+
+        const llmResponse = await ai.generate({
+            prompt: systemPrompt,
+            model: 'googleai/gemini-1.5-flash',
+            config: {
+                output: {
+                    format: 'json',
+                    schema: SkillSyncNetOutputSchema,
+                },
+            },
+        });
+        
+        return llmResponse.output() || { match: {} };
+    }
+);
+
+
 export async function skillSyncNet(input: SkillSyncNetInput): Promise<SkillSyncNetOutput> {
-    let systemPrompt: string;
-    let userPrompt: string;
-
-    if (input.context === 'client_seeking_freelancer') {
-        if (!input.clientBrief) throw new Error("Client brief is required.");
-        systemPrompt = clientSystemPrompt;
-        userPrompt = `
-**Client's Project Brief:**
-- **Title:** ${input.clientBrief.projectTitle}
-- **Description:** ${input.clientBrief.projectDescription}
-- **Required Skills:** ${input.clientBrief.requiredSkills}
-- **Budget:** $${input.clientBrief.budget}
-- **Timeline:** ${input.clientBrief.timeline}
-        `;
-    } else if (input.context === 'freelancer_seeking_project') {
-        if (!input.freelancerProfile) throw new Error("Freelancer profile is required.");
-        systemPrompt = freelancerSystemPrompt;
-        userPrompt = `
-**Freelancer's Profile:**
-- **Headline:** ${input.freelancerProfile.headline}
-- **Bio:** ${input.freelancerProfile.bio}
-- **Skills:** ${input.freelancerProfile.skills.join(', ')}
-        `;
-    } else {
-        throw new Error("Invalid context provided.");
-    }
-    
-    const response = await openai.chat.completions.create({
-        model: "google/gemma-3-27b-instruct/bf-16",
-        messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt }
-        ],
-        response_format: { type: "json_object" },
-    });
-
-    const content = response.choices[0]?.message?.content;
-    if (!content) {
-        throw new Error("AI failed to generate a response.");
-    }
-    
-    try {
-        return JSON.parse(content) as SkillSyncNetOutput;
-    } catch (e) {
-        console.error("Failed to parse AI response as JSON:", content);
-        throw new Error("AI returned invalid data format.");
-    }
+    return skillSyncNetFlow(input);
 }

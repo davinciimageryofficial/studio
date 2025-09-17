@@ -1,4 +1,3 @@
-
 /**
  * @fileOverview Zod schemas and TypeScript types for the Skill Sync Net AI functionality.
  *
@@ -7,7 +6,7 @@
  * - ClientBriefSchema - Zod schema for a client's project brief.
  * - FreelancerProfileSchema - Zod schema for a freelancer's profile.
  */
-import { z } from 'genkit';
+import { z } from 'genkit/zod';
 
 export const ClientBriefSchema = z.object({
     projectTitle: z.string().describe("The title of the client's project."),

@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -6,7 +5,7 @@
  *
  * - generatePost - A function that creates a post with content, an image, and engagement stats.
  */
-import { openai } from '@/ai/inference';
+import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { getUsers } from '@/lib/database';
 
@@ -28,32 +27,6 @@ const PostGeneratorOutputSchema = z.object({
 });
 export type PostGeneratorOutput = z.infer<typeof PostGeneratorOutputSchema>;
 
-const systemPrompt = `You are an AI assistant for a professional networking platform called Sentry.
-
-Your task is to generate a realistic, text-only social media post for a professional user.
-The post should be engaging and relevant to their industry. Do not include images.
-
-Generate the following as a valid JSON object:
-- **timestamp**: A short, relative timestamp (e.g., "5m", "3h", "1d").
-- **content**: The main text of the post. It should be insightful, ask a question, or share an update. Include 1-2 relevant hashtags.
-- **image**: This must always be null.
-- **likes**: A random number of likes between 20 and 500.
-- **comments**: A random number of comments between 5 and 50.
-- **retweets**: A random number of retweets/reposts between 10 and 100.
-- **views**: A string representing a random number of views between 1.0k and 50.0k (e.g., "15.7k").
-
-The JSON schema for the output is:
-{
-  "timestamp": string,
-  "content": string,
-  "image": null,
-  "likes": number,
-  "comments": number,
-  "retweets": number,
-  "views": string
-}
-`;
-
 // Select a user based on the persona
 const getAuthorForPersona = async (persona: PostGeneratorInput['persona']) => {
     const users = await getUsers();
@@ -66,33 +39,55 @@ const getAuthorForPersona = async (persona: PostGeneratorInput['persona']) => {
 }
 
 
-export async function generatePost(input: PostGeneratorInput): Promise<PostGeneratorOutput> {
-    const response = await openai.chat.completions.create({
-        model: "google/gemma-3-27b-instruct/bf-16",
-        messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: `The user's persona is: ${input.persona}.` }
-        ],
-        response_format: { type: "json_object" },
-    });
+const generatePostFlow = ai.defineFlow(
+    {
+        name: 'generatePostFlow',
+        inputSchema: PostGeneratorInputSchema,
+        outputSchema: PostGeneratorOutputSchema,
+    },
+    async (input) => {
+        const author = await getAuthorForPersona(input.persona);
 
-    const content = response.choices[0]?.message?.content;
-    if (!content) {
+        const llmResponse = await ai.generate({
+            prompt: `You are an AI assistant for a professional networking platform called Sentry.
+
+Your task is to generate a realistic, text-only social media post for a professional user with the persona of a '${input.persona}'.
+The post should be engaging and relevant to their industry. Do not include images.
+
+Generate the following as a valid JSON object:
+- **timestamp**: A short, relative timestamp (e.g., "5m", "3h", "1d").
+- **content**: The main text of the post. It should be insightful, ask a question, or share an update. Include 1-2 relevant hashtags.
+- **image**: This must always be null.
+- **likes**: A random number of likes between 20 and 500.
+- **comments**: A random number of comments between 5 and 50.
+- **retweets**: A random number of retweets/reposts between 10 and 100.
+- **views**: A string representing a random number of views between 1.0k and 50.0k (e.g., "15.7k").
+`,
+            model: 'googleai/gemini-1.5-flash',
+            config: {
+                output: {
+                    format: 'json',
+                    schema: PostGeneratorOutputSchema,
+                },
+            },
+        });
+        
+        const output = llmResponse.output();
+
+        if (output) {
+            return {
+                ...output,
+                image: null,
+                id: Date.now(),
+                authorId: author.id,
+            };
+        }
+
         throw new Error("AI failed to generate a response.");
     }
-    
-    try {
-        const output = JSON.parse(content);
-        const author = await getAuthorForPersona(input.persona);
-        
-        return {
-            ...output,
-            image: null, // Ensure image is always null
-            id: Date.now(), // Generate a unique ID
-            authorId: author.id,
-        };
-    } catch (e) {
-        console.error("Failed to parse AI response as JSON:", content);
-        throw new Error("AI returned invalid data format.");
-    }
+);
+
+
+export async function generatePost(input: PostGeneratorInput): Promise<PostGeneratorOutput> {
+    return generatePostFlow(input);
 }

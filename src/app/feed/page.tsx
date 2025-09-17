@@ -60,7 +60,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { freelanceNiches } from "@/app/skill-sync-net/page";
 import { Post, User as UserType } from "@/lib/types";
 import { getPosts, getCurrentUser, getUserById } from "@/lib/database";
-import { supabase } from "@/lib/supabase";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
@@ -131,6 +131,7 @@ function FeedPageInternal() {
   const [selectedNiche, setSelectedNiche] = useState<string | null>(null);
   const { language } = useLanguage();
   const t = translations[language];
+  const supabase = createSupabaseBrowserClient();
 
   useEffect(() => {
     async function loadData() {
@@ -166,7 +167,7 @@ function FeedPageInternal() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [supabase]);
 
   const addPost = (newPostData: PostGeneratorOutput) => {
     if (currentUser) {

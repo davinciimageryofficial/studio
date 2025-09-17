@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -8,7 +7,7 @@
  * - AIWorkmateRadarInput - The input type for the aiWorkmateRadar function.
  * - AIWorkmateRadarOutput - The return type for the aiWorkmateRadar function.
  */
-import { openai } from '@/ai/inference';
+import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 const AIWorkmateRadarInputSchema = z.object({
@@ -31,68 +30,52 @@ const AIWorkmateRadarOutputSchema = z.object({
 });
 export type AIWorkmateRadarOutput = z.infer<typeof AIWorkmateRadarOutputSchema>;
 
-const systemPrompt = `You are an AI Talent Scout for Sentry, a professional networking platform. Your task is to find the perfect collaborators for a user.
 
-Analyze the user's profile or project description below. Based on this, suggest a dream team for the specified category.
+const workmateRadarFlow = ai.defineFlow(
+    {
+        name: 'workmateRadarFlow',
+        inputSchema: AIWorkmateRadarInputSchema,
+        outputSchema: AIWorkmateRadarOutputSchema,
+    },
+    async (input) => {
+        const llmResponse = await ai.generate({
+            prompt: `You are an AI Talent Scout. Analyze the user's profile or project description and suggest a dream team for the specified category.
 
 **Your Task:**
 1.  Identify the core strengths and needs from the user's information.
-2.  Suggest team members who complement the user's skills and would be a great fit for the project.
+2.  Suggest ${input.teamSize} team member(s) who complement the user's skills and would be a great fit.
 3.  For each suggested member, provide a realistic name, a match score between 70 and 95, a list of 3-5 relevant skills, and a compelling, one-sentence bio that highlights their expertise.
-4.  Ensure the output is a valid JSON object.
-The JSON schema for the output is:
-{
-  "suggestedMembers": [
-    {
-      "profileId": string,
-      "name": string,
-      "matchScore": number (70-95),
-      "skills": string[],
-      "shortBio": string
-    }
-  ]
-}
-`;
+4.  Generate a unique 'profileId' for each member.
+5.  Ensure the output is a valid JSON object.
 
-function buildUserPrompt(input: AIWorkmateRadarInput): string {
-    return `
-User Information / Project Description:
+**User Information / Project Description:**
 """
 ${input.userProfile}
 """
 
-Categorization Needed: ${input.categorization}
-Team Size to Suggest: ${input.teamSize}
-`;
-}
+**Categorization Needed:** ${input.categorization}
+`,
+            model: 'googleai/gemini-1.5-flash',
+            config: {
+                output: {
+                    format: 'json',
+                    schema: AIWorkmateRadarOutputSchema,
+                },
+            },
+        });
 
-
-export async function aiWorkmateRadar(input: AIWorkmateRadarInput): Promise<AIWorkmateRadarOutput> {
-    const response = await openai.chat.completions.create({
-        model: "google/gemma-3-27b-instruct/bf-16",
-        messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: buildUserPrompt(input) }
-        ],
-        response_format: { type: "json_object" },
-    });
-    
-    const content = response.choices[0]?.message?.content;
-    if (!content) {
-        throw new Error("AI failed to generate a response.");
-    }
-
-    try {
-        const parsed = JSON.parse(content);
-        // Add a simple unique ID for profileId
-        if (parsed.suggestedMembers) {
-            parsed.suggestedMembers.forEach((member: any) => {
+        const output = llmResponse.output();
+        if (output && output.suggestedMembers) {
+            output.suggestedMembers.forEach(member => {
                 member.profileId = `user-${Date.now()}-${Math.random()}`;
             });
         }
-        return parsed as AIWorkmateRadarOutput;
-    } catch (e) {
-        console.error("Failed to parse AI response as JSON:", content);
-        throw new Error("AI returned invalid data format.");
+
+        return output || { suggestedMembers: [] };
     }
+);
+
+
+export async function aiWorkmateRadar(input: AIWorkmateRadarInput): Promise<AIWorkmateRadarOutput> {
+    return workmateRadarFlow(input);
 }

@@ -23,15 +23,16 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
 import { ClientOnly } from "@/components/layout/client-only";
-import { getCampaigns } from "@/lib/database";
+import { getCampaigns, createCampaign as createCampaignInDb } from "@/lib/database";
+import { useToast } from "@/hooks/use-toast";
 
 const campaignFormSchema = z.object({
-  campaignName: z.string().min(1, "Campaign name is required."),
-  adType: z.enum(['profile-spotlight', 'product-listing', 'sponsored-content', 'job-gig'], {
+  name: z.string().min(1, "Campaign name is required."),
+  type: z.enum(['profile-spotlight', 'product-listing', 'sponsored-content', 'job-gig'], {
       errorMap: () => ({ message: "Please select an ad type." }),
   }),
-  adContent: z.string().min(1, "Ad content is required."),
-  targetingKeywords: z.string().min(1, "At least one keyword is required."),
+  content: z.string().min(1, "Ad content is required."),
+  keywords: z.string().min(1, "At least one keyword is required."),
 });
 
 type CampaignFormValues = z.infer<typeof campaignFormSchema>;
@@ -44,21 +45,24 @@ type Campaign = {
     conversions: number;
 }
 
-function AdStudioPageInternal() {
+function AdStudioPageInternal({ initialCampaigns }: { initialCampaigns: Campaign[] }) {
   const { language } = useLanguage();
   const t = translations[language];
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  useEffect(() => {
-    async function loadCampaigns() {
-        setIsLoading(true);
-        const fetchedCampaigns = await getCampaigns();
-        setCampaigns(fetchedCampaigns);
-        setIsLoading(false);
-    }
-    loadCampaigns();
+  const loadCampaigns = useCallback(async () => {
+    setIsLoading(true);
+    const fetchedCampaigns = await getCampaigns();
+    setCampaigns(fetchedCampaigns);
+    setIsLoading(false);
   }, []);
+  
+  const handleCampaignCreated = () => {
+    loadCampaigns();
+    setIsDialogOpen(false); // Close dialog on success
+  }
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
@@ -69,14 +73,14 @@ function AdStudioPageInternal() {
                 {t.adStudioDescription}
             </p>
         </div>
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
                 <Button>
                     <PlusCircle className="mr-2 h-4 w-4" />
                     {t.createCampaign}
                 </Button>
             </DialogTrigger>
-            <CreateCampaignDialog t={t} />
+            <CreateCampaignDialog t={t} onCampaignCreated={handleCampaignCreated} />
         </Dialog>
       </header>
 
@@ -208,33 +212,35 @@ function AdStudioPageInternal() {
   );
 }
 
-export default function AdStudioPage() {
+export default async function AdStudioPage() {
+    const campaigns = await getCampaigns();
     return (
         <ClientOnly>
-            <AdStudioPageInternal />
+            <AdStudioPageInternal initialCampaigns={campaigns} />
         </ClientOnly>
     );
 }
 
-function CreateCampaignDialog({ t }: { t: typeof translations['en'] }) {
+function CreateCampaignDialog({ t, onCampaignCreated }: { t: typeof translations['en'], onCampaignCreated: () => void }) {
     const [analysis, setAnalysis] = useState<AdCampaignAnalyzerOutput | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+    const { toast } = useToast();
 
     const form = useForm<CampaignFormValues>({
         resolver: zodResolver(campaignFormSchema),
         defaultValues: {
-            campaignName: "",
-            adContent: "",
-            targetingKeywords: "",
+            name: "",
+            content: "",
+            keywords: "",
         }
     });
 
     const watchedFields = form.watch();
 
-    const triggerAnalysis = useCallback(async (data: CampaignFormValues) => {
-        if (!data.campaignName && !data.adContent && !data.targetingKeywords) {
+    const triggerAnalysis = useCallback(async (data: {name: string, content: string, keywords: string, type: any}) => {
+        if (!data.name && !data.content && !data.keywords) {
             setAnalysis(null);
             return;
         }
@@ -242,10 +248,10 @@ function CreateCampaignDialog({ t }: { t: typeof translations['en'] }) {
         setError(null);
         try {
             const result = await analyzeAdCampaign({
-                campaignName: data.campaignName,
-                adContent: data.adContent,
-                targetingKeywords: data.targetingKeywords,
-                adType: data.adType,
+                campaignName: data.name,
+                adContent: data.content,
+                targetingKeywords: data.keywords,
+                adType: data.type,
             });
             setAnalysis(result);
         } catch (e) {
@@ -261,7 +267,8 @@ function CreateCampaignDialog({ t }: { t: typeof translations['en'] }) {
             clearTimeout(debounceTimeout.current);
         }
         debounceTimeout.current = setTimeout(() => {
-            triggerAnalysis(watchedFields);
+            const { name, content, keywords, type } = form.getValues();
+            triggerAnalysis({ name, content, keywords, type });
         }, 1000); // 1-second debounce
 
         return () => {
@@ -269,11 +276,23 @@ function CreateCampaignDialog({ t }: { t: typeof translations['en'] }) {
                 clearTimeout(debounceTimeout.current);
             }
         };
-    }, [watchedFields, triggerAnalysis]);
+    }, [watchedFields, triggerAnalysis, form]);
     
-    const onSubmit = (data: CampaignFormValues) => {
-        console.log("Campaign Submitted:", data);
-        // Here you would typically send the data to your backend
+    const onSubmit = async (data: CampaignFormValues) => {
+        const result = await createCampaignInDb(data);
+        if (result.error) {
+            toast({
+                title: "Error Creating Campaign",
+                description: result.error,
+                variant: "destructive"
+            });
+        } else {
+            toast({
+                title: "Campaign Launched!",
+                description: "Your new ad campaign is now active.",
+            });
+            onCampaignCreated();
+        }
     };
 
     return (
@@ -290,13 +309,13 @@ function CreateCampaignDialog({ t }: { t: typeof translations['en'] }) {
                     <div className="md:col-span-2 space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="campaign-name">{t.campaignName}</Label>
-                            <Input id="campaign-name" placeholder={t.campaignNamePlaceholder} {...form.register("campaignName")} />
-                            {form.formState.errors.campaignName && <p className="text-sm text-destructive">{form.formState.errors.campaignName.message}</p>}
+                            <Input id="campaign-name" placeholder={t.campaignNamePlaceholder} {...form.register("name")} />
+                            {form.formState.errors.name && <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>}
                         </div>
                         <div className="space-y-2">
                             <Label>{t.adType}</Label>
                             <Controller
-                                name="adType"
+                                name="type"
                                 control={form.control}
                                 render={({ field }) => (
                                      <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -310,17 +329,17 @@ function CreateCampaignDialog({ t }: { t: typeof translations['en'] }) {
                                     </Select>
                                 )}
                             />
-                             {form.formState.errors.adType && <p className="text-sm text-destructive">{form.formState.errors.adType.message}</p>}
+                             {form.formState.errors.type && <p className="text-sm text-destructive">{form.formState.errors.type.message}</p>}
                         </div>
                          <div className="space-y-2">
                             <Label htmlFor="ad-content">{t.adContent}</Label>
-                            <Textarea id="ad-content" placeholder={t.adContentPlaceholder} className="min-h-32" {...form.register("adContent")} />
-                            {form.formState.errors.adContent && <p className="text-sm text-destructive">{form.formState.errors.adContent.message}</p>}
+                            <Textarea id="ad-content" placeholder={t.adContentPlaceholder} className="min-h-32" {...form.register("content")} />
+                            {form.formState.errors.content && <p className="text-sm text-destructive">{form.formState.errors.content.message}</p>}
                         </div>
                          <div className="space-y-2">
                             <Label htmlFor="targeting-keywords">{t.targetingKeywords}</Label>
-                            <Input id="targeting-keywords" placeholder={t.targetingKeywordsPlaceholder} {...form.register("targetingKeywords")} />
-                             {form.formState.errors.targetingKeywords && <p className="text-sm text-destructive">{form.formState.errors.targetingKeywords.message}</p>}
+                            <Input id="targeting-keywords" placeholder={t.targetingKeywordsPlaceholder} {...form.register("keywords")} />
+                             {form.formState.errors.keywords && <p className="text-sm text-destructive">{form.formState.errors.keywords.message}</p>}
                         </div>
 
                     </div>

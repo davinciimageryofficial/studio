@@ -1,38 +1,8 @@
 
 'use server';
 
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createSupabaseServerClient } from './supabase/server';
 import type { User, Post, Course, Experience } from './types';
-
-/**
- * Creates a Supabase client for server-side operations.
- * This is used for all database interactions that happen in Server Components or Server Actions.
- */
-function createSupabaseServerClient() {
-  const cookieStore = cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options) {
-            cookieStore.set({ name, value, ...options })
-        },
-        remove(name: string, options) {
-            cookieStore.delete({ name, ...options })
-        },
-      },
-    }
-  );
-}
-
-// =================================================================
-// User & Profile Functions
-// =================================================================
 
 /**
  * Fetches the current authenticated user's profile.
@@ -618,7 +588,7 @@ export async function createCampaign(campaignData: { name: string, type: string,
 // =================================================================
 
 export async function getBillingInfo() {
-     const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseServerClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
 
