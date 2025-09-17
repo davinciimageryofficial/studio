@@ -15,7 +15,7 @@ export function AppLayout({
 }>) {
   const pathname = usePathname();
   const publicPages = ['/', '/login', '/signup', '/waitlist-confirmation', '/logout', '/donate', '/faq'];
-  const isPublicPage = publicPages.includes(pathname);
+  const isPublicPage = publicPages.some(page => pathname === page);
 
   if (isPublicPage) {
     return <>{children}</>;
