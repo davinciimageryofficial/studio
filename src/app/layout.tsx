@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Inter, Michroma } from "next/font/google";
@@ -8,6 +7,7 @@ import { AppLayout } from "@/components/layout/app-layout";
 import { Providers } from "./providers";
 import { ClientOnly } from "@/components/layout/client-only";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { usePathname } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -46,6 +46,7 @@ export default function RootLayout({
           </ClientOnly>
         </Providers>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
