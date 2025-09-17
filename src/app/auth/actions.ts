@@ -91,6 +91,16 @@ export async function signup(formData: FormData) {
   if (!authData.user) {
     return { error: "An unexpected error occurred during signup. Please try again."}
   }
+  
+  // Manually sign in the user after successful signup
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+  });
+
+  if (signInError) {
+      return { error: "Signup successful, but login failed. Please try logging in manually." };
+  }
 
   // The handle_new_user trigger will create the profile automatically.
   // Now, add the user to the waitlist table.
