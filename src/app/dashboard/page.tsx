@@ -175,7 +175,6 @@ function DashboardPageInternal() {
                 setCurrentUser(user);
 
                 if (!user) {
-                    // If no user, we can't fetch the rest of the data.
                     setIsLoading(false);
                     return;
                 }
