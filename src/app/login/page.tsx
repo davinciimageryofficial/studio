@@ -14,6 +14,7 @@ import Link from "next/link";
 import { Kanban } from "lucide-react";
 import { useState } from "react";
 import { ClientOnly } from "@/components/layout/client-only";
+import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -25,6 +26,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 function LoginPageInternal() {
   const { toast } = useToast();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -48,6 +50,8 @@ function LoginPageInternal() {
         title: "Login Failed",
         description: result.error,
       });
+    } else if (result?.success) {
+      router.push('/dashboard');
     }
   };
 

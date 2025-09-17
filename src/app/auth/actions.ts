@@ -39,7 +39,7 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  return { success: true };
 }
 
 export async function signup(formData: FormData) {
@@ -109,9 +109,7 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  // Return success instead of redirecting from the server action.
-  // The client will handle the redirect.
-  return { success: true };
+  redirect('/dashboard');
 }
 
 export async function logout() {

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -56,19 +57,10 @@ function SignupPageInternal() {
     formData.append('profession', data.profession);
     formData.append('earlyAccess', String(data.earlyAccess));
     
-    // Store data in localStorage for the confirmation page
-    localStorage.setItem('waitlistData', JSON.stringify(data));
-
     const result = await signup(formData);
 
     if (result?.error) {
         setErrorMessage(result.error);
-    } else if (result?.success) {
-        toast({
-            title: t.signupSuccessToastTitle,
-            description: t.signupSuccessToastDesc,
-        });
-        router.push('/waitlist-confirmation');
     }
   };
 
