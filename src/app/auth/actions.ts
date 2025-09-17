@@ -45,40 +45,43 @@ export async function signup(formData: FormData) {
   })
 
   if (authError) {
-    if (authError.message.includes("duplicate key value")) {
-        return { error: "A user with this email already exists."}
+    if (authError.message.includes("User already registered")) {
+        // This is not a fatal error, the user might be re-trying.
+        // We can proceed to try and sign them in and upsert their waitlist status.
+    } else {
+       return { error: authError.message };
     }
-    return { error: authError.message };
   }
 
-  if (!authData.user) {
-    return { error: "An unexpected error occurred during signup. Please try again."}
-  }
-  
-  // Manually sign in the user after successful signup
-  const { error: signInError } = await supabase.auth.signInWithPassword({
+  // Manually sign in the user after successful signup or if they already exist.
+  const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
   });
 
   if (signInError) {
-      return { error: "Signup successful, but login failed. Please try logging in manually." };
+      return { error: "Login failed. Please check your credentials and try logging in manually." };
+  }
+  
+  const user = signInData.user;
+  if (!user) {
+    return { error: "An unexpected error occurred after login. Please try again."}
   }
 
   // The handle_new_user trigger will create the profile automatically.
-  // Now, add the user to the waitlist table.
-  const { error: waitlistError } = await supabase.from('waitlist').insert({
-      id: authData.user.id,
+  // Now, add the user to the waitlist table using upsert to prevent duplicate errors.
+  const { error: waitlistError } = await supabase.from('waitlist').upsert({
+      id: user.id,
       email: email,
       full_name: fullName,
       profession: profession,
       wants_early_access: earlyAccess,
-  });
+  }, { onConflict: 'id' });
 
   if (waitlistError) {
-      // Even if waitlist fails, the user is signed up. We should probably handle this
-      // more gracefully, but for now we'll just log it and continue.
-      console.error("Error adding user to waitlist:", waitlistError.message);
+      // This is a critical error.
+      console.error("Database error saving new user to waitlist:", waitlistError.message);
+      return { error: "Database error saving new user. Please contact support."}
   }
 
   revalidatePath('/', 'layout')
