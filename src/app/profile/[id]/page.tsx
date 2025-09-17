@@ -20,7 +20,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { PortfolioView } from "./portfolio-view";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { getUserById, getExperiencesByUserId, getCurrentUser, logout as performLogout } from "@/lib/database";
+import { getUserById, getExperiencesByUserId, getCurrentUser } from "@/lib/database";
+import { logout as performLogout } from "@/app/auth/actions";
 import type { User, PortfolioItem, Experience } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
