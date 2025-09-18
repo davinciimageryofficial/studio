@@ -18,7 +18,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/context/language-context";
-import { translations } from "@/lib/translations";
 
 const signupSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters."),
@@ -34,8 +33,7 @@ function SignupPageInternal() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const router = useRouter();
     const { toast } = useToast();
-    const { language } = useLanguage();
-    const t = translations[language];
+    const { translations: t } = useLanguage();
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),

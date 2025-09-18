@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Inter, Michroma } from "next/font/google";
@@ -9,6 +10,7 @@ import { ClientOnly } from "@/components/layout/client-only";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { usePathname } from "next/navigation";
+import { useLanguage } from "@/context/language-context";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const michroma = Michroma({
@@ -17,36 +19,53 @@ const michroma = Michroma({
   variable: '--font-michroma',
 });
 
-export default function RootLayout({
+function RootLayoutInternal({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
+  const { isLoaded } = useLanguage();
   const publicPages = ['/', '/login', '/signup', '/waitlist-confirmation', '/logout', '/donate', '/faq'];
   const isPublicPage = publicPages.includes(pathname);
 
+  if (!isLoaded) {
+    return null; // Render nothing while translations are loading to avoid flash of unstyled text
+  }
+
+  return (
+    <>
+      {isPublicPage ? (
+        <>{children}</>
+      ) : (
+        <AppLayout>
+          {children}
+        </AppLayout>
+      )}
+      <ClientOnly>
+        <Toaster />
+      </ClientOnly>
+      <Analytics />
+      <SpeedInsights />
+    </>
+  );
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en" suppressHydrationWarning>
-       <head>
+      <head>
         <title>Sentry</title>
         <meta name="description" content="Your professional network and dream team builder." />
       </head>
       <body className={`${inter.variable} ${michroma.variable} font-body antialiased`}>
         <Providers>
-          {isPublicPage ? (
-            <>{children}</>
-          ) : (
-            <AppLayout>
-              {children}
-            </AppLayout>
-          )}
-          <ClientOnly>
-              <Toaster />
-          </ClientOnly>
+          <RootLayoutInternal>{children}</RootLayoutInternal>
         </Providers>
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   );

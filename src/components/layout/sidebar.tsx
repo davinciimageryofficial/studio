@@ -37,14 +37,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useWorkspace } from "@/context/workspace-context";
 import { useFullscreen } from "@/hooks/use-fullscreen";
 import { useLanguage } from "@/context/language-context";
-import { translations } from "@/lib/translations";
+import { getTranslations } from "@/lib/translations";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "@/lib/database";
 import type { User as UserType } from "@/lib/types";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { language, isHydrated } = useLanguage();
+  const { language, isLoaded } = useLanguage();
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
 
   useEffect(() => {
@@ -55,12 +55,18 @@ export function AppSidebar() {
     fetchUser();
   }, []);
   
-  if (!isHydrated) {
-    // Render nothing or a placeholder until the language is hydrated
-    return null; 
+  if (!isLoaded) {
+    // Render a skeleton or null while translations are loading
+    return (
+        <Sidebar variant="sidebar" collapsible="icon" side="left">
+             <SidebarHeader />
+             <SidebarContent />
+             <SidebarFooter />
+        </Sidebar>
+    ); 
   }
 
-  const t = translations[language];
+  const t = getTranslations(language);
 
   const menuItems = [
     { href: "/dashboard", label: t.sidebarDashboard, icon: Home },

@@ -21,7 +21,6 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/context/language-context";
-import { translations } from "@/lib/translations";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { verifyAccessCode } from "@/app/auth/actions";
 
@@ -37,8 +36,7 @@ export default function WaitlistConfirmationPage() {
   const [waitlistData, setWaitlistData] = useState<WaitlistData | null>(null);
   const [accessCode, setAccessCode] = useState("");
   const { toast } = useToast();
-  const { language } = useLanguage();
-  const t = translations[language];
+  const { translations: t } = useLanguage();
 
   useEffect(() => {
     const data = localStorage.getItem("waitlistData");

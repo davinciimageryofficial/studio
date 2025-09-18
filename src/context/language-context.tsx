@@ -1,26 +1,19 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { getTranslations, translations as defaultTranslations } from '@/lib/translations';
 
-export type Language = 
-  | 'en' | 'zh' | 'hi' | 'es' | 'fr' | 'ar' | 'bn' | 'ru' | 'pt' | 'ur' 
-  | 'id' | 'de' | 'ja' | 'pcm' | 'mr' | 'te' | 'tr' | 'ta' | 'vi' | 'ko' 
-  | 'jv' | 'it' | 'gu' | 'pl' | 'uk' | 'pa' | 'nl' | 'yo' | 'ms' | 'th' 
-  | 'kn' | 'ml' | 'ig' | 'ha' | 'or' | 'my' | 'su' | 'ro' | 'uz' | 'am' 
-  | 'fa' | 'bho' | 'so' | 'fil' | 'ps' | 'el' | 'sv' | 'hu' | 'cs' | 'az' 
-  | 'he' | 'ceb' | 'mg' | 'bg' | 'be' | 'si' | 'tt' | 'no' | 'sk' | 'da' 
-  | 'fi' | 'hr' | 'lt' | 'sl' | 'et' | 'lv' | 'ga' | 'mt' | 'is' | 'cy' 
-  | 'eu' | 'ca' | 'gl' | 'af' | 'sw' | 'zu' | 'xh' | 'st' | 'sn' | 'ny' 
-  | 'rw' | 'kg' | 'lg' | 'rn' | 'sg' | 'ak' | 'bm' | 'ewo' | 'ff' | 'ig'
-  | 'ln' | 'lu' | 'kam' | 'kea' | 'khq' | 'ki' | 'kln' | 'kok' | 'ksb' | 'luy'
-  | 'mas' | 'mer' | 'mfe' | 'naq' | 'nyn' | 'om' | 'saq' | 'seh' | 'ses' | 'teo'
-  | 'vai' | 'wo' | 'zgh';
+// Defines the available languages. Add new language codes here.
+export const availableLanguages = ['en', 'es', 'zh', 'hi', 'fr'];
+export type Language = typeof availableLanguages[number];
+
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (language: Language) => void;
-  isHydrated: boolean;
+  translations: typeof defaultTranslations['en'];
+  isLoaded: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -35,23 +28,46 @@ export const useLanguage = () => {
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('en');
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [translations, setTranslations] = useState(defaultTranslations.en);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  const loadTranslations = useCallback(async (lang: Language) => {
+    try {
+      const newTranslations = await getTranslations(lang);
+      setTranslations(newTranslations);
+    } catch (e) {
+      console.error(`Could not load translations for ${lang}, falling back to English.`);
+      setTranslations(defaultTranslations.en);
+    } finally {
+        setIsLoaded(true);
+    }
+  }, []);
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('sentry-language') as Language | null;
-    if (savedLanguage) {
+    if (savedLanguage && availableLanguages.includes(savedLanguage)) {
       setLanguage(savedLanguage);
+      loadTranslations(savedLanguage);
+    } else {
+      loadTranslations('en');
     }
-    setIsHydrated(true);
-  }, []);
+  }, [loadTranslations]);
 
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang);
     localStorage.setItem('sentry-language', lang);
+    loadTranslations(lang);
+  };
+
+  const value = {
+    language,
+    setLanguage: handleSetLanguage,
+    translations,
+    isLoaded
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, isHydrated }}>
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );

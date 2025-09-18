@@ -1,9 +1,9 @@
 
-"use client";
+import type { Language } from "@/context/language-context";
 
-import { Language } from "@/context/language-context";
-
-const englishTranslations = {
+// This is a placeholder for the English translations.
+// In a real app, this would be imported from a JSON file.
+const en = {
     // Settings
     settings: "Settings",
     manageAccount: "Manage your account and application preferences.",
@@ -311,125 +311,16 @@ const englishTranslations = {
     purchase: "Purchase",
 };
 
-// Create a placeholder for other languages by just copying English for now.
-// In a real app, these would be filled with actual translations.
-const createTranslation = (langName: string) => ({
-  ...englishTranslations,
-  language: langName, 
-  settings: `${langName} Settings (Placeholder)`, 
-});
+export const translations = { en };
 
-export const translations: Record<Language, typeof englishTranslations> = {
-    en: englishTranslations,
-    zh: { ...englishTranslations, settings: "设置", language: "语言", landingTitle: "合作的未来就在这里" },
-    hi: { ...englishTranslations, settings: "सेटिंग्स", language: "भाषा", landingTitle: "सहयोग का भविष्य यहाँ है" },
-    es: { ...englishTranslations, settings: "Configuración", language: "Idioma", landingTitle: "El Futuro de la Colaboración está Aquí" },
-    fr: { ...englishTranslations, settings: "Paramètres", language: "Langue", landingTitle: "Le Futur de la Collaboration est Ici" },
-    ar: { ...englishTranslations, settings: "الإعدادات", language: "اللغة", landingTitle: "مستقبل التعاون هنا" },
-    bn: { ...englishTranslations, settings: "সেটিংস", language: "ভাষা", landingTitle: "সহযোগিতার ভবিষ্যৎ এখানে" },
-    ru: { ...englishTranslations, settings: "Настройки", language: "Язык", landingTitle: "Будущее совместной работы уже здесь" },
-    pt: { ...englishTranslations, settings: "Configurações", language: "Idioma", landingTitle: "O Futuro da Colaboração é Agora" },
-    ur: { ...englishTranslations, settings: "ترتیبات", language: "زبان", landingTitle: "تعاون کا مستقبل یہاں ہے" },
-    id: createTranslation("Bahasa Indonesia"),
-    de: { ...englishTranslations, settings: "Einstellungen", language: "Sprache", landingTitle: "Die Zukunft der Zusammenarbeit ist da" },
-    ja: { ...englishTranslations, settings: "設定", language: "言語", landingTitle: "コラボレーションの未来がここに" },
-    pcm: createTranslation("Nigerian Pidgin"),
-    mr: createTranslation("Marathi"),
-    te: createTranslation("Telugu"),
-    tr: createTranslation("Türkçe"),
-    ta: createTranslation("Tamil"),
-    vi: createTranslation("Tiếng Việt"),
-    ko: createTranslation("한국어"),
-    jv: createTranslation("Basa Jawa"),
-    it: createTranslation("Italiano"),
-    gu: createTranslation("Gujarati"),
-    pl: createTranslation("Polski"),
-    uk: createTranslation("Українська"),
-    pa: createTranslation("ਪੰਜਾਬੀ"),
-    nl: createTranslation("Nederlands"),
-    yo: createTranslation("Yorùbá"),
-    ms: createTranslation("Bahasa Melayu"),
-    th: createTranslation("ไทย"),
-    kn: createTranslation("ಕನ್ನಡ"),
-    ml: createTranslation("മലയാളം"),
-    ig: createTranslation("Igbo"),
-    ha: createTranslation("Hausa"),
-    or: createTranslation("ଓଡ଼ିଆ"),
-    my: createTranslation("မြန်မာ"),
-    su: createTranslation("Basa Sunda"),
-    ro: createTranslation("Română"),
-    uz: createTranslation("Oʻzbekcha"),
-    am: createTranslation("አማርኛ"),
-    fa: createTranslation("فارسی"),
-    bho: createTranslation("Bhojpuri"),
-    so: createTranslation("Soomaaliga"),
-    fil: createTranslation("Filipino"),
-    ps: createTranslation("پښتو"),
-    el: createTranslation("Ελληνικά"),
-    sv: createTranslation("Svenska"),
-    hu: createTranslation("Magyar"),
-    cs: createTranslation("Čeština"),
-    az: createTranslation("Azərbaycanca"),
-    he: createTranslation("עברית"),
-    ceb: createTranslation("Cebuano"),
-    mg: createTranslation("Malagasy"),
-    bg: createTranslation("Български"),
-    be: createTranslation("Беларуская"),
-    si: createTranslation("සිංහල"),
-    tt: createTranslation("Tatar"),
-    no: createTranslation("Norsk"),
-    sk: createTranslation("Slovenčina"),
-    da: createTranslation("Dansk"),
-    fi: createTranslation("Suomi"),
-    hr: createTranslation("Hrvatski"),
-    lt: createTranslation("Lietuvių"),
-    sl: createTranslation("Slovenščina"),
-    et: createTranslation("Eesti"),
-    lv: createTranslation("Latviešu"),
-    ga: createTranslation("Gaeilge"),
-    mt: createTranslation("Malti"),
-    is: createTranslation("Íslenska"),
-    cy: createTranslation("Cymraeg"),
-    eu: createTranslation("Euskara"),
-    ca: createTranslation("Català"),
-    gl: createTranslation("Galego"),
-    af: createTranslation("Afrikaans"),
-    sw: createTranslation("Kiswahili"),
-    zu: createTranslation("IsiZulu"),
-    xh: createTranslation("IsiXhosa"),
-    st: createTranslation("Sesotho"),
-    sn: createTranslation("ChiShona"),
-    ny: createTranslation("Chichewa"),
-    rw: createTranslation("Kinyarwanda"),
-    kg: createTranslation("Kikongo"),
-    lg: createTranslation("Luganda"),
-    rn: createTranslation("Kirundi"),
-    sg: createTranslation("Sango"),
-    ak: createTranslation("Akan"),
-    bm: createTranslation("Bamanankan"),
-    ewo: createTranslation("Ewondo"),
-    ff: createTranslation("Fulah"),
-    ln: createTranslation("Lingála"),
-    lu: createTranslation("Tshiluba"),
-    kam: createTranslation("Kamba"),
-    kea: createTranslation("Kabuverdianu"),
-    khq: createTranslation("Koyra Chiini"),
-    ki: createTranslation("Kikuyu"),
-    kln: createTranslation("Kalenjin"),
-    kok: createTranslation("Konkani"),
-    ksb: createTranslation("Shambala"),
-    luy: createTranslation("Luyia"),
-    mas: createTranslation("Maasai"),
-    mer: createTranslation("Meru"),
-    mfe: createTranslation("Morisyen"),
-    naq: createTranslation("Nama"),
-    nyn: createTranslation("Nyankole"),
-    om: createTranslation("Oromo"),
-    saq: createTranslation("Samburu"),
-    seh: createTranslation("Sena"),
-    ses: createTranslation("Koyraboro Senni"),
-    teo: createTranslation("Teso"),
-    vai: createTranslation("Vai"),
-    wo: createTranslation("Wolof"),
-    zgh: createTranslation("Standard Moroccan Tamazight"),
+export const getTranslations = async (language: Language) => {
+    try {
+        // Dynamically import the language file.
+        // This uses webpack's magic comments to create separate chunks.
+        const langModule = await import(`@/lib/locales/${language}.json`);
+        return langModule.default;
+    } catch (error) {
+        console.warn(`Could not load translations for "${language}", falling back to English.`);
+        return en;
+    }
 };

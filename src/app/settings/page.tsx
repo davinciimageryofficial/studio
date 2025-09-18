@@ -13,8 +13,7 @@ import { CheckCircle, Briefcase, LogOut, Globe } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useLanguage, Language } from '@/context/language-context';
-import { translations } from '@/lib/translations';
+import { useLanguage, Language, availableLanguages } from '@/context/language-context';
 import { useToast } from '@/hooks/use-toast';
 import { getCurrentUser, updateUserProfile } from '@/lib/database';
 import { logout } from '@/app/auth/actions';
@@ -24,8 +23,7 @@ import { Textarea } from '@/components/ui/textarea';
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { language, setLanguage } = useLanguage();
-  const t = translations[language];
+  const { language, setLanguage, translations: t, isLoaded } = useLanguage();
   const { toast } = useToast();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [name, setName] = useState('');
@@ -67,7 +65,7 @@ export default function SettingsPage() {
     }
   };
 
-  if (!currentUser) {
+  if (!currentUser || !isLoaded) {
     return <div>Loading...</div>; // Or a skeleton loader
   }
 
@@ -187,85 +185,9 @@ export default function SettingsPage() {
                             <SelectValue placeholder="Select a language" />
                         </SelectTrigger>
                         <SelectContent>
-                           <SelectItem value="en">English</SelectItem>
-                            <SelectItem value="zh">中文 (Chinese)</SelectItem>
-                            <SelectItem value="hi">हिन्दी (Hindi)</SelectItem>
-                            <SelectItem value="es">Español (Spanish)</SelectItem>
-                            <SelectItem value="fr">Français (French)</SelectItem>
-                            <SelectItem value="ar">العربية (Arabic)</SelectItem>
-                            <SelectItem value="bn">বাংলা (Bengali)</SelectItem>
-                            <SelectItem value="ru">Русский (Russian)</SelectItem>
-                            <SelectItem value="pt">Português (Portuguese)</SelectItem>
-                            <SelectItem value="ur">اردو (Urdu)</SelectItem>
-                            <SelectItem value="id">Bahasa Indonesia</SelectItem>
-                            <SelectItem value="de">Deutsch (German)</SelectItem>
-                            <SelectItem value="ja">日本語 (Japanese)</SelectItem>
-                            <SelectItem value="pcm">Nigerian Pidgin</SelectItem>
-                            <SelectItem value="mr">मराठी (Marathi)</SelectItem>
-                            <SelectItem value="te">తెలుగు (Telugu)</SelectItem>
-                            <SelectItem value="tr">Türkçe (Turkish)</SelectItem>
-                            <SelectItem value="ta">தமிழ் (Tamil)</SelectItem>
-                            <SelectItem value="vi">Tiếng Việt (Vietnamese)</SelectItem>
-                            <SelectItem value="ko">한국어 (Korean)</SelectItem>
-                            <SelectItem value="jv">Basa Jawa (Javanese)</SelectItem>
-                            <SelectItem value="it">Italiano (Italian)</SelectItem>
-                            <SelectItem value="gu">ગુજરાતી (Gujarati)</SelectItem>
-                            <SelectItem value="pl">Polski (Polish)</SelectItem>
-                            <SelectItem value="uk">Українська (Ukrainian)</SelectItem>
-                            <SelectItem value="pa">ਪੰਜਾਬੀ (Punjabi)</SelectItem>
-                            <SelectItem value="nl">Nederlands (Dutch)</SelectItem>
-                            <SelectItem value="yo">Yorùbá (Yoruba)</SelectItem>
-                            <SelectItem value="ms">Bahasa Melayu (Malay)</SelectItem>
-                            <SelectItem value="th">ไทย (Thai)</SelectItem>
-                            <SelectItem value="kn">ಕನ್ನಡ (Kannada)</SelectItem>
-                            <SelectItem value="ml">മലയാളം (Malayalam)</SelectItem>
-                            <SelectItem value="ig">Igbo</SelectItem>
-                            <SelectItem value="ha">Hausa</SelectItem>
-                            <SelectItem value="or">ଓଡ଼ିଆ (Odia)</SelectItem>
-                            <SelectItem value="my">မြန်မာ (Burmese)</SelectItem>
-                            <SelectItem value="su">Basa Sunda</SelectItem>
-                            <SelectItem value="ro">Română (Romanian)</SelectItem>
-                            <SelectItem value="uz">Oʻzbekcha (Uzbek)</SelectItem>
-                            <SelectItem value="am">አማርኛ (Amharic)</SelectItem>
-                            <SelectItem value="fa">فارسی (Persian)</SelectItem>
-                            <SelectItem value="bho">Bhojpuri</SelectItem>
-                            <SelectItem value="so">Soomaaliga (Somali)</SelectItem>
-                            <SelectItem value="fil">Filipino</SelectItem>
-                            <SelectItem value="ps">پښتو (Pashto)</SelectItem>
-                            <SelectItem value="el">Ελληνικά (Greek)</SelectItem>
-                            <SelectItem value="sv">Svenska (Swedish)</SelectItem>
-                            <SelectItem value="hu">Magyar (Hungarian)</SelectItem>
-                            <SelectItem value="cs">Čeština (Czech)</SelectItem>
-                            <SelectItem value="az">Azərbaycanca (Azerbaijani)</SelectItem>
-                            <SelectItem value="he">עברית (Hebrew)</SelectItem>
-                            <SelectItem value="ceb">Cebuano</SelectItem>
-                            <SelectItem value="mg">Malagasy</SelectItem>
-                            <SelectItem value="bg">Български (Bulgarian)</SelectItem>
-                            <SelectItem value="be">Беларуская (Belarusian)</SelectItem>
-                            <SelectItem value="si">සිංහල (Sinhala)</SelectItem>
-                            <SelectItem value="tt">Tatar</SelectItem>
-                            <SelectItem value="no">Norsk (Norwegian)</SelectItem>
-                            <SelectItem value="sk">Slovenčina (Slovak)</SelectItem>
-                            <SelectItem value="da">Dansk (Danish)</SelectItem>
-                            <SelectItem value="fi">Suomi (Finnish)</SelectItem>
-                            <SelectItem value="hr">Hrvatski (Croatian)</SelectItem>
-                            <SelectItem value="lt">Lietuvių (Lithuanian)</SelectItem>
-                            <SelectItem value="sl">Slovenščina (Slovenian)</SelectItem>
-                            <SelectItem value="et">Eesti (Estonian)</SelectItem>
-                            <SelectItem value="lv">Latviešu (Latvian)</SelectItem>
-                            <SelectItem value="ga">Gaeilge (Irish)</SelectItem>
-                            <SelectItem value="mt">Malti (Maltese)</SelectItem>
-                            <SelectItem value="is">Íslenska (Icelandic)</SelectItem>
-                            <SelectItem value="cy">Cymraeg (Welsh)</SelectItem>
-                            <SelectItem value="eu">Euskara (Basque)</SelectItem>
-                            <SelectItem value="ca">Català (Catalan)</SelectItem>
-                            <SelectItem value="gl">Galego (Galician)</SelectItem>
-                            <SelectItem value="af">Afrikaans</SelectItem>
-                            <SelectItem value="sw">Kiswahili</SelectItem>
-                            <SelectItem value="zu">IsiZulu</SelectItem>
-                            <SelectItem value="xh">IsiXhosa</SelectItem>
-                            <SelectItem value="st">Sesotho</SelectItem>
-                            <SelectItem value="sn">ChiShona</SelectItem>
+                           {availableLanguages.map(lang => (
+                               <SelectItem key={lang} value={lang}>{lang.toUpperCase()}</SelectItem>
+                           ))}
                         </SelectContent>
                     </Select>
                     <p className="text-xs text-muted-foreground">{t.languageDesc}</p>
