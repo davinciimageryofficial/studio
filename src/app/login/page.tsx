@@ -11,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { login } from "@/app/auth/actions";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
-import { Kanban } from "lucide-react";
+import { Kanban, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { ClientOnly } from "@/components/layout/client-only";
 import { useRouter } from "next/navigation";
@@ -26,6 +26,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 function LoginPageInternal() {
   const { toast } = useToast();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   const form = useForm<LoginFormValues>({
@@ -37,19 +38,19 @@ function LoginPageInternal() {
   });
 
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    
     const formData = new FormData();
     formData.append('email', data.email);
     formData.append('password', data.password);
 
     const result = await login(formData);
+    
+    setIsSubmitting(false);
 
     if (result?.error) {
       setErrorMessage(result.error);
-      toast({
-        variant: "destructive",
-        title: "Login Failed",
-        description: result.error,
-      });
     } else if (result?.success) {
       router.push('/dashboard');
     }
@@ -68,37 +69,40 @@ function LoginPageInternal() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" {...field} placeholder="you@example.com" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" {...field} placeholder="••••••••" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <fieldset disabled={isSubmitting} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" {...field} placeholder="you@example.com" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" {...field} placeholder="••••••••" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </fieldset>
               {errorMessage && (
                   <p className="text-sm font-medium text-destructive">{errorMessage}</p>
               )}
-              <Button type="submit" className="w-full">
-                Log In
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isSubmitting ? "Logging In..." : "Log In"}
               </Button>
             </form>
           </Form>
