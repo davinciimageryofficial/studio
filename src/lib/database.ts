@@ -277,7 +277,7 @@ export async function getPosts(): Promise<Post[]> {
     const supabase = createSupabaseServerClient();
     const { data, error } = await supabase
         .from('posts')
-        .select(`
+        .select(\`
             *,
             author:profiles!author_id (
                 id,
@@ -285,7 +285,7 @@ export async function getPosts(): Promise<Post[]> {
                 headline,
                 avatar_url
             )
-        `)
+        \`)
         .is('parent_id', null) // Fetch only top-level posts
         .order('created_at', { ascending: false });
 
@@ -350,7 +350,7 @@ export async function getConversations() {
 
     const { data, error } = await supabase
         .from('conversations')
-        .select(`
+        .select(\`
             *,
             participants:conversation_participants!conversation_id(
                 profile:profiles!user_id(id, full_name, avatar_url, headline)
@@ -358,8 +358,8 @@ export async function getConversations() {
             last_message:messages!last_message_id(
                 id, content, created_at
             )
-        `)
-        .or(`participants.user_id.eq.${user.id}`);
+        \`)
+        .or(\`participants.user_id.eq.\${user.id}\`);
         
     if (error) {
         console.error('Error fetching conversations', error);
@@ -453,7 +453,7 @@ export async function getPersonalProductivityChartData(timeline: 'daily' | 'week
         });
 
         return Object.keys(weeks).map(weekStart => ({
-            week: `W/C ${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+            week: \`W/C \${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}\`,
             revenue: (weeks[weekStart].revenue / 1000),
             projects: weeks[weekStart].projects,
             impressions: weeks[weekStart].impressions,
@@ -512,7 +512,7 @@ export async function getProfileEngagementChartData(timeline: 'daily' | 'weekly'
         });
 
         return Object.keys(weeks).map(weekStart => ({
-            week: `W/C ${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+            week: \`W/C \${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}\`,
             ...weeks[weekStart],
         })).slice(-4);
     }
@@ -618,7 +618,7 @@ export async function saveSoloSession(durationSeconds: number) {
     // This is a simplified implementation. A real app would likely have more robust logic
     // to handle daily roll-ups, but for now we'll just increment a field.
     // We'll simulate adding to a 'solo_session_logs' table.
-    console.log(`Saving solo session of ${durationSeconds} seconds for user ${user.id}`);
+    console.log(\`Saving solo session of \${durationSeconds} seconds for user \${user.id}\`);
     
     // In a real implementation, you would likely do something like this:
     /*

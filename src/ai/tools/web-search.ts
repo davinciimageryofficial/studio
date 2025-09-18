@@ -1,27 +1,39 @@
 
 'use server';
 
+import { getJson } from "serpapi";
+
 /**
- * @fileOverview A tool for the AI to perform web searches.
+ * @fileOverview A tool for the AI to perform web searches using SerpApi.
  */
 export async function searchTheWeb(args: { query: string }) {
     console.log(`[Web Search Tool] Searching for: ${args.query}`);
 
-    // In a real application, this would call a search engine API (e.g., Google Search API).
-    // For this example, we'll return hardcoded results for specific queries to simulate the tool's behavior.
-    
-    if (args.query.toLowerCase().includes('top designers in london')) {
-        return JSON.stringify([
-            { name: 'Es Devlin', specialty: 'Stage Design, Large-Scale Installations', note: 'Known for her spectacular stage sets for artists like Beyoncé and U2.' },
-            { name: 'Tom Dixon', specialty: 'Product & Interior Design', note: 'An industrial designer famous for his lighting and furniture.' },
-            { name: 'Kelly Hoppen', specialty: 'Interior Design', note: 'A world-renowned interior designer with a clean, precise style.' },
-            { name: 'Thomas Heatherwick', specialty: 'Architecture, Design', note: 'Creator of the 2012 Olympic Cauldron and the new London bus.' },
-        ]);
+    if (!process.env.SERPAPI_API_KEY) {
+        console.error("SERPAPI_API_KEY is not set. Web search will not function.");
+        return "I am sorry, but I am unable to perform a web search because the search API is not configured.";
     }
 
-    if (args.query.toLowerCase().includes('future of ai')) {
-        return 'The future of AI points towards more personalized experiences, advancements in autonomous systems, and significant breakthroughs in creative fields and scientific research. Ethical considerations and responsible development are key themes in the ongoing conversation.';
-    }
+    try {
+        const response = await getJson({
+            engine: "google",
+            q: args.query,
+            api_key: process.env.SERPAPI_API_KEY,
+        });
+        
+        // Extract relevant information from the search response.
+        // This could be organic results, answer boxes, knowledge graphs, etc.
+        if (response.answer_box) {
+            return response.answer_box.snippet || response.answer_box.answer;
+        }
+        if (response.organic_results && response.organic_results.length > 0) {
+            return response.organic_results.map(r => `- ${r.title}: ${r.snippet}`).slice(0, 5).join('\n');
+        }
+        
+        return "No specific results found for this query. Try a different search term.";
 
-    return 'No specific results found for this query. Try a different search term.';
-  }
+    } catch (error) {
+        console.error("Error performing web search with SerpApi:", error);
+        return "Sorry, I encountered an error while trying to search the web.";
+    }
+}
