@@ -106,11 +106,10 @@ export async function verifyAccessCode(accessCode: string) {
         return { error: 'Could not redeem the access code. Please try again.' };
     }
     
-    // 3. Update the user's profile to grant access (optional, depends on your schema)
-    // For example, you might have a 'status' or 'has_access' column on the profiles table
+    // 3. Update the user's profile to grant access
     const { error: profileError } = await supabase
         .from('profiles')
-        .update({ status: 'active' }) // Assuming a 'status' column exists
+        .update({ status: 'active' })
         .eq('id', user.id);
         
     if (profileError) {
