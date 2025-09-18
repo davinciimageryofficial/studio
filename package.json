@@ -61,7 +61,6 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/wav": "^1.0.3",
-    "firebase-tools": "^13.13.2",
     "glob": "^10.4.2",
     "inflight": "^1.0.6",
     "postcss": "^8",

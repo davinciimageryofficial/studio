@@ -24,6 +24,7 @@ const getStockPrice = ai.defineTool(
     },
     async (input) => {
       // This is a placeholder. In a real app, this would call a stock price API.
+      console.log(`[Stock Price Tool] Getting price for: ${input.ticker}`);
       return Math.random() * 1000;
     }
 );
