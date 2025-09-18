@@ -32,9 +32,7 @@ export async function signup(formData: FormData) {
 
   const supabase = createSupabaseServerClient()
 
-  // First, try to sign up the user in auth.users
-  // The handle_new_user trigger in Supabase will automatically create their profile
-  // and add them to the waitlist.
+  // First, try to sign up the user.
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
     password,
@@ -43,36 +41,30 @@ export async function signup(formData: FormData) {
       data: {
         full_name: fullName,
         category: profession,
-        // The trigger will use this metadata
         wants_early_access: earlyAccess,
       },
     },
-  })
-
-  if (authError) {
-    // If user is already registered, this is not a fatal error for this flow.
-    // We can proceed to sign them in.
-    if (!authError.message.includes("User already registered")) {
-       return { error: authError.message };
-    }
-  }
-
-  // If we are here, it means either the user is new (and an email has been sent)
-  // or they already exist. In either case, we now sign them in to create an active session.
-  const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
   });
 
-  if (signInError) {
-      // This might happen if they use the wrong password for an existing account.
-      return { error: signInError.message };
+  if (authError) {
+    // If the error is "User already registered", this is not a fatal error.
+    // We can proceed to sign them in.
+    if (authError.message.includes("User already registered")) {
+      console.log("User already exists. Attempting to sign in...");
+      return login(formData);
+    }
+    // For any other auth error, return it to the user.
+    return { error: authError.message };
   }
   
-  if (!signInData.user) {
-    return { error: "An unexpected error occurred after login. Please try again."}
+  // If signup was successful but didn't return a user (e.g., email confirmation required),
+  // we still consider it a success for the purpose of the waitlist confirmation page.
+  if (!authData.user) {
+    revalidatePath('/', 'layout')
+    return { success: true, pendingConfirmation: true };
   }
-
+  
+  // If signup was successful and returned a user, we are good to go.
   revalidatePath('/', 'layout')
   return { success: true };
 }
