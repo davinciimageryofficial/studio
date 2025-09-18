@@ -27,10 +27,10 @@ export async function getCurrentUser(): Promise<User | null> {
         return null;
     }
 
-    const { full_name, ...rest } = userProfile;
+    const { full_name, avatar_url, job_title, ...rest } = userProfile;
     // A real app would fetch portfolio items from a separate table.
     // For now, we return an empty array.
-    return { ...rest, name: full_name, portfolio: [] } as User;
+    return { ...rest, name: full_name, avatar: avatar_url, jobTitle: job_title, portfolio: [] } as User;
 }
 
 /**
@@ -43,7 +43,7 @@ export async function getUsers(): Promise<User[]> {
         console.error("Error fetching users:", error);
         return [];
     }
-    return users.map(({ full_name, ...rest }) => ({...rest, name: full_name, portfolio: []})) as User[];
+    return users.map(({ full_name, avatar_url, job_title, ...rest }) => ({...rest, name: full_name, avatar: avatar_url, jobTitle: job_title, portfolio: []})) as User[];
 }
 
 /**
@@ -56,9 +56,28 @@ export async function getUserById(id: string): Promise<User | null> {
         console.error(`Error fetching user ${id}:`, error);
         return null;
     }
-    const { full_name, ...rest } = data;
-    return { ...rest, name: full_name, portfolio: [] } as User;
+    const { full_name, avatar_url, job_title, ...rest } = data;
+    return { ...rest, name: full_name, avatar: avatar_url, jobTitle: job_title, portfolio: [] } as User;
 }
+
+export async function updateUserProfile(userId: string, profileData: { name: string, headline: string, bio: string }) {
+  const supabase = createSupabaseServerClient();
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      full_name: profileData.name,
+      headline: profileData.headline,
+      bio: profileData.bio,
+    })
+    .eq('id', userId);
+
+  if (error) {
+    console.error("Error updating profile:", error);
+    return { error: "Failed to update profile." };
+  }
+  return { success: true };
+}
+
 
 /**
  * Fetches work experiences for a given user ID.
@@ -277,7 +296,7 @@ export async function getPosts(): Promise<Post[]> {
     const supabase = createSupabaseServerClient();
     const { data, error } = await supabase
         .from('posts')
-        .select(\`
+        .select(`
             *,
             author:profiles!author_id (
                 id,
@@ -285,7 +304,7 @@ export async function getPosts(): Promise<Post[]> {
                 headline,
                 avatar_url
             )
-        \`)
+        `)
         .is('parent_id', null) // Fetch only top-level posts
         .order('created_at', { ascending: false });
 
@@ -298,7 +317,8 @@ export async function getPosts(): Promise<Post[]> {
         ...p,
         author: {
             ...p.author,
-            name: p.author.full_name
+            name: p.author.full_name,
+            avatar: p.author.avatar_url,
         }
     })) as Post[];
 }
@@ -350,7 +370,7 @@ export async function getConversations() {
 
     const { data, error } = await supabase
         .from('conversations')
-        .select(\`
+        .select(`
             *,
             participants:conversation_participants!conversation_id(
                 profile:profiles!user_id(id, full_name, avatar_url, headline)
@@ -358,8 +378,8 @@ export async function getConversations() {
             last_message:messages!last_message_id(
                 id, content, created_at
             )
-        \`)
-        .or(\`participants.user_id.eq.\${user.id}\`);
+        `)
+        .or(`participants.user_id.eq.${user.id}`);
         
     if (error) {
         console.error('Error fetching conversations', error);
@@ -371,8 +391,9 @@ export async function getConversations() {
         name: c.is_group ? c.name : c.participants.find((p: any) => p.profile.id !== user.id)?.profile.full_name || 'Conversation',
         avatar: c.is_group ? c.avatar_url : c.participants.find((p: any) => p.profile.id !== user.id)?.profile.avatar_url,
         lastMessage: {
+            from: 'them',
             text: c.last_message?.content || 'No messages yet',
-            time: c.last_message ? new Date(c.last_message.created_at).toLocaleDateString([], { hour: '2-digit', minute: '2-digit' }) : '',
+            time: c.last_message ? new Date(c.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
         },
         type: c.is_group ? 'group' : 'dm',
         messages: [],
@@ -453,7 +474,7 @@ export async function getPersonalProductivityChartData(timeline: 'daily' | 'week
         });
 
         return Object.keys(weeks).map(weekStart => ({
-            week: \`W/C \${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}\`,
+            week: `W/C ${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
             revenue: (weeks[weekStart].revenue / 1000),
             projects: weeks[weekStart].projects,
             impressions: weeks[weekStart].impressions,
@@ -512,7 +533,7 @@ export async function getProfileEngagementChartData(timeline: 'daily' | 'weekly'
         });
 
         return Object.keys(weeks).map(weekStart => ({
-            week: \`W/C \${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}\`,
+            week: `W/C ${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
             ...weeks[weekStart],
         })).slice(-4);
     }
@@ -561,7 +582,7 @@ export async function getCampaigns() {
     return data;
 }
 
-export async function createCampaign(campaignData: { name: string, type: string, content: string, keywords: string }) {
+export async function createCampaignInDb(campaignData: { name: string, type: string, content: string, keywords: string }) {
     const supabase = createSupabaseServerClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { error: "You must be logged in to create a campaign." };
@@ -618,7 +639,7 @@ export async function saveSoloSession(durationSeconds: number) {
     // This is a simplified implementation. A real app would likely have more robust logic
     // to handle daily roll-ups, but for now we'll just increment a field.
     // We'll simulate adding to a 'solo_session_logs' table.
-    console.log(\`Saving solo session of \${durationSeconds} seconds for user \${user.id}\`);
+    console.log(`Saving solo session of ${durationSeconds} seconds for user ${user.id}`);
     
     // In a real implementation, you would likely do something like this:
     /*

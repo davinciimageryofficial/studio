@@ -181,7 +181,7 @@ export default function ProfilePage() {
 
   const overviewCardProps = {
     user,
-    skills: user.skills,
+    skills: user.skills || [],
     isMyProfile,
     handleSaveSkills,
   };
@@ -221,16 +221,6 @@ export default function ProfilePage() {
                     </DropdownMenu>
                   </div>
                   <p className="text-muted-foreground">{user.headline}</p>
-                  <div className="mt-2 flex items-center justify-center sm:justify-start gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          <span>San Francisco, CA</span>
-                      </div>
-                       <div className="flex items-center gap-1">
-                          <LinkIcon className="h-4 w-4" />
-                          <a href="#" className="hover:underline">website.com</a>
-                      </div>
-                  </div>
                 </div>
                 <div className="mt-4 flex w-full flex-col items-center sm:items-end gap-4 sm:w-auto">
                     <div className="flex items-center gap-2">
@@ -358,18 +348,12 @@ function AboutCard({ user }: { user: User }) {
                     </div>
                     <p className="text-muted-foreground whitespace-pre-line max-w-2xl mx-auto">{user.bio}</p>
                      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4" />
-                            <span>San Francisco, CA</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <LinkIcon className="h-4 w-4" />
-                            <a href="#" className="hover:underline">website.com</a>
-                        </div>
-                         <div className="flex items-center gap-2">
-                            <Briefcase className="h-4 w-4" />
-                            <span>{user.jobTitle} at {user.company}</span>
-                        </div>
+                        {user.jobTitle && user.company && (
+                          <div className="flex items-center gap-2">
+                              <Briefcase className="h-4 w-4" />
+                              <span>{user.jobTitle} at {user.company}</span>
+                          </div>
+                        )}
                     </div>
                 </div>
             </CardContent>

@@ -20,6 +20,7 @@ export type Experience = {
 export type User = {
   id: string;
   name: string;
+  email?: string;
   handle?: string;
   headline: string;
   bio: string;
@@ -76,5 +77,3 @@ export type Course = {
     image_url: string;
     level: string;
 }
-
-    

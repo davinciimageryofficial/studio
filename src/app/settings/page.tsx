@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,16 +15,61 @@ import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage, Language } from '@/context/language-context';
 import { translations } from '@/lib/translations';
+import { useToast } from '@/hooks/use-toast';
+import { getCurrentUser, updateUserProfile } from '@/lib/database';
+import { logout } from '@/app/auth/actions';
+import type { User } from '@/lib/types';
+import { Textarea } from '@/components/ui/textarea';
 
 
 export default function SettingsPage() {
   const router = useRouter();
   const { language, setLanguage } = useLanguage();
   const t = translations[language];
+  const { toast } = useToast();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [name, setName] = useState('');
+  const [headline, setHeadline] = useState('');
+  const [bio, setBio] = useState('');
 
-  const handleLogout = () => {
+  useEffect(() => {
+    async function fetchUser() {
+      const user = await getCurrentUser();
+      setCurrentUser(user);
+      if (user) {
+        setName(user.name);
+        setHeadline(user.headline);
+        setBio(user.bio);
+      }
+    }
+    fetchUser();
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
     router.push('/logout');
   };
+
+  const handleProfileSave = async () => {
+    if (!currentUser) return;
+    const result = await updateUserProfile(currentUser.id, { name, headline, bio });
+    if (result.success) {
+      toast({
+        title: "Profile Updated",
+        description: "Your changes have been saved successfully.",
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: result.error,
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (!currentUser) {
+    return <div>Loading...</div>; // Or a skeleton loader
+  }
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
@@ -45,18 +90,18 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="name">{t.name}</Label>
-                <Input id="name" defaultValue="Christian Peta" />
+                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="headline">{t.headline}</Label>
-                <Input id="headline" defaultValue="Senior Frontend Developer | React & Next.js Expert" />
+                <Input id="headline" value={headline} onChange={(e) => setHeadline(e.target.value)} />
               </div>
             </div>
             <div className="space-y-2">
                 <Label htmlFor="bio">{t.bio}</Label>
-                <textarea id="bio" className="w-full min-h-24 p-2 border rounded-md" defaultValue="Building performant and scalable web applications. I love TypeScript and clean code. Always eager to learn new technologies."></textarea>
+                <Textarea id="bio" className="w-full min-h-24 p-2 border rounded-md" value={bio} onChange={(e) => setBio(e.target.value)} />
             </div>
-             <Button>{t.saveChanges}</Button>
+             <Button onClick={handleProfileSave}>{t.saveChanges}</Button>
           </CardContent>
         </Card>
         
@@ -72,7 +117,7 @@ export default function SettingsPage() {
                     <Briefcase className="h-4 w-4" />
                     <AlertTitle>{t.currentPosition}</AlertTitle>
                     <AlertDescription>
-                        <p className="font-semibold">Senior Frontend Developer at Innovate Inc.</p>
+                        <p className="font-semibold">{currentUser.jobTitle} at {currentUser.company}</p>
                         <p className="text-sm text-muted-foreground">{t.positionVerified}</p>
                     </AlertDescription>
                 </Alert>
@@ -96,7 +141,7 @@ export default function SettingsPage() {
           <CardContent className="space-y-6">
              <div className="space-y-2">
                 <Label htmlFor="email">{t.email}</Label>
-                <Input id="email" type="email" defaultValue="chris.peta@example.com" disabled />
+                <Input id="email" type="email" value={currentUser.email || ''} disabled />
               </div>
               <Button variant="outline">{t.changePassword}</Button>
 

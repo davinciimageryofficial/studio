@@ -144,22 +144,43 @@ function FeedPageInternal() {
     loadData();
   }, []);
 
+  const addReplyRecursively = (posts: Post[], newReply: Post): Post[] => {
+      return posts.map(post => {
+          if (post.id === newReply.parent_id) {
+              return {
+                  ...post,
+                  replies: [...(post.replies || []), newReply],
+                  replies_count: (post.replies_count || 0) + 1
+              };
+          }
+          if (post.replies && post.replies.length > 0) {
+              return {
+                  ...post,
+                  replies: addReplyRecursively(post.replies, newReply)
+              };
+          }
+          return post;
+      });
+  };
+
   useEffect(() => {
     const channel = supabase.channel('realtime posts');
     channel
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, async (payload) => {
         const newPostData = payload.new as Post;
-        // Only add top-level posts in real-time
-        if (!newPostData.parent_id) {
-          const author = await getUserById(newPostData.author_id);
-          if (author) {
-            const fullPost = {
-              ...newPostData,
-              author,
-              replies: [],
-            };
+        const author = await getUserById(newPostData.author_id);
+        if (!author) return;
+
+        const fullPost: Post = {
+            ...newPostData,
+            author,
+            replies: [],
+        };
+
+        if (newPostData.parent_id) {
+            setPosts(prevPosts => addReplyRecursively(prevPosts, fullPost));
+        } else {
             setPosts((prevPosts) => [fullPost, ...prevPosts]);
-          }
         }
       })
       .subscribe();
@@ -193,24 +214,7 @@ function FeedPageInternal() {
   };
 
   const handleReply = (parentPostId: number, reply: Post) => {
-    const addReplyRecursively = (posts: Post[]): Post[] => {
-        return posts.map(post => {
-            if (post.id === parentPostId) {
-                return {
-                    ...post,
-                    replies: [...(post.replies || []), reply]
-                };
-            }
-            if (post.replies && post.replies.length > 0) {
-                return {
-                    ...post,
-                    replies: addReplyRecursively(post.replies)
-                };
-            }
-            return post;
-        });
-    };
-    setPosts(prevPosts => addReplyRecursively(prevPosts));
+    // This is now handled by the real-time subscription
   };
 
 
@@ -523,24 +527,24 @@ function ApplyForJobDialog({ post, t, currentUser }: { post: Post, t: typeof tra
 
 function ReplyDialog({ post, onReply, t, currentUser }: { post: Post, onReply: (reply: Post) => void, t: typeof translations['en'], currentUser: UserType | null }) {
     const [replyContent, setReplyContent] = useState("");
+    const supabase = createSupabaseBrowserClient();
 
-    const handleReplySubmit = () => {
+    const handleReplySubmit = async () => {
         if (!replyContent.trim() || !currentUser) return;
-        const newReply: Post = {
-            id: Date.now(),
-            author: currentUser,
+        
+        const { error } = await supabase.from('posts').insert({
             author_id: currentUser.id,
             content: replyContent,
-            created_at: new Date().toISOString(),
-            image: null,
-            likes_count: 0,
-            replies_count: 0,
-            reposts_count: 0,
-            views_count: 0,
-            type: 'post',
-            replies: [],
-        };
-        onReply(newReply);
+            parent_id: post.id,
+            type: 'post'
+        });
+
+        if (error) {
+            // handle error with a toast
+        } else {
+             // Let real-time handle the UI update
+            setReplyContent("");
+        }
     };
 
     return (
@@ -719,7 +723,7 @@ function PostCard({ post, onUpdate, onDelete, onReply, t, currentUser, isReply =
                             <span>{post.replies_count}</span>
                         </Button>
                     </DialogTrigger>
-                    <ReplyDialog post={post} onReply={(reply) => onReply(post.id, reply)} t={t} currentUser={currentUser} />
+                    <ReplyDialog post={post} onReply={(reply) => { /* handled by real-time */ }} t={t} currentUser={currentUser} />
                 </Dialog>
               <Button variant="ghost" size="sm" className="flex items-center gap-2" onClick={handleRetweet}>
                 <Repeat2 className="h-5 w-5" />
