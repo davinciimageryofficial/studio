@@ -33,6 +33,8 @@ export async function signup(formData: FormData) {
   const supabase = createSupabaseServerClient()
 
   // First, try to sign up the user in auth.users
+  // The handle_new_user trigger in Supabase will automatically create their profile
+  // and add them to the waitlist.
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
     password,
@@ -41,47 +43,34 @@ export async function signup(formData: FormData) {
       data: {
         full_name: fullName,
         category: profession,
+        // The trigger will use this metadata
+        wants_early_access: earlyAccess,
       },
     },
   })
 
   if (authError) {
-    // If the user is already registered, this is not a fatal error.
-    // We can proceed to sign them in and update their waitlist status.
+    // If user is already registered, this is not a fatal error for this flow.
+    // We can proceed to sign them in.
     if (!authError.message.includes("User already registered")) {
        return { error: authError.message };
     }
   }
 
-  // Manually sign in the user. This works for both new signups (if email confirmation is disabled)
-  // and for existing users who are trying to sign up again.
+  // If we are here, it means either the user is new (and an email has been sent)
+  // or they already exist. In either case, we now sign them in to create an active session.
   const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
   });
 
   if (signInError) {
-      return { error: "Login failed after signup attempt. Please check your credentials and try logging in manually." };
+      // This might happen if they use the wrong password for an existing account.
+      return { error: signInError.message };
   }
   
-  const user = signInData.user;
-  if (!user) {
+  if (!signInData.user) {
     return { error: "An unexpected error occurred after login. Please try again."}
-  }
-
-  // Now, use upsert to add the user to the waitlist table, preventing duplicate errors.
-  // The handle_new_user trigger will create the profile automatically on first signup.
-  const { error: waitlistError } = await supabase.from('waitlist').upsert({
-      id: user.id,
-      email: email,
-      full_name: fullName,
-      profession: profession,
-      wants_early_access: earlyAccess,
-  }, { onConflict: 'id' });
-
-  if (waitlistError) {
-      console.error("Database error saving user to waitlist:", waitlistError.message);
-      return { error: "A database error occurred while saving your information. Please contact support."}
   }
 
   revalidatePath('/', 'layout')
