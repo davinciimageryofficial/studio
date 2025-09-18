@@ -166,7 +166,7 @@ export function MessagesClient() {
                     <div class="p-4 rounded-lg border bg-card shadow-sm">
                         <div class="flex items-center gap-3 pb-3 border-b mb-3">
                             <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                                <${'Briefcase'} class="h-6 w-6" />
+                                <${'Briefcase'} />
                             </div>
                             <div>
                                 <h4 class="font-semibold">New Application: ${app.jobTitle}</h4>
