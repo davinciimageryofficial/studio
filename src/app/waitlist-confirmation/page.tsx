@@ -23,6 +23,7 @@ import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { verifyAccessCode } from "@/app/auth/actions";
 
 type WaitlistData = {
   fullName: string;
@@ -52,9 +53,20 @@ export default function WaitlistConfirmationPage() {
     router.push(path);
   };
   
-  const handleAccessCodeSubmit = (e?: React.FormEvent) => {
+  const handleAccessCodeSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (accessCode === '2004') {
+    if (!accessCode.trim()) {
+        toast({
+            variant: "destructive",
+            title: t.invalidCodeToastTitle,
+            description: "Please enter an access code.",
+        });
+        return;
+    }
+
+    const result = await verifyAccessCode(accessCode);
+
+    if (result.success) {
         toast({
             title: t.accessGrantedToastTitle,
             description: t.accessGrantedToastDesc,
@@ -64,7 +76,7 @@ export default function WaitlistConfirmationPage() {
         toast({
             variant: "destructive",
             title: t.invalidCodeToastTitle,
-            description: t.invalidCodeToastDesc,
+            description: result.error || t.invalidCodeToastDesc,
         });
     }
   };

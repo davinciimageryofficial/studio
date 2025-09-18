@@ -92,3 +92,49 @@ export async function logout() {
     await supabase.auth.signOut();
     revalidatePath('/', 'layout')
 }
+
+export async function verifyAccessCode(accessCode: string) {
+    const supabase = createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return { error: 'You must be logged in to verify an access code.' };
+    }
+
+    // 1. Check if the access code exists and is not yet redeemed
+    const { data: codeData, error: codeError } = await supabase
+        .from('access_codes')
+        .select('*')
+        .eq('code', accessCode)
+        .is('redeemed_by', null)
+        .single();
+
+    if (codeError || !codeData) {
+        return { error: 'Invalid or already used access code.' };
+    }
+
+    // 2. Mark the code as redeemed by the current user
+    const { error: updateError } = await supabase
+        .from('access_codes')
+        .update({ redeemed_by: user.id, redeemed_at: new Date().toISOString() })
+        .eq('id', codeData.id);
+
+    if (updateError) {
+        console.error('Error redeeming access code:', updateError);
+        return { error: 'Could not redeem the access code. Please try again.' };
+    }
+    
+    // 3. Update the user's profile to grant access (optional, depends on your schema)
+    // For example, you might have a 'status' or 'has_access' column on the profiles table
+    const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ status: 'active' }) // Assuming a 'status' column exists
+        .eq('id', user.id);
+        
+    if (profileError) {
+      // Not a fatal error, but should be logged
+      console.error('Failed to update user profile status after code redemption:', profileError);
+    }
+
+    return { success: true };
+}
