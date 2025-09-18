@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, Eye, DollarSign, Target, MousePointerClick, Kanban, CheckCircle, Sparkles, AlertCircle } from "lucide-react";
+import { PlusCircle, Eye, DollarSign, Target, MousePointerClick, Kanban, CheckCircle, Sparkles, AlertCircle, Loader2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -23,7 +23,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
 import { ClientOnly } from "@/components/layout/client-only";
-import { getCampaigns, createCampaign as createCampaignInDb } from "@/lib/database";
+import { getCampaigns, createCampaignInDb } from "@/lib/database";
 import { useToast } from "@/hooks/use-toast";
 
 const campaignFormSchema = z.object({
@@ -212,11 +212,10 @@ function AdStudioPageInternal({ initialCampaigns }: { initialCampaigns: Campaign
   );
 }
 
-export default async function AdStudioPage() {
-    const campaigns = await getCampaigns();
+export default function AdStudioPage() {
     return (
         <ClientOnly>
-            <AdStudioPageInternal initialCampaigns={campaigns} />
+            <AdStudioPageInternal initialCampaigns={[]} />
         </ClientOnly>
     );
 }
@@ -224,6 +223,7 @@ export default async function AdStudioPage() {
 function CreateCampaignDialog({ t, onCampaignCreated }: { t: typeof translations['en'], onCampaignCreated: () => void }) {
     const [analysis, setAnalysis] = useState<AdCampaignAnalyzerOutput | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
     const { toast } = useToast();
@@ -279,6 +279,7 @@ function CreateCampaignDialog({ t, onCampaignCreated }: { t: typeof translations
     }, [watchedFields, triggerAnalysis, form]);
     
     const onSubmit = async (data: CampaignFormValues) => {
+        setIsSubmitting(true);
         const result = await createCampaignInDb(data);
         if (result.error) {
             toast({
@@ -293,6 +294,7 @@ function CreateCampaignDialog({ t, onCampaignCreated }: { t: typeof translations
             });
             onCampaignCreated();
         }
+        setIsSubmitting(false);
     };
 
     return (
@@ -401,9 +403,9 @@ function CreateCampaignDialog({ t, onCampaignCreated }: { t: typeof translations
                     <DialogClose asChild>
                         <Button type="button" variant="secondary">{t.cancel}</Button>
                     </DialogClose>
-                    <Button type="submit">
-                        <CheckCircle className="mr-2 h-4 w-4" />
-                        {t.launchCampaign}
+                    <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle className="mr-2 h-4 w-4" />}
+                        {isSubmitting ? "Launching..." : t.launchCampaign}
                     </Button>
                 </DialogFooter>
             </form>
