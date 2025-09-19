@@ -3,7 +3,6 @@
 
 import { revalidatePath } from 'next/cache'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation';
 
 export async function login(formData: FormData) {
   const email = formData.get('email') as string
