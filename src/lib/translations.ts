@@ -1,9 +1,14 @@
 
 import type { Language } from "@/context/language-context";
 
-// English translations are now in en.json and loaded by default.
 // Other languages can be added as json files in the locales directory.
-const en = {};
+// We provide a default minimal english object to prevent errors on initial load.
+const en = {
+    "settings": "Settings",
+    "manageAccount": "Manage your account and application preferences.",
+    "profile": "Profile",
+    "updateProfile": "Update your public profile information."
+};
 
 export const translations = { en };
 
