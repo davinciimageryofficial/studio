@@ -51,7 +51,7 @@ export async function signup(formData: FormData) {
     // We can proceed to sign them in.
     if (authError.message.includes("User already registered")) {
       console.log("User already exists. Attempting to sign in...");
-      return login(formData);
+      return await login(formData);
     }
     // For any other auth error, return it to the user.
     return { error: authError.message };
