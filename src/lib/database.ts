@@ -28,9 +28,19 @@ export async function getCurrentUser(): Promise<User | null> {
     }
 
     const { full_name, avatar_url, job_title, ...rest } = userProfile;
-    // A real app would fetch portfolio items from a separate table.
-    // For now, we return an empty array.
-    return { ...rest, name: full_name, avatar: avatar_url, jobTitle: job_title, portfolio: [] } as User;
+    
+    const { data: portfolioItems } = await supabase
+        .from('portfolio_items')
+        .select('*')
+        .eq('user_id', authUser.id);
+
+    return { 
+        ...rest, 
+        name: full_name, 
+        avatar: avatar_url, 
+        jobTitle: job_title,
+        portfolio: portfolioItems || []
+    } as User;
 }
 
 /**
@@ -43,7 +53,13 @@ export async function getUsers(): Promise<User[]> {
         console.error("Error fetching users:", error);
         return [];
     }
-    return users.map(({ full_name, avatar_url, job_title, ...rest }) => ({...rest, name: full_name, avatar: avatar_url, jobTitle: job_title, portfolio: []})) as User[];
+    return users.map(({ full_name, avatar_url, job_title, ...rest }) => ({
+        ...rest, 
+        name: full_name, 
+        avatar: avatar_url, 
+        jobTitle: job_title, 
+        portfolio: []
+    })) as User[];
 }
 
 /**
@@ -57,7 +73,19 @@ export async function getUserById(id: string): Promise<User | null> {
         return null;
     }
     const { full_name, avatar_url, job_title, ...rest } = data;
-    return { ...rest, name: full_name, avatar: avatar_url, jobTitle: job_title, portfolio: [] } as User;
+    
+    const { data: portfolioItems } = await supabase
+        .from('portfolio_items')
+        .select('*')
+        .eq('user_id', id);
+
+    return { 
+        ...rest, 
+        name: full_name, 
+        avatar: avatar_url, 
+        jobTitle: job_title,
+        portfolio: portfolioItems || []
+    } as User;
 }
 
 export async function updateUserProfile(userId: string, profileData: { name: string, headline: string, bio: string }) {
@@ -149,7 +177,7 @@ export async function getPersonalDashboardMetrics() {
     };
     
     // Placeholder for pending invitations
-    const pendingInvitations = 0;
+    const pendingInvitations = 3;
 
     return {
         profileViews: currentViews,
@@ -292,35 +320,47 @@ export async function getAgencyMetrics() {
 // Feed & Posts Functions
 // =================================================================
 
+const mapPost = (post: any): Post => ({
+    id: post.id,
+    author_id: post.author_id,
+    created_at: post.created_at,
+    content: post.content,
+    image: post.image,
+    likes_count: post.likes_count,
+    replies_count: post.replies_count,
+    reposts_count: post.reposts_count,
+    views_count: post.views_count,
+    type: post.type,
+    parent_id: post.parent_id,
+    jobDetails: post.job_details,
+    replies: post.replies?.map(mapPost) || [],
+    author: {
+        id: post.author.id,
+        name: post.author.full_name,
+        headline: post.author.headline,
+        avatar: post.author.avatar_url,
+        // Fill in other User fields as needed, or leave them as undefined
+        bio: post.author.bio,
+        skills: post.author.skills,
+        portfolio: [],
+        category: post.author.category,
+        reliabilityScore: post.author.reliability_score,
+        communityStanding: post.author.community_standing,
+        disputes: post.author.disputes,
+    }
+});
+
 export async function getPosts(): Promise<Post[]> {
     const supabase = createSupabaseServerClient();
     const { data, error } = await supabase
-        .from('posts')
-        .select(`
-            *,
-            author:profiles!author_id (
-                id,
-                full_name,
-                headline,
-                avatar_url
-            )
-        `)
-        .is('parent_id', null) // Fetch only top-level posts
-        .order('created_at', { ascending: false });
+        .rpc('get_posts_with_replies');
 
     if (error) {
-        console.error("Error fetching posts:", error);
+        console.error("Error fetching posts with replies:", error);
         return [];
     }
 
-    return data.map(p => ({
-        ...p,
-        author: {
-            ...p.author,
-            name: p.author.full_name,
-            avatar: p.author.avatar_url,
-        }
-    })) as Post[];
+    return data.map(mapPost);
 }
 
 
@@ -368,35 +408,27 @@ export async function getConversations() {
     const {data: { user }} = await supabase.auth.getUser();
     if (!user) return [];
 
-    const { data, error } = await supabase
-        .from('conversations')
-        .select(`
-            *,
-            participants:conversation_participants!conversation_id(
-                profile:profiles!user_id(id, full_name, avatar_url, headline)
-            ),
-            last_message:messages!last_message_id(
-                id, content, created_at
-            )
-        `)
-        .or(`participants.user_id.eq.${user.id}`);
+    const { data, error } = await supabase.rpc('get_user_conversations', { requestor_id: user.id });
         
     if (error) {
-        console.error('Error fetching conversations', error);
+        console.error('Error fetching conversations rpc', error);
         return [];
     }
 
-    return data.map(c => ({
-        id: c.id,
-        name: c.is_group ? c.name : c.participants.find((p: any) => p.profile.id !== user.id)?.profile.full_name || 'Conversation',
-        avatar: c.is_group ? c.avatar_url : c.participants.find((p: any) => p.profile.id !== user.id)?.profile.avatar_url,
+    // The RPC returns a structure that needs to be mapped to our app's types.
+    // This mapping can be complex depending on the RPC's output.
+    // The following is a simplified example based on a hypothetical RPC result.
+    return data.map((convo: any) => ({
+        id: convo.id,
+        name: convo.conversation_name,
+        avatar: convo.avatar_url,
         lastMessage: {
-            from: 'them',
-            text: c.last_message?.content || 'No messages yet',
-            time: c.last_message ? new Date(c.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+            from: convo.last_message_sender_id === user.id ? 'me' : 'them',
+            text: convo.last_message_content || 'No messages yet',
+            time: convo.last_message_created_at ? new Date(convo.last_message_created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
         },
-        type: c.is_group ? 'group' : 'dm',
-        messages: [],
+        type: convo.is_group ? 'group' : 'dm',
+        messages: [], // Messages for a convo are fetched when it's selected
     }));
 }
 
