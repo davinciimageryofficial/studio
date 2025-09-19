@@ -24,50 +24,51 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
-  const fullName = formData.get('fullName') as string;
-  const profession = formData.get('profession') as string;
-  const earlyAccess = formData.get('earlyAccess') === 'true';
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const fullName = formData.get('fullName') as string;
+    const profession = formData.get('profession') as string;
+    const earlyAccess = formData.get('earlyAccess') === 'true';
 
-  const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseServerClient();
 
-  // First, try to sign up the user.
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-      data: {
-        full_name: fullName,
-        category: profession,
-        wants_early_access: earlyAccess,
-      },
-    },
-  });
+    // First, try to sign up the user.
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+            emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+            data: {
+                full_name: fullName,
+                category: profession,
+                wants_early_access: earlyAccess,
+            },
+        },
+    });
 
-  if (authError) {
-    // If the error is "User already registered", this is not a fatal error.
-    // We can proceed to sign them in.
-    if (authError.message.includes("User already registered")) {
-      console.log("User already exists. Attempting to sign in...");
-      return await login(formData);
+    if (authError) {
+        // If the error is "User already registered", this is not a fatal error.
+        // We can proceed to sign them in.
+        if (authError.message.includes("User already registered")) {
+            console.log("User already exists. Attempting to sign in...");
+            return await login(formData);
+        }
+        // For any other auth error, return it to the user.
+        return { error: authError.message };
     }
-    // For any other auth error, return it to the user.
-    return { error: authError.message };
-  }
-  
-  // If signup was successful but didn't return a user (e.g., email confirmation required),
-  // we still consider it a success for the purpose of the waitlist confirmation page.
-  if (!authData.user) {
-    revalidatePath('/', 'layout')
-    return { success: true, pendingConfirmation: true };
-  }
-  
-  // If signup was successful and returned a user, we are good to go.
-  revalidatePath('/', 'layout')
-  return { success: true };
+
+    // If signup was successful but didn't return a user (e.g., email confirmation required),
+    // we still consider it a success for the purpose of the waitlist confirmation page.
+    if (!authData.user) {
+        revalidatePath('/', 'layout');
+        return { success: true, pendingConfirmation: true };
+    }
+
+    // If signup was successful and returned a user, we are good to go.
+    revalidatePath('/', 'layout');
+    return { success: true };
 }
+
 
 export async function logout() {
     const supabase = createSupabaseServerClient()
