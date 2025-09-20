@@ -31,23 +31,17 @@ export async function signup(formData: FormData) {
 
     const supabase = createSupabaseServerClient();
 
-    // First, try to sign up the user.
+    // First, try to sign up the user for authentication.
     const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
             emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-            data: {
-                full_name: fullName,
-                category: profession,
-                wants_early_access: earlyAccess,
-            },
         },
     });
 
     if (authError) {
-        // If the error is "User already registered", this is not a fatal error.
-        // We can proceed to sign them in.
+        // If the error is "User already registered", try to log them in.
         if (authError.message.includes("User already registered")) {
             console.log("User already exists. Attempting to sign in...");
             return await login(formData);
@@ -56,16 +50,49 @@ export async function signup(formData: FormData) {
         return { error: authError.message };
     }
 
-    // If signup was successful but didn't return a user (e.g., email confirmation required),
-    // we still consider it a success for the purpose of the waitlist confirmation page.
     if (!authData.user) {
-        revalidatePath('/', 'layout');
-        return { success: true, pendingConfirmation: true };
+        return { error: 'Signup successful, but no user data returned. Please try logging in.' };
     }
 
-    // If signup was successful and returned a user, we are good to go.
+    // Second, if auth succeeds, create the user's public profile.
+    const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({ 
+            id: authData.user.id, 
+            full_name: fullName, 
+            category: profession,
+            email: email, // Assuming you store email in profiles table as well
+            // Set default values for other profile fields
+            headline: `New ${profession} on Sentry`,
+            bio: 'Just joined Sentry! Looking to connect and collaborate.',
+            skills: [profession],
+            reliability_score: 80,
+            community_standing: "New member with a clean record.",
+            disputes: 0,
+            avatar_url: `https://picsum.photos/seed/${authData.user.id}/200/200`
+        });
+    
+    if (profileError) {
+        // This is where the "Database error saving new user" comes from.
+        console.error("Error creating profile:", profileError);
+        return { error: 'Database error saving new user.' };
+    }
+
+    // Optionally handle the waitlist table if it's still in use
+    if (earlyAccess) {
+        const { error: waitlistError } = await supabase
+            .from('waitlist')
+            .insert({ user_id: authData.user.id });
+        if (waitlistError) {
+            // Not a fatal error, but good to log.
+            console.warn("Could not add user to early access waitlist:", waitlistError);
+        }
+    }
+
+    // If signup was successful, revalidate and return success.
+    // The user will need to confirm their email.
     revalidatePath('/', 'layout');
-    return { success: true };
+    return { success: true, pendingConfirmation: true };
 }
 
 
