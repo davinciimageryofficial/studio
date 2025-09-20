@@ -1,3 +1,4 @@
+
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -82,7 +83,7 @@ export async function signup(formData: FormData) {
     if (earlyAccess) {
         const { error: waitlistError } = await supabase
             .from('waitlist')
-            .insert({ user_id: authData.user.id, email: email }); // Also inserting email for reference
+            .insert({ user_id: authData.user.id, email: email, status: 'pending_verification' });
         if (waitlistError) {
             // Not a fatal error, but good to log.
             console.warn("Could not add user to early access waitlist:", waitlistError);
@@ -143,6 +144,13 @@ export async function verifyAccessCode(accessCode: string) {
       // Not a fatal error, but should be logged
       console.error('Failed to update user profile status after code redemption:', profileError);
     }
+    
+    // 4. Update the waitlist entry as well, if it exists
+    await supabase
+        .from('waitlist')
+        .update({ status: 'activated_via_code' })
+        .eq('user_id', user.id);
+
 
     revalidatePath('/dashboard');
     return { success: true };

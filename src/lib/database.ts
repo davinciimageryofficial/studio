@@ -58,7 +58,7 @@ export async function getUsers(): Promise<User[]> {
         name: full_name, 
         avatar: avatar_url, 
         jobTitle: job_title, 
-        portfolio: []
+        portfolio: [] // Portfolio items are not needed for list views
     })) as User[];
 }
 
@@ -347,6 +347,8 @@ const mapPost = (post: any): Post => ({
         reliabilityScore: post.author.reliability_score,
         communityStanding: post.author.community_standing,
         disputes: post.author.disputes,
+        jobTitle: post.author.job_title,
+        company: post.author.company
     }
 });
 
