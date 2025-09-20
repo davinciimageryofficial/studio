@@ -75,14 +75,15 @@ export async function signup(formData: FormData) {
     if (profileError) {
         // This is where the "Database error saving new user" comes from.
         console.error("Error creating profile:", profileError);
-        return { error: 'Database error saving new user.' };
+        // Provide the actual database error message for better debugging
+        return { error: `Database error: ${profileError.message}` };
     }
 
     // Optionally handle the waitlist table if it's still in use
     if (earlyAccess) {
         const { error: waitlistError } = await supabase
             .from('waitlist')
-            .insert({ user_id: authData.user.id });
+            .insert({ user_id: authData.user.id, email: email }); // Also inserting email for reference
         if (waitlistError) {
             // Not a fatal error, but good to log.
             console.warn("Could not add user to early access waitlist:", waitlistError);
