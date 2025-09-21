@@ -25,7 +25,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/database";
 import type { User as UserType } from "@/lib/types";
-import { requirementCategories, freelanceNiches, type ReqCategory, type FreelanceNiche } from "@/lib/skill-sync-net-data";
+import { requirementCategories, type ReqCategory, type FreelanceNiche } from "@/lib/skill-sync-net-data";
+import freelanceNiches from "@/lib/freelance-niches.json";
+
 
 const clientFormSchema = z.object({
   projectTitle: z.string().min(5, "Project title must be at least 5 characters."),
@@ -44,9 +46,11 @@ type SelectedNiches = Record<string, string[]>;
 function NichePickerDialog({ onSave, initialNiches }: { onSave: (niches: string[]) => void, initialNiches: string[] }) {
     const [selected, setSelected] = useState<SelectedNiches>(() => {
         const initialState: SelectedNiches = {};
+        const allNichesData = freelanceNiches as Record<FreelanceNiche, string[]>;
+
         initialNiches.forEach(niche => {
-            for (const category in freelanceNiches) {
-                if (freelanceNiches[category as FreelanceNiche].includes(niche)) {
+            for (const category in allNichesData) {
+                if (allNichesData[category as FreelanceNiche].includes(niche)) {
                     if (!initialState[category]) {
                         initialState[category] = [];
                     }
@@ -78,6 +82,9 @@ function NichePickerDialog({ onSave, initialNiches }: { onSave: (niches: string[
         onSave(allSelected);
     };
 
+    const allNichesData = freelanceNiches as Record<FreelanceNiche, string[]>;
+
+
     return (
         <DialogContent className="sm:max-w-3xl">
             <DialogHeader>
@@ -86,7 +93,7 @@ function NichePickerDialog({ onSave, initialNiches }: { onSave: (niches: string[
             </DialogHeader>
             <div className="py-4 space-y-2 max-h-[60vh] overflow-y-auto pr-4">
                  <Accordion type="multiple" className="w-full">
-                     {Object.entries(freelanceNiches).map(([category, subNiches]) => (
+                     {Object.entries(allNichesData).map(([category, subNiches]) => (
                         <AccordionItem key={category} value={category}>
                             <AccordionTrigger className="text-base font-semibold">{category}</AccordionTrigger>
                             <AccordionContent>
@@ -228,10 +235,12 @@ function ClientView() {
 
     const handleNicheSave = (niches: string[]) => {
         setSelectedNiches(niches);
-        const currentSkills = form.getValues("requiredSkills").split(',').map(s => s.trim()).filter(s => s && !Object.values(freelanceNiches).flat().includes(s));
+        const allNichesData = freelanceNiches as Record<FreelanceNiche, string[]>;
+        const currentSkills = form.getValues("requiredSkills").split(',').map(s => s.trim()).filter(s => s && !Object.values(allNichesData).flat().includes(s));
         const newSkills = [...currentSkills, ...niches].join(', ');
         form.setValue("requiredSkills", newSkills, { shouldValidate: true });
     };
+
 
     const onSubmit: SubmitHandler<ClientFormValues> = async (data) => {
         setLoading(true);
