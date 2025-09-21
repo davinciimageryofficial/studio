@@ -37,7 +37,7 @@ export default function LandingPage() {
                 <div className="grid lg:grid-cols-2 min-h-screen">
                     <div className="flex flex-col justify-center p-8 sm:p-16 lg:p-24">
                         <Kanban className="size-10 mb-4 text-primary" />
-                        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">{t.landingTitle}</h1>
+                        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-black">{t.landingTitle}</h1>
                         <p className="mt-4 text-lg text-muted-foreground max-w-xl">
                            {t.landingDescription}
                         </p>
