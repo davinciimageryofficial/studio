@@ -130,6 +130,7 @@ function DashboardPageInternal({
     personalMetrics: initialPersonalMetrics,
     agencyMetrics: initialAgencyMetrics,
     initialTasks,
+    t,
 }: {
     currentUser: UserType | null,
     otherUsers: UserType[],
@@ -137,9 +138,8 @@ function DashboardPageInternal({
     personalMetrics: { profileViews: number, newConnections: number, pendingInvitations: number, profileViewsChange: number, newConnectionsChange: number },
     agencyMetrics: any,
     initialTasks: { [key in TaskStatus]: Task[] },
+    t: typeof translations['en']
 }) {
-    const { language } = useLanguage();
-    const t = translations[language];
     const [isAppDownloaded, setIsAppDownloaded] = useState(false);
     const [accessCode, setAccessCode] = useState("");
     const [tasks, setTasks] = useState(initialTasks);
@@ -791,6 +791,7 @@ export default function DashboardPage() {
         initialTasks: { todo: Task[]; inProgress: Task[]; done: Task[]; };
     } | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const { language, translations: t, isLoaded } = useLanguage();
 
     useEffect(() => {
         async function loadData() {
@@ -831,7 +832,7 @@ export default function DashboardPage() {
         loadData();
     }, []);
 
-    if (isLoading || !data) {
+    if (isLoading || !data || !isLoaded) {
         return (
             <div className="p-8">
                 <Skeleton className="h-8 w-1/4 mb-2" />
@@ -857,6 +858,7 @@ export default function DashboardPage() {
                 personalMetrics={data.personalMetrics}
                 agencyMetrics={data.agencyMetrics}
                 initialTasks={data.initialTasks}
+                t={t}
             />
         </ClientOnly>
     )
