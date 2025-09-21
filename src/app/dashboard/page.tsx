@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -25,36 +25,12 @@ import { OperationalCharts } from "./operational-charts";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
 import { ProfileEngagementChart } from "./profile-engagement-chart";
-import { getCurrentUser, getUsers, getAgencyDashboardMetrics, getPersonalDashboardMetrics, getAgencyMetrics } from "@/lib/database";
+import { getCurrentUser, getUsers, getAgencyDashboardMetrics, getPersonalDashboardMetrics, getAgencyMetrics, getTasks, createTask, updateTask, deleteTask } from "@/lib/database";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { User as UserType } from '@/lib/types';
+import type { User as UserType, Task, TaskStatus } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { verifyAccessCode } from "@/app/auth/actions";
 
-
-type Task = {
-    id: string;
-    title: string;
-    priority: 'High' | 'Medium' | 'Low';
-};
-
-type TaskStatus = 'todo' | 'inProgress' | 'done';
-
-const initialTasks: { [key in TaskStatus]: Task[] } = {
-  todo: [
-    { id: 'task-1', title: 'Draft Q3 marketing brief for the new feature launch', priority: 'High' },
-    { id: 'task-2', title: 'Design new homepage mockups in Figma', priority: 'Medium' },
-    { id: 'task-3', title: 'Schedule user testing sessions for the checkout flow', priority: 'Medium' },
-  ],
-  inProgress: [
-    { id: 'task-4', title: 'Develop user authentication flow with NextAuth.js', priority: 'High' },
-    { id: 'task-5', title: 'Write blog post on "The Future of AI in Creative Work"', priority: 'Low' },
-  ],
-  done: [
-    { id: 'task-6', title: 'Deploy serverless API endpoint for the new analytics service', priority: 'High' },
-    { id: 'task-7', title: 'Onboard new design intern and set up their accounts', priority: 'Medium' },
-    { id: 'task-8', title: 'Finalize and send invoices for May projects', priority: 'High' },
-  ],
-};
 
 const priorityIcons = {
   High: <ArrowUp className="h-4 w-4 text-red-600" />,
@@ -78,18 +54,32 @@ type VisibleEngagementMetrics = {
     skillSyncNetMatches: boolean;
 }
 
-function TaskDialog({ task, onSave, triggerButton, column }: { task?: Task, onSave: (task: Task) => void, triggerButton: React.ReactNode, column: TaskStatus }) {
+function TaskDialog({ task, onSave, triggerButton, column, userId }: { task?: Task, onSave: (task: Task) => void, triggerButton: React.ReactNode, column: TaskStatus, userId: string }) {
     const [title, setTitle] = useState(task?.title || "");
     const [priority, setPriority] = useState<Task['priority']>(task?.priority || 'Medium');
+    const { toast } = useToast();
     const isEditing = !!task;
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (title.trim()) {
-            onSave({
-                id: task?.id || `task-${Date.now()}`,
+            const taskData = {
+                id: task?.id || 0,
                 title: title.trim(),
                 priority,
-            });
+                status: column,
+                user_id: userId,
+            };
+            
+            const result = isEditing ? await updateTask(taskData.id, { title: taskData.title, priority: taskData.priority, status: taskData.status }) : await createTask(taskData);
+            
+            if (result.error) {
+                toast({ title: `Error ${isEditing ? 'updating' : 'creating'} task`, description: result.error, variant: "destructive" });
+            } else {
+                toast({ title: `Task ${isEditing ? 'updated' : 'created'}!` });
+                if (result.data) {
+                    onSave(result.data);
+                }
+            }
         }
     };
 
@@ -136,15 +126,17 @@ function TaskDialog({ task, onSave, triggerButton, column }: { task?: Task, onSa
 function DashboardPageInternal({
     currentUser,
     otherUsers,
-    dashboardMetrics,
-    personalMetrics,
-    agencyMetrics
+    dashboardMetrics: initialDashboardMetrics,
+    personalMetrics: initialPersonalMetrics,
+    agencyMetrics: initialAgencyMetrics,
+    initialTasks,
 }: {
     currentUser: UserType | null,
     otherUsers: UserType[],
     dashboardMetrics: { teamRevenue: number, totalProjects: number, clientAcquisition: number },
     personalMetrics: { profileViews: number, newConnections: number, pendingInvitations: number, profileViewsChange: number, newConnectionsChange: number },
     agencyMetrics: any,
+    initialTasks: { [key in TaskStatus]: Task[] },
 }) {
     const { language } = useLanguage();
     const t = translations[language];
@@ -172,6 +164,17 @@ function DashboardPageInternal({
     const [productivityChartScale, setProductivityChartScale] = useState(1);
     const [tempProductivityChartScale, setTempProductivityChartScale] = useState(1);
 
+    const [personalMetrics, setPersonalMetrics] = useState(initialPersonalMetrics);
+
+    const fetchMetrics = useCallback(async () => {
+        const metrics = await getPersonalDashboardMetrics();
+        setPersonalMetrics(metrics);
+    }, []);
+
+    useEffect(() => {
+        fetchMetrics();
+    }, [fetchMetrics]);
+
     // Memos for derived data, now using live 'otherUsers'
     const recentActivities = useMemo(() => {
         if (otherUsers.length < 4) return [];
@@ -187,25 +190,26 @@ function DashboardPageInternal({
     const pendingInvitationsList = useMemo(() => otherUsers.slice(1, 4), [otherUsers]);
     const newConnectionsList = useMemo(() => otherUsers.slice(0, 3), [otherUsers]);
     
-    const handleAccessCodeSubmit = (e: React.FormEvent) => {
+    const handleAccessCodeSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (accessCode === '2004') {
+        const result = await verifyAccessCode(accessCode);
+        if (result.error) {
+            toast({
+                variant: "destructive",
+                title: "Invalid Code",
+                description: result.error,
+            });
+        } else {
             toast({
                 title: "Access Granted!",
                 description: "Welcome to the AD-Sentry Studio.",
             });
             router.push('/ad-studio');
-        } else {
-            toast({
-                variant: "destructive",
-                title: "Invalid Code",
-                description: "The access code you entered is incorrect. Please try again.",
-            });
         }
     };
     
-    const handleDragStart = (e: React.DragEvent<HTMLDivElement>, taskId: string, sourceColumn: TaskStatus) => {
-        e.dataTransfer.setData("taskId", taskId);
+    const handleDragStart = (e: React.DragEvent<HTMLDivElement>, taskId: number, sourceColumn: TaskStatus) => {
+        e.dataTransfer.setData("taskId", String(taskId));
         e.dataTransfer.setData("sourceColumn", sourceColumn);
     };
 
@@ -213,9 +217,9 @@ function DashboardPageInternal({
         e.preventDefault();
     };
 
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>, destinationColumn: TaskStatus) => {
+    const handleDrop = async (e: React.DragEvent<HTMLDivElement>, destinationColumn: TaskStatus) => {
         e.preventDefault();
-        const taskId = e.dataTransfer.getData("taskId");
+        const taskId = Number(e.dataTransfer.getData("taskId"));
         const sourceColumn = e.dataTransfer.getData("sourceColumn") as TaskStatus;
 
         if (sourceColumn === destinationColumn) return;
@@ -231,8 +235,15 @@ function DashboardPageInternal({
         });
 
         if (taskToMove) {
-            const newDestinationTasks = [...tasks[destinationColumn], taskToMove];
+            const updatedTask = { ...taskToMove, status: destinationColumn };
             
+            const result = await updateTask(taskId, { status: destinationColumn });
+            if (result.error) {
+                toast({ title: "Error moving task", description: result.error, variant: "destructive" });
+                return; // Don't update UI if backend fails
+            }
+
+            const newDestinationTasks = [...tasks[destinationColumn], updatedTask];
             setTasks(prevTasks => ({
                 ...prevTasks,
                 [sourceColumn]: newSourceTasks,
@@ -241,16 +252,21 @@ function DashboardPageInternal({
         }
     };
 
-    const handleSaveTask = (updatedTask: Task, column: TaskStatus) => {
-        const columnTasks = tasks[column];
-        const taskExists = columnTasks.some(t => t.id === updatedTask.id);
+    const handleSaveTask = (updatedTask: Task) => {
+        const column = updatedTask.status;
+        const taskExists = Object.values(tasks).flat().some(t => t.id === updatedTask.id);
 
         if (taskExists) {
-            // Edit existing task
-            setTasks(prev => ({
-                ...prev,
-                [column]: prev[column].map(t => t.id === updatedTask.id ? updatedTask : t),
-            }));
+            // Edit existing task: remove from old status list, add to new one
+            setTasks(prev => {
+                const newTasks: { [key in TaskStatus]: Task[] } = { todo: [], inProgress: [], done: [] };
+                Object.keys(prev).forEach(key => {
+                    const statusKey = key as TaskStatus;
+                    newTasks[statusKey] = prev[statusKey].filter(t => t.id !== updatedTask.id);
+                });
+                newTasks[column].push(updatedTask);
+                return newTasks;
+            });
         } else {
             // Add new task
             setTasks(prev => ({
@@ -260,11 +276,17 @@ function DashboardPageInternal({
         }
     };
 
-    const handleDeleteTask = (taskId: string, column: TaskStatus) => {
-        setTasks(prev => ({
-            ...prev,
-            [column]: prev[column].filter(t => t.id !== taskId),
-        }));
+    const handleDeleteTask = async (taskId: number, column: TaskStatus) => {
+        const result = await deleteTask(taskId);
+        if (result.error) {
+            toast({ title: "Error deleting task", description: result.error, variant: "destructive" });
+        } else {
+             setTasks(prev => ({
+                ...prev,
+                [column]: prev[column].filter(t => t.id !== taskId),
+            }));
+            toast({ title: "Task deleted" });
+        }
     };
     
     const handleMetricVisibilityChange = (metric: keyof VisibleMetrics, checked: boolean) => {
@@ -469,8 +491,9 @@ function DashboardPageInternal({
                                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                           <TaskDialog
                                               task={task}
-                                              onSave={(updatedTask) => handleSaveTask(updatedTask, status)}
+                                              onSave={(updatedTask) => handleSaveTask(updatedTask)}
                                               column={status}
+                                              userId={currentUser!.id}
                                               triggerButton={
                                                   <Button variant="ghost" size="icon" className="h-7 w-7">
                                                       <Edit className="h-4 w-4" />
@@ -501,8 +524,9 @@ function DashboardPageInternal({
                             ))}
                           </div>
                            <TaskDialog
-                                onSave={(newTask) => handleSaveTask(newTask, status)}
+                                onSave={(newTask) => handleSaveTask(newTask)}
                                 column={status}
+                                userId={currentUser!.id}
                                 triggerButton={
                                     <Button variant="outline" className="w-full mt-2">
                                         <PlusCircle className="mr-2 h-4 w-4" />
@@ -715,7 +739,7 @@ function DashboardPageInternal({
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">${dashboardMetrics.teamRevenue.toLocaleString()}</div>
+                            <div className="text-2xl font-bold">${initialDashboardMetrics.teamRevenue.toLocaleString()}</div>
                             <p className="text-xs text-muted-foreground">Total revenue generated by the team.</p>
                         </CardContent>
                     </Card>
@@ -725,7 +749,7 @@ function DashboardPageInternal({
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{dashboardMetrics.totalProjects}</div>
+                            <div className="text-2xl font-bold">{initialDashboardMetrics.totalProjects}</div>
                             <p className="text-xs text-muted-foreground">Total projects across the agency.</p>
                         </CardContent>
                     </Card>
@@ -735,7 +759,7 @@ function DashboardPageInternal({
                             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                           <div className="text-2xl font-bold">+{dashboardMetrics.clientAcquisition}</div>
+                           <div className="text-2xl font-bold">+{initialDashboardMetrics.clientAcquisition}</div>
                             <p className="text-xs text-muted-foreground">New clients this quarter.</p>
                         </CardContent>
                     </Card>
@@ -746,7 +770,7 @@ function DashboardPageInternal({
                         <CardDescription>{t.teamProductivityDesc}</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
-                         <AgencyMetrics metrics={agencyMetrics} isLoading={!agencyMetrics} />
+                         <AgencyMetrics metrics={initialAgencyMetrics} isLoading={!initialAgencyMetrics} />
                     </CardContent>
                 </Card>
                 <OperationalCharts />
@@ -757,31 +781,100 @@ function DashboardPageInternal({
   );
 }
 
-export default async function DashboardPage() {
+export default function DashboardPage() {
     const [
         currentUser,
         allUsers,
         dashboardMetrics,
         personalMetrics,
         agencyMetrics,
-    ] = await Promise.all([
+        tasks
+    ] = use(Promise.all([
         getCurrentUser(),
         getUsers(),
         getAgencyDashboardMetrics(),
         getPersonalDashboardMetrics(),
         getAgencyMetrics(),
-    ]);
+        getTasks(),
+    ]));
 
     const otherUsers = allUsers.filter(u => u.id !== currentUser?.id);
+
+    const initialTasks: { [key in TaskStatus]: Task[] } = {
+        todo: tasks.filter(t => t.status === 'todo'),
+        inProgress: tasks.filter(t => t.status === 'inProgress'),
+        done: tasks.filter(t => t.status === 'done'),
+    };
+    
+    // Replace use() with a more traditional client-side data fetching pattern
+    const [data, setData] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadData() {
+            setIsLoading(true);
+            const [
+                currentUser,
+                allUsers,
+                dashboardMetrics,
+                personalMetrics,
+                agencyMetrics,
+                tasks
+            ] = await Promise.all([
+                getCurrentUser(),
+                getUsers(),
+                getAgencyDashboardMetrics(),
+                getPersonalDashboardMetrics(),
+                getAgencyMetrics(),
+                getTasks(),
+            ]);
+
+            const otherUsers = allUsers.filter(u => u.id !== currentUser?.id);
+            const initialTasks: { [key in TaskStatus]: Task[] } = {
+                todo: tasks.filter(t => t.status === 'todo'),
+                inProgress: tasks.filter(t => t.status === 'inProgress'),
+                done: tasks.filter(t => t.status === 'done'),
+            };
+
+            setData({
+                currentUser,
+                otherUsers,
+                dashboardMetrics,
+                personalMetrics,
+                agencyMetrics,
+                initialTasks
+            });
+            setIsLoading(false);
+        }
+        loadData();
+    }, []);
+
+    if (isLoading || !data) {
+        return (
+            <div className="p-8">
+                <Skeleton className="h-8 w-1/4 mb-2" />
+                <Skeleton className="h-4 w-1/2 mb-8" />
+                <div className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <Card><CardHeader><Skeleton className="h-5 w-1/3"/></CardHeader><CardContent><Skeleton className="h-8 w-1/2"/><Skeleton className="h-4 w-1/4 mt-1"/></CardContent></Card>
+                        <Card><CardHeader><Skeleton className="h-5 w-1/3"/></CardHeader><CardContent><Skeleton className="h-8 w-1/2"/><Skeleton className="h-4 w-1/4 mt-1"/></CardContent></Card>
+                        <Card><CardHeader><Skeleton className="h-5 w-1/3"/></CardHeader><CardContent><Skeleton className="h-8 w-1/2"/><Skeleton className="h-4 w-1/4 mt-1"/></CardContent></Card>
+                    </div>
+                     <Card><CardHeader><Skeleton className="h-6 w-1/4"/></CardHeader><CardContent><Skeleton className="h-40 w-full"/></CardContent></Card>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <ClientOnly>
             <DashboardPageInternal 
-                currentUser={currentUser}
-                otherUsers={otherUsers}
-                dashboardMetrics={dashboardMetrics}
-                personalMetrics={personalMetrics}
-                agencyMetrics={agencyMetrics}
+                currentUser={data.currentUser}
+                otherUsers={data.otherUsers}
+                dashboardMetrics={data.dashboardMetrics}
+                personalMetrics={data.personalMetrics}
+                agencyMetrics={data.agencyMetrics}
+                initialTasks={data.initialTasks}
             />
         </ClientOnly>
     )

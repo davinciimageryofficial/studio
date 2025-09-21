@@ -1,9 +1,8 @@
 
-
 'use server';
 
 import { createSupabaseServerClient } from './supabase/server';
-import type { User, Post, Course, Experience } from './types';
+import type { User, Post, Course, Experience, Task, TaskStatus } from './types';
 
 /**
  * Fetches the current authenticated user's profile.
@@ -314,6 +313,49 @@ export async function getAgencyMetrics() {
             capacity: 85,
         }
     };
+}
+
+// =================================================================
+// Task Board Functions
+// =================================================================
+export async function getTasks(): Promise<Task[]> {
+  const supabase = createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data, error } = await supabase.from('tasks').select('*').eq('user_id', user.id);
+  if (error) {
+    console.error("Error fetching tasks:", error);
+    return [];
+  }
+  return data;
+}
+
+export async function createTask(task: Omit<Task, 'id' | 'created_at'>) {
+    const supabase = createSupabaseServerClient();
+    const { data, error } = await supabase.from('tasks').insert(task).select().single();
+    if (error) {
+        return { error: error.message };
+    }
+    return { data };
+}
+
+export async function updateTask(taskId: number, updates: Partial<Task>) {
+    const supabase = createSupabaseServerClient();
+    const { data, error } = await supabase.from('tasks').update(updates).eq('id', taskId).select().single();
+     if (error) {
+        return { error: error.message };
+    }
+    return { data };
+}
+
+export async function deleteTask(taskId: number) {
+    const supabase = createSupabaseServerClient();
+    const { error } = await supabase.from('tasks').delete().eq('id', taskId);
+     if (error) {
+        return { error: error.message };
+    }
+    return { success: true };
 }
 
 

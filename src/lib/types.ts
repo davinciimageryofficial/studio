@@ -17,6 +17,18 @@ export type Experience = {
     end_date?: string | null;
 };
 
+export type TaskStatus = 'todo' | 'inProgress' | 'done';
+
+export type Task = {
+  id: number;
+  created_at?: string;
+  user_id: string;
+  title: string;
+  status: TaskStatus;
+  priority: 'High' | 'Medium' | 'Low';
+};
+
+
 export type User = {
   id: string;
   name: string;

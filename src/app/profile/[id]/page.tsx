@@ -9,7 +9,7 @@ import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Tra
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
-import { useState, useRef, useMemo, useEffect } from "react";
+import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose, DialogDescription } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -112,37 +112,39 @@ export default function ProfilePage() {
     instagram: "",
   });
 
-  useEffect(() => {
-    async function fetchData() {
-        setIsLoading(true);
-        const loggedInUser = await getCurrentUser();
-        setCurrentUser(loggedInUser);
-        
-        const profileId = params.id === 'me' ? loggedInUser?.id : params.id;
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    const loggedInUser = await getCurrentUser();
+    setCurrentUser(loggedInUser);
+    
+    const profileId = params.id === 'me' ? loggedInUser?.id : params.id;
 
-        if (!profileId) {
-            setIsLoading(false);
-            notFound();
-            return;
-        }
-
-        const [profileUser, profileExperiences] = await Promise.all([
-            getUserById(profileId),
-            getExperiencesByUserId(profileId)
-        ]);
-
-        if (!profileUser) {
-            setIsLoading(false);
-            notFound();
-            return;
-        }
-
-        setUser(profileUser);
-        setExperiences(profileExperiences);
+    if (!profileId) {
         setIsLoading(false);
+        notFound();
+        return;
     }
-    fetchData();
+
+    const [profileUser, profileExperiences] = await Promise.all([
+        getUserById(profileId),
+        getExperiencesByUserId(profileId)
+    ]);
+
+    if (!profileUser) {
+        setIsLoading(false);
+        notFound();
+        return;
+    }
+
+    setUser(profileUser);
+    setExperiences(profileExperiences);
+    setIsLoading(false);
   }, [params.id]);
+
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
 
   if (isLoading) {
@@ -728,7 +730,8 @@ function EditExperienceDialog({ initialExperiences, onSave }: { initialExperienc
 
     const handleChange = (index: number, field: keyof Experience, value: string) => {
         const newExperiences = [...experiences];
-        newExperiences[index][field] = value;
+        const exp = newExperiences[index] as any;
+        exp[field] = value;
         setExperiences(newExperiences);
     };
 

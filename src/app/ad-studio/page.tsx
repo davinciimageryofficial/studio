@@ -45,11 +45,11 @@ type Campaign = {
     conversions: number;
 }
 
-function AdStudioPageInternal({ initialCampaigns }: { initialCampaigns: Campaign[] }) {
+function AdStudioPageInternal() {
   const { language } = useLanguage();
   const t = translations[language];
-  const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
-  const [isLoading, setIsLoading] = useState(false);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const loadCampaigns = useCallback(async () => {
@@ -58,6 +58,10 @@ function AdStudioPageInternal({ initialCampaigns }: { initialCampaigns: Campaign
     setCampaigns(fetchedCampaigns);
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    loadCampaigns();
+  }, [loadCampaigns]);
   
   const handleCampaignCreated = () => {
     loadCampaigns();
@@ -215,7 +219,7 @@ function AdStudioPageInternal({ initialCampaigns }: { initialCampaigns: Campaign
 export default function AdStudioPage() {
     return (
         <ClientOnly>
-            <AdStudioPageInternal initialCampaigns={[]} />
+            <AdStudioPageInternal />
         </ClientOnly>
     );
 }
@@ -268,7 +272,9 @@ function CreateCampaignDialog({ t, onCampaignCreated }: { t: typeof translations
         }
         debounceTimeout.current = setTimeout(() => {
             const { name, content, keywords, type } = form.getValues();
-            triggerAnalysis({ name, content, keywords, type });
+            if (type) { // Only run analysis if a type is selected
+                triggerAnalysis({ name, content, keywords, type });
+            }
         }, 1000); // 1-second debounce
 
         return () => {
@@ -403,7 +409,7 @@ function CreateCampaignDialog({ t, onCampaignCreated }: { t: typeof translations
                     <DialogClose asChild>
                         <Button type="button" variant="secondary">{t.cancel}</Button>
                     </DialogClose>
-                    <Button type="submit" disabled={isSubmitting}>
+                    <Button type="submit" disabled={isSubmitting || !form.formState.isValid}>
                         {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle className="mr-2 h-4 w-4" />}
                         {isSubmitting ? "Launching..." : t.launchCampaign}
                     </Button>
