@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -38,7 +38,6 @@ import { AlertCircle, User, SlidersHorizontal, Zap } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { getCurrentUser } from "@/lib/database";
 import type { User as UserType } from "@/lib/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { requirementCategories, type ReqCategory, type FreelanceNiche } from "@/lib/skill-sync-net-data";
@@ -191,7 +190,7 @@ function TraitPickerDialog({ onSave }: { onSave: (traits: string) => void }) {
     );
 }
 
-export function WorkmateRadarForm({ isLoggedIn }: { isLoggedIn: boolean }) {
+export function WorkmateRadarForm({ currentUser, isLoggedIn }: { currentUser: UserType | null, isLoggedIn: boolean }) {
   const [result, setResult] = useState<AIWorkmateRadarOutput | null>(null);
   const [loading, setLoading] = useState(false);
   const [autoMatching, setAutoMatching] = useState(false);
@@ -227,15 +226,15 @@ export function WorkmateRadarForm({ isLoggedIn }: { isLoggedIn: boolean }) {
   }
 
   const handleAutomatch = async () => {
+    if (!currentUser) {
+        setError("You must be logged in to use automatch.");
+        return;
+    }
     setAutoMatching(true);
     setLoading(true);
     setError(null);
     setResult(null);
     try {
-        const currentUser = await getCurrentUser();
-        if (!currentUser) {
-            throw new Error("Could not find current user to automatch.");
-        }
         const autoProfile = `This user has the headline "${currentUser.headline}". Their bio is: "${currentUser.bio}". Their skills include: ${currentUser.skills.join(", ")}. Find collaborators who would complement this user's profile.`;
         
         const output = await aiWorkmateRadar({

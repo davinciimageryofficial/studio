@@ -24,7 +24,7 @@ import { AgencyMetrics } from "./agency-metrics";
 import { OperationalCharts } from "./operational-charts";
 import { useLanguage } from "@/context/language-context";
 import { ProfileEngagementChart } from "./profile-engagement-chart";
-import { getDashboardPageData, createTask, updateTask, deleteTask } from "@/lib/database";
+import { getDashboardPageData, createTask, updateTask, deleteTask, getUsers } from "@/lib/database";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { User as UserType, Task, TaskStatus } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -129,6 +129,7 @@ function DashboardPageInternal({
     personalMetrics: initialPersonalMetrics,
     agencyMetrics,
     initialTasks,
+    notifications,
     t,
 }: {
     currentUser: UserType | null,
@@ -137,6 +138,7 @@ function DashboardPageInternal({
     personalMetrics: { profileViews: number, newConnections: number, pendingInvitations: number, profileViewsChange: number, newConnectionsChange: number },
     agencyMetrics: any,
     initialTasks: { [key in TaskStatus]: Task[] },
+    notifications: any[],
     t: typeof translations['en']
 }) {
     const [isAppDownloaded, setIsAppDownloaded] = useState(false);
@@ -780,6 +782,7 @@ type DashboardData = {
     personalMetrics: { profileViews: number; newConnections: number; pendingInvitations: number; profileViewsChange: number; newConnectionsChange: number; };
     agencyMetrics: any;
     initialTasks: { todo: Task[]; inProgress: Task[]; done: Task[]; };
+    notifications: any[];
 };
 
 export default function DashboardPage() {
@@ -791,7 +794,15 @@ export default function DashboardPage() {
         async function loadData() {
             setIsLoading(true);
             const pageData = await getDashboardPageData();
-            setData(pageData);
+
+            const users = await getUsers();
+            const notifications = users.length >= 4 ? [
+                { user: users[2], action: "viewed your profile.", time: "2h" },
+                { user: users[3], action: "sent you a connection request.", time: "1d" },
+                { user: users[4], action: "accepted your connection request.", time: "2d" },
+            ] : [];
+
+            setData({ ...pageData, notifications });
             setIsLoading(false);
         }
         loadData();
@@ -823,12 +834,9 @@ export default function DashboardPage() {
                 personalMetrics={data.personalMetrics}
                 agencyMetrics={data.agencyMetrics}
                 initialTasks={data.initialTasks}
+                notifications={data.notifications}
                 t={t}
             />
         </ClientOnly>
     )
 }
-
-    
-
-    

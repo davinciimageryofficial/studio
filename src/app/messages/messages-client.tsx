@@ -41,7 +41,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { User as UserType } from "@/lib/types";
-import { getUsers } from "@/lib/database";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 
@@ -77,7 +76,6 @@ interface MessagesClientProps {
 
 export function MessagesClient({ initialConversations, initialAllUsers, currentUser }: MessagesClientProps) {
   const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
-  const [allUsers, setAllUsers] = useState<UserType[]>(initialAllUsers);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(initialConversations[0]?.id || null);
   const [fontSize, setFontSize] = useState("base");
   const [showAvatars, setShowAvatars] = useState(true);
@@ -114,7 +112,7 @@ export function MessagesClient({ initialConversations, initialAllUsers, currentU
             setConversations([...conversations]);
             setActiveConversationId(partnerConversation.id);
         } else {
-            const partnerDetails = allUsers.find(u => u.id === partnerId);
+            const partnerDetails = initialAllUsers.find(u => u.id === partnerId);
             const newConversation: Conversation = {
                 id: partnerId,
                 name: partnerName,
@@ -152,7 +150,7 @@ export function MessagesClient({ initialConversations, initialAllUsers, currentU
     } else if (applicationParam) {
         try {
             const app = JSON.parse(applicationParam);
-            const recruiter = allUsers.find(u => u.id === app.recruiterId);
+            const recruiter = initialAllUsers.find(u => u.id === app.recruiterId);
 
             if (recruiter) {
                 const applicationMessage = `
@@ -178,7 +176,7 @@ export function MessagesClient({ initialConversations, initialAllUsers, currentU
         }
     }
 
-  }, [searchParams, toast, allUsers, conversations]);
+  }, [searchParams, toast, initialAllUsers, conversations]);
 
   useEffect(() => {
     // Scroll to the bottom when new messages are added
@@ -277,7 +275,7 @@ export function MessagesClient({ initialConversations, initialAllUsers, currentU
                             <PlusCircle className="h-5 w-5" />
                         </Button>
                     </DialogTrigger>
-                    <NewCommunityDialog />
+                    <NewCommunityDialog allUsers={initialAllUsers} currentUser={currentUser} />
                 </Dialog>
             </div>
             <div className="relative mt-4">
@@ -455,19 +453,11 @@ export function MessagesClient({ initialConversations, initialAllUsers, currentU
   );
 }
 
-function NewCommunityDialog() {
+function NewCommunityDialog({ allUsers, currentUser }: { allUsers: UserType[], currentUser: UserType | null }) {
     const { toast } = useToast();
     const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-    const [connections, setConnections] = useState<UserType[]>([]);
-
-    useEffect(() => {
-        async function fetchUsers() {
-            const users = await getUsers();
-            // Exclude current user placeholder
-            setConnections(users.filter(u => u.id !== '2'));
-        }
-        fetchUsers();
-    }, []);
+    
+    const connections = allUsers.filter(u => u.id !== currentUser?.id);
 
     const handleSelectUser = (userId: string) => {
         setSelectedUsers(prev => 

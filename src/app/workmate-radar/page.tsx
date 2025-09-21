@@ -77,7 +77,7 @@ export default async function WorkmateRadarPage() {
           </CardHeader>
           <CardContent>
             <ClientOnly>
-              <WorkmateRadarForm isLoggedIn={isLoggedIn} />
+              <WorkmateRadarForm isLoggedIn={isLoggedIn} currentUser={currentUser} />
             </ClientOnly>
           </CardContent>
         </Card>
