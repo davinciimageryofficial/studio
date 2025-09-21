@@ -69,7 +69,8 @@ export async function signup(formData: FormData) {
             reliability_score: 80,
             community_standing: "New member with a clean record.",
             disputes: 0,
-            avatar_url: `https://picsum.photos/seed/${authData.user.id}/200/200`
+            avatar_url: `https://picsum.photos/seed/${authData.user.id}/200/200`,
+            status: 'pending_verification', // Start as pending
         });
     
     if (profileError) {
@@ -107,8 +108,10 @@ export async function verifyAccessCode(accessCode: string) {
     const supabase = createSupabaseServerClient();
     const { data: { user } } = await supabase.auth.getUser();
 
+    // The user might not be "active" yet, but they have an auth session
+    // after signing up. We just need to check if a user session exists.
     if (!user) {
-        return { error: 'You must be logged in to verify an access code.' };
+        return { error: 'You must sign up or log in before verifying an access code.' };
     }
 
     // 1. Check if the access code exists and is not yet redeemed

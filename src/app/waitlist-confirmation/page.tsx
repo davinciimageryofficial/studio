@@ -23,6 +23,7 @@ import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/context/language-context";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { verifyAccessCode } from "@/app/auth/actions";
+import { Loader2 } from "lucide-react";
 
 type WaitlistData = {
   fullName: string;
@@ -35,6 +36,7 @@ export default function WaitlistConfirmationPage() {
   const router = useRouter();
   const [waitlistData, setWaitlistData] = useState<WaitlistData | null>(null);
   const [accessCode, setAccessCode] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { translations: t } = useLanguage();
 
@@ -43,6 +45,8 @@ export default function WaitlistConfirmationPage() {
     if (data) {
       setWaitlistData(JSON.parse(data));
     } else {
+      // If there's no data, maybe they landed here directly.
+      // Redirecting to signup is a safe fallback.
       router.push('/signup');
     }
   }, [router]);
@@ -62,7 +66,9 @@ export default function WaitlistConfirmationPage() {
         return;
     }
 
+    setIsSubmitting(true);
     const result = await verifyAccessCode(accessCode);
+    setIsSubmitting(false);
 
     if (result.success) {
         toast({
@@ -82,7 +88,7 @@ export default function WaitlistConfirmationPage() {
   if (!waitlistData) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        {/* You can add a loading spinner here */}
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
@@ -145,10 +151,15 @@ export default function WaitlistConfirmationPage() {
                                         value={accessCode}
                                         onChange={(e) => setAccessCode(e.target.value)}
                                         className="border-black"
+                                        disabled={isSubmitting}
                                     />
-                                    <Button type="submit" className="bg-black hover:bg-gray-800">
-                                        <Rocket className="mr-2 h-4 w-4" />
-                                        {t.confirmationSkipWaitlist}
+                                    <Button type="submit" className="bg-black hover:bg-gray-800" disabled={isSubmitting}>
+                                        {isSubmitting ? (
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <Rocket className="mr-2 h-4 w-4" />
+                                        )}
+                                        {isSubmitting ? "Verifying..." : t.confirmationSkipWaitlist}
                                     </Button>
                                 </form>
                             </CardContent>
