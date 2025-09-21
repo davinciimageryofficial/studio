@@ -66,7 +66,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
-import { freelanceNiches } from "@/lib/skill-sync-net-data";
+import freelanceNiches from "@/lib/freelance-niches.json";
 
 
 function FeedContent({ posts, onUpdate, onDelete, onReply, t, isLoading, currentUser }: { posts: Post[], onUpdate: (post: Post) => void, onDelete: (postId: number) => void, onReply: (parentPostId: number, reply: Post) => void, t: typeof translations['en'], isLoading: boolean, currentUser: UserType | null }) {
