@@ -42,7 +42,7 @@ export default function LandingPage() {
                            {t.landingDescription}
                         </p>
                         <div className="mt-8 flex items-center gap-4">
-                            <Button asChild size="lg" className="h-12 px-8">
+                            <Button asChild size="lg" className="h-12 px-8 bg-black hover:bg-gray-800 text-primary-foreground">
                                 <Link href="/signup">
                                     {t.joinWaitlist}
                                     <ArrowRight className="ml-2 h-5 w-5" />
