@@ -42,6 +42,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { User as UserType } from "@/lib/types";
 import { getConversations, getUsers } from "@/lib/database";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 
 type Message = {
@@ -84,6 +85,7 @@ export function MessagesClient() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const searchParams = useSearchParams();
+  const supabase = createSupabaseBrowserClient();
 
   useEffect(() => {
       async function loadData() {
@@ -194,10 +196,28 @@ export function MessagesClient() {
     }
   }, [activeConversation?.messages]);
 
-  const handleSendMessage = (e?: React.FormEvent) => {
+  const handleSendMessage = async (e?: React.FormEvent) => {
     e?.preventDefault();
     const messageContent = editorRef.current?.innerHTML || '';
     if (!messageContent.trim() || !activeConversationId) return;
+
+    const currentUser = await supabase.auth.getUser();
+    if (!currentUser.data.user) return;
+    
+    const { error } = await supabase.from('messages').insert({
+        content: messageContent,
+        sender_id: currentUser.data.user.id,
+        conversation_id: activeConversationId
+    });
+
+    if (error) {
+        toast({
+            title: "Error Sending Message",
+            description: "Could not send your message. Please try again.",
+            variant: "destructive"
+        });
+        return;
+    }
 
     const newMessageObj: Message = {
       from: 'me',
