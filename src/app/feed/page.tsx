@@ -58,7 +58,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Post, User as UserType } from "@/lib/types";
-import { getPosts, getCurrentUser, getUserById } from "@/lib/database";
+import { getPosts, getUserById } from "@/lib/database";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -122,27 +122,15 @@ function PocketGuideDialog({ onStartPost, t }: { onStartPost: () => void, t: typ
     )
 }
 
-function FeedPageInternal() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+function FeedPageInternal({ initialPosts, currentUser }: { initialPosts: Post[], currentUser: UserType | null }) {
+  const [posts, setPosts] = useState<Post[]>(initialPosts);
+  const [isLoading, setIsLoading] = useState(false);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("you-centric");
   const [selectedNiche, setSelectedNiche] = useState<string | null>(null);
   const { language } = useLanguage();
   const t = translations[language];
   const supabase = createSupabaseBrowserClient();
-
-  useEffect(() => {
-    async function loadData() {
-        setIsLoading(true);
-        const [postsData, currentUserData] = await Promise.all([getPosts(), getCurrentUser()]);
-        setPosts(postsData);
-        setCurrentUser(currentUserData);
-        setIsLoading(false);
-    }
-    loadData();
-  }, []);
 
   const addReplyRecursively = (posts: Post[], newReply: Post): Post[] => {
       return posts.map(post => {
@@ -233,7 +221,8 @@ function FeedPageInternal() {
           return posts;
       }
       if (activeTab === "clique") {
-          return posts.filter(post => post.author.category === 'design');
+          if (!currentUser) return [];
+          return posts.filter(post => post.author.category === currentUser.category);
       }
       if (activeTab === "niche") {
           if (!selectedNiche) return posts;
@@ -333,10 +322,13 @@ function FeedPageInternal() {
   );
 }
 
-export default function FeedPage() {
+export default async function FeedPage() {
+    const posts = await getPosts();
+    // In a real app, currentUser would be passed from a higher-level component (e.g., layout)
+    // to avoid fetching it on every page. For now, we keep it simple.
     return (
         <ClientOnly>
-            <FeedPageInternal />
+            <FeedPageInternal initialPosts={posts} currentUser={null} />
         </ClientOnly>
     )
 }

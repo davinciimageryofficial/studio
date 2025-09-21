@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -41,7 +41,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { User as UserType } from "@/lib/types";
-import { getConversations, getUsers } from "@/lib/database";
+import { getUsers } from "@/lib/database";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 
@@ -72,9 +72,10 @@ const GoogleDriveIcon = () => (
 interface MessagesClientProps {
     initialConversations: Conversation[];
     initialAllUsers: UserType[];
+    currentUser: UserType | null;
 }
 
-export function MessagesClient({ initialConversations, initialAllUsers }: MessagesClientProps) {
+export function MessagesClient({ initialConversations, initialAllUsers, currentUser }: MessagesClientProps) {
   const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
   const [allUsers, setAllUsers] = useState<UserType[]>(initialAllUsers);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(initialConversations[0]?.id || null);
@@ -189,14 +190,11 @@ export function MessagesClient({ initialConversations, initialAllUsers }: Messag
   const handleSendMessage = async (e?: React.FormEvent) => {
     e?.preventDefault();
     const messageContent = editorRef.current?.innerHTML || '';
-    if (!messageContent.trim() || !activeConversationId) return;
-
-    const currentUser = await supabase.auth.getUser();
-    if (!currentUser.data.user) return;
+    if (!messageContent.trim() || !activeConversationId || !currentUser) return;
     
     const { error } = await supabase.from('messages').insert({
         content: messageContent,
-        sender_id: currentUser.data.user.id,
+        sender_id: currentUser.id,
         conversation_id: activeConversationId
     });
 
@@ -309,6 +307,7 @@ export function MessagesClient({ initialConversations, initialAllUsers }: Messag
                 >
                   <div className="flex items-start gap-3">
                     <Avatar>
+                        <AvatarImage src={convo.avatar} />
                         <AvatarFallback>
                             <User className="h-5 w-5" />
                         </AvatarFallback>
@@ -333,6 +332,7 @@ export function MessagesClient({ initialConversations, initialAllUsers }: Messag
           {/* Chat Header */}
           <div className="flex items-center gap-3 border-b p-4">
             <Avatar>
+                <AvatarImage src={activeConversation.avatar} />
                 <AvatarFallback>
                     <User className="h-5 w-5" />
                 </AvatarFallback>
@@ -392,7 +392,8 @@ export function MessagesClient({ initialConversations, initialAllUsers }: Messag
               {activeConversation.messages?.map((message, index) => (
                 <div key={index} className={cn("flex items-end gap-2", message.from === 'me' ? 'justify-end' : 'justify-start')}>
                   {message.from !== 'me' && (
-                    <Avatar className="h-8 w-8">
+                    <Avatar className={cn("h-8 w-8", !showAvatars && "invisible")}>
+                        <AvatarImage src={activeConversation.avatar} />
                         <AvatarFallback>
                             <User className="h-4 w-4" />
                         </AvatarFallback>
@@ -522,6 +523,7 @@ function NewCommunityDialog() {
                                 <div key={user.id} className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <Avatar className="h-9 w-9">
+                                            <AvatarImage src={user.avatar} />
                                             <AvatarFallback>
                                                 <User className="h-5 w-5" />
                                             </AvatarFallback>
@@ -588,6 +590,7 @@ function CallDialog({ user, isVideo }: { user: Conversation, isVideo: boolean })
                 ) : (
                     <div className="w-full h-full flex items-center justify-center">
                          <Avatar className="h-24 w-24">
+                            <AvatarImage src={user.avatar} />
                             <AvatarFallback><User className="h-12 w-12" /></AvatarFallback>
                         </Avatar>
                     </div>
@@ -596,6 +599,7 @@ function CallDialog({ user, isVideo }: { user: Conversation, isVideo: boolean })
         )}
         {!isVideo && (
             <Avatar className="h-24 w-24 mb-4">
+                <AvatarImage src={user.avatar} />
                 <AvatarFallback><User className="h-12 w-12" /></AvatarFallback>
             </Avatar>
         )}

@@ -1,6 +1,4 @@
 
-"use client";
-
 import { Inter, Michroma } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
@@ -21,33 +19,39 @@ const michroma = Michroma({
 
 function RootLayoutInternal({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   const pathname = usePathname();
   const { isLoaded } = useLanguage();
   const publicPages = ['/', '/login', '/signup', '/waitlist-confirmation', '/logout', '/donate', '/faq'];
   const isPublicPage = publicPages.includes(pathname);
 
   if (!isLoaded) {
-    return null; // Render nothing while translations are loading to avoid flash of unstyled text
+    return (
+        <body className={`${inter.variable} ${michroma.variable} font-body antialiased`}>
+            {/* Render nothing or a loading spinner to avoid flash of unstyled content */}
+        </body>
+    );
   }
 
   return (
-    <>
-      {isPublicPage ? (
-        <>{children}</>
-      ) : (
-        <AppLayout>
-          {children}
-        </AppLayout>
-      )}
-      <ClientOnly>
-        <Toaster />
-      </ClientOnly>
-      <Analytics />
-      <SpeedInsights />
-    </>
+    <body className={`${inter.variable} ${michroma.variable} font-body antialiased`}>
+        {isPublicPage ? (
+            <>
+                {children}
+            </>
+        ) : (
+            <AppLayout>
+              {children}
+            </AppLayout>
+        )}
+        <ClientOnly>
+            <Toaster />
+        </ClientOnly>
+        <Analytics />
+        <SpeedInsights />
+    </body>
   );
 }
 
@@ -62,11 +66,9 @@ export default function RootLayout({
         <title>Sentry</title>
         <meta name="description" content="Your professional network and dream team builder." />
       </head>
-      <body className={`${inter.variable} ${michroma.variable} font-body antialiased`}>
         <Providers>
-          <RootLayoutInternal>{children}</RootLayoutInternal>
+            <RootLayoutInternal>{children}</RootLayoutInternal>
         </Providers>
-      </body>
     </html>
   );
 }

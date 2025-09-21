@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -37,11 +37,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, User, SlidersHorizontal, Zap } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { getCurrentUser } from "@/lib/database";
 import type { User as UserType } from "@/lib/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { requirementCategories, type ReqCategory, type FreelanceNiche } from "@/lib/skill-sync-net-data";
+import freelanceNiches from "@/lib/freelance-niches.json";
 
 
 const formSchema = z.object({
@@ -190,20 +191,11 @@ function TraitPickerDialog({ onSave }: { onSave: (traits: string) => void }) {
     );
 }
 
-export function WorkmateRadarForm() {
+export function WorkmateRadarForm({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [result, setResult] = useState<AIWorkmateRadarOutput | null>(null);
   const [loading, setLoading] = useState(false);
   const [autoMatching, setAutoMatching] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    async function checkUser() {
-        const user = await getCurrentUser();
-        setIsLoggedIn(!!user);
-    }
-    checkUser();
-  }, []);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),

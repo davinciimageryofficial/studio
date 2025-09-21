@@ -39,21 +39,11 @@ import { useFullscreen } from "@/hooks/use-fullscreen";
 import { useLanguage } from "@/context/language-context";
 import { getTranslations } from "@/lib/translations";
 import { useEffect, useState } from "react";
-import { getCurrentUser } from "@/lib/database";
 import type { User as UserType } from "@/lib/types";
 
-export function AppSidebar() {
+export function AppSidebar({ currentUser }: { currentUser: UserType | null }) {
   const pathname = usePathname();
   const { language, isLoaded } = useLanguage();
-  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
-
-  useEffect(() => {
-    async function fetchUser() {
-      const user = await getCurrentUser();
-      setCurrentUser(user);
-    }
-    fetchUser();
-  }, []);
   
   if (!isLoaded) {
     // Render a skeleton or null while translations are loading

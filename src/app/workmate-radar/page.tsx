@@ -2,8 +2,12 @@
 import { WorkmateRadarForm } from "./form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ClientOnly } from "@/components/layout/client-only";
+import { getCurrentUser } from "@/lib/database";
 
-export default function WorkmateRadarPage() {
+export default async function WorkmateRadarPage() {
+  const currentUser = await getCurrentUser();
+  const isLoggedIn = !!currentUser;
+
   return (
     <div className="flex flex-col items-center p-4 sm:p-6 md:p-8">
         {/* New Quantum Grid Animation */}
@@ -73,7 +77,7 @@ export default function WorkmateRadarPage() {
           </CardHeader>
           <CardContent>
             <ClientOnly>
-              <WorkmateRadarForm />
+              <WorkmateRadarForm isLoggedIn={isLoggedIn} />
             </ClientOnly>
           </CardContent>
         </Card>
