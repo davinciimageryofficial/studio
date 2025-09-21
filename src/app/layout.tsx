@@ -2,13 +2,11 @@
 import { Inter, Michroma } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
-import { AppLayout } from "@/components/layout/app-layout";
 import { Providers } from "./providers";
 import { ClientOnly } from "@/components/layout/client-only";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { usePathname } from "next/navigation";
-import { useLanguage } from "@/context/language-context";
+import { LayoutBody } from "@/components/layout/layout-body";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const michroma = Michroma({
@@ -16,46 +14,6 @@ const michroma = Michroma({
   weight: ['400'],
   variable: '--font-michroma',
 });
-
-function RootLayoutInternal({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  "use client";
-  
-  const pathname = usePathname();
-  const { isLoaded } = useLanguage();
-  const publicPages = ['/', '/login', '/signup', '/waitlist-confirmation', '/logout', '/donate', '/faq'];
-  const isPublicPage = publicPages.includes(pathname);
-
-  if (!isLoaded) {
-    return (
-        <body className={`${inter.variable} ${michroma.variable} font-body antialiased`}>
-            {/* Render nothing or a loading spinner to avoid flash of unstyled content */}
-        </body>
-    );
-  }
-
-  return (
-    <body className={`${inter.variable} ${michroma.variable} font-body antialiased`}>
-        {isPublicPage ? (
-            <>
-                {children}
-            </>
-        ) : (
-            <AppLayout>
-              {children}
-            </AppLayout>
-        )}
-        <ClientOnly>
-            <Toaster />
-        </ClientOnly>
-        <Analytics />
-        <SpeedInsights />
-    </body>
-  );
-}
 
 export default function RootLayout({
   children,
@@ -68,9 +26,16 @@ export default function RootLayout({
         <title>Sentry</title>
         <meta name="description" content="Your professional network and dream team builder." />
       </head>
+      <body className={`${inter.variable} ${michroma.variable} font-body antialiased`}>
         <Providers>
-            <RootLayoutInternal>{children}</RootLayoutInternal>
+            <LayoutBody>{children}</LayoutBody>
+            <ClientOnly>
+                <Toaster />
+            </ClientOnly>
+            <Analytics />
+            <SpeedInsights />
         </Providers>
+      </body>
     </html>
   );
 }

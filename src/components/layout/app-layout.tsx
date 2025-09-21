@@ -7,7 +7,7 @@ import { NavigationPrompt } from "@/components/layout/navigation-prompt";
 import { getCurrentUser } from "@/lib/database";
 import type { User } from "@/lib/types";
 
-// AppLayout is now a Server Component that fetches data.
+
 export async function AppLayout({
   children,
 }: Readonly<{
