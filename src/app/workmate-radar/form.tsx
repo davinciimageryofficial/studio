@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -41,6 +41,7 @@ import { Separator } from "@/components/ui/separator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { getCurrentUser } from "@/lib/database";
 import type { User as UserType } from "@/lib/types";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
 const formSchema = z.object({
@@ -194,6 +195,15 @@ export function WorkmateRadarForm() {
   const [loading, setLoading] = useState(false);
   const [autoMatching, setAutoMatching] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    async function checkUser() {
+        const user = await getCurrentUser();
+        setIsLoggedIn(!!user);
+    }
+    checkUser();
+  }, []);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -331,10 +341,29 @@ export function WorkmateRadarForm() {
             <Button type="submit" disabled={loading} className="flex-1">
               {loading && !autoMatching ? "Analyzing..." : "Find My Dream Team"}
             </Button>
-             <Button type="button" variant="outline" disabled={loading} onClick={handleAutomatch} className="flex-1">
-                <Zap className="mr-2 h-4 w-4" />
-                {loading && autoMatching ? "Automatching..." : "Automatch From My Profile"}
-            </Button>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <div className="flex-1">
+                            <Button 
+                                type="button" 
+                                variant="outline" 
+                                disabled={loading || !isLoggedIn} 
+                                onClick={handleAutomatch} 
+                                className="w-full"
+                            >
+                                <Zap className="mr-2 h-4 w-4" />
+                                {loading && autoMatching ? "Automatching..." : "Automatch From My Profile"}
+                            </Button>
+                        </div>
+                    </TooltipTrigger>
+                    {!isLoggedIn && (
+                        <TooltipContent>
+                            <p>You must be logged in to use automatch.</p>
+                        </TooltipContent>
+                    )}
+                </Tooltip>
+            </TooltipProvider>
           </div>
         </form>
       </Form>
