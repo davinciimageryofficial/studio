@@ -1,0 +1,97 @@
+
+{
+  "General": [
+    {
+      "question": "What is Sentry?",
+      "answer": "Sentry is an AI-powered networking and collaboration platform designed for creative professionals, freelancers, and businesses. Our goal is to help you build your dream team, find exciting projects, and enhance your professional skills."
+    },
+    {
+      "question": "Who is Sentry for?",
+      "answer": "Sentry is for developers, designers, writers, marketers, project managers, and any professional in the creative and tech industries. It's also for businesses of all sizes looking to hire top-tier freelance talent for their projects."
+    },
+    {
+      "question": "How is Sentry different from other professional networking sites?",
+      "answer": "Sentry differentiates itself through its deep integration of AI. Features like the AI Workmate Radar for team building and Skill Sync Net for project matching go beyond simple keyword searches to provide intelligent, context-aware recommendations."
+    },
+    {
+      "question": "Is Sentry free to use?",
+      "answer": "Sentry will offer a tiered subscription model, including a free tier with core functionalities and premium tiers with advanced features, increased limits, and access to exclusive tools."
+    }
+  ],
+  "AI Features": [
+    {
+      "question": "How does the AI Workmate Radar work?",
+      "answer": "The AI Workmate Radar analyzes your profile, skills, and project descriptions to suggest ideal collaborators. It looks for complementary skills and compatible working styles to help you build a well-rounded and effective team."
+    },
+    {
+      "question": "What is Skill Sync Net?",
+      "answer": "Skill Sync Net is our intelligent marketplace. For businesses, it finds the most suitable freelancer for a project based on a detailed brief. For freelancers, it scans the market for projects that perfectly match their skills and experience, eliminating the need for manual searching."
+    },
+    {
+      "question": "Can the AI help me write posts?",
+      "answer": "Yes! Our platform includes AI-powered tools to help you create better content. The Post Analyzer provides feedback on your drafts, while the Conversation Starters give you ideas to spark engagement on your feed."
+    },
+    {
+      "question": "Is my data used to train the AI?",
+      "answer": "We prioritize user privacy. Your personal data and private conversations are not used to train our models. We use anonymized and aggregated data to improve our services, always in compliance with strict privacy standards."
+    }
+  ],
+  "Workspaces": [
+    {
+      "question": "What are Workspaces?",
+      "answer": "Workspaces are collaborative, real-time environments for deep work. You can start a solo focus session to track your time and productivity, or create a team workspace to collaborate with others via video call, chat, and shared tools."
+    },
+    {
+      "question": "Can I record a session in a Workspace?",
+      "answer": "Yes, team workspaces include a recording feature, allowing you to save your sessions for later review or for team members who couldn't attend."
+    },
+    {
+      "question": "How many people can join a Team Workspace?",
+      "answer": "Our Team Workspaces support up to 15 participants, making them suitable for small team meetings, brainstorming sessions, and collaborative work sprints."
+    },
+     {
+      "question": "Can I share my screen in a Workspace?",
+      "answer": "Absolutely. Screen sharing is a core feature of Team Workspaces, allowing for seamless presentations, code reviews, and design walkthroughs."
+    }
+  ],
+  "Profile & Networking": [
+    {
+      "question": "How can I make my profile stand out?",
+      "answer": "Complete your profile thoroughly! Add a clear headline, a detailed bio, list all your relevant skills, and upload high-quality portfolio items. A complete and polished profile is more likely to be discovered and matched by our AI."
+    },
+    {
+      "question": "How does connecting with others work?",
+      "answer": "You can discover other professionals through our Discover page, get recommendations from the AI Workmate Radar, or find them via their content on the Feed. You can then send connection requests to build your professional network."
+    },
+    {
+      "question": "What is the benefit of verifying my position?",
+      "answer": "Verifying your current job adds a badge of authenticity to your profile. It enhances trust and credibility, showing others that your stated experience is confirmed."
+    },
+    {
+      "question": "Can I customize my profile URL?",
+      "answer": "This feature is on our roadmap! We plan to allow premium users to create a custom, vanity URL for their Sentry profile."
+    }
+  ],
+  "Content & Courses": [
+    {
+      "question": "What kind of content can I find on the News page?",
+      "answer": "The News page features curated articles on the latest trends in technology, design, freelancing, and the future of work. It also includes statistical insights drawn from platform data, such as trending skills and freelance rates."
+    },
+    {
+      "question": "Are the courses on Sentry created by the platform?",
+      "answer": "The courses are created by industry experts and partners. We aim to provide a curated marketplace of high-quality educational content to help our users level up their skills."
+    },
+    {
+      "question": "How do I purchase a course?",
+      "answer": "You can purchase courses directly through the Courses page. Once purchased, they will be added to your account for lifetime access."
+    },
+    {
+      "question": "Can I become an instructor on Sentry?",
+      "answer": "We are currently working with a select group of initial instructors. However, we plan to open up instructor applications in the future. Stay tuned for announcements!"
+    },
+    {
+        "question": "What is the Pocket Guide on the Feed page?",
+        "answer": "The Pocket Guide, powered by our Conversation Starters AI, is a tool to help you overcome writer's block. It generates thought-provoking headlines and topics to inspire your next post and kickstart engagement."
+    }
+  ]
+}
