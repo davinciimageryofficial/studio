@@ -57,7 +57,6 @@ import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { freelanceNiches } from "@/app/skill-sync-net/page";
 import { Post, User as UserType } from "@/lib/types";
 import { getPosts, getCurrentUser, getUserById } from "@/lib/database";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -67,6 +66,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
+import { freelanceNiches } from "@/lib/skill-sync-net-data";
 
 
 function FeedContent({ posts, onUpdate, onDelete, onReply, t, isLoading, currentUser }: { posts: Post[], onUpdate: (post: Post) => void, onDelete: (postId: number) => void, onReply: (parentPostId: number, reply: Post) => void, t: typeof translations['en'], isLoading: boolean, currentUser: UserType | null }) {
