@@ -61,8 +61,7 @@ export async function signup(formData: FormData) {
             id: authData.user.id, 
             full_name: fullName, 
             category: profession,
-            email: email, // Assuming you store email in profiles table as well
-            // Set default values for other profile fields
+            email: email,
             headline: `New ${profession} on Sentry`,
             bio: 'Just joined Sentry! Looking to connect and collaborate.',
             skills: [profession],
@@ -74,9 +73,7 @@ export async function signup(formData: FormData) {
         });
     
     if (profileError) {
-        // This is where the "Database error saving new user" comes from.
         console.error("Error creating profile:", profileError);
-        // Provide the actual database error message for better debugging
         return { error: `Database error: ${profileError.message}` };
     }
 
@@ -86,13 +83,10 @@ export async function signup(formData: FormData) {
             .from('waitlist')
             .insert({ user_id: authData.user.id, email: email, status: 'pending_verification' });
         if (waitlistError) {
-            // Not a fatal error, but good to log.
             console.warn("Could not add user to early access waitlist:", waitlistError);
         }
     }
 
-    // If signup was successful, revalidate and return success.
-    // The user will need to confirm their email.
     revalidatePath('/', 'layout');
     return { success: true, pendingConfirmation: true };
 }
@@ -109,7 +103,7 @@ export async function verifyAccessCode(accessCode: string) {
     const { data: { user } } = await supabase.auth.getUser();
 
     // The user might not be "active" yet, but they have an auth session
-    // after signing up. We just need to check if a user session exists.
+    // after signing up. This check is correct; we just need a session to exist.
     if (!user) {
         return { error: 'You must sign up or log in before verifying an access code.' };
     }
@@ -155,6 +149,6 @@ export async function verifyAccessCode(accessCode: string) {
         .eq('user_id', user.id);
 
 
-    revalidatePath('/dashboard');
+    revalidatePath('/dashboard', 'layout');
     return { success: true };
 }
