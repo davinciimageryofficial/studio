@@ -32,6 +32,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isLoaded, setIsLoaded] = useState(false);
 
   const loadTranslations = useCallback(async (lang: Language) => {
+    // Set loading state to false only after attempting to load translations.
     try {
       const newTranslations = await getTranslations(lang);
       setTranslations(newTranslations);
@@ -44,16 +45,16 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, []);
 
   useEffect(() => {
+    // We start with isLoaded as false.
+    setIsLoaded(false);
     const savedLanguage = localStorage.getItem('sentry-language') as Language | null;
-    if (savedLanguage && availableLanguages.includes(savedLanguage)) {
-      setLanguage(savedLanguage);
-      loadTranslations(savedLanguage);
-    } else {
-      loadTranslations('en');
-    }
+    const initialLang = (savedLanguage && availableLanguages.includes(savedLanguage)) ? savedLanguage : 'en';
+    setLanguage(initialLang);
+    loadTranslations(initialLang);
   }, [loadTranslations]);
 
   const handleSetLanguage = (lang: Language) => {
+    setIsLoaded(false);
     setLanguage(lang);
     localStorage.setItem('sentry-language', lang);
     loadTranslations(lang);
@@ -72,3 +73,5 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     </LanguageContext.Provider>
   );
 };
+
+    
