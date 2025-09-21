@@ -23,7 +23,6 @@ import { ClientOnly } from "@/components/layout/client-only";
 import { AgencyMetrics } from "./agency-metrics";
 import { OperationalCharts } from "./operational-charts";
 import { useLanguage } from "@/context/language-context";
-import { translations } from "@/lib/translations";
 import { ProfileEngagementChart } from "./profile-engagement-chart";
 import { getCurrentUser, getUsers, getAgencyDashboardMetrics, getPersonalDashboardMetrics, getAgencyMetrics, getTasks, createTask, updateTask, deleteTask } from "@/lib/database";
 import { Skeleton } from "@/components/ui/skeleton";

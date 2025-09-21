@@ -80,7 +80,6 @@ export function MessagesClient() {
   
   const activeConversation = conversations.find(c => c.id === activeConversationId);
   const [newMessage, setNewMessage] = useState("");
-  const [linkPreview, setLinkPreview] = useState<{url: string, title: string, description: string, image: string} | null>(null);
   const editorRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -242,31 +241,12 @@ export function MessagesClient() {
         editorRef.current.innerHTML = "";
     }
     setNewMessage("");
-    setLinkPreview(null);
   };
 
 
-  const extractUrl = (text: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const match = text.match(urlRegex);
-    return match ? match[0] : null;
-  }
   
   const handleInput = () => {
-    const textContent = editorRef.current?.textContent || '';
-    const url = extractUrl(textContent);
-    if (url) {
-        // In a real app, you would fetch metadata from this URL.
-        // For now, we'll use placeholder data for the preview.
-        setLinkPreview({
-            url,
-            title: "Link Preview Title",
-            description: "This is a placeholder description for the link you shared. In a real application, we would fetch this from the website.",
-            image: "https://picsum.photos/seed/link/400/200"
-        });
-    } else {
-        setLinkPreview(null);
-    }
+    // This function can be used for features like typing indicators in the future
   }
 
 
@@ -438,16 +418,6 @@ export function MessagesClient() {
           
           {/* Message Input */}
           <form onSubmit={handleSendMessage} className="border-t p-4 bg-card">
-              {linkPreview && (
-                  <Card className="mb-2 overflow-hidden">
-                      <Image src={linkPreview.image} width={400} height={200} alt="Link preview" className="w-full object-cover max-h-40" />
-                      <div className="p-3">
-                          <h4 className="font-semibold truncate">{linkPreview.title}</h4>
-                          <p className="text-xs text-muted-foreground truncate">{linkPreview.description}</p>
-                          <a href={linkPreview.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline">{linkPreview.url}</a>
-                      </div>
-                  </Card>
-              )}
             <div className="relative rounded-lg border">
                 <div
                     ref={editorRef}

@@ -29,36 +29,13 @@ export default function WorkspacesPage() {
         formatTime,
     } = useWorkspace();
 
-  const [isStartingFlow, setIsStartingFlow] = useState(false);
   const [monthlyFlowHours, setMonthlyFlowHours] = useState(25.5); // Example starting hours
   const monthlyGoal = 50;
-  const [isRewardSectionVisible, setIsRewardSectionVisible] = useState(true);
   
-  const rewardTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (sessionType === 'solo' && !isStartingFlow) {
-      setIsRewardSectionVisible(true); // Reset on new session start
-      rewardTimerRef.current = setTimeout(() => {
-        setIsRewardSectionVisible(false);
-      }, 30000); // 30 seconds
-    }
-    
-    return () => {
-      if (rewardTimerRef.current) {
-        clearTimeout(rewardTimerRef.current);
-      }
-    };
-  }, [sessionType, isStartingFlow]);
-
-
   const handleStartSolo = () => {
-    setIsStartingFlow(true);
-    setTimeout(() => {
-        setIsStartingFlow(false);
-        startSession('solo');
-    }, 2000);
+    startSession('solo');
   };
   
    const handleStartTeam = () => {
@@ -104,14 +81,6 @@ export default function WorkspacesPage() {
                 <CardDescription>You are in a solo session. Keep up the great work!</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col items-center justify-center gap-8 p-12">
-                  {isStartingFlow ? (
-                        <div className="text-center animate-in fade-in-0 zoom-in-95 duration-500">
-                             <h2 className="text-2xl font-bold tracking-widest text-primary animate-pulse">
-                                FLOW STATE
-                            </h2>
-                            <p className="text-muted-foreground">CONFIRMED</p>
-                        </div>
-                  ) : (
                     <>
                         <div className="w-full max-w-full space-y-6">
                             <div className="font-mono text-8xl font-bold tracking-tighter text-center">
@@ -126,10 +95,7 @@ export default function WorkspacesPage() {
                             </div>
                             
                             {/* Monthly Reward Tracker */}
-                            <div className={cn(
-                                "w-full pt-4 space-y-3 transition-all duration-500 ease-in-out",
-                                isRewardSectionVisible ? "opacity-100 max-h-40" : "opacity-0 max-h-0 overflow-hidden"
-                            )}>
+                            <div className="w-full pt-4 space-y-3 transition-all duration-500 ease-in-out">
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2 text-muted-foreground">
                                     <Award className="h-5 w-5" />
@@ -162,27 +128,7 @@ export default function WorkspacesPage() {
                             </Button>
                         </div>
                     </>
-                  )}
               </CardContent>
-               {!isStartingFlow && (
-                 <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="absolute bottom-4 right-4 text-muted-foreground hover:bg-muted"
-                                onClick={() => setIsRewardSectionVisible(!isRewardSectionVisible)}
-                            >
-                                <ArrowUp className="h-5 w-5" />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>Toggle Monthly Reward Tracker</p>
-                        </TooltipContent>
-                    </Tooltip>
-                 </TooltipProvider>
-               )}
             </Card>
         ) : sessionType === 'team' ? (
           <WorkspaceTeam />
