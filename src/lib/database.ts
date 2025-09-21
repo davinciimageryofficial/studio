@@ -131,6 +131,44 @@ export async function getExperiencesByUserId(userId: string): Promise<Experience
 // =================================================================
 
 /**
+ * Fetches all data required for the main dashboard page in a single function.
+ */
+export async function getDashboardPageData() {
+    const [
+        currentUser,
+        allUsers,
+        dashboardMetrics,
+        personalMetrics,
+        agencyMetrics,
+        tasks
+    ] = await Promise.all([
+        getCurrentUser(),
+        getUsers(),
+        getAgencyDashboardMetrics(),
+        getPersonalDashboardMetrics(),
+        getAgencyMetrics(),
+        getTasks(),
+    ]);
+
+    const otherUsers = allUsers.filter(u => u.id !== currentUser?.id);
+    const initialTasks: { [key in TaskStatus]: Task[] } = {
+        todo: tasks.filter(t => t.status === 'todo'),
+        inProgress: tasks.filter(t => t.status === 'inProgress'),
+        done: tasks.filter(t => t.status === 'done'),
+    };
+
+    return {
+        currentUser,
+        otherUsers,
+        dashboardMetrics,
+        personalMetrics,
+        agencyMetrics,
+        initialTasks
+    };
+}
+
+
+/**
  * Fetches key metrics for the personal dashboard.
  */
 export async function getPersonalDashboardMetrics() {
@@ -735,3 +773,5 @@ export async function saveSoloSession(durationSeconds: number) {
 
     return { success: true };
 }
+
+    
