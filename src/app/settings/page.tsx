@@ -19,29 +19,17 @@ import { getCurrentUser, updateUserProfile } from '@/lib/database';
 import { logout } from '@/app/auth/actions';
 import type { User } from '@/lib/types';
 import { Textarea } from '@/components/ui/textarea';
+import { ClientOnly } from '@/components/layout/client-only';
 
 
-export default function SettingsPage() {
+function SettingsPageInternal({ initialUser, t }: { initialUser: User | null, t: any }) {
   const router = useRouter();
-  const { language, setLanguage, translations: t, isLoaded } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const { toast } = useToast();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [name, setName] = useState('');
-  const [headline, setHeadline] = useState('');
-  const [bio, setBio] = useState('');
-
-  useEffect(() => {
-    async function fetchUser() {
-      const user = await getCurrentUser();
-      setCurrentUser(user);
-      if (user) {
-        setName(user.name);
-        setHeadline(user.headline);
-        setBio(user.bio);
-      }
-    }
-    fetchUser();
-  }, []);
+  const [currentUser, setCurrentUser] = useState<User | null>(initialUser);
+  const [name, setName] = useState(initialUser?.name || '');
+  const [headline, setHeadline] = useState(initialUser?.headline || '');
+  const [bio, setBio] = useState(initialUser?.bio || '');
 
   const handleLogout = async () => {
     await logout();
@@ -65,7 +53,7 @@ export default function SettingsPage() {
     }
   };
 
-  if (!currentUser || !isLoaded) {
+  if (!currentUser) {
     return <div>Loading...</div>; // Or a skeleton loader
   }
 
@@ -202,4 +190,16 @@ export default function SettingsPage() {
       </div>
     </div>
   );
+}
+
+
+export default async function SettingsPage() {
+    const user = await getCurrentUser();
+    const t = await import(`@/lib/locales/en.json`); // Assuming you might want to fetch based on user preference later
+
+    return (
+        <ClientOnly>
+            <SettingsPageInternal initialUser={user} t={t.default} />
+        </ClientOnly>
+    );
 }
