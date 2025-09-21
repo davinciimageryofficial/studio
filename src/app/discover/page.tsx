@@ -26,7 +26,7 @@ function DiscoverPageInternal({ initialUsers }: { initialUsers: User[] }) {
   
   const { toast } = useToast();
   const [users, setUsers] = useState<User[]>(initialUsers);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Can be removed if not used for refetching
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("All");
 
@@ -186,5 +186,7 @@ function ProfileCard({ user, handleAction, t }: { user: User, handleAction: (act
     </Card>
   );
 }
+
+    
 
     

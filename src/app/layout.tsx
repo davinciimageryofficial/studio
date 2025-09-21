@@ -22,6 +22,8 @@ function RootLayoutInternal({
 }: {
   children: React.ReactNode;
 }) {
+  "use client";
+  
   const pathname = usePathname();
   const { isLoaded } = useLanguage();
   const publicPages = ['/', '/login', '/signup', '/waitlist-confirmation', '/logout', '/donate', '/faq'];

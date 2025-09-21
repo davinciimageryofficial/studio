@@ -55,8 +55,8 @@ type Category =
 
 function NewsPageInternal({ initialArticles }: { initialArticles: Article[] }) {
   const [selectedCategory, setSelectedCategory] = useState<Category>("All");
-  const [articles, setArticles] = useState<Article[]>(initialArticles);
-  const [isLoading, setIsLoading] = useState(false);
+  const articles = initialArticles; // Use the prop directly
+  const [isLoading, setIsLoading] = useState(false); // Can be removed if not used for refetching
 
   const getArticlesForCategory = (category: Category) => {
     switch (category) {
@@ -246,5 +246,7 @@ function NewsGrid({ articles }: { articles: Article[] }) {
     </div>
   )
 }
+
+    
 
     
