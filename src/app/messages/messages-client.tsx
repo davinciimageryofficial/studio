@@ -69,11 +69,15 @@ const GoogleDriveIcon = () => (
     </svg>
 );
 
+interface MessagesClientProps {
+    initialConversations: Conversation[];
+    initialAllUsers: UserType[];
+}
 
-export function MessagesClient() {
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [allUsers, setAllUsers] = useState<UserType[]>([]);
-  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+export function MessagesClient({ initialConversations, initialAllUsers }: MessagesClientProps) {
+  const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
+  const [allUsers, setAllUsers] = useState<UserType[]>(initialAllUsers);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(initialConversations[0]?.id || null);
   const [fontSize, setFontSize] = useState("base");
   const [showAvatars, setShowAvatars] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
@@ -85,19 +89,6 @@ export function MessagesClient() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const supabase = createSupabaseBrowserClient();
-
-  useEffect(() => {
-      async function loadData() {
-          const [convos, users] = await Promise.all([getConversations(), getUsers()]);
-          setConversations(convos as Conversation[]);
-          setAllUsers(users);
-          if (convos.length > 0) {
-              setActiveConversationId(convos[0].id);
-          }
-      }
-      loadData();
-  }, []);
-
 
   useEffect(() => {
     const projectParam = searchParams.get('project');
@@ -466,7 +457,6 @@ export function MessagesClient() {
 function NewCommunityDialog() {
     const { toast } = useToast();
     const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-    const [creationType, setCreationType] = useState<'group' | 'agency'>('group');
     const [connections, setConnections] = useState<UserType[]>([]);
 
     useEffect(() => {
@@ -487,8 +477,8 @@ function NewCommunityDialog() {
     const handleCreateCommunity = () => {
         // In a real app, this would trigger a backend call to create the entity
         toast({
-            title: `${creationType === 'group' ? 'Group' : 'Agency'} Created!`,
-            description: `Your new ${creationType} is ready to go.`,
+            title: `Community Created!`,
+            description: `Your new community is ready to go.`,
         });
     }
 
@@ -501,7 +491,7 @@ function NewCommunityDialog() {
                 </DialogDescription>
             </DialogHeader>
             <div className="py-4 space-y-4">
-                <Tabs value={creationType} onValueChange={(value) => setCreationType(value as any)} className="w-full">
+                <Tabs defaultValue="group" className="w-full">
                     <TabsList className="grid w-full grid-cols-2 bg-black text-muted-foreground">
                         <TabsTrigger value="group"><Users className="mr-2 h-4 w-4" />Group</TabsTrigger>
                         <TabsTrigger value="agency"><Building className="mr-2 h-4 w-4" />Agency</TabsTrigger>

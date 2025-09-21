@@ -265,29 +265,17 @@ function UpgradeDialog({ plan, paymentMethods, onUpgrade }: { plan: any, payment
 }
 
 
-function BillingPageInternal() {
+function BillingPageInternal({ initialData }: { initialData: Awaited<ReturnType<typeof getBillingInfo>> }) {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') || "subscription";
   const { toast } = useToast();
   const { language } = useLanguage();
   const t = translations[language];
 
-  const [invoices, setInvoices] = useState<any[]>([]);
-  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const invoices = initialData?.invoices || [];
+  const paymentMethods = initialData?.paymentMethods || [];
+  const isLoading = !initialData;
 
-  useEffect(() => {
-    async function loadBillingInfo() {
-        setIsLoading(true);
-        const billingData = await getBillingInfo();
-        if (billingData) {
-            setInvoices(billingData.invoices);
-            setPaymentMethods(billingData.paymentMethods);
-        }
-        setIsLoading(false);
-    }
-    loadBillingInfo();
-  }, []);
 
   const plans = [
     {
@@ -633,10 +621,11 @@ function BillingPageInternal() {
   );
 }
 
-export default function BillingPage() {
+export default async function BillingPage() {
+    const data = await getBillingInfo();
     return (
         <ClientOnly>
-            <BillingPageInternal />
+            <BillingPageInternal initialData={data} />
         </ClientOnly>
     )
 }

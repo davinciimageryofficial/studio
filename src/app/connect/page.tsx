@@ -29,7 +29,6 @@ import type { Course } from "@/lib/types";
 
 function CoursesPageInternal({ initialCourses }: { initialCourses: Course[] }) {
   const [courses, setCourses] = useState<Course[]>(initialCourses);
-  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [priceRange, setPriceRange] = useState([0, 300]);
@@ -151,9 +150,7 @@ function CoursesPageInternal({ initialCourses }: { initialCourses: Course[] }) {
 
 
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {isLoading ? (
-            Array.from({ length: 6 }).map((_, index) => <CourseCardSkeleton key={index} />)
-        ) : filteredAndSortedCourses.length > 0 ? (
+        {filteredAndSortedCourses.length > 0 ? (
             filteredAndSortedCourses.map((course) => (
                 <ContentCard key={course.id} content={course} t={t} />
             ))
@@ -205,22 +202,4 @@ function ContentCard({ content, t }: { content: Course, t: typeof translations['
       </CardContent>
     </Card>
   );
-}
-
-function CourseCardSkeleton() {
-    return (
-        <Card className="overflow-hidden">
-            <Skeleton className="aspect-video w-full" />
-            <CardContent className="p-4 space-y-3">
-                <Skeleton className="h-5 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-5/6" />
-                <div className="flex items-center justify-between pt-2">
-                    <Skeleton className="h-8 w-1/3" />
-                    <Skeleton className="h-8 w-1/4" />
-                </div>
-            </CardContent>
-        </Card>
-    )
 }
