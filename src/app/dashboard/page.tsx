@@ -782,32 +782,14 @@ function DashboardPageInternal({
 }
 
 export default function DashboardPage() {
-    const [
-        currentUser,
-        allUsers,
-        dashboardMetrics,
-        personalMetrics,
-        agencyMetrics,
-        tasks
-    ] = use(Promise.all([
-        getCurrentUser(),
-        getUsers(),
-        getAgencyDashboardMetrics(),
-        getPersonalDashboardMetrics(),
-        getAgencyMetrics(),
-        getTasks(),
-    ]));
-
-    const otherUsers = allUsers.filter(u => u.id !== currentUser?.id);
-
-    const initialTasks: { [key in TaskStatus]: Task[] } = {
-        todo: tasks.filter(t => t.status === 'todo'),
-        inProgress: tasks.filter(t => t.status === 'inProgress'),
-        done: tasks.filter(t => t.status === 'done'),
-    };
-    
-    // Replace use() with a more traditional client-side data fetching pattern
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<{
+        currentUser: UserType | null;
+        otherUsers: UserType[];
+        dashboardMetrics: { teamRevenue: number; totalProjects: number; clientAcquisition: number; };
+        personalMetrics: { profileViews: number; newConnections: number; pendingInvitations: number; profileViewsChange: number; newConnectionsChange: number; };
+        agencyMetrics: any;
+        initialTasks: { todo: Task[]; inProgress: Task[]; done: Task[]; };
+    } | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
