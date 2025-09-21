@@ -31,22 +31,21 @@ export async function signup(formData: FormData) {
 
     const supabase = createSupabaseServerClient();
 
-    // First, try to sign up the user for authentication.
     const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
+            data: {
+                full_name: fullName,
+            },
             emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
         },
     });
 
     if (authError) {
-        // If the error is "User already registered", try to log them in.
         if (authError.message.includes("User already registered")) {
-            console.log("User already exists. Attempting to sign in...");
-            return await login(formData);
+            return { error: "A user with this email already exists. Please log in." };
         }
-        // For any other auth error, return it to the user.
         return { error: authError.message };
     }
 
@@ -54,7 +53,7 @@ export async function signup(formData: FormData) {
         return { error: 'Signup successful, but no user data returned. Please try logging in.' };
     }
 
-    // Second, if auth succeeds, create the user's public profile.
+    // Now, create the public profile for the new user.
     const { error: profileError } = await supabase
         .from('profiles')
         .insert({ 
@@ -69,20 +68,22 @@ export async function signup(formData: FormData) {
             community_standing: "New member with a clean record.",
             disputes: 0,
             avatar_url: `https://picsum.photos/seed/${authData.user.id}/200/200`,
-            status: 'pending_verification', // Start as pending
+            status: 'pending_verification',
         });
     
     if (profileError) {
         console.error("Error creating profile:", profileError);
-        return { error: `Database error: ${profileError.message}` };
+        // This is a critical failure, as auth user exists without a profile.
+        // In a real-world scenario, you might want to delete the auth user here or have a cleanup job.
+        return { error: `Database error saving new user: ${profileError.message}` };
     }
 
-    // Optionally handle the waitlist table if it's still in use
     if (earlyAccess) {
         const { error: waitlistError } = await supabase
             .from('waitlist')
             .insert({ user_id: authData.user.id, email: email, status: 'pending_verification' });
         if (waitlistError) {
+            // This is not a fatal error, just a warning.
             console.warn("Could not add user to early access waitlist:", waitlistError);
         }
     }
