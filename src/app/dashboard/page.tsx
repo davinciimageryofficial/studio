@@ -523,17 +523,19 @@ function DashboardPageInternal({
                               </div>
                             ))}
                           </div>
-                           <TaskDialog
-                                onSave={(newTask) => handleSaveTask(newTask)}
-                                column={status}
-                                userId={currentUser!.id}
-                                triggerButton={
-                                    <Button variant="outline" className="w-full mt-2">
-                                        <PlusCircle className="mr-2 h-4 w-4" />
-                                        Add Task
-                                    </Button>
-                                }
-                           />
+                           {currentUser && (
+                               <TaskDialog
+                                    onSave={(newTask) => handleSaveTask(newTask)}
+                                    column={status}
+                                    userId={currentUser.id}
+                                    triggerButton={
+                                        <Button variant="outline" className="w-full mt-2">
+                                            <PlusCircle className="mr-2 h-4 w-4" />
+                                            Add Task
+                                        </Button>
+                                    }
+                               />
+                           )}
                         </div>
                       ))}
                     </div>
@@ -863,3 +865,5 @@ export default function DashboardPage() {
         </ClientOnly>
     )
 }
+
+    
