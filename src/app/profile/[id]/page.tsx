@@ -114,6 +114,7 @@ export default function ProfilePage() {
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
+    
     const loggedInUser = await getCurrentUser();
     setCurrentUser(loggedInUser);
     
@@ -125,20 +126,26 @@ export default function ProfilePage() {
         return;
     }
 
-    const [profileUser, profileExperiences] = await Promise.all([
-        getUserById(profileId),
-        getExperiencesByUserId(profileId)
-    ]);
+    try {
+        const [profileUser, profileExperiences] = await Promise.all([
+            getUserById(profileId),
+            getExperiencesByUserId(profileId)
+        ]);
 
-    if (!profileUser) {
-        setIsLoading(false);
+        if (!profileUser) {
+            notFound();
+            return;
+        }
+        
+        setUser(profileUser);
+        setExperiences(profileExperiences);
+
+    } catch (error) {
+        console.error("Failed to fetch profile data:", error);
         notFound();
-        return;
+    } finally {
+        setIsLoading(false);
     }
-
-    setUser(profileUser);
-    setExperiences(profileExperiences);
-    setIsLoading(false);
   }, [params.id]);
 
 
