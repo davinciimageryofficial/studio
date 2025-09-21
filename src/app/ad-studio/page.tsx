@@ -45,11 +45,11 @@ type Campaign = {
     conversions: number;
 }
 
-function AdStudioPageInternal() {
+function AdStudioPageInternal({ initialCampaigns }: { initialCampaigns: Campaign[] }) {
   const { language } = useLanguage();
   const t = translations[language];
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
+  const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const loadCampaigns = useCallback(async () => {
@@ -58,10 +58,6 @@ function AdStudioPageInternal() {
     setCampaigns(fetchedCampaigns);
     setIsLoading(false);
   }, []);
-
-  useEffect(() => {
-    loadCampaigns();
-  }, [loadCampaigns]);
   
   const handleCampaignCreated = () => {
     loadCampaigns();
@@ -216,10 +212,11 @@ function AdStudioPageInternal() {
   );
 }
 
-export default function AdStudioPage() {
+export default async function AdStudioPage() {
+    const campaigns = await getCampaigns();
     return (
         <ClientOnly>
-            <AdStudioPageInternal />
+            <AdStudioPageInternal initialCampaigns={campaigns} />
         </ClientOnly>
     );
 }
@@ -418,3 +415,5 @@ function CreateCampaignDialog({ t, onCampaignCreated }: { t: typeof translations
         </DialogContent>
     );
 }
+
+    

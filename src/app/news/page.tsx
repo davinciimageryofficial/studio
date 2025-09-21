@@ -53,20 +53,10 @@ type Category =
   | "Spotlight"
   | "Statistics";
 
-export default function NewsPage() {
+function NewsPageInternal({ initialArticles }: { initialArticles: Article[] }) {
   const [selectedCategory, setSelectedCategory] = useState<Category>("All");
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadNews() {
-        setIsLoading(true);
-        const newsArticles = await getNews();
-        setArticles(newsArticles);
-        setIsLoading(false);
-    }
-    loadNews();
-  }, []);
+  const [articles, setArticles] = useState<Article[]>(initialArticles);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getArticlesForCategory = (category: Category) => {
     switch (category) {
@@ -141,6 +131,15 @@ export default function NewsPage() {
       </Tabs>
     </div>
   );
+}
+
+export default async function NewsPage() {
+    const articles = await getNews();
+    return (
+        <ClientOnly>
+            <NewsPageInternal initialArticles={articles} />
+        </ClientOnly>
+    )
 }
 
 function NewsGridSkeleton() {
@@ -247,3 +246,5 @@ function NewsGrid({ articles }: { articles: Article[] }) {
     </div>
   )
 }
+
+    
