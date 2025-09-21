@@ -117,7 +117,7 @@ export function AppSidebar() {
             </div>
         </div>
       </SidebarHeader>
-      <SidebarContent className="flex-1 justify-center">
+      <SidebarContent className="flex-1">
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
