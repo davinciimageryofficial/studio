@@ -48,7 +48,7 @@ export default function LandingPage() {
                                     <ArrowRight className="ml-2 h-5 w-5" />
                                 </Link>
                             </Button>
-                            <Button asChild variant="outline" size="lg" className="h-12 px-8 text-muted-foreground">
+                            <Button asChild variant="outline" size="lg" className="h-12 px-8 text-black">
                                 <Link href="/faq">
                                     {t.faq}
                                 </Link>
