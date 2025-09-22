@@ -3,6 +3,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation';
 
 export async function login(formData: FormData) {
   const email = formData.get('email') as string
@@ -20,6 +21,27 @@ export async function login(formData: FormData) {
 
   revalidatePath('/', 'layout')
   return { success: true };
+}
+
+export async function googleSignIn() {
+    const supabase = createSupabaseServerClient();
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        },
+    });
+
+    if (error) {
+        console.error('Google Sign-In Error:', error);
+        return { error: 'Could not authenticate with Google. Please try again.' };
+    }
+
+    if (data.url) {
+        redirect(data.url);
+    }
+    
+    return { error: 'An unknown error occurred.' };
 }
 
 export async function signup(formData: FormData) {
