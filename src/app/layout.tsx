@@ -1,4 +1,3 @@
-
 import { Inter, Michroma } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
