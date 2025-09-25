@@ -33,6 +33,7 @@ import {
   DollarSign,
   Info,
   Kanban,
+  Loader2,
 } from "lucide-react";
 import Image from "next/image";
 import { ConversationStarters } from "../conversation-starters";
@@ -52,7 +53,7 @@ import { generatePost, PostGeneratorOutput } from "@/ai/flows/post-generator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
-import { ClientOnly } from "@/components/layout/client-only";
+import { ClientOnly } from "@/components/ui/client-only";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
@@ -334,17 +335,51 @@ function CreatePostDialog({
   const [postContent, setPostContent] = useState("");
   const [analysisResult, setAnalysisResult] = useState<AnalyzePostOutput | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
+  const supabase = createSupabaseBrowserClient();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const handleAnalyze = async () => {
-    // This functionality is preserved but now used inside the dialog
+    if (!postContent.trim() || !currentUser) return;
+    setIsAnalyzing(true);
+    setError(null);
+    try {
+      const result = await analyzePost({
+        postContent,
+        userProfile: {
+          headline: currentUser.headline,
+          bio: currentUser.bio,
+          skills: currentUser.skills,
+        },
+        targetAudience: "General professional audience on Sentry",
+      });
+      setAnalysisResult(result);
+    } catch (e) {
+      setError("AI analysis failed. Please try again.");
+      console.error(e);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
-  const handleGenerate = async () => {
-     // This functionality is preserved but now used inside the dialog
+  const handlePostSubmit = async () => {
+    if (!postContent.trim() || !currentUser) return;
+    setIsSubmitting(true);
+    const { error } = await supabase.from('posts').insert({
+        author_id: currentUser.id,
+        content: postContent,
+        type: 'post'
+    });
+
+    if (error) {
+        toast({ title: "Error creating post", description: error.message, variant: "destructive" });
+    } else {
+        toast({ title: "Post created!" });
+        setPostContent("");
+    }
+    setIsSubmitting(false);
   };
 
   const handleTextFormat = (format: 'bold' | 'italic' | 'code' | 'codeblock') => {
@@ -357,18 +392,10 @@ function CreatePostDialog({
     let formattedText = "";
 
     switch(format) {
-        case 'bold':
-            formattedText = `**${selectedText}**`;
-            break;
-        case 'italic':
-            formattedText = `*${selectedText}*`;
-            break;
-        case 'code':
-            formattedText = `\`${selectedText}\``;
-            break;
-        case 'codeblock':
-            formattedText = `\n\`\`\`\n${selectedText}\n\`\`\`\n`;
-            break;
+        case 'bold': formattedText = `**${selectedText}**`; break;
+        case 'italic': formattedText = `*${selectedText}*`; break;
+        case 'code': formattedText = `\`${selectedText}\``; break;
+        case 'codeblock': formattedText = `\n\`\`\`\n${selectedText}\n\`\`\`\n`; break;
     }
 
     const newText = postContent.substring(0, start) + formattedText + postContent.substring(end);
@@ -377,68 +404,95 @@ function CreatePostDialog({
   };
 
   return (
-    <DialogContent className="max-w-2xl">
+    <DialogContent className="max-w-4xl">
       <DialogHeader>
         <DialogTitle>{t.createPost}</DialogTitle>
       </DialogHeader>
-      <div className="flex items-start gap-4 pt-4">
-        <Avatar>
-          <AvatarImage src={currentUser?.avatar} alt={currentUser?.name} />
-          <AvatarFallback>
-            <User className="h-5 w-5" />
-          </AvatarFallback>
-        </Avatar>
-        <div className="w-full">
-          <Textarea
-            ref={textareaRef}
-            placeholder={t.postPlaceholder}
-            className="mb-2 min-h-48 w-full resize-none border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base"
-            value={postContent}
-            onChange={(e) => setPostContent(e.target.value)}
-          />
-        </div>
-      </div>
-      <DialogFooter className="justify-between">
-        <TooltipProvider>
-            <div className="flex items-center gap-1">
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={() => handleTextFormat('bold')}><Bold /></Button>
-                    </TooltipTrigger>
-                    <TooltipContent><p>{t.bold}</p></TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={() => handleTextFormat('italic')}><Italic /></Button>
-                    </TooltipTrigger>
-                    <TooltipContent><p>{t.italic}</p></TooltipContent>
-                </Tooltip>
-                 <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={() => handleTextFormat('codeblock')}><Code /></Button>
-                    </TooltipTrigger>
-                    <TooltipContent><p>{t.codeBlock}</p></TooltipContent>
-                </Tooltip>
-                 <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button variant="ghost" size="icon"><Link2 /></Button>
-                    </TooltipTrigger>
-                    <TooltipContent><p>{t.insertLink}</p></TooltipContent>
-                </Tooltip>
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-4">
+            <div className="md:col-span-2">
+                <div className="flex items-start gap-4">
+                    <Avatar>
+                        <AvatarImage src={currentUser?.avatar} alt={currentUser?.name} />
+                        <AvatarFallback><User className="h-5 w-5" /></AvatarFallback>
+                    </Avatar>
+                    <Textarea
+                        ref={textareaRef}
+                        placeholder={t.postPlaceholder}
+                        className="flex-1 min-h-48 w-full resize-none border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base p-0"
+                        value={postContent}
+                        onChange={(e) => setPostContent(e.target.value)}
+                    />
+                </div>
+                 <div className="flex items-center gap-1 mt-4 border-t pt-2">
+                    <TooltipProvider>
+                        <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" onClick={() => handleTextFormat('bold')}><Bold /></Button></TooltipTrigger><TooltipContent><p>{t.bold}</p></TooltipContent></Tooltip>
+                        <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" onClick={() => handleTextFormat('italic')}><Italic /></Button></TooltipTrigger><TooltipContent><p>{t.italic}</p></TooltipContent></Tooltip>
+                        <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" onClick={() => handleTextFormat('codeblock')}><Code /></Button></TooltipTrigger><TooltipContent><p>{t.codeBlock}</p></TooltipContent></Tooltip>
+                        <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon"><Link2 /></Button></TooltipTrigger><TooltipContent><p>{t.insertLink}</p></TooltipContent></Tooltip>
+                    </TooltipProvider>
+                </div>
             </div>
-        </TooltipProvider>
-        <div className="flex items-center gap-2">
-           <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleAnalyze}
-              disabled={!postContent.trim() || isAnalyzing}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-4 w-4"><circle cx="12" cy="12" r="7"></circle><line x1="19" y1="5" x2="19" y2="19"></line></svg>
-              {isAnalyzing ? t.analyzing : t.analyze}
+            <div className="space-y-4 border-l-0 md:border-l md:pl-6">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                   <Bot className="w-5 h-5 text-primary" />
+                   AI Writing Coach
+                </h3>
+                <div className="text-sm space-y-4">
+                    <Button variant="outline" size="sm" onClick={handleAnalyze} disabled={!postContent.trim() || isAnalyzing}>
+                        {isAnalyzing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
+                        {isAnalyzing ? t.analyzing : t.analyze} Post
+                    </Button>
+                    {isAnalyzing && (
+                        <div className="space-y-4">
+                            <Skeleton className="h-4 w-1/3" />
+                            <Skeleton className="h-8 w-full" />
+                        </div>
+                    )}
+                    {error && <Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
+                    {analysisResult && (
+                         <div className="space-y-4">
+                            {analysisResult.suggestions && analysisResult.suggestions.length > 0 && (
+                                <div>
+                                    <h4 className="font-semibold">Suggestions</h4>
+                                    <ul className="list-disc list-inside text-muted-foreground mt-1 space-y-1">
+                                        {analysisResult.suggestions.map((s, i) => <li key={i}>{s}</li>)}
+                                    </ul>
+                                </div>
+                            )}
+                             {analysisResult.perceptionAnalysis && (
+                                <div>
+                                    <h4 className="font-semibold">Perception Analysis</h4>
+                                    {analysisResult.perceptionAnalysis.map((metric, i) => (
+                                        <div key={i} className="mt-2">
+                                            <div className="flex justify-between text-xs font-medium">
+                                                <span>{metric.metric}</span>
+                                                <span>{metric.score}/100</span>
+                                            </div>
+                                            <Progress value={metric.score} className="h-2" />
+                                            <p className="text-xs text-muted-foreground mt-1">{metric.explanation}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                     {!analysisResult && !isAnalyzing && !error && (
+                        <p className="text-muted-foreground">Click "Analyze Post" to get AI-powered feedback on your draft.</p>
+                     )}
+                </div>
+            </div>
+       </div>
+
+      <DialogFooter>
+         <DialogClose asChild>
+            <Button type="button" variant="secondary">Cancel</Button>
+        </DialogClose>
+        <DialogClose asChild>
+            <Button onClick={handlePostSubmit} disabled={isSubmitting || !postContent.trim()}>
+                {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                {t.post}
             </Button>
-            <Button>{t.post}</Button>
-        </div>
+        </DialogClose>
       </DialogFooter>
     </DialogContent>
   );

@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ShoppingCart, SlidersHorizontal } from "lucide-react";
+import { Search, ShoppingCart, SlidersHorizontal, Loader2, Zap } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -21,6 +21,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
 import type { Course } from "@/lib/types";
+import { generateCourse } from "@/ai/flows/course-generator";
 
 
 export function CoursesClient({ initialCourses }: { initialCourses: Course[] }) {
@@ -30,6 +31,7 @@ export function CoursesClient({ initialCourses }: { initialCourses: Course[] }) 
   const [priceRange, setPriceRange] = useState([0, 300]);
   const [sortBy, setSortBy] = useState("relevance");
   const [skillLevel, setSkillLevel] = useState("all");
+  const [isGenerating, setIsGenerating] = useState(false);
   const { translations: t } = useLanguage();
 
   const courseCategories = ['Development', 'Design', 'Writing', 'AI & Machine Learning', 'Data Science', 'Freelance'];
@@ -49,12 +51,25 @@ export function CoursesClient({ initialCourses }: { initialCourses: Course[] }) 
         case 'price-desc':
           return b.price - a.price;
         case 'newest':
-            // A real app would use a date field, but we can simulate with ID for now
             return Number(b.id) - Number(a.id);
         default:
-          return 0; // 'relevance' - no specific sorting for now
+          return 0;
       }
     });
+
+  const handleGenerateCourse = async (category: Course['category']) => {
+    setIsGenerating(true);
+    try {
+        const newCourse = await generateCourse({ category: category as any });
+        setCourses(prev => [newCourse, ...prev]);
+    } catch (error) {
+        console.error("Failed to generate course:", error);
+        // Optionally show a toast notification here
+    } finally {
+        setIsGenerating(false);
+    }
+  };
+
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
@@ -88,6 +103,10 @@ export function CoursesClient({ initialCourses }: { initialCourses: Course[] }) 
             </SelectContent>
           </Select>
         </div>
+        <Button onClick={() => handleGenerateCourse(category === 'all' ? 'Development' : category)} disabled={isGenerating}>
+            {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
+            Generate New Course Idea
+        </Button>
       </div>
       
       <Collapsible className="mb-6">
@@ -162,7 +181,7 @@ function ContentCard({ content, t }: { content: Course, t: typeof translations['
     <Card className="overflow-hidden transition-all hover:shadow-lg">
         <div className="relative aspect-video">
             <Image
-            src={content.image_url}
+            src={content.image_url || content.imageUrl}
             alt={content.title}
             fill
             className="object-cover"

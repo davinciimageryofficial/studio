@@ -87,5 +87,6 @@ export type Course = {
     category: string;
     description: string;
     image_url: string;
+    imageUrl?: string; // Adding optional imageUrl to match AI flow output
     level: string;
 }
