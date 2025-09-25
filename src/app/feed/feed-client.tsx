@@ -36,7 +36,7 @@ import {
   Loader2,
 } from "lucide-react";
 import Image from "next/image";
-import { ConversationStarters } from "../conversation-starters";
+import { ConversationStarters } from "@/app/conversation-starters";
 import { useState, useEffect, useRef } from "react";
 import {
   Dialog,
@@ -53,7 +53,7 @@ import { generatePost, PostGeneratorOutput } from "@/ai/flows/post-generator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
-import { ClientOnly } from "@/components/ui/client-only";
+import { ClientOnly } from "@/components/layout/client-only";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";

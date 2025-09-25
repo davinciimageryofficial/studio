@@ -16,7 +16,7 @@ import { skillSyncNet, type SkillSyncNetInput, type SkillSyncNetOutput } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
-import { ClientOnly } from "@/components/ui/client-only";
+import { ClientOnly } from "@/components/layout/client-only";
 import { Badge } from "@/components/ui/badge";
 import { z } from "zod";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
