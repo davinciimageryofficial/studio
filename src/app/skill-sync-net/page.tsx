@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -27,6 +27,7 @@ import { getCurrentUser } from "@/lib/database";
 import type { User as UserType } from "@/lib/types";
 import { requirementCategories, type ReqCategory, type FreelanceNiche } from "@/lib/skill-sync-net-data";
 import freelanceNiches from "@/lib/freelance-niches.json";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 
 const clientFormSchema = z.object({
@@ -98,7 +99,7 @@ function NichePickerDialog({ onSave, initialNiches }: { onSave: (niches: string[
                             <AccordionTrigger className="text-base font-semibold">{category}</AccordionTrigger>
                             <AccordionContent>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-3 pl-2">
-                                    {subNiches.map(subNiche => (
+                                    {(subNiches as string[]).map(subNiche => (
                                         <div key={subNiche} className="flex items-center space-x-2">
                                             <Checkbox
                                                 id={`${category}-${subNiche}`}
@@ -184,7 +185,7 @@ function AdvancedRequirementsDialog({ onSave }: { onSave: (reqs: string) => void
                                     <div key={subCategory}>
                                         <h5 className="font-medium mb-3">{subCategory}</h5>
                                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-3">
-                                            {reqs.map(req => (
+                                            {(reqs as string[]).map(req => (
                                                 <div key={req} className="flex items-center space-x-2">
                                                     <Checkbox
                                                         id={`${mainCategory}-${subCategory}-${req}`}
@@ -364,7 +365,7 @@ function ClientView() {
     );
 }
 
-function FreelancerView() {
+function FreelancerView({ currentUser, isLoggedIn }: { currentUser: UserType | null, isLoggedIn: boolean }) {
     const [result, setResult] = useState<SkillSyncNetOutput | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -375,7 +376,6 @@ function FreelancerView() {
         setResult(null);
 
         try {
-            const currentUser = await getCurrentUser();
             if (!currentUser) {
                 throw new Error("User profile not found. Please complete your profile first.");
             }
@@ -389,8 +389,8 @@ function FreelancerView() {
             };
             const output = await skillSyncNet(input);
             setResult(output);
-        } catch (e) {
-            setError("Failed to find a project. The AI engine may be busy or has hit its rate limit. Please try again later.");
+        } catch (e: any) {
+            setError(e.message || "Failed to find a project. The AI engine may be busy. Please try again later.");
             console.error(e);
         } finally {
             setLoading(false);
@@ -406,10 +406,28 @@ function FreelancerView() {
                 </CardHeader>
                 <CardContent className="text-center p-12">
                     <p className="mb-6 text-muted-foreground">Ready for your next gig? Let our AI find a project that perfectly matches your skills and experience.</p>
-                    <Button size="lg" className="w-full text-lg bg-black text-white hover:bg-gray-800" onClick={handleFindProject} disabled={loading}>
-                        <Zap className="mr-3 h-6 w-6" />
-                        {loading ? "Scanning for Projects..." : "Find Instant Match"}
-                    </Button>
+                     <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <div className="w-full">
+                                    <Button 
+                                        size="lg" 
+                                        className="w-full text-lg bg-black text-white hover:bg-gray-800" 
+                                        onClick={handleFindProject} 
+                                        disabled={loading || !isLoggedIn}
+                                    >
+                                        <Zap className="mr-3 h-6 w-6" />
+                                        {loading ? "Scanning for Projects..." : "Find Instant Match"}
+                                    </Button>
+                                </div>
+                            </TooltipTrigger>
+                            {!isLoggedIn && (
+                                <TooltipContent>
+                                    <p>Please log in to find a project match.</p>
+                                </TooltipContent>
+                            )}
+                        </Tooltip>
+                    </TooltipProvider>
                 </CardContent>
             </Card>
             <div className="space-y-6">
@@ -563,34 +581,65 @@ function ProjectMatchCard({ project }: { project: NonNullable<NonNullable<SkillS
     );
 }
 
+function SkillSyncNetPageInternal({ currentUser, isLoggedIn }: { currentUser: UserType | null, isLoggedIn: boolean }) {
+    return (
+        <div className="p-4 sm:p-6 md:p-8">
+            <header className="mb-8 text-center">
+                <h1 className="hidden text-4xl font-bold tracking-tight font-headline-tech uppercase">Skill Sync Net</h1>
+                <p className="mt-2 text-lg text-muted-foreground max-w-3xl mx-auto">
+                    Forget endless scrolling. Get the perfect match, instantly.
+                </p>
+            </header>
+
+            <Tabs defaultValue="client" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 max-w-sm mx-auto bg-black text-muted-foreground">
+                    <TabsTrigger value="client" className="gap-2">
+                        <Kanban className="h-5 w-5" /> Businesses
+                    </TabsTrigger>
+                    <TabsTrigger value="freelancer" className="gap-2">
+                        <Kanban className="h-5 w-5" /> Freelancers
+                    </TabsTrigger>
+                </TabsList>
+                <TabsContent value="client" className="mt-8">
+                    <ClientView />
+                </TabsContent>
+                <TabsContent value="freelancer" className="mt-8">
+                    <FreelancerView currentUser={currentUser} isLoggedIn={isLoggedIn} />
+                </TabsContent>
+            </Tabs>
+        </div>
+    );
+}
+
 export default function SkillSyncNetPage() {
+    const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const user = await getCurrentUser();
+            setCurrentUser(user);
+            setIsLoggedIn(!!user);
+            setIsLoading(false);
+        };
+
+        fetchUser();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <Skeleton className="h-64 w-full max-w-lg" />
+            </div>
+        );
+    }
+
     return (
         <ClientOnly>
-            <div className="p-4 sm:p-6 md:p-8">
-                <header className="mb-8 text-center">
-                    <h1 className="hidden text-4xl font-bold tracking-tight font-headline-tech uppercase">Skill Sync Net</h1>
-                    <p className="mt-2 text-lg text-muted-foreground max-w-3xl mx-auto">
-                        Forget endless scrolling. Get the perfect match, instantly.
-                    </p>
-                </header>
-
-                <Tabs defaultValue="client" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 max-w-sm mx-auto bg-black text-muted-foreground">
-                        <TabsTrigger value="client" className="gap-2">
-                            <Kanban className="h-5 w-5" /> Businesses
-                        </TabsTrigger>
-                        <TabsTrigger value="freelancer" className="gap-2">
-                            <Kanban className="h-5 w-5" /> Freelancers
-                        </TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="client" className="mt-8">
-                        <ClientView />
-                    </TabsContent>
-                    <TabsContent value="freelancer" className="mt-8">
-                        <FreelancerView />
-                    </TabsContent>
-                </Tabs>
-            </div>
+            <SkillSyncNetPageInternal currentUser={currentUser} isLoggedIn={isLoggedIn} />
         </ClientOnly>
     );
 }
+
+    
