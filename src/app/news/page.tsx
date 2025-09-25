@@ -133,6 +133,7 @@ function NewsPageInternal({ initialArticles }: { initialArticles: Article[] }) {
   );
 }
 
+// This is now the Server Component part
 export default async function NewsPage() {
     const articles = await getNews();
     return (
