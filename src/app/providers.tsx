@@ -2,7 +2,6 @@
 "use client";
 
 import { ThemeProvider } from "next-themes";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { WorkspaceProvider } from "@/context/workspace-context";
 import { LanguageProvider } from "@/context/language-context";
 
@@ -14,9 +13,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       themes={["light", "dark", "midnight"]}
     >
       <LanguageProvider>
-        <SidebarProvider>
           <WorkspaceProvider>{children}</WorkspaceProvider>
-        </SidebarProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
