@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { createSupabaseServerClient } from './supabase/server';
@@ -401,49 +402,78 @@ export async function deleteTask(taskId: number) {
 // Feed & Posts Functions
 // =================================================================
 
-const mapPost = (post: any): Post => ({
-    id: post.id,
-    author_id: post.author_id,
-    created_at: post.created_at,
-    content: post.content,
-    image: post.image,
-    likes_count: post.likes_count,
-    replies_count: post.replies_count,
-    reposts_count: post.reposts_count,
-    views_count: post.views_count,
-    type: post.type,
-    parent_id: post.parent_id,
-    jobDetails: post.job_details,
-    replies: post.replies?.map(mapPost) || [],
-    author: {
-        id: post.author.id,
-        name: post.author.full_name,
-        headline: post.author.headline,
-        avatar: post.author.avatar_url,
-        // Fill in other User fields as needed, or leave them as undefined
-        bio: post.author.bio,
-        skills: post.author.skills,
-        portfolio: [],
-        category: post.author.category,
-        reliabilityScore: post.author.reliability_score,
-        communityStanding: post.author.community_standing,
-        disputes: post.author.disputes,
-        jobTitle: post.author.job_title,
-        company: post.author.company
-    }
-});
+const mapPost = (rawPost: any, allPosts: any[]): Post => {
+    const replies = allPosts
+        .filter(p => p.parent_id === rawPost.id)
+        .map(p => mapPost(p, allPosts));
+
+    return {
+        id: rawPost.id,
+        author_id: rawPost.author_id,
+        created_at: rawPost.created_at,
+        content: rawPost.content,
+        image: rawPost.image,
+        likes_count: rawPost.likes_count,
+        replies_count: replies.length,
+        reposts_count: rawPost.reposts_count,
+        views_count: rawPost.views_count,
+        type: rawPost.type,
+        parent_id: rawPost.parent_id,
+        jobDetails: rawPost.job_details,
+        replies: replies,
+        author: {
+            id: rawPost.author.id,
+            name: rawPost.author.full_name,
+            headline: rawPost.author.headline,
+            avatar: rawPost.author.avatar_url,
+            bio: rawPost.author.bio,
+            skills: rawPost.author.skills,
+            portfolio: [],
+            category: rawPost.author.category,
+            reliabilityScore: rawPost.author.reliability_score,
+            communityStanding: rawPost.author.community_standing,
+            disputes: rawPost.author.disputes,
+            jobTitle: rawPost.author.job_title,
+            company: rawPost.author.company
+        }
+    };
+};
 
 export async function getPosts(): Promise<Post[]> {
     const supabase = createSupabaseServerClient();
-    const { data, error } = await supabase
-        .rpc('get_posts_with_replies');
+    
+    // Fetch all posts and join with author profiles
+    const { data: allPosts, error } = await supabase
+        .from('posts')
+        .select(`
+            *,
+            author:profiles!author_id (
+                id,
+                full_name,
+                headline,
+                avatar_url,
+                bio,
+                skills,
+                category,
+                reliability_score,
+                community_standing,
+                disputes,
+                job_title,
+                company
+            )
+        `)
+        .order('created_at', { ascending: false });
 
     if (error) {
-        console.error("Error fetching posts with replies:", error);
+        console.error("Error fetching posts:", error);
         return [];
     }
 
-    return data.map(mapPost);
+    // Filter for top-level posts (posts without a parent_id)
+    const topLevelPosts = allPosts.filter(p => p.parent_id === null);
+
+    // Map the top-level posts and their nested replies
+    return topLevelPosts.map(post => mapPost(post, allPosts));
 }
 
 
