@@ -89,6 +89,26 @@ export async function getUserById(id: string): Promise<User | null> {
     } as User;
 }
 
+export async function getProfilePageData(profileId: string) {
+    const supabase = createSupabaseServerClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+
+    const targetId = profileId === 'me' ? authUser?.id : profileId;
+
+    if (!targetId) {
+        return { user: null, experiences: [], currentUser: null };
+    }
+
+    const [user, experiences, currentUser] = await Promise.all([
+        getUserById(targetId),
+        getExperiencesByUserId(targetId),
+        authUser ? getUserById(authUser.id) : Promise.resolve(null),
+    ]);
+
+    return { user, experiences, currentUser };
+}
+
+
 export async function updateUserProfile(userId: string, profileData: { name: string, headline: string, bio: string }) {
   const supabase = createSupabaseServerClient();
   const { error } = await supabase
@@ -505,11 +525,9 @@ export async function getNews() {
     try {
         const { data, error, status } = await supabase.from('articles').select('*').order('created_at', {ascending: false});
         
-        // If there's an error but it's not a "not found" type error (e.g. table is empty), log it.
-        // A common pattern is for Supabase to return an error when a query returns no rows, but we can treat that as success.
-        // We will check if data is null or empty.
-        if (error && (status !== 406 && status !== 404)) { // 406 can mean empty table. 404 is not found.
-            throw error;
+        if (error && (status < 200 || status >= 300)) {
+            console.error('Error fetching news:', error.message);
+            return []; // Return empty on actual error
         }
 
         if (!data) {
@@ -522,7 +540,7 @@ export async function getNews() {
             imageUrl: a.image_url,
         }));
     } catch (e: any) {
-        console.error('Error fetching news:', e.message);
+        console.error('An unexpected error occurred while fetching news:', e.message);
         return []; // Always return an array to prevent crashes downstream.
     }
 }

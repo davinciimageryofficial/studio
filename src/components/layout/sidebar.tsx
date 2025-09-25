@@ -187,20 +187,20 @@ export function AppSidebar({ currentUser }: { currentUser: UserType | null }) {
                  <SidebarTrigger className="w-full justify-start" />
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip={t.sidebarMyProfile} className="justify-start h-12 text-sm group-data-[collapsible=icon]:!p-0">
                 <Link href="/profile/me">
-                    <Avatar className="size-8">
-                      <AvatarImage src={currentUser?.avatar} />
-                      <AvatarFallback>
-                        <User className="h-4 w-4" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col items-start duration-200 group-data-[collapsible=icon]:-ml-8 group-data-[collapsible=icon]:opacity-0">
-                        <span className="text-sm font-medium">{currentUser?.name || 'Guest'}</span>
-                        <span className="text-xs text-sidebar-foreground/70">{t.sidebarMyProfile}</span>
-                    </div>
+                    <SidebarMenuButton tooltip={t.sidebarMyProfile} className="justify-start h-12 text-sm">
+                        <Avatar className="size-8">
+                        <AvatarImage src={currentUser?.avatar} />
+                        <AvatarFallback>
+                            <User className="h-4 w-4" />
+                        </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col items-start duration-200 group-data-[collapsible=icon]:-ml-8 group-data-[collapsible=icon]:opacity-0">
+                            <span className="text-sm font-medium">{currentUser?.name || 'Guest'}</span>
+                            <span className="text-xs text-sidebar-foreground/70">{t.sidebarMyProfile}</span>
+                        </div>
+                    </SidebarMenuButton>
                 </Link>
-              </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip={t.settings} isActive={pathname === '/settings'} className="justify-start">
