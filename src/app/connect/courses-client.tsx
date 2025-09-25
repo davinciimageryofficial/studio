@@ -30,8 +30,7 @@ export function CoursesClient({ initialCourses }: { initialCourses: Course[] }) 
   const [priceRange, setPriceRange] = useState([0, 300]);
   const [sortBy, setSortBy] = useState("relevance");
   const [skillLevel, setSkillLevel] = useState("all");
-  const { language } = useLanguage();
-  const t = translations[language];
+  const { translations: t } = useLanguage();
 
   const courseCategories = ['Development', 'Design', 'Writing', 'AI & Machine Learning', 'Data Science', 'Freelance'];
 
