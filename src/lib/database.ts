@@ -442,7 +442,6 @@ const mapPost = (rawPost: any, allPosts: any[]): Post => {
 export async function getPosts(): Promise<Post[]> {
     const supabase = createSupabaseServerClient();
     
-    // Fetch all posts and join with author profiles
     const { data: allPosts, error } = await supabase
         .from('posts')
         .select(`
@@ -469,10 +468,8 @@ export async function getPosts(): Promise<Post[]> {
         return [];
     }
 
-    // Filter for top-level posts (posts without a parent_id)
     const topLevelPosts = allPosts.filter(p => p.parent_id === null);
 
-    // Map the top-level posts and their nested replies
     return topLevelPosts.map(post => mapPost(post, allPosts));
 }
 
