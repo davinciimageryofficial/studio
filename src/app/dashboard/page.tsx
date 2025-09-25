@@ -1,7 +1,6 @@
 import { ClientOnly } from "@/components/layout/client-only";
 import { getDashboardPageData } from "@/lib/database";
 import { DashboardPageInternal } from "./dashboard-client";
-import { translations } from "@/lib/translations";
 
 export default async function DashboardPage() {
     const pageData = await getDashboardPageData();
@@ -16,8 +15,9 @@ export default async function DashboardPage() {
                 agencyMetrics={pageData.agencyMetrics}
                 initialTasks={pageData.initialTasks}
                 notifications={[]}
-                t={translations.en}
             />
         </ClientOnly>
     );
 }
+
+    

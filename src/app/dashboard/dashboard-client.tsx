@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useMemo, useCallback } from "react";
@@ -129,7 +130,6 @@ export function DashboardPageInternal({
     agencyMetrics,
     initialTasks,
     notifications,
-    t,
 }: {
     currentUser: UserType | null,
     otherUsers: UserType[],
@@ -138,13 +138,13 @@ export function DashboardPageInternal({
     agencyMetrics: any,
     initialTasks: { [key in TaskStatus]: Task[] },
     notifications: any[],
-    t: typeof import("@/lib/locales/en.json")
 }) {
     const [isAppDownloaded, setIsAppDownloaded] = useState(false);
     const [accessCode, setAccessCode] = useState("");
     const [tasks, setTasks] = useState(initialTasks);
     const { toast } = useToast();
     const router = useRouter();
+    const { translations: t } = useLanguage();
     const [productivityTimeline, setProductivityTimeline] = useState<"daily" | "weekly" | "monthly">("monthly");
     const [engagementTimeline, setEngagementTimeline] = useState<"daily" | "weekly" | "monthly">("daily");
     const [visibleMetrics, setVisibleMetrics] = useState<VisibleMetrics>({
@@ -773,3 +773,5 @@ export function DashboardPageInternal({
     </div>
   );
 }
+
+    
