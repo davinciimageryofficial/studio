@@ -27,7 +27,6 @@ import { getCurrentUser } from "@/lib/database";
 import type { User as UserType } from "@/lib/types";
 import { requirementCategories, type ReqCategory, type FreelanceNiche } from "@/lib/skill-sync-net-data";
 import freelanceNiches from "@/lib/freelance-niches.json";
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 
 const clientFormSchema = z.object({
@@ -365,7 +364,7 @@ function ClientView() {
     );
 }
 
-function FreelancerView({ currentUser, isLoggedIn }: { currentUser: UserType | null, isLoggedIn: boolean }) {
+function FreelancerView({ currentUser }: { currentUser: UserType | null }) {
     const [result, setResult] = useState<SkillSyncNetOutput | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -406,28 +405,10 @@ function FreelancerView({ currentUser, isLoggedIn }: { currentUser: UserType | n
                 </CardHeader>
                 <CardContent className="text-center p-12">
                     <p className="mb-6 text-muted-foreground">Ready for your next gig? Let our AI find a project that perfectly matches your skills and experience.</p>
-                     <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <div className="w-full">
-                                    <Button 
-                                        size="lg" 
-                                        className="w-full text-lg bg-black text-white hover:bg-gray-800" 
-                                        onClick={handleFindProject} 
-                                        disabled={loading || !isLoggedIn}
-                                    >
-                                        <Zap className="mr-3 h-6 w-6" />
-                                        {loading ? "Scanning for Projects..." : "Find Instant Match"}
-                                    </Button>
-                                </div>
-                            </TooltipTrigger>
-                            {!isLoggedIn && (
-                                <TooltipContent>
-                                    <p>Please log in to find a project match.</p>
-                                </TooltipContent>
-                            )}
-                        </Tooltip>
-                    </TooltipProvider>
+                    <Button size="lg" className="w-full text-lg bg-black text-white hover:bg-gray-800" onClick={handleFindProject} disabled={loading || !currentUser}>
+                        <Zap className="mr-3 h-6 w-6" />
+                        {loading ? "Scanning for Projects..." : "Find Instant Match"}
+                    </Button>
                 </CardContent>
             </Card>
             <div className="space-y-6">
@@ -581,7 +562,7 @@ function ProjectMatchCard({ project }: { project: NonNullable<NonNullable<SkillS
     );
 }
 
-function SkillSyncNetPageInternal({ currentUser, isLoggedIn }: { currentUser: UserType | null, isLoggedIn: boolean }) {
+function SkillSyncNetPageInternal({ currentUser }: { currentUser: UserType | null }) {
     return (
         <div className="p-4 sm:p-6 md:p-8">
             <header className="mb-8 text-center">
@@ -604,7 +585,7 @@ function SkillSyncNetPageInternal({ currentUser, isLoggedIn }: { currentUser: Us
                     <ClientView />
                 </TabsContent>
                 <TabsContent value="freelancer" className="mt-8">
-                    <FreelancerView currentUser={currentUser} isLoggedIn={isLoggedIn} />
+                    <FreelancerView currentUser={currentUser} />
                 </TabsContent>
             </Tabs>
         </div>
@@ -613,14 +594,12 @@ function SkillSyncNetPageInternal({ currentUser, isLoggedIn }: { currentUser: Us
 
 export default function SkillSyncNetPage() {
     const [currentUser, setCurrentUser] = useState<UserType | null>(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchUser = async () => {
             const user = await getCurrentUser();
             setCurrentUser(user);
-            setIsLoggedIn(!!user);
             setIsLoading(false);
         };
 
@@ -637,9 +616,7 @@ export default function SkillSyncNetPage() {
 
     return (
         <ClientOnly>
-            <SkillSyncNetPageInternal currentUser={currentUser} isLoggedIn={isLoggedIn} />
+            <SkillSyncNetPageInternal currentUser={currentUser} />
         </ClientOnly>
     );
 }
-
-    

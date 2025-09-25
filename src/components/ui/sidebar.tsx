@@ -277,7 +277,10 @@ const SidebarTrigger = React.forwardRef<
   React.ComponentProps<typeof Button>
 >(({ className, children, ...props }, ref) => {
   const { toggleSidebar, state } = useSidebar()
-  const label = state === 'collapsed' ? 'Expand' : 'Collapse';
+  const { label } = {
+    collapsed: 'Expand',
+    expanded: 'Collapse'
+  }[state]
 
   return (
     <SidebarMenuButton
@@ -576,23 +579,9 @@ const SidebarMenuButton = React.forwardRef<
         className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
         {...props}
       >
-        {React.Children.map(children, (child) => {
-          if (React.isValidElement(child)) {
-            // Check if the child is a span and apply classes
-            if (child.type === 'span') {
-              return React.cloneElement(child as React.ReactElement, {
-                className: cn(
-                  "truncate",
-                  (child.props as { className?: string }).className,
-                  "group-data-[collapsible=icon]:-ml-12 group-data-[collapsible=icon]:opacity-0"
-                ),
-              });
-            }
-          }
-          return child;
-        })}
+        {children}
       </Comp>
-    );
+    )
 
     if (!tooltip) {
       return button
@@ -788,5 +777,3 @@ export {
   SidebarTrigger,
   useSidebar,
 }
-
-    

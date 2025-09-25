@@ -83,13 +83,7 @@ export function AppSidebar({ currentUser }: { currentUser: UserType | null }) {
   const { setNextPath, isActive: isSessionActive } = useWorkspace();
   const { isFullscreen, toggleFullscreen } = useFullscreen();
   const isActive = (href: string) => (href === "/dashboard" ? pathname === href : pathname.startsWith(href) && href !== "/dashboard");
-  const { state } = useSidebar();
   
-  const getLabel = () => {
-    if (state === 'collapsed') return t.sidebarExpand;
-    return t.sidebarCollapse;
-  }
-
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (pathname.startsWith('/workspaces') && isSessionActive) {
         e.preventDefault();
@@ -190,22 +184,21 @@ export function AppSidebar({ currentUser }: { currentUser: UserType | null }) {
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-                 <SidebarTrigger className="w-full justify-start">
-                    <PanelLeft className="duration-200 group-data-[state=expanded]:rotate-180" />
-                    <span>{getLabel()}</span>
-                 </SidebarTrigger>
+                 <SidebarTrigger className="w-full justify-start" />
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip={t.sidebarMyProfile} className="justify-start">
+              <SidebarMenuButton asChild tooltip={t.sidebarMyProfile} className="justify-start h-12 text-sm group-data-[collapsible=icon]:!p-0">
                 <Link href="/profile/me">
-                    <UserCircle className="hidden group-data-[collapsible=icon]:block" />
-                    <Avatar className="size-7 group-data-[collapsible=icon]:hidden">
+                    <Avatar className="size-8">
                       <AvatarImage src={currentUser?.avatar} />
                       <AvatarFallback>
                         <User className="h-4 w-4" />
                       </AvatarFallback>
                     </Avatar>
-                    <span className="text-sm font-medium">{t.sidebarMyProfile}</span>
+                    <div className="flex flex-col items-start duration-200 group-data-[collapsible=icon]:-ml-8 group-data-[collapsible=icon]:opacity-0">
+                        <span className="text-sm font-medium">{currentUser?.name || 'Guest'}</span>
+                        <span className="text-xs text-sidebar-foreground/70">{t.sidebarMyProfile}</span>
+                    </div>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
