@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy, Users, BarChart, MessageSquare, Star, ArrowUp, ArrowDown, GripVertical, ChevronDown, ShieldCheck, AlertTriangle, ShieldX, Loader2 } from "lucide-react";
+import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy, Users, BarChart, MessageSquare, Star, ArrowUp, ArrowDown, GripVertical, ChevronDown, ShieldCheck, AlertTriangle, ShieldX, Loader2, Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
@@ -25,6 +25,7 @@ import { logout as performLogout } from "@/app/auth/actions";
 import type { User, PortfolioItem, Experience } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { analyzeUserBehavior, CommunityPolicingOutput } from "@/ai/flows/community-policing-agent";
+import { useToast } from "@/hooks/use-toast";
 
 
 type ProfileData = {
@@ -72,6 +73,7 @@ export function ProfileClient({ initialUser, initialExperiences, currentUser }: 
   const [user, setUser] = useState<User>(initialUser);
   const [experiences, setExperiences] = useState<Experience[]>(initialExperiences);
   const isMyProfile = params.id === 'me' || (currentUser?.id === user.id);
+  const { toast } = useToast();
   
   const [sections, setSections] = useState<ProfileSection[]>(['about', 'community', 'skills', 'achievements', 'network', 'impact', 'recommendations']);
 
@@ -107,11 +109,19 @@ export function ProfileClient({ initialUser, initialExperiences, currentUser }: 
       setSocials(updatedSocials);
   };
 
+  const handleGenericAction = (action: string) => {
+    toast({
+      title: "Action Triggered",
+      description: `The '${action}' action would be handled here.`,
+    });
+  };
+
   const overviewCardProps = {
     user,
     skills: user.skills || [],
     isMyProfile,
     handleSaveSkills,
+    handleGenericAction,
   };
 
 
@@ -178,10 +188,10 @@ export function ProfileClient({ initialUser, initialExperiences, currentUser }: 
                             />
                         ) : (
                             <>
-                                <Button className="flex-1">
+                                <Button className="flex-1" onClick={() => handleGenericAction('Connect')}>
                                     <CheckCircle className="mr-2 h-4 w-4" /> Connect
                                 </Button>
-                                <Button variant="outline" className="flex-1">
+                                <Button variant="outline" className="flex-1" onClick={() => handleGenericAction('Message')}>
                                     <Mail className="mr-2 h-4 w-4" /> Message
                                 </Button>
                             </>
@@ -425,12 +435,12 @@ function CommunityStandingCard({ user }: { user: User }) {
     )
 }
 
-function AchievementsCard({ isMyProfile }: { isMyProfile: boolean }) {
+function AchievementsCard({ isMyProfile, handleGenericAction }: { isMyProfile: boolean, handleGenericAction: (action: string) => void }) {
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Achievements</CardTitle>
-                {isMyProfile && <Button variant="ghost" size="icon"><Edit className="h-4 w-4" /></Button>}
+                {isMyProfile && <Button variant="ghost" size="icon" onClick={() => handleGenericAction('Edit Achievements')}><Edit className="h-4 w-4" /></Button>}
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="flex items-start gap-4">

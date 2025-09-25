@@ -355,7 +355,12 @@ export function MessagesClient({ initialConversations, initialAllUsers, currentU
                     </DialogTrigger>
                     <CallDialog user={activeConversation} isVideo={true} />
                 </Dialog>
-                <Button variant="ghost" size="icon"><UserPlus /></Button>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost" size="icon"><UserPlus /></Button>
+                    </DialogTrigger>
+                    <InviteDialog />
+                </Dialog>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon"><Settings /></Button>
@@ -466,10 +471,9 @@ function NewCommunityDialog({ allUsers, currentUser }: { allUsers: UserType[], c
     }
 
     const handleCreateCommunity = () => {
-        // In a real app, this would trigger a backend call to create the entity
         toast({
             title: `Community Created!`,
-            description: `Your new community is ready to go.`,
+            description: `Your new community space is ready.`,
         });
     }
 

@@ -13,6 +13,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 interface PortfolioViewProps {
     user: User;
@@ -85,12 +86,21 @@ export function PortfolioView({ user, isMyProfile }: PortfolioViewProps) {
         dribbble: "",
         github: "https://github.com/username",
     });
+    const { toast } = useToast();
 
     const filteredPortfolio = user.portfolio.filter(item => 
         item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
     );
+
+    const handleShare = (textToCopy: string, message: string) => {
+        navigator.clipboard.writeText(textToCopy);
+        toast({
+            title: "Copied to Clipboard!",
+            description: message,
+        });
+    };
     
     return (
         <div className="bg-background min-h-screen">
@@ -109,12 +119,12 @@ export function PortfolioView({ user, isMyProfile }: PortfolioViewProps) {
                                 <EditExternalLinksDialog onSave={setExternalLinks} />
                             </Dialog>
                         )}
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => handleShare(window.location.href, "Portfolio link copied to clipboard.")}>
                             <Share2 className="mr-2 h-4 w-4" />
                             Share Portfolio
                         </Button>
                          {isMyProfile && (
-                            <Button size="sm">
+                            <Button size="sm" onClick={() => toast({ title: "Coming Soon!", description: "A dialog to add a new project would appear here."})}>
                                 <PlusCircle className="mr-2 h-4 w-4" />
                                 New Project
                             </Button>
@@ -179,7 +189,7 @@ export function PortfolioView({ user, isMyProfile }: PortfolioViewProps) {
                             layout === 'grid' ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
                         )}>
                             {filteredPortfolio.map((item, index) => (
-                                <PortfolioCard key={index} item={item} layout={layout} />
+                                <PortfolioCard key={index} item={item} layout={layout} onShare={handleShare} />
                             ))}
                         </div>
                     ) : (
@@ -196,7 +206,7 @@ export function PortfolioView({ user, isMyProfile }: PortfolioViewProps) {
     )
 }
 
-function PortfolioCard({ item, layout }: { item: PortfolioItem, layout: 'grid' | 'list' }) {
+function PortfolioCard({ item, layout, onShare }: { item: PortfolioItem, layout: 'grid' | 'list', onShare: (url: string, msg: string) => void }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -245,7 +255,7 @@ function PortfolioCard({ item, layout }: { item: PortfolioItem, layout: 'grid' |
                             </div>
                         </div>
                          <div className="mt-6 flex gap-2">
-                            <Button className="w-full">
+                            <Button className="w-full" onClick={() => onShare(window.location.href, `Link to project '${item.title}' copied!`)}>
                                 <Share2 className="mr-2 h-4 w-4" />
                                 Share Project
                             </Button>
