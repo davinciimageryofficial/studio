@@ -186,7 +186,3 @@ function ProfileCard({ user, handleAction, t }: { user: User, handleAction: (act
     </Card>
   );
 }
-
-    
-
-    
