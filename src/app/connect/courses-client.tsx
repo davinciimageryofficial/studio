@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -103,7 +104,7 @@ export function CoursesClient({ initialCourses }: { initialCourses: Course[] }) 
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={() => handleGenerateCourse(category === 'all' ? 'Development' : category)} disabled={isGenerating}>
+        <Button onClick={() => handleGenerateCourse(category === 'all' ? 'Development' : category as any)} disabled={isGenerating}>
             {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
             Generate New Course Idea
         </Button>

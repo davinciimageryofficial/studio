@@ -1,5 +1,6 @@
 
 
+
 'use server';
 
 import { createSupabaseServerClient } from './supabase/server';
@@ -107,23 +108,22 @@ export async function getExperiencesByUserId(userId: string): Promise<Experience
  */
 export async function getProfilePageData(userId: string) {
     const supabase = createSupabaseServerClient();
-    
     let profileId = userId;
     let isMe = false;
 
     const { data: { user: authUser } } = await supabase.auth.getUser();
-    
+
     if (userId === 'me' && authUser) {
         profileId = authUser.id;
-        isMe = true;
-    } else if (authUser && userId === authUser.id) {
-        isMe = true;
     }
 
     const user = await getUserById(profileId);
-    const experiences = await getExperiencesByUserId(profileId);
+    const experiences = user ? await getExperiencesByUserId(user.id) : [];
+
+    // The currentUser is the one viewing the page, which might be different from the profile being viewed.
+    const currentUser = await getCurrentUser();
     
-    return { user, experiences, currentUser: isMe ? user : await getCurrentUser() };
+    return { user, experiences, currentUser };
 }
 
 
@@ -438,7 +438,7 @@ export async function getConversations() {
 
     const formattedConversations = data.map(convo => {
         const otherParticipant = convo.participants.find(p => p.profile.id !== user.id)?.profile;
-        const lastMessage = convo.messages[convo.messages.length - 1];
+        const lastMessage = convo.messages.length > 0 ? convo.messages[convo.messages.length - 1] : { content: "No messages yet", created_at: new Date().toISOString(), sender: { id: '', full_name: '' } };
 
         return {
             id: convo.id,
@@ -462,9 +462,9 @@ export async function getConversations() {
     
     // Sort by most recent message
     formattedConversations.sort((a, b) => {
-        const timeA = new Date(b.messages[b.messages.length - 1]?.time || 0).getTime();
-        const timeB = new Date(a.messages[a.messages.length - 1]?.time || 0).getTime();
-        return timeA - timeB;
+        const timeA = a.messages.length > 0 ? new Date(a.messages[a.messages.length - 1].time).getTime() : 0;
+        const timeB = b.messages.length > 0 ? new Date(b.messages[b.messages.length - 1].time).getTime() : 0;
+        return timeB - timeA;
     });
 
     return formattedConversations;

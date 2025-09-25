@@ -1,11 +1,11 @@
 import { ClientOnly } from "@/components/layout/client-only";
-import { getDashboardPageData } from "@/lib/database";
+import { getDashboardPageData, getCurrentUser } from "@/lib/database";
 import { DashboardPageInternal } from "./dashboard-client";
-import { getCurrentUser } from "@/lib/database";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
     const currentUser = await getCurrentUser();
+    
     if (!currentUser) {
         // This should theoretically be handled by middleware, but as a safeguard
         redirect('/login');

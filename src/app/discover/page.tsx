@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import Link from "next/link";
@@ -9,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, User as UserIcon, MoreHorizontal, Flag, ShieldX } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/context/language-context";
 import { translations } from "@/lib/translations";
@@ -18,6 +19,74 @@ import { useState, useEffect } from "react";
 import { User } from "@/lib/types";
 import { getUsers } from "@/lib/database";
 import { Skeleton } from "@/components/ui/skeleton";
+
+function DiscoverPageInternal({ initialUsers }: { initialUsers: User[] }) {
+  const { language } = useLanguage();
+  const t = translations[language];
+  const categories = ["All", "Design", "Writing", "Development"];
+  
+  const { toast } = useToast();
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState("All");
+
+  const handleAction = (action: string, userName: string) => {
+    toast({
+      title: `${t.action}: ${action}`,
+      description: `${t.actionDesc.replace('{action}', action).replace('{userName}', userName)}`,
+    });
+  };
+
+  const filteredUsers = users.filter(user => {
+    const matchesCategory = activeTab === "All" || user.category === activeTab.toLowerCase();
+    const matchesSearch = searchTerm === "" || 
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.headline && user.headline.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (user.skills && user.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase())));
+    return matchesCategory && matchesSearch;
+  });
+
+  return (
+    <div className="p-4 sm:p-6 md:p-8">
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight font-headline-tech uppercase">{t.discoverTitle}</h1>
+        <p className="mt-1 text-muted-foreground">
+          {t.discoverDescription}
+        </p>
+      </header>
+
+      <div className="mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input 
+            placeholder={t.discoverSearchPlaceholder} 
+            className="pl-10" 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-4 bg-black text-muted-foreground">
+          {categories.map((category) => (
+            <TabsTrigger key={category} value={category}>
+              {category}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        <TabsContent value={activeTab} className="mt-6">
+          {isLoading ? (
+            <ProfileGridSkeleton />
+          ) : (
+            <ProfileGrid users={filteredUsers} handleAction={handleAction} t={t} />
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
 
 function ProfileGrid({ users, handleAction, t }: { users: User[], handleAction: (action: string, userName: string) => void, t: typeof translations['en'] }) {
   if (users.length === 0) {
@@ -110,80 +179,20 @@ function ProfileCard({ user, handleAction, t }: { user: User, handleAction: (act
   );
 }
 
-export default async function DiscoverPage() {
-    const users = await getUsers();
+export default function DiscoverPage() {
+    const [users, setUsers] = useState<User[]>([]);
     
+    useEffect(() => {
+        const fetchUsers = async () => {
+            const data = await getUsers();
+            setUsers(data);
+        }
+        fetchUsers();
+    }, []);
+
     return (
         <ClientOnly>
             <DiscoverPageInternal initialUsers={users} />
         </ClientOnly>
     );
-}
-
-function DiscoverPageInternal({ initialUsers }: { initialUsers: User[] }) {
-  const { language } = useLanguage();
-  const t = translations[language];
-  const categories = ["All", "Design", "Writing", "Development"];
-  
-  const { toast } = useToast();
-  const [users, setUsers] = useState<User[]>(initialUsers);
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("All");
-
-  const handleAction = (action: string, userName: string) => {
-    toast({
-      title: `${t.action}: ${action}`,
-      description: `${t.actionDesc.replace('{action}', action).replace('{userName}', userName)}`,
-    });
-  };
-
-  const filteredUsers = users.filter(user => {
-    const matchesCategory = activeTab === "All" || user.category === activeTab.toLowerCase();
-    const matchesSearch = searchTerm === "" || 
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (user.headline && user.headline.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (user.skills && user.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase())));
-    return matchesCategory && matchesSearch;
-  });
-
-  return (
-    <div className="p-4 sm:p-6 md:p-8">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight font-headline-tech uppercase">{t.discoverTitle}</h1>
-        <p className="mt-1 text-muted-foreground">
-          {t.discoverDescription}
-        </p>
-      </header>
-
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input 
-            placeholder={t.discoverSearchPlaceholder} 
-            className="pl-10" 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-black text-muted-foreground">
-          {categories.map((category) => (
-            <TabsTrigger key={category} value={category}>
-              {category}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value={activeTab} className="mt-6">
-          {isLoading ? (
-            <ProfileGridSkeleton />
-          ) : (
-            <ProfileGrid users={filteredUsers} handleAction={handleAction} t={t} />
-          )}
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
 }

@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { usePathname } from "next/navigation";
@@ -24,7 +25,7 @@ export function LayoutBody({
 
   if (!isLoaded) {
     return (
-        <div className="flex h-screen w-full items-center justify-center">
+        <div className="flex h-screen w-full items-center justify-center bg-background">
             {/* You can add a more sophisticated loading spinner here */}
         </div>
     );

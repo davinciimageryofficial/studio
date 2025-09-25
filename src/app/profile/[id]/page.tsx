@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getProfilePageData } from "@/lib/database";
+import { getProfilePageData, getCurrentUser } from "@/lib/database";
 import { ClientOnly } from "@/components/layout/client-only";
 import { ProfileClient } from "./profile-client";
 

@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -60,8 +61,10 @@ export function NewsClient({ initialArticles }: { initialArticles: Article[] }) 
       case "All":
         return articles;
       case "Personalized":
-        return articles.slice(2, 6);
+        // In a real app, this would be based on user preferences
+        return articles.filter(a => ['AI & Machine Learning', 'Development'].includes(a.category));
       case "Trending":
+        // Simple mock of trending - could be based on views or likes
         return articles.slice(0, 4);
       case "Statistics":
         return [];

@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { AppSidebar } from "@/components/layout/sidebar";
@@ -16,17 +17,15 @@ export function AppLayout({
   currentUser: User | null;
 }>) {
   return (
-    <ClientOnly>
-      <SidebarProvider>
-        <AppSidebar currentUser={currentUser} />
-        <SidebarInset>
-          <div className="flex flex-col h-screen">
-            <GlobalSearch />
-            <div className="flex-1 overflow-y-auto">{children}</div>
-          </div>
-        </SidebarInset>
-        <NavigationPrompt />
-      </SidebarProvider>
-    </ClientOnly>
+    <SidebarProvider>
+      <AppSidebar currentUser={currentUser} />
+      <SidebarInset>
+        <div className="flex flex-col h-screen">
+          <GlobalSearch />
+          <div className="flex-1 overflow-y-auto">{children}</div>
+        </div>
+      </SidebarInset>
+      <NavigationPrompt />
+    </SidebarProvider>
   );
 }
