@@ -13,11 +13,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
       defaultTheme="light"
       themes={["light", "dark", "midnight"]}
     >
-        <LanguageProvider>
-            <WorkspaceProvider>
-                {children}
-            </WorkspaceProvider>
-        </LanguageProvider>
+      <LanguageProvider>
+        <SidebarProvider>
+          <WorkspaceProvider>{children}</WorkspaceProvider>
+        </SidebarProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }
