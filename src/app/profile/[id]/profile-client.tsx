@@ -1,10 +1,11 @@
+
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy, Users, BarChart, MessageSquare, Star, ArrowUp, ArrowDown, GripVertical, ChevronDown, ShieldCheck, AlertTriangle, ShieldX } from "lucide-react";
+import { Briefcase, Mail, CheckCircle, MapPin, Link as LinkIcon, Edit, Plus, Trash2, X, Building, Calendar, Twitter, Linkedin, Instagram, LogOut, User as UserIcon, Award, Trophy, Users, BarChart, MessageSquare, Star, ArrowUp, ArrowDown, GripVertical, ChevronDown, ShieldCheck, AlertTriangle, ShieldX, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
@@ -23,6 +24,8 @@ import { getUserById, getExperiencesByUserId, getCurrentUser } from "@/lib/datab
 import { logout as performLogout } from "@/app/auth/actions";
 import type { User, PortfolioItem, Experience } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { analyzeUserBehavior, CommunityPolicingOutput } from "@/ai/flows/community-policing-agent";
+
 
 type ProfileData = {
     name: string;
@@ -301,8 +304,63 @@ function SkillsCard({ skills, isMyProfile, handleSaveSkills }: { skills: string[
 }
 
 function CommunityStandingCard({ user }: { user: User }) {
-    if (!user) return null;
-    const scoreColor = user.reliabilityScore > 80 ? "text-green-600" : user.reliabilityScore > 60 ? "text-yellow-600" : "text-red-600";
+    const [analysis, setAnalysis] = useState<CommunityPolicingOutput | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        async function runAnalysis() {
+            setIsLoading(true);
+            try {
+                // In a real app, this activity and history would be fetched from the DB
+                const result = await analyzeUserBehavior({
+                    userId: user.id,
+                    userActivity: [
+                        "Posted a job for 'React Native Developer'",
+                        "Commented on 'Best Practices for API Design'",
+                        "Completed 'UX for Startups' course",
+                        "Posted 'Looking for a UI/UX Designer for a short-term project'"
+                    ],
+                    transactionHistory: [
+                        { type: 'payment_received', details: 'Project "Logo Redesign" - $500' },
+                        { type: 'payment_sent', details: 'Project "Blog Post Writing" - $250' },
+                        { type: 'dispute_resolved', details: 'Dispute with Client X resolved amicably.' }
+                    ]
+                });
+                setAnalysis(result);
+            } catch (error) {
+                console.error("Community analysis failed:", error);
+                // Set a default/error state
+                setAnalysis({
+                    reliabilityScore: user.reliabilityScore || 75,
+                    summary: user.communityStanding || 'Could not load community analysis.',
+                    flags: user.communityFlags || [],
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        if (user) {
+            runAnalysis();
+        }
+    }, [user]);
+
+    if (isLoading || !analysis) {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Community Score</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                </CardContent>
+            </Card>
+        )
+    }
+
+    const scoreColor = analysis.reliabilityScore > 80 ? "text-green-600" : analysis.reliabilityScore > 60 ? "text-yellow-600" : "text-red-600";
     const disputeColor = user.disputes === 0 ? "text-green-600" : "text-yellow-600";
     
     const getFlagIcon = (severity: 'low' | 'medium' | 'high') => {
@@ -324,22 +382,22 @@ function CommunityStandingCard({ user }: { user: User }) {
                             <div className="space-y-2">
                                 <div className="flex justify-between text-sm font-medium">
                                     <span>Reliability Score</span>
-                                    <span className={scoreColor}>{user.reliabilityScore}%</span>
+                                    <span className={scoreColor}>{analysis.reliabilityScore}%</span>
                                 </div>
-                                <Progress value={user.reliabilityScore} />
+                                <Progress value={analysis.reliabilityScore} />
                             </div>
                         </TooltipTrigger>
                         <TooltipContent>
-                            <p>{user.communityStanding}</p>
+                            <p>{analysis.summary}</p>
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
 
-                {user.communityFlags && user.communityFlags.length > 0 && (
+                {analysis.flags && analysis.flags.length > 0 && (
                     <div>
                         <h4 className="font-semibold text-sm mb-2">Active Flags</h4>
                         <div className="space-y-2">
-                        {user.communityFlags.map((flag, index) => (
+                        {analysis.flags.map((flag, index) => (
                              <div key={index} className="flex items-center gap-2 text-sm p-2 rounded-md bg-muted">
                                 {getFlagIcon(flag.severity)}
                                 <span>{flag.reason}</span>

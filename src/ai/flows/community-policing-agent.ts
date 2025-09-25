@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -8,27 +9,9 @@
  * - CommunityPolicingOutput - The return type for the analyzeUserBehavior function.
  */
 import { ai } from '@/ai/genkit';
-import { z } from 'zod';
+import { CommunityPolicingInputSchema, CommunityPolicingOutputSchema, type CommunityPolicingInput, type CommunityPolicingOutput } from '../schemas/community-policing-agent';
 
-const CommunityPolicingInputSchema = z.object({
-  userId: z.string().describe("The unique ID of the user to analyze."),
-  userActivity: z.array(z.string()).describe("A list of recent activities, such as posts, comments, and job listings."),
-  transactionHistory: z.array(z.object({
-    type: z.enum(['payment_received', 'payment_sent', 'dispute_opened', 'dispute_resolved']),
-    details: z.string(),
-  })).describe("A history of the user's transactions and disputes."),
-});
-export type CommunityPolicingInput = z.infer<typeof CommunityPolicingInputSchema>;
-
-const CommunityPolicingOutputSchema = z.object({
-  reliabilityScore: z.number().int().min(0).max(100).describe("A score from 0-100 representing the user's reliability."),
-  summary: z.string().describe("A brief, neutral summary of the user's community standing."),
-  flags: z.array(z.object({
-    reason: z.string().describe("The reason for the flag (e.g., 'Unresponsive to applicants', 'Payment dispute')."),
-    severity: z.enum(['low', 'medium', 'high']),
-  })).describe("A list of any flags raised against the user."),
-});
-export type CommunityPolicingOutput = z.infer<typeof CommunityPolicingOutputSchema>;
+export type { CommunityPolicingInput, CommunityPolicingOutput } from '../schemas/community-policing-agent';
 
 
 const communityPolicingFlow = ai.defineFlow(
