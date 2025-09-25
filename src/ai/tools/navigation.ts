@@ -16,6 +16,6 @@ export async function navigateTo(args: z.infer<typeof NavigationInputSchema>): P
   // The actual navigation will be handled by the client-side code that calls the flow.
   return {
     answer: `Navigating you to the ${args.destination} page.`,
-    destination: args.destination,
+    destination: args.destination.toLowerCase(),
   };
 }

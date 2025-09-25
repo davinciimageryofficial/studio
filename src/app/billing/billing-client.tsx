@@ -264,7 +264,7 @@ function UpgradeDialog({ plan, paymentMethods, onUpgrade }: { plan: any, payment
 }
 
 
-export function BillingClient({ initialData }: { initialData: Awaited<ReturnType<typeof getBillingInfo>> }) {
+export function BillingClient({ initialData }: { initialData: Awaited<ReturnType<typeof getBillingInfo>> | null }) {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') || "subscription";
   const { toast } = useToast();

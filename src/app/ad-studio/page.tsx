@@ -212,8 +212,17 @@ function AdStudioPageInternal({ initialCampaigns }: { initialCampaigns: Campaign
   );
 }
 
-export default async function AdStudioPage() {
-    const campaigns = await getCampaigns();
+export default function AdStudioPage() {
+    const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+    
+    useEffect(() => {
+        const fetchCampaigns = async () => {
+            const data = await getCampaigns();
+            setCampaigns(data);
+        }
+        fetchCampaigns();
+    }, []);
+
     return (
         <ClientOnly>
             <AdStudioPageInternal initialCampaigns={campaigns} />
@@ -415,7 +424,3 @@ function CreateCampaignDialog({ t, onCampaignCreated }: { t: typeof translations
         </DialogContent>
     );
 }
-
-    
-
-    

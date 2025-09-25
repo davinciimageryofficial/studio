@@ -26,6 +26,12 @@ export async function searchTheWeb(args: { query: string }) {
         if (response.answer_box) {
             return response.answer_box.snippet || response.answer_box.answer;
         }
+        if (response.knowledge_graph) {
+            if (response.knowledge_graph.stock_price) {
+                return `The stock price for ${response.knowledge_graph.title} is ${response.knowledge_graph.stock_price}.`;
+            }
+            return response.knowledge_graph.description;
+        }
         if (response.organic_results && response.organic_results.length > 0) {
             return response.organic_results.map(r => `- ${r.title}: ${r.snippet}`).slice(0, 5).join('\n');
         }
