@@ -62,7 +62,7 @@ function LoginPageInternal() {
     if (result?.error) {
       setErrorMessage(result.error);
     } else if (result?.success) {
-      router.push('/dashboard');
+      router.refresh(); // This will re-fetch server components and re-run middleware
     }
   };
 
@@ -153,3 +153,5 @@ export default function LoginPage() {
         </ClientOnly>
     );
 }
+
+    
