@@ -28,9 +28,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${michroma.variable} font-body antialiased`}>
         <Providers>
             <LayoutBody>{children}</LayoutBody>
-            <ClientOnly>
-                <Toaster />
-            </ClientOnly>
+            <Toaster />
             <Analytics />
             <SpeedInsights />
         </Providers>
@@ -38,3 +36,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+    

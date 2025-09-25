@@ -559,6 +559,7 @@ const SidebarMenuButton = React.forwardRef<
       size = "default",
       tooltip,
       className,
+      children,
       ...props
     },
     ref
@@ -574,8 +575,24 @@ const SidebarMenuButton = React.forwardRef<
         data-active={isActive}
         className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
         {...props}
-      />
-    )
+      >
+        {React.Children.map(children, (child) => {
+          if (React.isValidElement(child)) {
+            // Check if the child is a span and apply classes
+            if (child.type === 'span') {
+              return React.cloneElement(child as React.ReactElement, {
+                className: cn(
+                  "truncate",
+                  (child.props as { className?: string }).className,
+                  "group-data-[collapsible=icon]:-ml-12 group-data-[collapsible=icon]:opacity-0"
+                ),
+              });
+            }
+          }
+          return child;
+        })}
+      </Comp>
+    );
 
     if (!tooltip) {
       return button
@@ -771,3 +788,5 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+
+    
