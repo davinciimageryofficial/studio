@@ -6,6 +6,8 @@ import { useLanguage } from "@/context/language-context";
 import { AppLayout } from "@/components/layout/app-layout";
 import { CallWidget } from "./call-widget";
 import type { User } from "@/lib/types";
+import { useEffect, useState } from "react";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function LayoutBody({ 
   children,
@@ -17,7 +19,7 @@ export function LayoutBody({
   const pathname = usePathname();
   const { isLoaded } = useLanguage();
 
-  const publicPages = ['/', '/login', '/signup', '/waitlist-confirmation', '/logout', '/donate', '/faq'];
+  const publicPages = ['/', '/login', '/signup', '/waitlist-confirmation', '/logout', '/faq', '/donate'];
   const isPublicPage = publicPages.includes(pathname);
 
   if (!isLoaded) {

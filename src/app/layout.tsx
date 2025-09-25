@@ -2,7 +2,6 @@ import { Inter, Michroma } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { Providers } from "./providers";
-import { ClientOnly } from "@/components/layout/client-only";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { LayoutBody } from "@/components/layout/layout-body";

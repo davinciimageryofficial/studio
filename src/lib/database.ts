@@ -108,23 +108,22 @@ export async function getExperiencesByUserId(userId: string): Promise<Experience
 export async function getProfilePageData(userId: string) {
     const supabase = createSupabaseServerClient();
     
-    // Check if we need to fetch the current user's ID first
     let profileId = userId;
-    if (userId === 'me') {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-            return { user: null, experiences: [], currentUser: null };
-        }
-        profileId = user.id;
+    let isMe = false;
+
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+    if (userId === 'me' && authUser) {
+        profileId = authUser.id;
+        isMe = true;
+    } else if (authUser && userId === authUser.id) {
+        isMe = true;
     }
 
-    const [profile, experiences, currentUser] = await Promise.all([
-        getUserById(profileId),
-        getExperiencesByUserId(profileId),
-        getCurrentUser()
-    ]);
+    const user = await getUserById(profileId);
+    const experiences = await getExperiencesByUserId(profileId);
     
-    return { user: profile, experiences, currentUser };
+    return { user, experiences, currentUser: isMe ? user : await getCurrentUser() };
 }
 
 
@@ -218,15 +217,13 @@ export async function createCampaignInDb(campaign: { name: string, type: string,
 /**
  * Fetches all data for the dashboard page.
  */
-export async function getDashboardPageData() {
+export async function getDashboardPageData(currentUser: User) {
     const supabase = createSupabaseServerClient();
     
     const [
-        currentUser,
         users,
         tasks
     ] = await Promise.all([
-        getCurrentUser(),
         getUsers(),
         getTasks()
     ]);
@@ -253,7 +250,6 @@ export async function getDashboardPageData() {
     };
 
     return {
-        currentUser,
         otherUsers: users.filter(u => u.id !== currentUser?.id),
         dashboardMetrics,
         personalMetrics,

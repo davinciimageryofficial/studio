@@ -5,15 +5,16 @@ export async function middleware(request: NextRequest) {
   const { response, user } = await updateSession(request);
 
   const publicUrls = ['/login', '/signup', '/auth/callback', '/', '/waitlist-confirmation', '/logout', '/faq', '/donate'];
+  const isPublicUrl = publicUrls.includes(request.nextUrl.pathname);
 
   // if the user is not logged in and not trying to access a public url,
   // redirect them to the login page
-  if (!user && !publicUrls.includes(request.nextUrl.pathname)) {
+  if (!user && !isPublicUrl) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
   
   // if the user is logged in and tries to access login/signup, redirect to dashboard
-  if (user && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup')) {
+  if (user && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup' || request.nextUrl.pathname === '/')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
