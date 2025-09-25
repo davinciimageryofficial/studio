@@ -402,75 +402,80 @@ export async function deleteTask(taskId: number) {
 // Feed & Posts Functions
 // =================================================================
 
-const mapPost = (rawPost: any, allPosts: any[]): Post => {
-    const replies = allPosts
-        .filter(p => p.parent_id === rawPost.id)
-        .map(p => mapPost(p, allPosts));
-
-    return {
-        id: rawPost.id,
-        author_id: rawPost.author_id,
-        created_at: rawPost.created_at,
-        content: rawPost.content,
-        image: rawPost.image,
-        likes_count: rawPost.likes_count,
-        replies_count: replies.length,
-        reposts_count: rawPost.reposts_count,
-        views_count: rawPost.views_count,
-        type: rawPost.type,
-        parent_id: rawPost.parent_id,
-        jobDetails: rawPost.job_details,
-        replies: replies,
-        author: {
-            id: rawPost.author.id,
-            name: rawPost.author.full_name,
-            headline: rawPost.author.headline,
-            avatar: rawPost.author.avatar_url,
-            bio: rawPost.author.bio,
-            skills: rawPost.author.skills,
-            portfolio: [],
-            category: rawPost.author.category,
-            reliabilityScore: rawPost.author.reliability_score,
-            communityStanding: rawPost.author.community_standing,
-            disputes: rawPost.author.disputes,
-            jobTitle: rawPost.author.job_title,
-            company: rawPost.author.company
-        }
-    };
-};
-
 export async function getPosts(): Promise<Post[]> {
     const supabase = createSupabaseServerClient();
-    
-    const { data: allPosts, error } = await supabase
-        .from('posts')
-        .select(`
-            *,
-            author:profiles!author_id (
-                id,
-                full_name,
-                headline,
-                avatar_url,
-                bio,
-                skills,
-                category,
-                reliability_score,
-                community_standing,
-                disputes,
-                job_title,
-                company
-            )
-        `)
-        .order('created_at', { ascending: false });
 
-    if (error) {
-        console.error("Error fetching posts:", error);
+    // 1. Fetch all users and create a map
+    const { data: usersData, error: usersError } = await supabase.from('profiles').select('*');
+    if (usersError) {
+        console.error("Error fetching users for posts:", usersError);
         return [];
     }
+    const usersMap = new Map<string, User>(usersData.map(u => [u.id, {
+        id: u.id,
+        name: u.full_name,
+        headline: u.headline,
+        avatar: u.avatar_url,
+        bio: u.bio,
+        skills: u.skills,
+        portfolio: [], // Simplified for this context
+        category: u.category,
+        reliabilityScore: u.reliability_score,
+        communityStanding: u.community_standing,
+        disputes: u.disputes,
+        jobTitle: u.job_title,
+        company: u.company
+    }]));
+    
 
-    const topLevelPosts = allPosts.filter(p => p.parent_id === null);
+    // 2. Fetch all posts
+    const { data: postsData, error: postsError } = await supabase
+        .from('posts')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    return topLevelPosts.map(post => mapPost(post, allPosts));
+    if (postsError) {
+        console.error("Error fetching posts:", postsError);
+        return [];
+    }
+    
+    if (!postsData) {
+        return [];
+    }
+    
+    // 3. Assemble posts with author data and replies
+    const postsWithAuthors = postsData
+        .map(p => {
+            const author = usersMap.get(p.author_id);
+            if (!author) return null; // Skip post if author not found
+            return {
+                ...p,
+                author,
+                replies: [],
+                jobDetails: p.job_details,
+            } as Post;
+        })
+        .filter(p => p !== null) as Post[];
+
+    const postMap = new Map<number, Post>(postsWithAuthors.map(p => [p.id, p]));
+    const topLevelPosts: Post[] = [];
+
+    postsWithAuthors.forEach(post => {
+        if (post.parent_id && postMap.has(post.parent_id)) {
+            postMap.get(post.parent_id)?.replies?.push(post);
+        } else {
+            topLevelPosts.push(post);
+        }
+    });
+    
+    // Update reply counts
+    topLevelPosts.forEach(post => {
+        if (post.replies) {
+            post.replies_count = post.replies.length;
+        }
+    });
+
+    return topLevelPosts;
 }
 
 
@@ -800,5 +805,3 @@ export async function saveSoloSession(durationSeconds: number) {
 
     return { success: true };
 }
-
-    
