@@ -246,7 +246,3 @@ function NewsGrid({ articles }: { articles: Article[] }) {
     </div>
   )
 }
-
-    
-
-    
