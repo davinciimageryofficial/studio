@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { usePathname } from "next/navigation";
@@ -7,8 +6,6 @@ import { useLanguage } from "@/context/language-context";
 import { AppLayout } from "@/components/layout/app-layout";
 import { CallWidget } from "./call-widget";
 import type { User } from "@/lib/types";
-import { useEffect, useState } from "react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function LayoutBody({ 
   children,
@@ -31,15 +28,15 @@ export function LayoutBody({
     );
   }
 
+  if (isPublicPage) {
+    return <>{children}</>;
+  }
+
   return (
     <>
-      {isPublicPage ? (
-        children
-      ) : (
-        <AppLayout currentUser={currentUser}>
-          {children}
-        </AppLayout>
-      )}
+      <AppLayout currentUser={currentUser}>
+        {children}
+      </AppLayout>
       <CallWidget />
     </>
   );

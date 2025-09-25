@@ -4,6 +4,7 @@
 import { ThemeProvider } from "next-themes";
 import { WorkspaceProvider } from "@/context/workspace-context";
 import { LanguageProvider } from "@/context/language-context";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -13,7 +14,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       themes={["light", "dark", "midnight"]}
     >
       <LanguageProvider>
-          <WorkspaceProvider>{children}</WorkspaceProvider>
+        <WorkspaceProvider>{children}</WorkspaceProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
