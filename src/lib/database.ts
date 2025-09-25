@@ -502,16 +502,29 @@ export async function getCourses(): Promise<Course[]> {
 // =================================================================
 export async function getNews() {
     const supabase = createSupabaseServerClient();
-    const { data, error } = await supabase.from('articles').select('*').order('created_at', {ascending: false});
-    if (error) {
-        console.error('Error fetching news:', error);
-        return [];
+    try {
+        const { data, error, status } = await supabase.from('articles').select('*').order('created_at', {ascending: false});
+        
+        // If there's an error but it's not a "not found" type error (e.g. table is empty), log it.
+        // A common pattern is for Supabase to return an error when a query returns no rows, but we can treat that as success.
+        // We will check if data is null or empty.
+        if (error && (status !== 406 && status !== 404)) { // 406 can mean empty table. 404 is not found.
+            throw error;
+        }
+
+        if (!data) {
+            return []; // Return empty array if no data, which is a valid state.
+        }
+
+        return data.map(a => ({
+            ...a,
+            date: new Date(a.created_at).toLocaleDateString(),
+            imageUrl: a.image_url,
+        }));
+    } catch (e: any) {
+        console.error('Error fetching news:', e.message);
+        return []; // Always return an array to prevent crashes downstream.
     }
-    return data.map(a => ({
-        ...a,
-        date: new Date(a.created_at).toLocaleDateString(),
-        imageUrl: a.image_url,
-    }));
 }
 
 
