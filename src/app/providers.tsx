@@ -15,7 +15,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     >
         <LanguageProvider>
             <WorkspaceProvider>
-                <SidebarProvider>{children}</SidebarProvider>
+                {children}
             </WorkspaceProvider>
         </LanguageProvider>
     </ThemeProvider>
