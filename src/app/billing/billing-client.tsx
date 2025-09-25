@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useLanguage } from "@/context/language-context";
 import { ClientOnly } from "@/components/layout/client-only";
-import { translations } from "@/lib/translations";
 import { getBillingInfo } from "@/lib/database";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -268,8 +268,7 @@ export function BillingClient({ initialData }: { initialData: Awaited<ReturnType
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') || "subscription";
   const { toast } = useToast();
-  const { language } = useLanguage();
-  const t = translations[language];
+  const { translations: t } = useLanguage();
 
   const invoices = initialData?.invoices || [];
   const paymentMethods = initialData?.paymentMethods || [];
